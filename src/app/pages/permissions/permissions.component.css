@@ -1,0 +1,66 @@
+/* Estilos específicos del componente de permisos */
+
+/* Animaciones para el modal */
+.modal-enter {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal-exit {
+  animation: fadeOut 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* Estilos para el overflow del texto en las tarjetas */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Hover effects mejorados */
+.permission-card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Estados de los botones */
+.btn-loading {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Mejoras para accessibility */
+.modal-backdrop {
+  backdrop-filter: blur(4px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .modal-container {
+    margin: 1rem;
+    width: calc(100% - 2rem);
+  }
+}
