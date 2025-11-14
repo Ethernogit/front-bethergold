@@ -61,9 +61,9 @@ import { Permission, Role } from '../../../interfaces/auth.interfaces';
                   <label class="flex items-start space-x-3 cursor-pointer">
                     <input
                       type="checkbox"
-                      [value]="permission.id"
-                      (change)="onPermissionChange(permission.id, $event)"
-                      [checked]="isPermissionSelected(permission.id)"
+                      [value]="permission.id || ''"
+                      (change)="onPermissionChange(permission.id || '', $event)"
+                      [checked]="isPermissionSelected(permission.id || '')"
                       class="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
                     />
                     <div class="flex-1 min-w-0">
@@ -159,9 +159,9 @@ export class RoleFormComponent {
 
   ngOnInit() {
     if (this.role && this.editMode) {
-      this.selectedPermissions = this.role.permissions.map(p => 
-        typeof p === 'string' ? p : p.id
-      );
+      this.selectedPermissions = this.role.permissions
+        .map(p => typeof p === 'string' ? p : p.id)
+        .filter((id): id is string => id !== undefined);
       this.roleForm.patchValue({
         ...this.role,
         permissions: this.role.permissions

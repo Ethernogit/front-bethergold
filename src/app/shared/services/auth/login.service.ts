@@ -12,18 +12,19 @@ import {
   BackendLoginResponse,
   AuthUser,
   AuthState,
+  AuthPermission,
   SwitchOrganizationRequest,
   RefreshTokenResponse,
-  Permission,
   Organization,
   Sucursal
 } from '../../interfaces/auth.interfaces';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
-  private readonly API_URL = 'http://localhost:3000/api/v1/auth';
+  private readonly API_URL = `${environment.apiUrl}/auth`;
   private readonly STORAGE_KEYS = {
     ACCESS_TOKEN: 'access_token',
     REFRESH_TOKEN: 'refresh_token',
@@ -258,8 +259,17 @@ export class LoginService {
    * Verificar si el usuario tiene un permiso específico
    */
   hasPermission(permission: string): boolean {
+    // Convertir string "module:action" a búsqueda por module y action
+    const [module, action] = permission.split(':');
+    if (module && action) {
+      return this.hasModulePermission(module, action);
+    }
+    
+    // Fallback: buscar en permisos como antes
     const permissions = this.authState().permissions;
-    return permissions.some(p => p.name === permission && p.isActive);
+    return permissions.some((p: any) => 
+      `${p.module}:${p.action}` === permission
+    );
   }
 
   /**
@@ -267,10 +277,9 @@ export class LoginService {
    */
   hasModulePermission(module: string, action: string): boolean {
     const permissions = this.authState().permissions;
-    return permissions.some(p => 
+    return permissions.some((p: any) => 
       p.module === module && 
-      p.action === action && 
-      p.isActive
+      p.action === action
     );
   }
 
@@ -287,12 +296,15 @@ export class LoginService {
   private setBackendAuthData(data: BackendLoginResponse['data']): void {
     const { user, token, organization, sucursal, role } = data;
     
+    // Los permisos ahora vienen como objetos completos desde el backend
+    const userPermissions = user.permissions || role?.permissions || [];
+    
     // Adaptar la estructura del backend a nuestro formato interno
     const adaptedUser: AuthUser = {
       id: user._id || user.id,
       email: user.email,
       profile: user.profile,
-      permissions: user.permissions || [],
+      permissions: userPermissions, // Ya son objetos completos con module, action, etc.
       organizations: user.organizations || [],
       status: user.status,
       emailVerified: user.emailVerified,
@@ -306,7 +318,7 @@ export class LoginService {
       user: adaptedUser,
       accessToken: token,
       refreshToken: '', // El backend actual no devuelve refresh token
-      permissions: user.permissions || [],
+      permissions: userPermissions, // Usar los permisos completos
       organizations: user.organizations || [],
       currentOrganization: organization,
       currentSucursal: sucursal

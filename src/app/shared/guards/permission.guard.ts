@@ -25,44 +25,25 @@ export class PermissionGuard implements CanActivate {
     }
 
     // Obtener permisos requeridos desde la configuración de la ruta
-    const requiredPermissions: string[] = route.data['permissions'] || [];
     const requiredModule: string = route.data['module'];
     const requiredAction: string = route.data['action'];
 
-    // Si no se especificaron permisos, permitir acceso
-    if (!requiredPermissions.length && !requiredModule) {
+    // Si no se especificaron módulo/acción, permitir acceso
+    if (!requiredModule || !requiredAction) {
       return true;
     }
 
-    // Verificar permisos específicos por nombre
-    if (requiredPermissions.length > 0) {
-      const hasPermission = requiredPermissions.some(permission => 
-        this.loginService.hasPermission(permission)
-      );
-      
-      if (!hasPermission) {
-        this.router.navigate(['/dashboard'], {
-          queryParams: { 
-            error: 'insufficient-permissions',
-            required: requiredPermissions.join(',')
-          }
-        });
-        return false;
-      }
-    }
-
     // Verificar permisos por módulo y acción
-    if (requiredModule && requiredAction) {
-      if (!this.loginService.hasModulePermission(requiredModule, requiredAction)) {
-        this.router.navigate(['/dashboard'], {
-          queryParams: { 
-            error: 'insufficient-permissions',
-            module: requiredModule,
-            action: requiredAction
-          }
-        });
-        return false;
-      }
+    if (!this.loginService.hasModulePermission(requiredModule, requiredAction)) {
+      this.router.navigate(['/dashboard'], {
+        queryParams: { 
+          error: 'insufficient-permissions',
+          module: requiredModule,
+          action: requiredAction,
+          message: `Necesitas el permiso '${requiredModule}:${requiredAction}' para acceder a esta sección`
+        }
+      });
+      return false;
     }
 
     return true;

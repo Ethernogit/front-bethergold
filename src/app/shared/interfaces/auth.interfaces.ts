@@ -53,17 +53,27 @@ export interface AuthUser {
   emailVerified?: boolean;
   currentOrganization?: Organization | any;
   currentSucursal?: Sucursal | any;
-  permissions?: Permission[] | any[];
+  permissions?: AuthPermission[] | any[];  // Usar AuthPermission para login
   roles?: Role[];
   organizations?: any[];
 }
 
+// Permiso simple para autenticación (desde login)
+export interface AuthPermission {
+  id?: string;
+  module: string;
+  action: string;
+  resource?: string;
+}
+
+// Permiso completo para administración (desde API de permisos)
 export interface Permission {
-  id: string;
+  id?: string;
   name: string;
   description: string;
   module: string;
   action: string;
+  resource?: string;
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
@@ -107,7 +117,7 @@ export interface AuthState {
   user: AuthUser | null;
   accessToken: string | null;
   refreshToken: string | null;
-  permissions: Permission[];
+  permissions: AuthPermission[];  // Usar AuthPermission para estado de auth
   organizations: Organization[];
   currentOrganization: Organization | null;
   currentSucursal: Sucursal | null;

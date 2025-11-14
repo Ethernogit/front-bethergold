@@ -150,7 +150,6 @@ export const routes: Routes = [
         component: PermissionsComponent,
         canActivate: [AuthGuard, PermissionGuard],
         data: {
-          permissions: ['MANAGE_PERMISSIONS'],
           module: 'permissions',
           action: 'read'
         },
@@ -161,7 +160,6 @@ export const routes: Routes = [
         component: RolesComponent,
         canActivate: [AuthGuard, PermissionGuard],
         data: {
-          permissions: ['MANAGE_ROLES'],
           module: 'roles',
           action: 'read'
         },

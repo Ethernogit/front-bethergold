@@ -5,7 +5,8 @@ import { PageBreadcrumbComponent } from '../../shared/components/common/page-bre
 import { PermissionFormComponent } from '../../shared/components/admin/permissions/permission-form.component';
 import { PermissionsListComponent } from '../../shared/components/admin/permissions/permissions-list.component';
 import { Permission } from '../../shared/interfaces/auth.interfaces';
-import { PermissionService } from '../../shared/services/auth/permission.service';
+import { PermisosService } from '../../shared/services/rbca/permisos.service';
+import { LoginService } from '../../shared/services/auth/login.service';
 
 @Component({
   selector: 'app-permissions',
@@ -29,64 +30,49 @@ export class PermissionsComponent {
   showDeleteModal = false;
   permissionToDelete: Permission | null = null;
 
-  constructor(private permissionService: PermissionService) {}
+  constructor(
+    private permisosService: PermisosService,
+    private loginService: LoginService
+  ) {}
 
   ngOnInit() {
-    this.loadPermissions();
+    // Verificar autenticación antes de cargar permisos
+    if (this.loginService.isAuthenticated()()) {
+      console.log('Usuario autenticado, cargando permisos...');
+      console.log('Token:', this.loginService.getAccessToken()?.substring(0, 20) + '...');
+      this.loadPermissions();
+    } else {
+      console.error('Usuario no autenticado');
+    }
   }
 
   async loadPermissions() {
     this.isLoadingList = true;
     try {
-      // Simular carga de datos - aquí conectarías con tu API
-      await this.delay(1000);
+      console.log('Iniciando carga de permisos...');
+      const response = await this.permisosService.getPermissions().toPromise();
+      console.log('Respuesta del servidor:', response);
       
-      // Datos de ejemplo
-      this.permissions = [
-        {
-          id: '1',
-          name: 'CREATE_USER',
-          description: 'Permite crear nuevos usuarios en el sistema',
-          module: 'users',
-          action: 'create',
-          isActive: true,
-          createdAt: new Date('2024-01-15'),
-          updatedAt: new Date('2024-01-15')
-        },
-        {
-          id: '2',
-          name: 'READ_PRODUCTS',
-          description: 'Permite ver la lista de productos',
-          module: 'products',
-          action: 'read',
-          isActive: true,
-          createdAt: new Date('2024-01-16'),
-          updatedAt: new Date('2024-01-16')
-        },
-        {
-          id: '3',
-          name: 'UPDATE_ORDERS',
-          description: 'Permite modificar órdenes existentes',
-          module: 'orders',
-          action: 'update',
-          isActive: false,
-          createdAt: new Date('2024-01-17'),
-          updatedAt: new Date('2024-01-17')
-        },
-        {
-          id: '4',
-          name: 'DELETE_PROVIDER',
-          description: 'Permite eliminar proveedores del sistema',
-          module: 'providers',
-          action: 'delete',
-          isActive: true,
-          createdAt: new Date('2024-01-18'),
-          updatedAt: new Date('2024-01-18')
-        }
-      ];
-    } catch (error) {
+      if (response?.success) {
+        this.permissions = response.data;
+        console.log('Permisos cargados correctamente:', this.permissions.length);
+      } else {
+        console.error('Error: Response not successful');
+        this.permissions = [];
+      }
+    } catch (error: any) {
       console.error('Error loading permissions:', error);
-      // Aquí podrías mostrar un toast de error
+      
+      // Manejar errores específicos
+      if (error.status === 401) {
+        console.error('Error de autenticación: Token no válido o expirado');
+        // Aquí podrías redirigir al login o mostrar un mensaje específico
+      } else if (error.status === 403) {
+        console.error('Error de permisos: No tienes acceso a esta funcionalidad');
+      }
+      
+      this.permissions = [];
+      // Aquí podrías mostrar un toast de error con el mensaje específico
     } finally {
       this.isLoadingList = false;
     }
@@ -107,29 +93,24 @@ export class PermissionsComponent {
   async onPermissionSubmit(permissionData: Permission) {
     this.isLoading = true;
     try {
-      // Simular llamada a API
-      await this.delay(1500);
-
       if (this.editMode && permissionData.id) {
         // Actualizar permiso existente
-        const index = this.permissions.findIndex(p => p.id === permissionData.id);
-        if (index !== -1) {
-          this.permissions[index] = {
-            ...permissionData,
-            updatedAt: new Date()
-          };
+        const response = await this.permisosService.updatePermission(permissionData.id, permissionData).toPromise();
+        if (response?.success) {
+          const index = this.permissions.findIndex(p => p.id === permissionData.id);
+          if (index !== -1) {
+            this.permissions[index] = response.data;
+          }
+          console.log('Permiso actualizado:', response.data);
         }
-        console.log('Permiso actualizado:', permissionData);
       } else {
         // Crear nuevo permiso
-        const newPermission: Permission = {
-          ...permissionData,
-          id: (Date.now()).toString(),
-          createdAt: new Date(),
-          updatedAt: new Date()
-        };
-        this.permissions.unshift(newPermission);
-        console.log('Nuevo permiso creado:', newPermission);
+        const { id, createdAt, updatedAt, ...newPermissionData } = permissionData;
+        const response = await this.permisosService.createPermission(newPermissionData).toPromise();
+        if (response?.success) {
+          this.permissions.unshift(response.data);
+          console.log('Nuevo permiso creado:', response.data);
+        }
       }
 
       this.showForm = false;
@@ -153,21 +134,15 @@ export class PermissionsComponent {
 
   async onTogglePermission(permission: Permission) {
     try {
-      // Simular llamada a API
-      await this.delay(500);
-      
-      const index = this.permissions.findIndex(p => p.id === permission.id);
-      if (index !== -1) {
-        this.permissions[index] = {
-          ...this.permissions[index],
-          isActive: !this.permissions[index].isActive,
-          updatedAt: new Date()
-        };
+      const response = await this.permisosService.togglePermission(permission.id!).toPromise();
+      if (response?.success) {
+        const index = this.permissions.findIndex(p => p.id === permission.id);
+        if (index !== -1) {
+          this.permissions[index] = response.data;
+        }
+        console.log('Permiso toggle:', response.data);
+        // Aquí podrías mostrar un toast de éxito
       }
-      
-      console.log('Permiso toggle:', this.permissions[index]);
-      // Aquí podrías mostrar un toast de éxito
-      
     } catch (error) {
       console.error('Error toggling permission:', error);
       // Aquí podrías mostrar un toast de error
@@ -184,14 +159,12 @@ export class PermissionsComponent {
 
     this.isLoading = true;
     try {
-      // Simular llamada a API
-      await this.delay(1000);
-      
-      this.permissions = this.permissions.filter(p => p.id !== this.permissionToDelete!.id);
-      
-      console.log('Permiso eliminado:', this.permissionToDelete);
-      // Aquí podrías mostrar un toast de éxito
-      
+      const response = await this.permisosService.deletePermission(this.permissionToDelete.id!).toPromise();
+      if (response?.success) {
+        this.permissions = this.permissions.filter(p => p.id !== this.permissionToDelete!.id);
+        console.log('Permiso eliminado:', this.permissionToDelete);
+        // Aquí podrías mostrar un toast de éxito
+      }
     } catch (error) {
       console.error('Error deleting permission:', error);
       // Aquí podrías mostrar un toast de error
