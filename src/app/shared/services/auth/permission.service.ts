@@ -66,6 +66,18 @@ export class PermissionService {
   }
 
   /**
+   * Obtener todos los módulos disponibles
+   */
+  getPermissionModules(): Observable<string[]> {
+    return this.http.get<{success: boolean, data: string[]}>(`${this.API_URL}/permissions/modules`, {
+      headers: this.getAuthHeaders()
+    }).pipe(
+      map(response => response.data),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
    * Crear un nuevo permiso
    */
   createPermission(permission: PermissionRequest): Observable<Permission> {

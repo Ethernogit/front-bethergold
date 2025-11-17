@@ -14,6 +14,7 @@
 
     <app-permissions-list
       [permissions]="permissions"
+      [availableModules]="availableModules"
       [isLoading]="isLoadingList"
       (newPermission)="onNewPermission()"
       (editPermission)="onEditPermission($event)"

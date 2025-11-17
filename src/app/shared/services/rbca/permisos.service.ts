@@ -71,4 +71,13 @@ export class PermisosService {
       headers: this.getAuthHeaders()
     });
   }
+
+  /**
+   * Obtener todos los módulos disponibles
+   */
+  getPermissionModules(): Observable<{ success: boolean; data: string[] }> {
+    return this.http.get<{ success: boolean; data: string[] }>(`${this.API_URL}/modules`, {
+      headers: this.getAuthHeaders()
+    });
+  }
 }

@@ -32,13 +32,9 @@ import { Permission } from '../../../interfaces/auth.interfaces';
               class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             >
               <option value="">Todos los módulos</option>
-              <option value="users">Usuarios</option>
-              <option value="products">Productos</option>
-              <option value="orders">Órdenes</option>
-              <option value="providers">Proveedores</option>
-              <option value="organizations">Organizaciones</option>
-              <option value="reports">Reportes</option>
-              <option value="admin">Administración</option>
+              @for (module of availableModules; track module) {
+                <option [value]="module">{{ getModuleLabel(module) }}</option>
+              }
             </select>
             <button
               (click)="onNewPermission()"
@@ -173,6 +169,7 @@ import { Permission } from '../../../interfaces/auth.interfaces';
 })
 export class PermissionsListComponent {
   @Input() permissions: Permission[] = [];
+  @Input() availableModules: string[] = [];
   @Input() isLoading = false;
   @Output() newPermission = new EventEmitter<void>();
   @Output() editPermission = new EventEmitter<Permission>();
@@ -237,14 +234,30 @@ export class PermissionsListComponent {
   getModuleLabel(module: string): string {
     const labels: { [key: string]: string } = {
       'users': 'Usuarios',
+      'roles': 'Roles',
+      'permissions': 'Permisos',
+      'tenants': 'Tenants',
       'products': 'Productos',
       'orders': 'Órdenes',
-      'providers': 'Proveedores',
-      'organizations': 'Organizaciones',
+      'inventory': 'Inventario',
+      'sales': 'Ventas',
       'reports': 'Reportes',
+      'settings': 'Configuraciones',
+      'analytics': 'Analíticas',
+      'notifications': 'Notificaciones',
+      'payments': 'Pagos',
+      'customers': 'Clientes',
+      'suppliers': 'Proveedores',
+      'invitations': 'Invitaciones',
+      'organization': 'Organización',
+      'categories': 'Categorías',
+      'subcategories': 'Subcategorías',
+      'sucursales': 'Sucursales',
+      'auth': 'Autenticación',
+      'provider': 'Proveedores',
       'admin': 'Administración'
     };
-    return labels[module] || module;
+    return labels[module] || module.charAt(0).toUpperCase() + module.slice(1);
   }
 
   getActionLabel(action: string): string {
@@ -263,11 +276,19 @@ export class PermissionsListComponent {
   getModuleBadgeClass(module: string): string {
     const classes: { [key: string]: string } = {
       'users': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+      'roles': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
+      'permissions': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
       'products': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
       'orders': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-      'providers': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-      'organizations': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
+      'inventory': 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300',
+      'sales': 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300',
       'reports': 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300',
+      'analytics': 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300',
+      'notifications': 'bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-300',
+      'organization': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
+      'categories': 'bg-lime-100 text-lime-800 dark:bg-lime-900 dark:text-lime-300',
+      'auth': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+      'provider': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
       'admin': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
     };
     return classes[module] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';

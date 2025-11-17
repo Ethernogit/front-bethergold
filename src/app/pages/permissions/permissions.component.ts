@@ -22,6 +22,7 @@ import { LoginService } from '../../shared/services/auth/login.service';
 })
 export class PermissionsComponent {
   permissions: Permission[] = [];
+  availableModules: string[] = [];
   selectedPermission: Permission | null = null;
   showForm = false;
   editMode = false;
@@ -36,14 +37,8 @@ export class PermissionsComponent {
   ) {}
 
   ngOnInit() {
-    // Verificar autenticación antes de cargar permisos
-    if (this.loginService.isAuthenticated()()) {
-      console.log('Usuario autenticado, cargando permisos...');
-      console.log('Token:', this.loginService.getAccessToken()?.substring(0, 20) + '...');
-      this.loadPermissions();
-    } else {
-      console.error('Usuario no autenticado');
-    }
+    this.loadPermissions();
+    this.loadModules();
   }
 
   async loadPermissions() {
@@ -75,6 +70,24 @@ export class PermissionsComponent {
       // Aquí podrías mostrar un toast de error con el mensaje específico
     } finally {
       this.isLoadingList = false;
+    }
+  }
+
+  async loadModules() {
+    try {
+      console.log('Iniciando carga de módulos...');
+      const response = await this.permisosService.getPermissionModules().toPromise();
+      
+      if (response?.success) {
+        this.availableModules = response.data;
+        console.log('Módulos cargados:', this.availableModules);
+      } else {
+        console.error('Error: Response not successful');
+        this.availableModules = [];
+      }
+    } catch (error: any) {
+      console.error('Error loading modules:', error);
+      this.availableModules = [];
     }
   }
 
