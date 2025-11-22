@@ -57,13 +57,13 @@ import { Permission, Role } from '../../../interfaces/auth.interfaces';
               <p class="text-gray-500 dark:text-gray-400 text-sm">No hay permisos disponibles</p>
             } @else {
               <div class="space-y-3">
-                @for (permission of availablePermissions; track permission.id) {
+                @for (permission of availablePermissions; track getPermissionId(permission)) {
                   <label class="flex items-start space-x-3 cursor-pointer">
                     <input
                       type="checkbox"
-                      [value]="permission.id || ''"
-                      (change)="onPermissionChange(permission.id || '', $event)"
-                      [checked]="isPermissionSelected(permission.id || '')"
+                      [value]="getPermissionId(permission)"
+                      (change)="onPermissionChange(getPermissionId(permission), $event)"
+                      [checked]="isPermissionSelected(getPermissionId(permission))"
                       class="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
                     />
                     <div class="flex-1 min-w-0">
@@ -72,6 +72,9 @@ import { Permission, Role } from '../../../interfaces/auth.interfaces';
                       </div>
                       <div class="text-sm text-gray-500 dark:text-gray-400">
                         {{ permission.description }}
+                      </div>
+                      <div class="text-xs text-gray-400 dark:text-gray-500 font-mono">
+                        ID: {{ getPermissionId(permission) }}
                       </div>
                       <div class="flex gap-2 mt-1">
                         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
@@ -158,23 +161,48 @@ export class RoleFormComponent {
   }
 
   ngOnInit() {
+    console.log('RoleForm - Available permissions:', this.availablePermissions);
+    
     if (this.role && this.editMode) {
+      console.log('RoleForm - Editing role:', this.role);
+      
+      // Extraer IDs de permisos de manera más robusta
       this.selectedPermissions = this.role.permissions
-        .map(p => typeof p === 'string' ? p : p.id)
-        .filter((id): id is string => id !== undefined);
+        .map(p => {
+          if (typeof p === 'string') {
+            return p;
+          } else if (p && typeof p === 'object') {
+            return this.getPermissionId(p as Permission);
+          }
+          return null;
+        })
+        .filter((id): id is string => id !== null && id !== undefined && id !== '');
+      
+      console.log('RoleForm - Selected permissions:', this.selectedPermissions);
+      
       this.roleForm.patchValue({
         ...this.role,
-        permissions: this.role.permissions
+        permissions: this.selectedPermissions
       });
     }
   }
 
+  getPermissionId(permission: Permission): string {
+    return permission.id || (permission as any)._id || '';
+  }
+
   onPermissionChange(permissionId: string, event: any) {
+    console.log('Permission change:', permissionId, 'checked:', event.target.checked);
+    
     if (event.target.checked) {
-      this.selectedPermissions.push(permissionId);
+      if (!this.selectedPermissions.includes(permissionId)) {
+        this.selectedPermissions.push(permissionId);
+      }
     } else {
       this.selectedPermissions = this.selectedPermissions.filter(id => id !== permissionId);
     }
+    
+    console.log('Updated selected permissions:', this.selectedPermissions);
     this.roleForm.patchValue({ permissions: this.selectedPermissions });
   }
 
@@ -245,13 +273,41 @@ export class RoleFormComponent {
   }
 
   onSubmit() {
+    console.log('Form submission - Form valid:', this.roleForm.valid);
+    console.log('Form values:', this.roleForm.value);
+    console.log('Selected permissions:', this.selectedPermissions);
+    
     if (this.roleForm.valid) {
+      // Validar que los permisos seleccionados existan en la lista de permisos disponibles
+      const validPermissions = this.selectedPermissions.filter(permId => {
+        const exists = this.availablePermissions.some(perm => 
+          this.getPermissionId(perm) === permId
+        );
+        if (!exists) {
+          console.warn('Invalid permission ID found:', permId);
+          console.warn('Available permission IDs:', this.availablePermissions.map(p => this.getPermissionId(p)));
+        }
+        return exists;
+      });
+      
+      if (validPermissions.length !== this.selectedPermissions.length) {
+        const invalidCount = this.selectedPermissions.length - validPermissions.length;
+        console.error(`Found ${invalidCount} invalid permission IDs. They will be filtered out.`);
+        alert(`Atención: Se encontraron ${invalidCount} permisos inválidos que serán omitidos.`);
+      }
+      
+      console.log('Valid permissions after filtering:', validPermissions);
+      
       const roleData: Role = {
         ...this.roleForm.value,
-        id: this.editMode && this.role?.id ? this.role.id : Date.now().toString()
+        id: this.editMode && this.role?.id ? this.role.id : Date.now().toString(),
+        permissions: validPermissions // Usar solo permisos válidos
       };
+      
+      console.log('Final role data to submit:', roleData);
       this.formSubmit.emit(roleData);
     } else {
+      console.log('Form is invalid, marking all fields as touched');
       // Marcar todos los campos como touched para mostrar errores
       Object.keys(this.roleForm.controls).forEach(key => {
         this.roleForm.get(key)?.markAsTouched();

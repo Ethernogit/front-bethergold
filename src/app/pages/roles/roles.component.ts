@@ -93,14 +93,17 @@ export class RolesComponent {
   }
 
   async loadPermissions() {
+    console.log('Loading permissions...');
     try {
       // Usar el nuevo servicio de roles para obtener permisos
       this.availablePermissions = await this.roleService.getAvailablePermissions().toPromise() || [];
+      console.log('Permissions loaded from roles service:', this.availablePermissions);
     } catch (error) {
-      console.error('Error loading permissions:', error);
+      console.error('Error loading permissions from roles service:', error);
       try {
         // Fallback: usar el servicio de permisos
         this.availablePermissions = await this.permissionService.getAllPermissions().toPromise() || [];
+        console.log('Permissions loaded from permission service (fallback):', this.availablePermissions);
       } catch (fallbackError) {
         console.error('Error loading permissions (fallback):', fallbackError);
         // Datos de ejemplo como último recurso
@@ -138,6 +141,7 @@ export class RolesComponent {
             isActive: true
           }
         ];
+        console.log('Using fallback permissions:', this.availablePermissions);
       }
     }
   }
@@ -156,13 +160,20 @@ export class RolesComponent {
 
   async onRoleSubmit(roleData: Role) {
     this.isLoading = true;
+    console.log('=== ROLE SUBMIT START ===');
+    console.log('Role data received:', roleData);
+    console.log('Available permissions:', this.availablePermissions);
+    
     try {
       // Convertir permisos a array de strings si son objetos Permission
       const permissionIds = Array.isArray(roleData.permissions) 
         ? roleData.permissions.map(p => typeof p === 'string' ? p : p.id).filter(id => id !== undefined) as string[]
         : [];
 
+      console.log('Permission IDs to send:', permissionIds);
+
       if (this.editMode && roleData.id) {
+        console.log('Updating existing role...');
         // Actualizar rol existente
         const updatedRole = await this.roleService.updateRole(roleData.id, {
           name: roleData.name,
@@ -178,6 +189,7 @@ export class RolesComponent {
         }
         console.log('Rol actualizado:', updatedRole);
       } else {
+        console.log('Creating new role...');
         // Crear nuevo rol
         const newRole = await this.roleService.createRole({
           name: roleData.name,
@@ -193,11 +205,19 @@ export class RolesComponent {
 
       this.showForm = false;
       this.selectedRole = null;
-      
-      // Aquí podrías mostrar un toast de éxito
+      console.log('=== ROLE SUBMIT SUCCESS ===');
       
     } catch (error) {
+      console.error('=== ROLE SUBMIT ERROR ===');
       console.error('Error saving role:', error);
+      
+      // Mostrar el error al usuario
+      if (error instanceof Error) {
+        alert(`Error al guardar el rol: ${error.message}`);
+      } else {
+        alert('Error desconocido al guardar el rol');
+      }
+      
       // Fallback: comportamiento anterior en caso de error de API
       try {
         if (this.editMode && roleData.id) {
@@ -229,6 +249,7 @@ export class RolesComponent {
       }
     } finally {
       this.isLoading = false;
+      console.log('=== ROLE SUBMIT END ===');
     }
   }
 

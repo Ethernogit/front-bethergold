@@ -22,7 +22,7 @@ import { PermissionsComponent } from './pages/permissions/permissions.component'
 import { RolesComponent } from './pages/roles/roles.component';
 import { AuthGuard } from './shared/guards/auth.guard';
 import { PermissionGuard } from './shared/guards/permission.guard';
-
+import { ProvidersComponent } from './pages/providers/providers.component';
 export const routes: Routes = [
   {
     path: '',
@@ -164,6 +164,16 @@ export const routes: Routes = [
           action: 'read'
         },
         title: 'Gestión de Roles | Bethergold'
+      },
+      {
+        path: 'providers',
+        component: ProvidersComponent,
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'providers',
+          action: 'read'
+        },
+        title: 'Gestión de Proveedores | Bethergold'
       }
     ]
   },
