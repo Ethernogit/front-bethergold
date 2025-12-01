@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProviderService } from '../../shared/services/provider.service';
+import { ToastService } from '../../shared/services/toast.service';
 import {
   Provider,
   ProviderType,
@@ -24,6 +25,7 @@ import { finalize } from 'rxjs';
 })
 export class ProvidersComponent implements OnInit {
   private providerService = inject(ProviderService);
+  private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
 
   // Signals for reactive state
@@ -77,7 +79,7 @@ export class ProvidersComponent implements OnInit {
       country: ['México'],
       zipCode: [''],
       // Tax
-      rfc: ['', Validators.maxLength(13)],
+      rfc: ['', [Validators.maxLength(13), Validators.pattern(/^[A-ZÑ&]{3,4}\d{6}(?:[A-Z\d]{3})?$/)]],
       businessName: ['', Validators.maxLength(200)]
     });
 
@@ -106,11 +108,11 @@ export class ProvidersComponent implements OnInit {
   loadProviders() {
     this.loading.set(true);
     const filters: ProviderFilters = {};
-    
+
     const searchValue = this.searchForm.get('search')?.value;
     const statusValue = this.searchForm.get('status')?.value;
     const providerTypeValue = this.searchForm.get('providerTypeId')?.value;
-    
+
     if (searchValue) filters.search = searchValue;
     if (statusValue) filters.status = statusValue;
     if (providerTypeValue) filters.providerTypeId = providerTypeValue;
@@ -122,9 +124,13 @@ export class ProvidersComponent implements OnInit {
           if (response.success) {
             const transformedProviders = response.data.map(provider => ({
               ...provider,
-              id: provider._id || provider.id,
-              providerTypeName: provider.providerType?.name || 'N/A',
-              sucursalName: provider.sucursal?.name || 'N/A',
+              id: provider._id || provider.id || '',
+              // Handle populated fields
+              providerTypeId: (provider.providerTypeId as any)?._id || (provider.providerTypeId as any)?.id || provider.providerTypeId,
+              sucursalId: (provider.sucursalId as any)?._id || (provider.sucursalId as any)?.id || provider.sucursalId,
+              // Extract names from populated fields
+              providerTypeName: (provider.providerTypeId as any)?.name || 'N/A',
+              sucursalName: (provider.sucursalId as any)?.name || 'N/A',
               finalProfitMargin: `${provider.profitMargin}%`,
               contactInfo: provider.contact?.name || provider.contact?.email || 'N/A',
               statusDisplay: this.providerService.getStatusDisplay(provider.status)
@@ -134,13 +140,14 @@ export class ProvidersComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error loading providers:', error);
-          // TODO: Show error toast
+          console.error('Error loading providers:', error);
+          this.toastService.error('Error al cargar los proveedores');
         }
       });
   }
 
   loadProviderTypes() {
-    this.providerService.getProviderTypes({ status: 'active' })
+    this.providerService.getProviderTypes() // Remove filter to show all types
       .subscribe({
         next: (response) => {
           if (response.success) {
@@ -185,7 +192,7 @@ export class ProvidersComponent implements OnInit {
     this.providerForm.patchValue({
       name: provider.name,
       code: provider.code,
-      providerTypeId: provider.providerTypeId,
+      providerTypeId: typeof provider.providerTypeId === 'object' ? (provider.providerTypeId as any)._id || (provider.providerTypeId as any).id : provider.providerTypeId,
       profitMargin: provider.profitMargin,
       paymentTerms: provider.paymentTerms,
       creditDays: provider.creditDays,
@@ -240,7 +247,7 @@ export class ProvidersComponent implements OnInit {
     };
 
     this.loading.set(true);
-    const operation = this.editingProvider() 
+    const operation = this.editingProvider()
       ? this.providerService.updateProvider(this.editingProvider()!.id!, baseProviderData as UpdateProviderRequest)
       : this.providerService.createProvider(baseProviderData as CreateProviderRequest);
 
@@ -251,12 +258,18 @@ export class ProvidersComponent implements OnInit {
           if (response.success) {
             this.closeModal();
             this.loadProviders();
-            // TODO: Show success toast
+            this.closeModal();
+            this.loadProviders();
+            this.toastService.success(
+              this.editingProvider()
+                ? 'Proveedor actualizado exitosamente'
+                : 'Proveedor creado exitosamente'
+            );
           }
         },
         error: (error) => {
           console.error('Error saving provider:', error);
-          // TODO: Show error toast
+          this.toastService.error('Error al guardar el proveedor');
         }
       });
   }
@@ -279,12 +292,15 @@ export class ProvidersComponent implements OnInit {
             this.showDeleteModal.set(false);
             this.deletingProvider.set(null);
             this.loadProviders();
-            // TODO: Show success toast
+            this.showDeleteModal.set(false);
+            this.deletingProvider.set(null);
+            this.loadProviders();
+            this.toastService.success('Proveedor eliminado exitosamente');
           }
         },
         error: (error) => {
           console.error('Error deleting provider:', error);
-          // TODO: Show error toast
+          this.toastService.error('Error al eliminar el proveedor');
         }
       });
   }
@@ -323,7 +339,7 @@ export class ProvidersComponent implements OnInit {
 
     const priceData = this.priceForm.value;
     this.loading.set(true);
-    
+
     this.providerService.setProviderPrice(provider.id!, priceData)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
@@ -331,12 +347,14 @@ export class ProvidersComponent implements OnInit {
           if (response.success) {
             this.priceForm.reset();
             this.loadProviderPrices(provider.id!);
-            // TODO: Show success toast
+            this.priceForm.reset();
+            this.loadProviderPrices(provider.id!);
+            this.toastService.success('Precio agregado exitosamente');
           }
         },
         error: (error) => {
           console.error('Error adding price:', error);
-          // TODO: Show error toast
+          this.toastService.error('Error al agregar el precio');
         }
       });
   }
@@ -354,12 +372,15 @@ export class ProvidersComponent implements OnInit {
             if (provider) {
               this.loadProviderPrices(provider.id!);
             }
-            // TODO: Show success toast
+            if (provider) {
+              this.loadProviderPrices(provider.id!);
+            }
+            this.toastService.success('Precio eliminado exitosamente');
           }
         },
         error: (error) => {
           console.error('Error deleting price:', error);
-          // TODO: Show error toast
+          this.toastService.error('Error al eliminar el precio');
         }
       });
   }
@@ -424,6 +445,7 @@ export class ProvidersComponent implements OnInit {
       if (field.errors['maxlength']) return `Máximo ${field.errors['maxlength'].requiredLength} caracteres`;
       if (field.errors['min']) return `Valor mínimo: ${field.errors['min'].min}`;
       if (field.errors['max']) return `Valor máximo: ${field.errors['max'].max}`;
+      if (field.errors['pattern']) return 'Formato inválido';
     }
     return '';
   }

@@ -1,610 +1,630 @@
 <!-- Providers CRUD Component -->
-<div class="container-fluid">
+<div class="p-6">
   <!-- Header -->
-  <div class="row mb-4">
-    <div class="col">
-      <div class="d-flex justify-content-between align-items-center">
-        <h2 class="h3 mb-0">Gestión de Proveedores</h2>
-        <button 
-          type="button" 
-          class="btn btn-primary"
-          (click)="openCreateModal()">
-          <i class="fas fa-plus me-2"></i>
-          Nuevo Proveedor
-        </button>
-      </div>
-    </div>
+  <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <h2 class="text-title-md2 font-bold text-black dark:text-white">
+      Gestión de Proveedores
+    </h2>
+    <button type="button"
+      class="flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200"
+      (click)="openCreateModal()">
+      <i class="fas fa-plus"></i>
+      <span>Nuevo Proveedor</span>
+    </button>
   </div>
 
   <!-- Filters -->
-  <div class="row mb-4">
-    <div class="col">
-      <div class="card">
-        <div class="card-body">
-          <form [formGroup]="searchForm" class="row g-3">
-            <div class="col-md-4">
-              <label class="form-label">Buscar</label>
-              <input 
-                type="text" 
-                class="form-control" 
-                formControlName="search"
-                placeholder="Buscar por nombre o código...">
-            </div>
-            <div class="col-md-3">
-              <label class="form-label">Estado</label>
-              <select class="form-select" formControlName="status">
-                <option value="">Todos los estados</option>
-                <option value="active">Activo</option>
-                <option value="inactive">Inactivo</option>
-                <option value="blocked">Bloqueado</option>
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label">Tipo de Proveedor</label>
-              <select class="form-select" formControlName="providerTypeId">
-                <option value="">Todos los tipos</option>
-                @for (type of providerTypes(); track type._id || type.id) {
-                  <option [value]="type._id || type.id">{{ type.name }}</option>
-                }
-              </select>
-            </div>
-            <div class="col-md-2">
-              <label class="form-label">&nbsp;</label>
-              <div class="d-grid gap-2">
-                <button 
-                  type="button" 
-                  class="btn btn-outline-primary"
-                  (click)="onSearch()">
-                  <i class="fas fa-search"></i>
-                  Buscar
-                </button>
-                <button 
-                  type="button" 
-                  class="btn btn-outline-secondary btn-sm"
-                  (click)="resetFilters()">
-                  <i class="fas fa-times"></i>
-                  Limpiar
-                </button>
-              </div>
-            </div>
-          </form>
+  <div
+    class="mb-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-sm dark:border-gray-800 dark:bg-gray-900">
+    <form [formGroup]="searchForm" class="grid grid-cols-1 gap-4 md:grid-cols-4 lg:grid-cols-12">
+      <div class="md:col-span-2 lg:col-span-4">
+        <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-400">
+          Buscar
+        </label>
+        <div class="relative">
+          <input type="text"
+            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500 transition-colors"
+            formControlName="search" placeholder="Buscar por nombre o código...">
+          <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <i class="fas fa-search text-gray-500 dark:text-gray-400"></i>
+          </div>
         </div>
       </div>
-    </div>
+
+      <div class="md:col-span-1 lg:col-span-3">
+        <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-400">
+          Estado
+        </label>
+        <select
+          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500 transition-colors"
+          formControlName="status">
+          <option value="">Todos los estados</option>
+          <option value="active">Activo</option>
+          <option value="inactive">Inactivo</option>
+          <option value="blocked">Bloqueado</option>
+        </select>
+      </div>
+
+      <div class="md:col-span-1 lg:col-span-3">
+        <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-400">
+          Tipo de Proveedor
+        </label>
+        <select
+          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500 transition-colors"
+          formControlName="providerTypeId">
+          <option value="">Todos los tipos</option>
+          @for (type of providerTypes(); track type._id || type.id) {
+          <option [value]="type._id || type.id">{{ type.name }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="md:col-span-4 lg:col-span-2 flex items-end gap-2">
+        <button type="button"
+          class="flex-1 rounded-lg border border-brand-500 bg-transparent px-4 py-2.5 text-sm font-medium text-brand-500 hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:hover:bg-brand-500/10 transition-all"
+          (click)="onSearch()">
+          Buscar
+        </button>
+        <button type="button"
+          class="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-all"
+          (click)="resetFilters()" title="Limpiar filtros">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </form>
   </div>
 
   <!-- Loading State -->
   @if (loading()) {
-    <div class="row">
-      <div class="col">
-        <div class="d-flex justify-content-center py-5">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Cargando...</span>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="flex justify-center py-12">
+    <div class="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-brand-500"></div>
+  </div>
   }
 
   <!-- Providers Table -->
   @if (!loading()) {
-    <div class="row">
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            @if (providers().length > 0) {
-              <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                  <thead class="table-dark">
-                    <tr>
-                      <th>Código</th>
-                      <th>Nombre</th>
-                      <th>Tipo</th>
-                      <th>Margen (%)</th>
-                      <th>Contacto</th>
-                      <th>Estado</th>
-                      <th class="text-center">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @for (provider of providers(); track provider.id) {
-                      <tr>
-                        <td>
-                          <strong>{{ provider.code }}</strong>
-                        </td>
-                        <td>
-                          <div>
-                            <div class="fw-semibold">{{ provider.name }}</div>
-                            @if (provider.tax?.businessName) {
-                              <small class="text-muted">{{ provider.tax?.businessName }}</small>
-                            }
-                          </div>
-                        </td>
-                        <td>
-                          <span class="badge bg-info">{{ provider.providerTypeName }}</span>
-                        </td>
-                        <td>
-                          <span class="badge bg-success">{{ provider.profitMargin }}%</span>
-                        </td>
-                        <td>
-                          <div class="small">
-                            @if (provider.contact?.name) {
-                              <div><i class="fas fa-user me-1"></i>{{ provider.contact?.name }}</div>
-                            }
-                            @if (provider.contact?.phone) {
-                              <div><i class="fas fa-phone me-1"></i>{{ provider.contact?.phone }}</div>
-                            }
-                            @if (provider.contact?.email) {
-                              <div><i class="fas fa-envelope me-1"></i>{{ provider.contact?.email }}</div>
-                            }
-                          </div>
-                        </td>
-                        <td>
-                          <span [class]="getStatusClass(provider.status)">
-                            {{ provider.statusDisplay }}
-                          </span>
-                        </td>
-                        <td class="text-center">
-                          <div class="btn-group" role="group">
-                            <button 
-                              type="button" 
-                              class="btn btn-sm btn-outline-primary"
-                              (click)="openPriceModal(provider)"
-                              title="Gestionar Precios">
-                              <i class="fas fa-dollar-sign"></i>
-                            </button>
-                            <button 
-                              type="button" 
-                              class="btn btn-sm btn-outline-secondary"
-                              (click)="openEditModal(provider)"
-                              title="Editar">
-                              <i class="fas fa-edit"></i>
-                            </button>
-                            <button 
-                              type="button" 
-                              class="btn btn-sm btn-outline-danger"
-                              (click)="openDeleteModal(provider)"
-                              title="Eliminar">
-                              <i class="fas fa-trash"></i>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
+  <div
+    class="rounded-2xl border border-gray-200 bg-white shadow-theme-sm dark:border-gray-800 dark:bg-gray-900 overflow-hidden">
+    @if (providers().length > 0) {
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+        <thead class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-800 dark:text-gray-400">
+          <tr>
+            <th class="px-6 py-4 font-medium">Código</th>
+            <th class="px-6 py-4 font-medium">Nombre</th>
+            <th class="px-6 py-4 font-medium">Tipo</th>
+            <th class="px-6 py-4 font-medium">Margen</th>
+            <th class="px-6 py-4 font-medium">Contacto</th>
+            <th class="px-6 py-4 font-medium">Estado</th>
+            <th class="px-6 py-4 text-center font-medium">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+          @for (provider of providers(); track provider.id) {
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+              {{ provider.code }}
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex flex-col">
+                <span class="font-medium text-gray-900 dark:text-white">{{ provider.name }}</span>
+                @if (provider.tax?.businessName) {
+                <span class="text-xs text-gray-500">{{ provider.tax?.businessName }}</span>
+                }
               </div>
-            } @else {
-              <div class="text-center py-5">
-                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">No hay proveedores registrados</h5>
-                <p class="text-muted">Comienza agregando tu primer proveedor</p>
-                <button 
-                  type="button" 
-                  class="btn btn-primary"
-                  (click)="openCreateModal()">
-                  <i class="fas fa-plus me-2"></i>
-                  Crear Proveedor
+            </td>
+            <td class="px-6 py-4">
+              <span
+                class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                {{ provider.providerTypeName }}
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              <span
+                class="inline-flex items-center rounded-full bg-success-50 px-2.5 py-0.5 text-xs font-medium text-success-700 dark:bg-success-900/30 dark:text-success-300">
+                {{ provider.profitMargin }}%
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex flex-col gap-1 text-xs">
+                @if (provider.contact?.name) {
+                <div class="flex items-center gap-1.5">
+                  <i class="fas fa-user text-gray-400"></i>
+                  <span>{{ provider.contact?.name }}</span>
+                </div>
+                }
+                @if (provider.contact?.phone) {
+                <div class="flex items-center gap-1.5">
+                  <i class="fas fa-phone text-gray-400"></i>
+                  <span>{{ provider.contact?.phone }}</span>
+                </div>
+                }
+                @if (provider.contact?.email) {
+                <div class="flex items-center gap-1.5">
+                  <i class="fas fa-envelope text-gray-400"></i>
+                  <span>{{ provider.contact?.email }}</span>
+                </div>
+                }
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium" [ngClass]="{
+                        'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-300': provider.status === 'active',
+                        'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300': provider.status === 'inactive',
+                        'bg-error-50 text-error-700 dark:bg-error-900/30 dark:text-error-300': provider.status === 'blocked'
+                      }">
+                {{ provider.statusDisplay }}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button type="button"
+                  class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-brand-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-brand-400 transition-colors"
+                  (click)="openPriceModal(provider)" title="Gestionar Precios">
+                  <i class="fas fa-dollar-sign"></i>
+                </button>
+                <button type="button"
+                  class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-blue-400 transition-colors"
+                  (click)="openEditModal(provider)" title="Editar">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button type="button"
+                  class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-error-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-error-400 transition-colors"
+                  (click)="openDeleteModal(provider)" title="Eliminar">
+                  <i class="fas fa-trash"></i>
                 </button>
               </div>
-            }
-          </div>
-        </div>
-      </div>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
     </div>
+    } @else {
+    <div class="flex flex-col items-center justify-center py-12 text-center">
+      <div class="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-800">
+        <i class="fas fa-inbox text-3xl text-gray-400"></i>
+      </div>
+      <h5 class="mb-2 text-lg font-medium text-gray-900 dark:text-white">No hay proveedores registrados</h5>
+      <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">Comienza agregando tu primer proveedor al sistema.</p>
+      <button type="button"
+        class="flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all"
+        (click)="openCreateModal()">
+        <i class="fas fa-plus"></i>
+        <span>Crear Proveedor</span>
+      </button>
+    </div>
+    }
+  </div>
   }
 </div>
 
 <!-- Provider Form Modal -->
 @if (showModal()) {
-  <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">
-            {{ editingProvider() ? 'Editar Proveedor' : 'Nuevo Proveedor' }}
-          </h5>
-          <button type="button" class="btn-close" (click)="closeModal()"></button>
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/50 p-4 backdrop-blur-sm transition-all">
+  <div
+    class="relative w-full max-w-4xl rounded-2xl bg-white shadow-2xl dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800">
+    <!-- Modal Header -->
+    <div class="flex items-center justify-between border-b border-gray-200 p-5 dark:border-gray-800">
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+        {{ editingProvider() ? 'Editar Proveedor' : 'Nuevo Proveedor' }}
+      </h3>
+      <button type="button"
+        class="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
+        (click)="closeModal()">
+        <i class="fas fa-times text-lg"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="p-6 max-h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar">
+      <form [formGroup]="providerForm">
+        <!-- Basic Information -->
+        <div class="mb-6">
+          <h4 class="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Información
+            Básica</h4>
+          <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Nombre *</label>
+              <input type="text"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                [class.border-error-500]="isFieldInvalid('name')" formControlName="name">
+              @if (isFieldInvalid('name')) {
+              <p class="mt-1 text-xs text-error-500">{{ getFieldError('name') }}</p>
+              }
+            </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Código *</label>
+              <input type="text"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 uppercase focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                [class.border-error-500]="isFieldInvalid('code')" formControlName="code">
+              @if (isFieldInvalid('code')) {
+              <p class="mt-1 text-xs text-error-500">{{ getFieldError('code') }}</p>
+              }
+            </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Tipo de Proveedor *</label>
+              <select
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                [class.border-error-500]="isFieldInvalid('providerTypeId')" formControlName="providerTypeId">
+                <option value="">Seleccionar tipo...</option>
+                @for (type of providerTypes(); track type._id || type.id) {
+                <option [value]="type._id || type.id">{{ type.name }}</option>
+                }
+              </select>
+              @if (isFieldInvalid('providerTypeId')) {
+              <p class="mt-1 text-xs text-error-500">{{ getFieldError('providerTypeId') }}</p>
+              }
+            </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Margen de Ganancia (%)
+                *</label>
+              <input type="number"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                [class.border-error-500]="isFieldInvalid('profitMargin')" formControlName="profitMargin" min="0"
+                max="100" step="0.1">
+              @if (isFieldInvalid('profitMargin')) {
+              <p class="mt-1 text-xs text-error-500">{{ getFieldError('profitMargin') }}</p>
+              }
+            </div>
+          </div>
         </div>
-        <div class="modal-body">
-          <form [formGroup]="providerForm">
-            <!-- Basic Information -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">Nombre *</label>
-                <input 
-                  type="text" 
-                  class="form-control"
-                  [class.is-invalid]="isFieldInvalid('name')"
-                  formControlName="name">
-                @if (isFieldInvalid('name')) {
-                  <div class="invalid-feedback">{{ getFieldError('name') }}</div>
-                }
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Código *</label>
-                <input 
-                  type="text" 
-                  class="form-control"
-                  [class.is-invalid]="isFieldInvalid('code')"
-                  formControlName="code"
-                  style="text-transform: uppercase;">
-                @if (isFieldInvalid('code')) {
-                  <div class="invalid-feedback">{{ getFieldError('code') }}</div>
-                }
-              </div>
-            </div>
 
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">Tipo de Proveedor *</label>
-                <select 
-                  class="form-select"
-                  [class.is-invalid]="isFieldInvalid('providerTypeId')"
-                  formControlName="providerTypeId">
-                  <option value="">Seleccionar tipo...</option>
-                  @for (type of providerTypes(); track type._id || type.id) {
-                    <option [value]="type._id || type.id">{{ type.name }}</option>
-                  }
-                </select>
-                @if (isFieldInvalid('providerTypeId')) {
-                  <div class="invalid-feedback">{{ getFieldError('providerTypeId') }}</div>
+        <!-- Payment Terms -->
+        <div class="mb-6 border-t border-gray-200 pt-6 dark:border-gray-800">
+          <h4 class="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Condiciones
+            Comerciales</h4>
+          <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Términos de Pago</label>
+              <select
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                formControlName="paymentTerms">
+                @for (option of paymentTermsOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
                 }
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Margen de Ganancia (%) *</label>
-                <input 
-                  type="number" 
-                  class="form-control"
-                  [class.is-invalid]="isFieldInvalid('profitMargin')"
-                  formControlName="profitMargin"
-                  min="0" max="100" step="0.1">
-                @if (isFieldInvalid('profitMargin')) {
-                  <div class="invalid-feedback">{{ getFieldError('profitMargin') }}</div>
-                }
-              </div>
+              </select>
             </div>
-
-            <!-- Payment Terms -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">Términos de Pago</label>
-                <select class="form-select" formControlName="paymentTerms">
-                  @for (option of paymentTermsOptions; track option.value) {
-                    <option [value]="option.value">{{ option.label }}</option>
-                  }
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Días de Crédito</label>
-                <input 
-                  type="number" 
-                  class="form-control"
-                  formControlName="creditDays"
-                  min="0">
-              </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Días de Crédito</label>
+              <input type="number"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                formControlName="creditDays" min="0">
             </div>
+          </div>
+        </div>
 
-            <!-- Contact Information -->
-            <h6 class="mb-3">Información de Contacto</h6>
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">Nombre de Contacto</label>
-                <input 
-                  type="text" 
-                  class="form-control"
-                  [class.is-invalid]="isFieldInvalid('contactName')"
-                  formControlName="contactName">
-                @if (isFieldInvalid('contactName')) {
-                  <div class="invalid-feedback">{{ getFieldError('contactName') }}</div>
-                }
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Email</label>
-                <input 
-                  type="email" 
-                  class="form-control"
-                  [class.is-invalid]="isFieldInvalid('contactEmail')"
-                  formControlName="contactEmail">
-                @if (isFieldInvalid('contactEmail')) {
-                  <div class="invalid-feedback">{{ getFieldError('contactEmail') }}</div>
-                }
-              </div>
+        <!-- Contact Information -->
+        <div class="mb-6 border-t border-gray-200 pt-6 dark:border-gray-800">
+          <h4 class="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Información
+            de Contacto</h4>
+          <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Nombre de Contacto</label>
+              <input type="text"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                [class.border-error-500]="isFieldInvalid('contactName')" formControlName="contactName">
+              @if (isFieldInvalid('contactName')) {
+              <p class="mt-1 text-xs text-error-500">{{ getFieldError('contactName') }}</p>
+              }
             </div>
-
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">Teléfono</label>
-                <input 
-                  type="text" 
-                  class="form-control"
-                  formControlName="contactPhone">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Móvil</label>
-                <input 
-                  type="text" 
-                  class="form-control"
-                  formControlName="contactMobile">
-              </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Email</label>
+              <input type="email"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                [class.border-error-500]="isFieldInvalid('contactEmail')" formControlName="contactEmail">
+              @if (isFieldInvalid('contactEmail')) {
+              <p class="mt-1 text-xs text-error-500">{{ getFieldError('contactEmail') }}</p>
+              }
             </div>
-
-            <!-- Address -->
-            <h6 class="mb-3">Dirección</h6>
-            <div class="row mb-3">
-              <div class="col-md-12">
-                <label class="form-label">Calle</label>
-                <input 
-                  type="text" 
-                  class="form-control"
-                  formControlName="street">
-              </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Teléfono</label>
+              <input type="text"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                formControlName="contactPhone">
             </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Móvil</label>
+              <input type="text"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                formControlName="contactMobile">
+            </div>
+          </div>
+        </div>
 
-            <div class="row mb-3">
-              <div class="col-md-4">
-                <label class="form-label">Ciudad</label>
-                <input 
-                  type="text" 
-                  class="form-control"
+        <!-- Address -->
+        <div class="mb-6 border-t border-gray-200 pt-6 dark:border-gray-800">
+          <h4 class="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Dirección
+          </h4>
+          <div class="grid grid-cols-1 gap-6">
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Calle</label>
+              <input type="text"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                formControlName="street">
+            </div>
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+              <div>
+                <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Ciudad</label>
+                <input type="text"
+                  class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
                   formControlName="city">
               </div>
-              <div class="col-md-4">
-                <label class="form-label">Estado</label>
-                <input 
-                  type="text" 
-                  class="form-control"
+              <div>
+                <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Estado</label>
+                <input type="text"
+                  class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
                   formControlName="state">
               </div>
-              <div class="col-md-4">
-                <label class="form-label">Código Postal</label>
-                <input 
-                  type="text" 
-                  class="form-control"
+              <div>
+                <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Código Postal</label>
+                <input type="text"
+                  class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
                   formControlName="zipCode">
               </div>
             </div>
+          </div>
+        </div>
 
-            <!-- Tax Information -->
-            <h6 class="mb-3">Información Fiscal</h6>
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">RFC</label>
-                <input 
-                  type="text" 
-                  class="form-control"
-                  [class.is-invalid]="isFieldInvalid('rfc')"
-                  formControlName="rfc"
-                  style="text-transform: uppercase;">
-                @if (isFieldInvalid('rfc')) {
-                  <div class="invalid-feedback">{{ getFieldError('rfc') }}</div>
-                }
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Razón Social</label>
-                <input 
-                  type="text" 
-                  class="form-control"
-                  [class.is-invalid]="isFieldInvalid('businessName')"
-                  formControlName="businessName">
-                @if (isFieldInvalid('businessName')) {
-                  <div class="invalid-feedback">{{ getFieldError('businessName') }}</div>
-                }
-              </div>
-            </div>
-
-            <!-- Notes -->
-            <div class="mb-3">
-              <label class="form-label">Notas</label>
-              <textarea 
-                class="form-control"
-                [class.is-invalid]="isFieldInvalid('notes')"
-                formControlName="notes"
-                rows="3"></textarea>
-              @if (isFieldInvalid('notes')) {
-                <div class="invalid-feedback">{{ getFieldError('notes') }}</div>
+        <!-- Tax Information -->
+        <div class="mb-6 border-t border-gray-200 pt-6 dark:border-gray-800">
+          <h4 class="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Información
+            Fiscal</h4>
+          <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">RFC</label>
+              <input type="text"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 uppercase focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                [class.border-error-500]="isFieldInvalid('rfc')" formControlName="rfc">
+              @if (isFieldInvalid('rfc')) {
+              <p class="mt-1 text-xs text-error-500">{{ getFieldError('rfc') }}</p>
               }
             </div>
-          </form>
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Razón Social</label>
+              <input type="text"
+                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                [class.border-error-500]="isFieldInvalid('businessName')" formControlName="businessName">
+              @if (isFieldInvalid('businessName')) {
+              <p class="mt-1 text-xs text-error-500">{{ getFieldError('businessName') }}</p>
+              }
+            </div>
+          </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeModal()">
-            Cancelar
-          </button>
-          <button 
-            type="button" 
-            class="btn btn-primary"
-            [disabled]="loading()"
-            (click)="saveProvider()">
-            @if (loading()) {
-              <span class="spinner-border spinner-border-sm me-2"></span>
-            }
-            {{ editingProvider() ? 'Actualizar' : 'Crear' }}
-          </button>
+
+        <!-- Notes -->
+        <div class="mb-6 border-t border-gray-200 pt-6 dark:border-gray-800">
+          <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Notas</label>
+          <textarea
+            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+            [class.border-error-500]="isFieldInvalid('notes')" formControlName="notes" rows="3"></textarea>
+          @if (isFieldInvalid('notes')) {
+          <p class="mt-1 text-xs text-error-500">{{ getFieldError('notes') }}</p>
+          }
         </div>
-      </div>
+      </form>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="flex items-center justify-end gap-3 border-t border-gray-200 p-6 dark:border-gray-800">
+      <button type="button"
+        class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-all"
+        (click)="closeModal()">
+        Cancelar
+      </button>
+      <button type="button"
+        class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+        [disabled]="loading()" (click)="saveProvider()">
+        @if (loading()) {
+        <svg class="mr-2 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+          </path>
+        </svg>
+        }
+        {{ editingProvider() ? 'Actualizar' : 'Crear' }}
+      </button>
     </div>
   </div>
+</div>
 }
 
 <!-- Delete Confirmation Modal -->
 @if (showDeleteModal()) {
-  <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Confirmar Eliminación</h5>
-          <button type="button" class="btn-close" (click)="closeDeleteModal()"></button>
-        </div>
-        <div class="modal-body">
-          <p>¿Estás seguro de que quieres eliminar el proveedor <strong>{{ deletingProvider()?.name }}</strong>?</p>
-          <p class="text-muted small">Esta acción desactivará el proveedor pero mantendrá el historial.</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()">
-            Cancelar
-          </button>
-          <button 
-            type="button" 
-            class="btn btn-danger"
-            [disabled]="loading()"
-            (click)="confirmDelete()">
-            @if (loading()) {
-              <span class="spinner-border spinner-border-sm me-2"></span>
-            }
-            Eliminar
-          </button>
-        </div>
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/50 p-4 backdrop-blur-sm transition-all">
+  <div
+    class="relative w-full max-w-md rounded-2xl bg-white shadow-2xl dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800">
+    <div class="p-6 text-center">
+      <div
+        class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-error-100 dark:bg-error-900/30">
+        <i class="fas fa-exclamation-triangle text-xl text-error-500"></i>
+      </div>
+      <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Confirmar Eliminación</h3>
+      <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">
+        ¿Estás seguro de que quieres eliminar el proveedor <strong>{{ deletingProvider()?.name }}</strong>?
+        <br>
+        <span class="text-xs">Esta acción desactivará el proveedor pero mantendrá el historial.</span>
+      </p>
+      <div class="flex items-center justify-center gap-3">
+        <button type="button"
+          class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-all"
+          (click)="closeDeleteModal()">
+          Cancelar
+        </button>
+        <button type="button"
+          class="inline-flex items-center justify-center rounded-lg bg-error-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-error-700 focus:outline-none focus:ring-2 focus:ring-error-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          [disabled]="loading()" (click)="confirmDelete()">
+          @if (loading()) {
+          <svg class="mr-2 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+          }
+          Eliminar
+        </button>
       </div>
     </div>
   </div>
+</div>
 }
 
 <!-- Price Management Modal -->
 @if (showPriceModal()) {
-  <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">
-            Precios - {{ pricingProvider()?.name }}
-          </h5>
-          <button type="button" class="btn-close" (click)="closePriceModal()"></button>
-        </div>
-        <div class="modal-body">
-          <!-- Add Price Form -->
-          <div class="card mb-4">
-            <div class="card-header">
-              <h6 class="mb-0">Agregar Nuevo Precio</h6>
-            </div>
-            <div class="card-body">
-              <form [formGroup]="priceForm" class="row g-3">
-                <div class="col-md-4">
-                  <label class="form-label">Tipo de Material *</label>
-                  <select 
-                    class="form-select"
-                    [class.is-invalid]="isFieldInvalid('materialTypeId', priceForm)"
-                    formControlName="materialTypeId">
-                    <option value="">Seleccionar material...</option>
-                    @for (material of materialTypes(); track material._id || material.id) {
-                      <option [value]="material._id || material.id">
-                        {{ material.name }} ({{ material.unit }})
-                      </option>
-                    }
-                  </select>
-                  @if (isFieldInvalid('materialTypeId', priceForm)) {
-                    <div class="invalid-feedback">{{ getFieldError('materialTypeId', priceForm) }}</div>
-                  }
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">Precio por Gramo *</label>
-                  <div class="input-group">
-                    <span class="input-group-text">$</span>
-                    <input 
-                      type="number" 
-                      class="form-control"
-                      [class.is-invalid]="isFieldInvalid('pricePerGram', priceForm)"
-                      formControlName="pricePerGram"
-                      min="0.01" step="0.01">
-                  </div>
-                  @if (isFieldInvalid('pricePerGram', priceForm)) {
-                    <div class="invalid-feedback">{{ getFieldError('pricePerGram', priceForm) }}</div>
-                  }
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">Precio Final</label>
-                  <div class="input-group">
-                    <span class="input-group-text">$</span>
-                    <input 
-                      type="text" 
-                      class="form-control"
-                      readonly
-                      [value]="calculateFinalPrice(priceForm.get('pricePerGram')?.value || 0) | number:'1.2-2'">
-                  </div>
-                  <small class="text-muted">Incluye margen del {{ pricingProvider()?.profitMargin }}%</small>
-                </div>
-                <div class="col-md-2">
-                  <label class="form-label">&nbsp;</label>
-                  <button 
-                    type="button" 
-                    class="btn btn-primary d-block w-100"
-                    [disabled]="loading() || priceForm.invalid"
-                    (click)="addPrice()">
-                    @if (loading()) {
-                      <span class="spinner-border spinner-border-sm"></span>
-                    } @else {
-                      <i class="fas fa-plus"></i>
-                      Agregar
-                    }
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/50 p-4 backdrop-blur-sm transition-all">
+  <div
+    class="relative w-full max-w-4xl rounded-2xl bg-white shadow-2xl dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800">
+    <!-- Modal Header -->
+    <div class="flex items-center justify-between border-b border-gray-200 p-5 dark:border-gray-800">
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+        Precios - {{ pricingProvider()?.name }}
+      </h3>
+      <button type="button"
+        class="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
+        (click)="closePriceModal()">
+        <i class="fas fa-times text-lg"></i>
+      </button>
+    </div>
 
-          <!-- Current Prices -->
-          <div class="card">
-            <div class="card-header">
-              <h6 class="mb-0">Precios Actuales</h6>
-            </div>
-            <div class="card-body">
-              @if (currentProviderPrices().length > 0) {
-                <div class="table-responsive">
-                  <table class="table table-sm">
-                    <thead class="table-light">
-                      <tr>
-                        <th>Material</th>
-                        <th>Precio/Gramo</th>
-                        <th>Precio Final</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @for (price of currentProviderPrices(); track price._id || price.id) {
-                        <tr>
-                          <td>
-                            <span class="badge bg-info">{{ price.materialType?.name }}</span>
-                            <small class="text-muted d-block">{{ price.materialType?.unit }}</small>
-                          </td>
-                          <td>${{ price.pricePerGram | number:'1.2-2' }}</td>
-                          <td>
-                            <strong>${{ calculateFinalPrice(price.pricePerGram) | number:'1.2-2' }}</strong>
-                          </td>
-                          <td>
-                            <span [class]="getStatusClass(price.status)">
-                              {{ price.status === 'active' ? 'Activo' : 'Inactivo' }}
-                            </span>
-                          </td>
-                          <td>
-                            <button 
-                              type="button" 
-                              class="btn btn-sm btn-outline-danger"
-                              (click)="deletePrice(price._id || price.id!)"
-                              title="Eliminar precio">
-                              <i class="fas fa-trash"></i>
-                            </button>
-                          </td>
-                        </tr>
-                      }
-                    </tbody>
-                  </table>
-                </div>
-              } @else {
-                <div class="text-center py-3">
-                  <i class="fas fa-tag fa-2x text-muted mb-2"></i>
-                  <p class="text-muted">No hay precios configurados para este proveedor</p>
-                </div>
+    <div class="p-6 max-h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar">
+      <!-- Add Price Form -->
+      <div class="mb-6 rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
+        <h6 class="mb-4 text-sm font-semibold text-gray-900 dark:text-white">Agregar Nuevo Precio</h6>
+        <form [formGroup]="priceForm" class="grid grid-cols-1 gap-4 md:grid-cols-12 items-end">
+          <div class="md:col-span-4">
+            <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Tipo de Material *</label>
+            <select
+              class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:focus:border-brand-500 dark:focus:ring-brand-500"
+              [class.border-error-500]="isFieldInvalid('materialTypeId', priceForm)" formControlName="materialTypeId">
+              <option value="">Seleccionar material...</option>
+              @for (material of materialTypes(); track material._id || material.id) {
+              <option [value]="material._id || material.id">
+                {{ material.name }} ({{ material.unit }})
+              </option>
               }
-            </div>
+            </select>
+            @if (isFieldInvalid('materialTypeId', priceForm)) {
+            <p class="mt-1 text-xs text-error-500">{{ getFieldError('materialTypeId', priceForm) }}</p>
+            }
           </div>
+          <div class="md:col-span-3">
+            <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Precio por Gramo *</label>
+            <div class="relative">
+              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <span class="text-gray-500 dark:text-gray-400">$</span>
+              </div>
+              <input type="number"
+                class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 pl-7 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                [class.border-error-500]="isFieldInvalid('pricePerGram', priceForm)" formControlName="pricePerGram"
+                min="0.01" step="0.01">
+            </div>
+            @if (isFieldInvalid('pricePerGram', priceForm)) {
+            <p class="mt-1 text-xs text-error-500">{{ getFieldError('pricePerGram', priceForm) }}</p>
+            }
+          </div>
+          <div class="md:col-span-3">
+            <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Precio Final</label>
+            <div class="relative">
+              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <span class="text-gray-500 dark:text-gray-400">$</span>
+              </div>
+              <input type="text"
+                class="block w-full rounded-lg border border-gray-200 bg-gray-100 p-2.5 pl-7 text-sm text-gray-900 dark:border-gray-700 dark:bg-gray-700 dark:text-gray-300 cursor-not-allowed"
+                readonly [value]="calculateFinalPrice(priceForm.get('pricePerGram')?.value || 0) | number:'1.2-2'">
+            </div>
+            <p class="mt-1 text-xs text-gray-500">Incluye margen del {{ pricingProvider()?.profitMargin }}%</p>
+          </div>
+          <div class="md:col-span-2">
+            <button type="button"
+              class="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              [disabled]="loading() || priceForm.invalid" (click)="addPrice()">
+              @if (loading()) {
+              <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+              </svg>
+              } @else {
+              <i class="fas fa-plus"></i>
+              <span>Agregar</span>
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Current Prices -->
+      <div>
+        <h6 class="mb-4 text-sm font-semibold text-gray-900 dark:text-white">Precios Actuales</h6>
+        @if (currentProviderPrices().length > 0) {
+        <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+          <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+            <thead class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-800 dark:text-gray-400">
+              <tr>
+                <th class="px-6 py-3 font-medium">Material</th>
+                <th class="px-6 py-3 font-medium">Precio/Gramo</th>
+                <th class="px-6 py-3 font-medium">Precio Final</th>
+                <th class="px-6 py-3 font-medium">Estado</th>
+                <th class="px-6 py-3 text-center font-medium">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+              @for (price of currentProviderPrices(); track price._id || price.id) {
+              <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                <td class="px-6 py-4">
+                  <div class="flex flex-col">
+                    <span class="font-medium text-gray-900 dark:text-white">{{ price.materialType?.name }}</span>
+                    <span class="text-xs text-gray-500">{{ price.materialType?.unit }}</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4">${{ price.pricePerGram | number:'1.2-2' }}</td>
+                <td class="px-6 py-4">
+                  <span class="font-bold text-gray-900 dark:text-white">${{ calculateFinalPrice(price.pricePerGram) |
+                    number:'1.2-2' }}</span>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium" [ngClass]="{
+                            'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-300': price.status === 'active',
+                            'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300': price.status !== 'active'
+                          }">
+                    {{ price.status === 'active' ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-center">
+                  <button type="button"
+                    class="rounded-lg p-2 text-gray-500 hover:bg-error-50 hover:text-error-600 dark:text-gray-400 dark:hover:bg-error-900/20 dark:hover:text-error-400 transition-colors"
+                    (click)="deletePrice(price._id || price.id!)" title="Eliminar precio">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closePriceModal()">
-            Cerrar
-          </button>
+        } @else {
+        <div
+          class="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 py-8 dark:border-gray-700 dark:bg-gray-800/50">
+          <i class="fas fa-tag mb-3 text-2xl text-gray-400"></i>
+          <p class="text-sm text-gray-500 dark:text-gray-400">No hay precios configurados para este proveedor</p>
         </div>
+        }
       </div>
     </div>
+
+    <div class="flex items-center justify-end border-t border-gray-200 p-6 dark:border-gray-800">
+      <button type="button"
+        class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-all"
+        (click)="closePriceModal()">
+        Cerrar
+      </button>
+    </div>
   </div>
+</div>
 }

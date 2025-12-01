@@ -86,6 +86,10 @@ export interface ProviderPrice {
   updatedBy?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  notes?: string;
+  currency?: string;
+  effectiveDate?: Date;
+  previousPrice?: number;
 }
 
 // Main Provider interface
@@ -94,9 +98,9 @@ export interface Provider {
   id?: string;
   name: string;
   code: string;
-  sucursalId: string;
+  sucursalId: string | any;
   organizationId: string;
-  providerTypeId: string;
+  providerTypeId: string | ProviderType;
   profitMargin: number;
   contact?: ProviderContact;
   address?: ProviderAddress;
@@ -109,7 +113,7 @@ export interface Provider {
   updatedBy?: string;
   createdAt?: Date;
   updatedAt?: Date;
-  
+
   // Populated fields
   providerType?: ProviderType;
   sucursal?: any;
@@ -204,6 +208,7 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
 
 // Table display interfaces
 export interface ProviderTableItem extends Provider {
+  id: string;
   providerTypeName?: string;
   sucursalName?: string;
   finalProfitMargin?: string;

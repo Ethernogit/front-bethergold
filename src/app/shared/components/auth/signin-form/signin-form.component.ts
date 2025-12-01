@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, AfterViewInit, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { LabelComponent } from '../../form/label/label.component';
 import { CheckboxComponent } from '../../form/input/checkbox.component';
 import { ButtonComponent } from '../../ui/button/button.component';
@@ -10,6 +10,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { LoginService } from '../../../services/auth/login.service';
 import { OrganizationSelectorComponent, OrganizationSelection } from '../organization-selector/organization-selector.component';
 import { Organization, LoginData, BackendLoginResponse } from '../../../interfaces/auth.interfaces';
+import anime from 'animejs';
 
 @Component({
   selector: 'app-signin-form',
@@ -24,9 +25,16 @@ import { Organization, LoginData, BackendLoginResponse } from '../../../interfac
     OrganizationSelectorComponent
   ],
   templateUrl: './signin-form.component.html',
-  styles: ``
+  styles: `
+    @keyframes shimmer {
+      100% { transform: translateX(100%); }
+    }
+    .animate-shimmer {
+      animation: shimmer 2s infinite;
+    }
+  `
 })
-export class SigninFormComponent implements OnDestroy {
+export class SigninFormComponent implements OnDestroy, OnInit, AfterViewInit {
   private destroy$ = new Subject<void>();
 
   // Estados del componente
@@ -42,7 +50,7 @@ export class SigninFormComponent implements OnDestroy {
 
   // Datos de organizaciones
   availableOrganizations: Organization[] = [];
-  
+
   // Mensajes de error
   errorMessage = '';
   fieldErrors: { [key: string]: string } = {};
@@ -50,11 +58,35 @@ export class SigninFormComponent implements OnDestroy {
   constructor(
     private loginService: LoginService,
     private router: Router
-  ) {}
+  ) { }
+
+  ngOnInit(): void {
+    const rememberedEmail = localStorage.getItem('remember_email');
+    if (rememberedEmail) {
+      this.email = rememberedEmail;
+      this.isChecked = true;
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.initAnimations();
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private initAnimations(): void {
+    // Simple fade in for the right side content
+    anime({
+      targets: '.anime-fade-in',
+      opacity: [0, 1],
+      translateY: [20, 0],
+      easing: 'easeOutExpo',
+      duration: 1000,
+      delay: 300
+    });
   }
 
   togglePasswordVisibility(): void {
@@ -74,16 +106,16 @@ export class SigninFormComponent implements OnDestroy {
 
     try {
       const preLoginResponse = await this.loginService.preLogin(this.email, this.password).toPromise();
-            
+
       if (!preLoginResponse?.success) {
         throw new Error('Error en pre-login');
       }
 
       const { organizations, requiresSelection } = preLoginResponse;
-      
+
       // Verificar si necesita mostrar selector
       let needsSelection = false;
-      
+
       if (organizations.length > 1) {
         // Múltiples organizaciones - siempre mostrar selector
         needsSelection = true;
@@ -112,7 +144,7 @@ export class SigninFormComponent implements OnDestroy {
       if (organizations.length === 1) {
         const org = organizations[0];
         loginData.organizationId = org.id;
-        
+
         // Si la organización tiene sucursales, usar la primera (solo debería haber una)
         const sucursales = org.sucursales || [];
         if (sucursales.length === 1) {
@@ -143,7 +175,7 @@ export class SigninFormComponent implements OnDestroy {
       };
 
       await this.performLogin(loginData);
-      
+
     } catch (error: any) {
       console.error('Error en login con organización:', error);
       this.handleLoginError(error);
@@ -158,9 +190,9 @@ export class SigninFormComponent implements OnDestroy {
   }
 
   private async performLogin(loginData: LoginData): Promise<void> {
-    
+
     const loginResponse = await this.loginService.login(loginData).toPromise();
-    
+
     if (!loginResponse?.data?.success) {
       throw new Error('Error en el login');
     }
@@ -235,14 +267,5 @@ export class SigninFormComponent implements OnDestroy {
   private clearErrors(): void {
     this.errorMessage = '';
     this.fieldErrors = {};
-  }
-
-  // Método para cargar email recordado al inicializar el componente
-  ngOnInit(): void {
-    const rememberedEmail = localStorage.getItem('remember_email');
-    if (rememberedEmail) {
-      this.email = rememberedEmail;
-      this.isChecked = true;
-    }
   }
 }

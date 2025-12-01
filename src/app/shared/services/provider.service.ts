@@ -25,9 +25,9 @@ import {
   providedIn: 'root'
 })
 export class ProviderService {
-  private apiUrl = `${environment.apiUrl}/organizations`;
+  private apiUrl = `${environment.apiUrl}`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // =============== PROVIDER CRUD METHODS ===============
 
@@ -43,7 +43,7 @@ export class ProviderService {
    */
   getProviders(filters?: ProviderFilters): Observable<ApiResponse<Provider[]>> {
     let params = new HttpParams();
-    
+
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
@@ -60,7 +60,7 @@ export class ProviderService {
    */
   getProvidersBySucursal(sucursalId: string, filters?: ProviderFilters): Observable<ApiResponse<Provider[]>> {
     let params = new HttpParams();
-    
+
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
@@ -69,7 +69,10 @@ export class ProviderService {
       });
     }
 
-    return this.http.get<ApiResponse<Provider[]>>(`${this.apiUrl}/sucursales/${sucursalId}/providers`, { params });
+    // Add sucursalId to params
+    params = params.set('sucursalId', sucursalId);
+
+    return this.http.get<ApiResponse<Provider[]>>(`${this.apiUrl}/providers`, { params });
   }
 
   /**
@@ -130,7 +133,7 @@ export class ProviderService {
    */
   getProviderTypes(filters?: ProviderTypeFilters): Observable<ApiResponse<ProviderType[]>> {
     let params = new HttpParams();
-    
+
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
@@ -177,7 +180,7 @@ export class ProviderService {
    */
   getMaterialTypes(filters?: MaterialTypeFilters): Observable<ApiResponse<MaterialType[]>> {
     let params = new HttpParams();
-    
+
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
@@ -194,7 +197,7 @@ export class ProviderService {
    */
   getGlobalMaterialTypes(filters?: MaterialTypeFilters): Observable<ApiResponse<MaterialType[]>> {
     let params = new HttpParams();
-    
+
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
