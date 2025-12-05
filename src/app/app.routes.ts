@@ -23,13 +23,15 @@ import { RolesComponent } from './pages/roles/roles.component';
 import { AuthGuard } from './shared/guards/auth.guard';
 import { PermissionGuard } from './shared/guards/permission.guard';
 import { ProvidersComponent } from './pages/providers/providers.component';
+import { CategoriesComponent } from './pages/products/categories/categories.component';
+import { SubcategoriesComponent } from './pages/products/subcategories/subcategories.component';
 export const routes: Routes = [
   {
     path: '',
     redirectTo: '/dashboard',
     pathMatch: 'full'
   },
-  
+
   // Rutas de autenticación (públicas)
   {
     path: 'auth',
@@ -73,21 +75,21 @@ export const routes: Routes = [
         component: ProfileComponent,
         title: 'Perfil | Bethergold'
       },
-      
+
       // Formularios
       {
         path: 'form-elements',
         component: FormElementsComponent,
         title: 'Elementos de Formulario | Bethergold'
       },
-      
+
       // Tablas
       {
         path: 'basic-tables',
         component: BasicTablesComponent,
         title: 'Tablas Básicas | Bethergold'
       },
-      
+
       // Páginas adicionales
       {
         path: 'blank',
@@ -99,7 +101,7 @@ export const routes: Routes = [
         component: InvoicesComponent,
         title: 'Facturas | Bethergold'
       },
-      
+
       // Gráficos
       {
         path: 'line-chart',
@@ -111,7 +113,7 @@ export const routes: Routes = [
         component: BarChartComponent,
         title: 'Gráfico de Barras | Bethergold'
       },
-      
+
       // UI Elements
       {
         path: 'alerts',
@@ -143,7 +145,7 @@ export const routes: Routes = [
         component: VideosComponent,
         title: 'Videos | Bethergold'
       },
-      
+
       // Administración (requiere permisos específicos)
       {
         path: 'permisos',
@@ -174,10 +176,30 @@ export const routes: Routes = [
           action: 'read'
         },
         title: 'Gestión de Proveedores | Bethergold'
+      },
+      {
+        path: 'categories',
+        component: CategoriesComponent,
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'categories',
+          action: 'read'
+        },
+        title: 'Gestión de Categorías | Bethergold'
+      },
+      {
+        path: 'subcategories',
+        component: SubcategoriesComponent,
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'subcategories',
+          action: 'read'
+        },
+        title: 'Gestión de Subcategorías | Bethergold'
       }
     ]
   },
-  
+
   // Rutas de compatibilidad (redirect)
   {
     path: 'signin',
@@ -189,7 +211,7 @@ export const routes: Routes = [
     redirectTo: '/auth/sign-up',
     pathMatch: 'full'
   },
-  
+
   // Error pages
   {
     path: '404',

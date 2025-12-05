@@ -1,0 +1,287 @@
+<div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+    <!-- Breadcrumb -->
+    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h2 class="text-title-md2 font-bold text-black dark:text-white">
+            Gestión de Subcategorías
+        </h2>
+        <nav>
+            <ol class="flex items-center gap-2">
+                <li>
+                    <a class="font-medium text-black dark:text-white" href="/">Dashboard /</a>
+                </li>
+                <li class="font-medium text-primary">Subcategorías</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex flex-col gap-10">
+        <!-- Subcategories Table -->
+        <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-gray-800 dark:bg-gray-900">
+            <!-- Header -->
+            <div class="border-b border-stroke px-7 py-4 dark:border-gray-800">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <h3 class="font-medium text-black dark:text-white">
+                        Listado de Subcategorías
+                    </h3>
+                    <button (click)="openCreateModal()"
+                        class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-5 py-3 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200">
+                        <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 4.5V15.5M4.5 10H15.5" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                        Nueva Subcategoría
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="border-b border-stroke px-7 py-4 dark:border-gray-800">
+                <form [formGroup]="searchForm" class="flex flex-col gap-4 sm:flex-row sm:items-end">
+                    <div class="flex-1">
+                        <label class="mb-2.5 block text-sm font-medium text-black dark:text-white">
+                            Buscar
+                        </label>
+                        <input type="text" formControlName="search" placeholder="Buscar por nombre o código..."
+                            class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500" />
+                    </div>
+                    <div class="w-full sm:w-48">
+                        <label class="mb-2.5 block text-sm font-medium text-black dark:text-white">
+                            Categoría
+                        </label>
+                        <select formControlName="categoryId"
+                            class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500">
+                            <option value="">Todas</option>
+                            @for (category of categories(); track category.id || category._id) {
+                            <option [value]="category._id || category.id">{{ category.name }}</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="w-full sm:w-48">
+                        <label class="mb-2.5 block text-sm font-medium text-black dark:text-white">
+                            Estado
+                        </label>
+                        <select formControlName="status"
+                            class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500">
+                            <option value="">Todos</option>
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="button" (click)="onSearch()"
+                            class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-5 py-3 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all">
+                            Buscar
+                        </button>
+                        <button type="button" (click)="resetFilters()"
+                            class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-3 text-center font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-all">
+                            Limpiar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Table -->
+            <div class="p-7">
+                @if (loading()) {
+                <div class="flex justify-center py-10">
+                    <div
+                        class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent">
+                    </div>
+                </div>
+                } @else if (subcategories().length === 0) {
+                <div class="py-10 text-center text-gray-500 dark:text-gray-400">
+                    No se encontraron subcategorías
+                </div>
+                } @else {
+                <div class="overflow-x-auto">
+                    <table class="w-full table-auto">
+                        <thead>
+                            <tr class="bg-gray-50 text-left dark:bg-gray-800">
+                                <th class="px-4 py-4 font-medium text-black dark:text-white">
+                                    Código
+                                </th>
+                                <th class="px-4 py-4 font-medium text-black dark:text-white">
+                                    Nombre
+                                </th>
+                                <th class="px-4 py-4 font-medium text-black dark:text-white">
+                                    Categoría
+                                </th>
+                                <th class="px-4 py-4 font-medium text-black dark:text-white">
+                                    Descripción
+                                </th>
+                                <th class="px-4 py-4 font-medium text-black dark:text-white">
+                                    Estado
+                                </th>
+                                <th class="px-4 py-4 font-medium text-black dark:text-white">
+                                    Acciones
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (subcategory of subcategories(); track subcategory.id) {
+                            <tr
+                                class="border-b border-stroke dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                                <td class="px-4 py-5">
+                                    <p class="text-black dark:text-white">{{ subcategory.code }}</p>
+                                </td>
+                                <td class="px-4 py-5">
+                                    <p class="text-black dark:text-white">{{ subcategory.name }}</p>
+                                </td>
+                                <td class="px-4 py-5">
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ subcategory.categoryName }}
+                                    </p>
+                                </td>
+                                <td class="px-4 py-5">
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ subcategory.description ||
+                                        '-' }}</p>
+                                </td>
+                                <td class="px-4 py-5">
+                                    <span [ngClass]="getStatusClass(subcategory.status)">
+                                        {{ subcategory.statusDisplay }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-5">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <button (click)="openEditModal(subcategory)"
+                                            class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-blue-400 transition-colors"
+                                            title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button (click)="openDeleteModal(subcategory)"
+                                            class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-error-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-error-400 transition-colors"
+                                            title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create/Edit Modal -->
+@if (showModal()) {
+<div
+    class="fixed left-0 top-0 z-999999 flex h-full min-h-screen w-full items-center justify-center bg-black/90 px-4 py-5">
+    <div class="w-full max-w-142.5 rounded-lg bg-white px-8 py-12 text-center dark:bg-gray-900 md:px-17.5 md:py-15">
+        <h3 class="pb-2 text-xl font-bold text-black dark:text-white sm:text-2xl">
+            {{ editingSubcategory() ? 'Editar Subcategoría' : 'Nueva Subcategoría' }}
+        </h3>
+
+        <form [formGroup]="subcategoryForm" (ngSubmit)="saveSubcategory()" class="mt-6.5">
+            <div class="mb-5.5">
+                <label class="mb-3 block text-left text-sm font-medium text-black dark:text-white">
+                    Categoría <span class="text-meta-1">*</span>
+                </label>
+                <select formControlName="categoryId"
+                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                    [class.border-danger]="isFieldInvalid('categoryId')">
+                    <option value="">Seleccionar categoría</option>
+                    @for (category of categories(); track category.id || category._id) {
+                    <option [value]="category._id || category.id">{{ category.name }}</option>
+                    }
+                </select>
+                @if (isFieldInvalid('categoryId')) {
+                <p class="mt-1 text-left text-xs text-danger dark:text-red-400">{{ getFieldError('categoryId') }}</p>
+                }
+            </div>
+
+            <div class="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+                <div class="w-full sm:w-1/2">
+                    <label class="mb-3 block text-left text-sm font-medium text-black dark:text-white">
+                        Código <span class="text-meta-1">*</span>
+                    </label>
+                    <input type="text" formControlName="code" placeholder="Ej: SUB001"
+                        class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                        [class.border-danger]="isFieldInvalid('code')" />
+                    @if (isFieldInvalid('code')) {
+                    <p class="mt-1 text-left text-xs text-danger dark:text-red-400">{{ getFieldError('code') }}</p>
+                    }
+                </div>
+                <div class="w-full sm:w-1/2">
+                    <label class="mb-3 block text-left text-sm font-medium text-black dark:text-white">
+                        Nombre <span class="text-meta-1">*</span>
+                    </label>
+                    <input type="text" formControlName="name" placeholder="Ej: Oro 18k"
+                        class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                        [class.border-danger]="isFieldInvalid('name')" />
+                    @if (isFieldInvalid('name')) {
+                    <p class="mt-1 text-left text-xs text-danger dark:text-red-400">{{ getFieldError('name') }}</p>
+                    }
+                </div>
+            </div>
+
+            <div class="mb-5.5">
+                <label class="mb-3 block text-left text-sm font-medium text-black dark:text-white">
+                    Descripción
+                </label>
+                <textarea rows="3" formControlName="description" placeholder="Descripción de la subcategoría..."
+                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"></textarea>
+            </div>
+
+            <div class="mb-5.5">
+                <label class="mb-3 block text-left text-sm font-medium text-black dark:text-white">
+                    Estado
+                </label>
+                <select formControlName="status"
+                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500">
+                    <option value="active">Activo</option>
+                    <option value="inactive">Inactivo</option>
+                </select>
+            </div>
+
+            <div class="flex gap-4.5">
+                <button type="button" (click)="closeModal()"
+                    class="flex-1 rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-all">
+                    Cancelar
+                </button>
+                <button type="submit" [disabled]="loading()"
+                    class="flex-1 rounded-lg bg-brand-500 px-6 py-3 font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all">
+                    {{ loading() ? 'Guardando...' : 'Guardar' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+}
+
+<!-- Delete Confirmation Modal -->
+@if (showDeleteModal()) {
+<div
+    class="fixed left-0 top-0 z-999999 flex h-full min-h-screen w-full items-center justify-center bg-black/90 px-4 py-5">
+    <div class="w-full max-w-142.5 rounded-lg bg-white px-8 py-12 text-center dark:bg-gray-900 md:px-17.5 md:py-15">
+        <span class="mx-auto inline-block">
+            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect opacity="0.1" width="60" height="60" rx="30" fill="#DC2626" />
+                <path
+                    d="M30 27.2498V29.9998V27.2498ZM30 35.4999H30.0134H30ZM20.6914 41H39.3086C41.3778 41 42.6704 38.7078 41.6358 36.8749L32.3272 20.3747C31.2926 18.5418 28.7074 18.5418 27.6728 20.3747L18.3642 36.8749C17.3296 38.7078 18.6222 41 20.6914 41Z"
+                    stroke="#DC2626" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </span>
+        <h3 class="mt-5.5 pb-2 text-xl font-bold text-black dark:text-white sm:text-2xl">
+            ¿Eliminar Subcategoría?
+        </h3>
+        <p class="mb-10 text-gray-600 dark:text-gray-300">
+            ¿Estás seguro de que deseas eliminar la subcategoría "{{ deletingSubcategory()?.name }}"?
+        </p>
+        <div class="flex gap-4.5">
+            <button (click)="closeDeleteModal()"
+                class="flex-1 rounded border border-stroke px-6 py-3 font-medium hover:shadow-1 dark:border-gray-800">
+                Cancelar
+            </button>
+            <button (click)="confirmDelete()" [disabled]="loading()"
+                class="flex-1 rounded bg-danger px-6 py-3 font-medium text-white hover:bg-opacity-90">
+                {{ loading() ? 'Eliminando...' : 'Eliminar' }}
+            </button>
+        </div>
+    </div>
+</div>
+}
