@@ -196,6 +196,36 @@ export const routes: Routes = [
           action: 'read'
         },
         title: 'Gestión de Subcategorías | Bethergold'
+      },
+      {
+        path: 'users/edit/:id',
+        loadComponent: () => import('./pages/users/user-create/user-create.component').then(m => m.UserCreateComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'users',
+          action: 'update'
+        },
+        title: 'Editar Usuario | Bethergold'
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./pages/users/user-list/user-list.component').then(m => m.UserListComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'users',
+          action: 'read'
+        },
+        title: 'Lista de Usuarios | Bethergold'
+      },
+      {
+        path: 'users/create',
+        loadComponent: () => import('./pages/users/user-create/user-create.component').then(m => m.UserCreateComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'users',
+          action: 'create'
+        },
+        title: 'Crear Usuario | Bethergold'
       }
     ]
   },

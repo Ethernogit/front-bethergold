@@ -53,6 +53,7 @@
           </h2>
           <ul class="flex flex-col gap-1">
             @for (nav of navItems; track $index;let i = $index) {
+            @if (hasPermission(nav)) {
             <li>
               @if (nav.subItems) {
               <button (click)="toggleSubmenu('main',i)" class="menu-item group cursor-pointer"
@@ -106,6 +107,7 @@
                   }">
                 <ul class="mt-2 space-y-1 ml-9">
                   @for (subItem of nav.subItems; track $index) {
+                  @if (hasPermission(subItem)) {
                   <li>
                     <a [routerLink]="subItem.path" routerLinkActive="" (click)="onSubmenuClick()"
                       class="menu-dropdown-item" [ngClass]="{
@@ -142,6 +144,7 @@
                     </a>
                   </li>
                   }
+                  }
                 </ul>
               </div>
               } @else {
@@ -162,6 +165,7 @@
               }
               }
             </li>
+            }
             }
           </ul>
         </div>
@@ -196,6 +200,7 @@
 
           <ul class="flex flex-col gap-1">
             @for (nav of othersItems; track $index;let i = $index) {
+            @if (hasPermission(nav)) {
             <li>
               @if (nav.subItems) {
               <button (click)="toggleSubmenu('others',i)" class="menu-item group cursor-pointer" [ngClass]="{
@@ -251,6 +256,7 @@
                   }">
                 <ul class="mt-2 space-y-1 ml-9">
                   @for (subItem of nav.subItems; track $index) {
+                  @if (hasPermission(subItem)) {
                   <li>
                     <a [routerLink]="subItem.path" routerLinkActive="" (click)="onSubmenuClick()"
                       class="menu-dropdown-item" [ngClass]="{
@@ -287,6 +293,7 @@
                     </a>
                   </li>
                   }
+                  }
                 </ul>
               </div>
               } @else {
@@ -307,6 +314,7 @@
               }
               }
             </li>
+            }
             }
           </ul>
         </div>

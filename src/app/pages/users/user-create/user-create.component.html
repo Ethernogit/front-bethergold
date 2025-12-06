@@ -1,0 +1,106 @@
+<div>
+    <app-page-breadcrumb [pageTitle]="pageTitle"></app-page-breadcrumb>
+
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
+        <h3 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90">
+            {{ isEditMode ? 'Editar Usuario' : 'Registro de Usuario' }}
+        </h3>
+
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+
+                <!-- First Name -->
+                <div>
+                    <app-label label="Nombre" for="firstName" [required]="true"></app-label>
+                    <app-input-field formControlName="firstName" placeholder="Ingrese el nombre" type="text"
+                        id="firstName"></app-input-field>
+                    <div *ngIf="userForm.get('firstName')?.touched && userForm.get('firstName')?.invalid"
+                        class="mt-1 text-sm text-red-500">
+                        El nombre es requerido
+                    </div>
+                </div>
+
+                <!-- Last Name -->
+                <div>
+                    <app-label label="Apellido" for="lastName" [required]="true"></app-label>
+                    <app-input-field formControlName="lastName" placeholder="Ingrese el apellido" type="text"
+                        id="lastName"></app-input-field>
+                    <div *ngIf="userForm.get('lastName')?.touched && userForm.get('lastName')?.invalid"
+                        class="mt-1 text-sm text-red-500">
+                        El apellido es requerido
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <app-label label="Correo Electrónico" for="email" [required]="true"></app-label>
+                    <app-input-field formControlName="email" placeholder="Ingrese el correo electrónico" type="email"
+                        id="email"></app-input-field>
+                    <div *ngIf="userForm.get('email')?.touched && userForm.get('email')?.invalid"
+                        class="mt-1 text-sm text-red-500">
+                        Se requiere un correo válido
+                    </div>
+                </div>
+
+                <!-- Password (Only in Create Mode) -->
+                <div *ngIf="!isEditMode">
+                    <app-label label="Contraseña" for="password" [required]="true"></app-label>
+                    <app-input-field formControlName="password" placeholder="Ingrese la contraseña" type="password"
+                        id="password"></app-input-field>
+                    <div *ngIf="userForm.get('password')?.touched && userForm.get('password')?.invalid"
+                        class="mt-1 text-sm text-red-500">
+                        La contraseña debe tener al menos 8 caracteres
+                    </div>
+                </div>
+
+                <!-- Role -->
+                <div class="lg:col-span-2">
+                    <app-label label="Rol" for="roleId" [required]="true"></app-label>
+                    <div class="relative">
+                        <select formControlName="roleId" id="roleId"
+                            class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500">
+                            <option value="" disabled>Seleccione un rol</option>
+                            <option *ngFor="let role of roles" [value]="role._id">
+                                {{ role.name }}
+                            </option>
+                        </select>
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.66667"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="text-gray-500 dark:text-gray-400" />
+                            </svg>
+                        </span>
+                    </div>
+                    <div *ngIf="userForm.get('roleId')?.touched && userForm.get('roleId')?.invalid"
+                        class="mt-1 text-sm text-red-500">
+                        El rol es requerido
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Messages -->
+            <div *ngIf="error" class="mt-4 rounded-lg bg-red-50 p-4 text-sm text-red-500 dark:bg-red-500/10">
+                {{ error }}
+            </div>
+            <div *ngIf="success" class="mt-4 rounded-lg bg-green-50 p-4 text-sm text-green-500 dark:bg-green-500/10">
+                {{ success }}
+            </div>
+
+            <!-- Actions -->
+            <div class="mt-6 flex items-center justify-end gap-3">
+                <button type="button" routerLink="/users"
+                    class="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]">
+                    Cancelar
+                </button>
+                <button type="submit" [disabled]="isLoading"
+                    class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50">
+                    {{ isLoading ? (isEditMode ? 'Actualizando...' : 'Creando...') : (isEditMode ? 'Actualizar Usuario'
+                    : 'Crear Usuario') }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
