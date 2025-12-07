@@ -226,6 +226,16 @@ export const routes: Routes = [
           action: 'create'
         },
         title: 'Crear Usuario | Bethergold'
+      },
+      {
+        path: 'sucursal/config',
+        loadComponent: () => import('./pages/sucursal/sucursal-config/sucursal-config.component').then(m => m.SucursalConfigComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'organization',
+          action: 'update'
+        },
+        title: 'Configuración de Sucursal | Bethergold'
       }
     ]
   },

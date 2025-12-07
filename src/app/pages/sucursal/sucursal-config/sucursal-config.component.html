@@ -1,0 +1,152 @@
+<div class="p-6 bg-white border border-gray-200 rounded-lg dark:bg-gray-900 dark:border-gray-800">
+    <div class="mb-6">
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Configuración de Sucursal</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Define cómo se generarán los códigos de barras de tus
+            productos.</p>
+    </div>
+
+    <form [formGroup]="configForm" (ngSubmit)="onSubmit()">
+
+        <!-- Enable/Disable Section -->
+        <div class="mb-6">
+            <label class="flex items-center cursor-pointer">
+                <div class="relative">
+                    <input type="checkbox" formControlName="enabled" class="sr-only peer" />
+                    <div
+                        class="block bg-gray-200 w-14 h-8 rounded-full dark:bg-gray-700 peer-checked:bg-[#D4AF37] transition-colors">
+                    </div>
+                    <div
+                        class="absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform peer-checked:translate-x-6">
+                    </div>
+                </div>
+                <div class="ml-3 text-gray-700 dark:text-gray-300 font-medium">
+                    {{ configForm.get('enabled')?.value ? 'Generación Activada' : 'Generación Desactivada' }}
+                </div>
+            </label>
+        </div>
+
+        <!-- Configuration Fields -->
+        <div *ngIf="configForm.get('enabled')?.value" class="space-y-6">
+
+            <!-- Preview Box -->
+            <div
+                class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center">
+                <span class="text-sm text-gray-500 mb-2">Vista Previa</span>
+                <div
+                    class="text-2xl font-mono font-bold text-gray-900 dark:text-white tracking-widest bg-white dark:bg-gray-900 px-4 py-2 rounded border border-gray-300 dark:border-gray-600">
+                    {{ previewBarcode }}
+                </div>
+                <span class="text-xs text-gray-400 mt-2">Ejemplo con categoría "JOY" e índice 123</span>
+            </div>
+
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <!-- Prefix -->
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Prefijo</label>
+                    <input type="text" formControlName="prefix" placeholder="Ej. SUC1"
+                        class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-brand-500 dark:focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    <p class="mt-1 text-xs text-gray-400">Texto opcional al inicio del código.</p>
+                </div>
+
+                <!-- Suffix -->
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Sufijo</label>
+                    <input type="text" formControlName="suffix" placeholder="Ej. MX"
+                        class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-brand-500 dark:focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    <p class="mt-1 text-xs text-gray-400">Texto opcional al final del código.</p>
+                </div>
+
+                <!-- Category Length -->
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Longitud de
+                        Categoría</label>
+                    <input type="number" formControlName="categoryLength" min="1" max="10"
+                        class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-brand-500 dark:focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    <p class="mt-1 text-xs text-gray-400">Cuántas letras de la categoría usar.</p>
+                </div>
+
+                <!-- Subcategory Length -->
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Longitud de
+                        Subcategoría</label>
+                    <input type="number" formControlName="subcategoryLength" min="1" max="10"
+                        class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-brand-500 dark:focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    <p class="mt-1 text-xs text-gray-400">Cuántas letras de la subcategoría usar.</p>
+                </div>
+
+                <!-- Index Length -->
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Longitud del
+                        Índice</label>
+                    <input type="number" formControlName="indexLength" min="1" max="10"
+                        class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-brand-500 dark:focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    <p class="mt-1 text-xs text-gray-400">Longitud del número consecutivo (relleno con ceros).</p>
+                </div>
+            </div>
+
+            <!-- Pattern Editor -->
+            <div class="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white">Estructura del Código</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    Define el orden y los elementos que compondrán tu código de barras. Haz clic en los botones para
+                    insertar variables.
+                </p>
+
+                <div class="flex flex-wrap gap-2 mb-2">
+                    <button type="button" (click)="insertPlaceholder('{prefix}')"
+                        class="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gold-100 dark:hover:bg-gold-900 text-gray-700 dark:text-gray-300 rounded border border-gray-300 dark:border-gray-600 transition-colors">
+                        {{ '{prefix}' }}
+                    </button>
+                    <button type="button" (click)="insertPlaceholder('{suffix}')"
+                        class="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gold-100 dark:hover:bg-gold-900 text-gray-700 dark:text-gray-300 rounded border border-gray-300 dark:border-gray-600 transition-colors">
+                        {{ '{suffix}' }}
+                    </button>
+                    <button type="button" (click)="insertPlaceholder('{category}')"
+                        class="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gold-100 dark:hover:bg-gold-900 text-gray-700 dark:text-gray-300 rounded border border-gray-300 dark:border-gray-600 transition-colors">
+                        {{ '{category}' }}
+                    </button>
+                    <button type="button" (click)="insertPlaceholder('{subcategory}')"
+                        class="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gold-100 dark:hover:bg-gold-900 text-gray-700 dark:text-gray-300 rounded border border-gray-300 dark:border-gray-600 transition-colors">
+                        {{ '{subcategory}' }}
+                    </button>
+                    <button type="button" (click)="insertPlaceholder('{index}')"
+                        class="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gold-100 dark:hover:bg-gold-900 text-gray-700 dark:text-gray-300 rounded border border-gray-300 dark:border-gray-600 transition-colors">
+                        {{ '{index}' }}
+                    </button>
+                    <button type="button" (click)="insertPlaceholder('{sucursalCode}')"
+                        class="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gold-100 dark:hover:bg-gold-900 text-gray-700 dark:text-gray-300 rounded border border-gray-300 dark:border-gray-600 transition-colors">
+                        {{ '{sucursalCode}' }}
+                    </button>
+                </div>
+
+                <div class="relative">
+                    <input type="text" formControlName="pattern"
+                        class="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500 outline-none transition-all dark:text-white font-mono text-sm">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-200 dark:border-gray-700 mt-6">
+            <button type="button"
+                class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500 transition-colors">
+                Cancelar
+            </button>
+            <button type="submit" [disabled]="configForm.invalid || isLoading"
+                class="relative inline-flex items-center justify-center px-6 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gold-600 hover:bg-gold-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                <span *ngIf="!isLoading">Guardar Cambios</span>
+                <div *ngIf="isLoading" class="absolute inset-0 flex items-center justify-center">
+                    <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                </div>
+            </button>
+        </div>
+    </form>
+</div>

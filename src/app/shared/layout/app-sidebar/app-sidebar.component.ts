@@ -114,6 +114,7 @@ export class AppSidebarComponent {
         { name: "Roles", path: "/roles", permission: 'roles:read' },
         { name: "Permisos", path: "/permisos", permission: 'permissions:read' },
         { name: "Proveedores", path: "/providers", permission: 'providers:read' },
+        { name: "Sucursal", path: "/sucursal/config", permission: 'organization:update' },
       ],
     },
   ];
@@ -248,6 +249,12 @@ export class AppSidebarComponent {
     if (!item.permission) {
       return true;
     }
-    return this.permissionService.hasPermission(item.permission);
+    const hasPerm = this.permissionService.hasPermission(item.permission);
+    if (item.name === 'Sucursal' && !hasPerm) {
+      console.warn('Checks for Sucursal menu item failed.');
+      console.log('Required:', item.permission);
+      console.log('Available Permissions:', this.permissionService.currentUserPermissions());
+    }
+    return hasPerm;
   }
 }

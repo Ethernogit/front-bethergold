@@ -18,9 +18,11 @@ export interface Organization {
 
 export interface Sucursal {
   id: string;
+  _id?: string; // Backend Mongo ID
   name: string;
   organizationId: string;
   isActive: boolean;
+  config?: any;
 }
 
 export interface PreLoginResponse {
