@@ -25,6 +25,7 @@ import { PermissionGuard } from './shared/guards/permission.guard';
 import { ProvidersComponent } from './pages/providers/providers.component';
 import { CategoriesComponent } from './pages/products/categories/categories.component';
 import { SubcategoriesComponent } from './pages/products/subcategories/subcategories.component';
+
 export const routes: Routes = [
   {
     path: '',
@@ -196,6 +197,16 @@ export const routes: Routes = [
           action: 'read'
         },
         title: 'Gestión de Subcategorías | Bethergold'
+      },
+      {
+        path: 'products',
+        loadComponent: () => import('./pages/products/product-list/product-list.component').then(m => m.ProductListComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'products',
+          action: 'read'
+        },
+        title: 'Gestión de Productos | Bethergold'
       },
       {
         path: 'users/edit/:id',

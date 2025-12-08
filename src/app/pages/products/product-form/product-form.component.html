@@ -1,0 +1,140 @@
+<form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <!-- Row 1 -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Barcode -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Código de barras*</label>
+            <input type="text" formControlName="barcode"
+                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
+            <div *ngIf="productForm.get('barcode')?.touched && productForm.get('barcode')?.invalid"
+                class="text-red-500 text-xs mt-1">Requerido</div>
+        </div>
+
+        <!-- Provider -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Proveedor*</label>
+            <select formControlName="providerId"
+                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
+                <option value="">Seleccione</option>
+                <option *ngFor="let provider of providers" [value]="provider._id">{{ provider.name }}</option>
+            </select>
+            <div *ngIf="productForm.get('providerId')?.touched && productForm.get('providerId')?.invalid"
+                class="text-red-500 text-xs mt-1">Requerido</div>
+        </div>
+
+        <!-- Weight -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Peso*</label>
+            <input type="number" formControlName="weight"
+                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
+            <div *ngIf="productForm.get('weight')?.touched && productForm.get('weight')?.invalid"
+                class="text-red-500 text-xs mt-1">Requerido</div>
+        </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Category -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Categoría*</label>
+            <select formControlName="category"
+                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
+                <option value="">Seleccione</option>
+                <option *ngFor="let cat of categories" [value]="cat._id">{{ cat.name }}</option>
+            </select>
+            <div *ngIf="productForm.get('category')?.touched && productForm.get('category')?.invalid"
+                class="text-red-500 text-xs mt-1">Requerido</div>
+        </div>
+
+        <!-- Gold Type -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de oro*</label>
+            <select formControlName="goldType"
+                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
+                <option value="">Seleccione</option>
+                <option *ngFor="let type of goldTypes" [value]="type">{{ type }}</option>
+            </select>
+        </div>
+
+        <!-- Purchase Price/Cost -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Precio compra*</label>
+            <input type="number" formControlName="cost"
+                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
+            <div *ngIf="productForm.get('cost')?.touched && productForm.get('cost')?.invalid"
+                class="text-red-500 text-xs mt-1">Requerido</div>
+        </div>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Subcategory -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Subcategoría*</label>
+            <select formControlName="subcategory"
+                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
+                <option value="">Seleccione</option>
+                <option *ngFor="let sub of subcategories" [value]="sub._id">{{ sub.name }}</option>
+            </select>
+        </div>
+
+        <!-- Karatage -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kilataje*</label>
+            <select formControlName="karatage"
+                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
+                <option value="">Seleccione</option>
+                <option *ngFor="let k of karatages" [value]="k">{{ k }}</option>
+            </select>
+        </div>
+
+        <!-- Sale Price -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Precio venta*</label>
+            <input type="number" formControlName="price"
+                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
+            <div *ngIf="productForm.get('price')?.touched && productForm.get('price')?.invalid"
+                class="text-red-500 text-xs mt-1">Requerido</div>
+        </div>
+    </div>
+
+    <!-- Row 4 -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Diamond Points -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Puntos diamante*</label>
+            <input type="number" formControlName="diamondPoints"
+                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
+        </div>
+        <!-- Spacer cols -->
+        <div></div>
+        <div></div>
+    </div>
+
+    <!-- Description -->
+    <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descripción*</label>
+        <textarea formControlName="description" rows="3"
+            class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white"></textarea>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex items-center justify-between pt-6 mt-6 border-t border-gray-200 dark:border-gray-700">
+        <button type="submit" [disabled]="productForm.invalid || isSubmitting"
+            class="px-6 py-2 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 disabled:opacity-50 transition-colors flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+            </svg>
+            {{ isSubmitting ? 'Guardando...' : 'Guardar Producto' }}
+        </button>
+
+        <button type="button" (click)="onCancel()"
+            class="px-6 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-black dark:text-white font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Cancelar
+        </button>
+    </div>
+</form>

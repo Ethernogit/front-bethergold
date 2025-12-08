@@ -13,5 +13,5 @@ import { ToastComponent } from './shared/components/toast/toast.component';
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = 'Bether Gold Dashboard | TailAdmin';
+  title = 'Bether Gold';
 }

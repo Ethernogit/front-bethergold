@@ -20,6 +20,7 @@ export interface Sucursal {
   id: string;
   _id?: string; // Backend Mongo ID
   name: string;
+  code?: string;
   organizationId: string;
   isActive: boolean;
   config?: any;
