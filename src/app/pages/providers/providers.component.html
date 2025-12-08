@@ -476,151 +476,127 @@
 <!-- Price Management Modal -->
 @if (showPriceModal()) {
 <div
-  class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/50 p-4 backdrop-blur-sm transition-all">
+  class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/50 p-4 backdrop-blur-sm transition-all"
+  (click)="closePriceModal()">
   <div
-    class="relative w-full max-w-4xl rounded-2xl bg-white shadow-2xl dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800">
+    class="relative w-full max-w-4xl rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700"
+    (click)="$event.stopPropagation()">
+
     <!-- Modal Header -->
-    <div class="flex items-center justify-between border-b border-gray-200 p-5 dark:border-gray-800">
+    <div class="flex items-center justify-between border-b border-gray-200 p-5 dark:border-gray-700">
       <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
         Precios - {{ pricingProvider()?.name }}
       </h3>
       <button type="button"
-        class="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
+        class="ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
         (click)="closePriceModal()">
-        <i class="fas fa-times text-lg"></i>
+        <i class="fas fa-times"></i>
       </button>
     </div>
 
     <div class="p-6 max-h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar">
       <!-- Add Price Form -->
-      <div class="mb-6 rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
+      <div class="mb-6 rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-700/50">
         <h6 class="mb-4 text-sm font-semibold text-gray-900 dark:text-white">Agregar Nuevo Precio</h6>
         <form [formGroup]="priceForm" class="grid grid-cols-1 gap-4 md:grid-cols-12 items-end">
-          <div class="md:col-span-4">
+          <div class="md:col-span-3">
+            <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Subcategoría</label>
+            <select
+              class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:focus:border-brand-500 dark:focus:ring-brand-500"
+              formControlName="subcategoryId">
+              <option value="">Opcional (Todas)</option>
+              @for (sub of subcategories(); track sub._id) {
+              <option [value]="sub._id">{{ sub.name }}</option>
+              }
+            </select>
+          </div>
+          <div class="md:col-span-3">
             <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Tipo de Material *</label>
             <select
               class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:focus:border-brand-500 dark:focus:ring-brand-500"
-              [class.border-error-500]="isFieldInvalid('materialTypeId', priceForm)" formControlName="materialTypeId">
-              <option value="">Seleccionar material...</option>
-              @for (material of materialTypes(); track material._id || material.id) {
-              <option [value]="material._id || material.id">
-                {{ material.name }} ({{ material.unit }})
-              </option>
+              formControlName="materialTypeId">
+              <option value="">Seleccione</option>
+              @for (type of materialTypes(); track type.id) {
+              <option [value]="type.id">{{ type.name }} - {{ type.karat }}k</option>
               }
             </select>
-            @if (isFieldInvalid('materialTypeId', priceForm)) {
-            <p class="mt-1 text-xs text-error-500">{{ getFieldError('materialTypeId', priceForm) }}</p>
-            }
           </div>
           <div class="md:col-span-3">
             <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Precio por Gramo *</label>
             <div class="relative">
-              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
                 <span class="text-gray-500 dark:text-gray-400">$</span>
               </div>
               <input type="number"
-                class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 pl-7 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:focus:border-brand-500 dark:focus:ring-brand-500"
-                [class.border-error-500]="isFieldInvalid('pricePerGram', priceForm)" formControlName="pricePerGram"
-                min="0.01" step="0.01">
+                class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 ps-7 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                placeholder="0.00" formControlName="pricePerGram">
             </div>
-            @if (isFieldInvalid('pricePerGram', priceForm)) {
-            <p class="mt-1 text-xs text-error-500">{{ getFieldError('pricePerGram', priceForm) }}</p>
-            }
           </div>
           <div class="md:col-span-3">
-            <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Precio Final</label>
-            <div class="relative">
-              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <span class="text-gray-500 dark:text-gray-400">$</span>
-              </div>
-              <input type="text"
-                class="block w-full rounded-lg border border-gray-200 bg-gray-100 p-2.5 pl-7 text-sm text-gray-900 dark:border-gray-700 dark:bg-gray-700 dark:text-gray-300 cursor-not-allowed"
-                readonly [value]="calculateFinalPrice(priceForm.get('pricePerGram')?.value || 0) | number:'1.2-2'">
-            </div>
-            <p class="mt-1 text-xs text-gray-500">Incluye margen del {{ pricingProvider()?.profitMargin }}%</p>
-          </div>
-          <div class="md:col-span-2">
             <button type="button"
-              class="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              class="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-4 focus:ring-brand-300 dark:bg-brand-600 dark:hover:bg-brand-700 dark:focus:ring-brand-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               [disabled]="loading() || priceForm.invalid" (click)="addPrice()">
-              @if (loading()) {
-              <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                </path>
-              </svg>
-              } @else {
               <i class="fas fa-plus"></i>
-              <span>Agregar</span>
-              }
+              Agregar Precio
             </button>
           </div>
         </form>
-      </div>
 
-      <!-- Current Prices -->
-      <div>
-        <h6 class="mb-4 text-sm font-semibold text-gray-900 dark:text-white">Precios Actuales</h6>
-        @if (currentProviderPrices().length > 0) {
-        <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-          <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-            <thead class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-800 dark:text-gray-400">
-              <tr>
-                <th class="px-6 py-3 font-medium">Material</th>
-                <th class="px-6 py-3 font-medium">Precio/Gramo</th>
-                <th class="px-6 py-3 font-medium">Precio Final</th>
-                <th class="px-6 py-3 font-medium">Estado</th>
-                <th class="px-6 py-3 text-center font-medium">Acciones</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-              @for (price of currentProviderPrices(); track price._id || price.id) {
-              <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                <td class="px-6 py-4">
-                  <div class="flex flex-col">
-                    <span class="font-medium text-gray-900 dark:text-white">{{ price.materialType?.name }}</span>
-                    <span class="text-xs text-gray-500">{{ price.materialType?.unit }}</span>
-                  </div>
-                </td>
-                <td class="px-6 py-4">${{ price.pricePerGram | number:'1.2-2' }}</td>
-                <td class="px-6 py-4">
-                  <span class="font-bold text-gray-900 dark:text-white">${{ calculateFinalPrice(price.pricePerGram) |
-                    number:'1.2-2' }}</span>
-                </td>
-                <td class="px-6 py-4">
-                  <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium" [ngClass]="{
-                            'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-300': price.status === 'active',
-                            'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300': price.status !== 'active'
-                          }">
-                    {{ price.status === 'active' ? 'Activo' : 'Inactivo' }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 text-center">
-                  <button type="button"
-                    class="rounded-lg p-2 text-gray-500 hover:bg-error-50 hover:text-error-600 dark:text-gray-400 dark:hover:bg-error-900/20 dark:hover:text-error-400 transition-colors"
-                    (click)="deletePrice(price._id || price.id!)" title="Eliminar precio">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </td>
-              </tr>
-              }
-            </tbody>
-          </table>
+        <!-- Current Prices -->
+        <div class="mt-6">
+          <h6 class="mb-4 text-sm font-semibold text-gray-900 dark:text-white">Precios Actuales</h6>
+          <div class="relative overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+            <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+              <thead class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th scope="col" class="px-6 py-3">Subcategoría</th>
+                  <th scope="col" class="px-6 py-3">Material</th>
+                  <th scope="col" class="px-6 py-3">Precio Base</th>
+                  <th scope="col" class="px-6 py-3">Precio Final</th>
+                  <th scope="col" class="px-6 py-3 text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (price of currentProviderPrices(); track price._id || price.id) {
+                <tr
+                  class="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+                  <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                    {{ price.subcategoryId?.name || 'Todas' }}
+                  </td>
+                  <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                    {{ price.materialTypeId.name }} ({{ price.materialTypeId.karat }}k)
+                  </td>
+                  <td class="px-6 py-4">
+                    ${{ price.pricePerGram | number:'1.2-2' }}
+                  </td>
+                  <td class="px-6 py-4 font-semibold text-brand-600 dark:text-brand-400">
+                    ${{ calculateFinalPrice(price.pricePerGram) | number:'1.2-2' }}
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <button class="font-medium text-red-600 hover:underline dark:text-red-500"
+                      (click)="deletePrice(price._id || price.id)">
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+                } @empty {
+                <tr>
+                  <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                    No hay precios configurados
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
-        } @else {
-        <div
-          class="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 py-8 dark:border-gray-700 dark:bg-gray-800/50">
-          <i class="fas fa-tag mb-3 text-2xl text-gray-400"></i>
-          <p class="text-sm text-gray-500 dark:text-gray-400">No hay precios configurados para este proveedor</p>
-        </div>
-        }
       </div>
     </div>
 
-    <div class="flex items-center justify-end border-t border-gray-200 p-6 dark:border-gray-800">
+    <!-- Modal Footer -->
+    <div class="flex items-center justify-end border-t border-gray-200 p-6 dark:border-gray-700">
       <button type="button"
-        class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-all"
+        class="rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
         (click)="closePriceModal()">
         Cerrar
       </button>

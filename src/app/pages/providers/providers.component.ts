@@ -15,6 +15,9 @@ import {
   ProviderTableItem
 } from '../../shared/interfaces/provider.interfaces';
 import { finalize } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { SubcategoryService } from '../../shared/services/subcategory.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-providers',
@@ -27,6 +30,8 @@ export class ProvidersComponent implements OnInit {
   private providerService = inject(ProviderService);
   private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
+  private subcategoryService = inject(SubcategoryService);
+  private http = inject(HttpClient);
 
   // Signals for reactive state
   providers = signal<ProviderTableItem[]>([]);
@@ -40,6 +45,12 @@ export class ProvidersComponent implements OnInit {
   deletingProvider = signal<Provider | null>(null);
   pricingProvider = signal<Provider | null>(null);
   currentProviderPrices = signal<any[]>([]);
+
+  // Rule Signals
+  showRulesModal = signal(false);
+  rules = signal<any[]>([]);
+  subcategories = signal<any[]>([]);
+  ruleForm: FormGroup;
 
   // Forms
   providerForm: FormGroup;
@@ -84,6 +95,7 @@ export class ProvidersComponent implements OnInit {
     });
 
     this.priceForm = this.fb.group({
+      subcategoryId: [''], // Opcional
       materialTypeId: ['', Validators.required],
       pricePerGram: [0, [Validators.required, Validators.min(0.01)]]
     });
@@ -92,6 +104,15 @@ export class ProvidersComponent implements OnInit {
       search: [''],
       status: [''],
       providerTypeId: ['']
+    });
+
+    this.ruleForm = this.fb.group({
+      subcategoryId: ['', Validators.required],
+      providerTypeId: ['', Validators.required],
+      price10k: [0, [Validators.required, Validators.min(0)]],
+      price14k: [0, [Validators.required, Validators.min(0)]],
+      price18k: [0, [Validators.required, Validators.min(0)]],
+      profitMargin: [0, [Validators.required, Validators.min(0), Validators.max(100)]]
     });
   }
 
@@ -103,6 +124,16 @@ export class ProvidersComponent implements OnInit {
     this.loadProviders();
     this.loadProviderTypes();
     this.loadMaterialTypes();
+    this.loadSubcategories();
+  }
+
+  loadSubcategories() {
+    this.subcategoryService.getSubcategories().subscribe({
+      next: (res: any) => {
+        this.subcategories.set(res.data || res);
+      },
+      error: (err) => console.error('Error loading subcategories', err)
+    });
   }
 
   loadProviders() {
@@ -388,6 +419,90 @@ export class ProvidersComponent implements OnInit {
   calculateFinalPrice(pricePerGram: number): number {
     const provider = this.pricingProvider();
     return provider ? this.providerService.calculateFinalPrice(pricePerGram, provider.profitMargin) : 0;
+  }
+
+  // =============== RULES MANAGEMENT ===============
+
+  openRulesModal() {
+    this.showRulesModal.set(true);
+    this.loadRules();
+    this.ruleForm.reset({
+      price10k: 0,
+      price14k: 0,
+      price18k: 0,
+      profitMargin: 0
+    });
+  }
+
+  closeRulesModal() {
+    this.showRulesModal.set(false);
+  }
+
+  loadRules() {
+    this.http.get<any>(`${environment.apiUrl}/providers/rules`).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.rules.set(res.data);
+        }
+      },
+      error: (err) => console.error('Error loading rules', err)
+    });
+  }
+
+  saveRule() {
+    if (this.ruleForm.invalid) {
+      this.ruleForm.markAllAsTouched();
+      return;
+    }
+
+    this.loading.set(true);
+    const val = this.ruleForm.value;
+    const payload = {
+      providerTypeId: val.providerTypeId,
+      subcategoryId: val.subcategoryId,
+      prices: {
+        k10: val.price10k,
+        k14: val.price14k,
+        k18: val.price18k
+      },
+      profitMargin: val.profitMargin
+    };
+
+    this.http.post<any>(`${environment.apiUrl}/providers/rules`, payload)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (res) => {
+          if (res.success) {
+            this.toastService.success('Regla guardada exitosamente');
+            this.ruleForm.reset({
+              price10k: 0,
+              price14k: 0,
+              price18k: 0,
+              profitMargin: 0
+            });
+            this.loadRules();
+          }
+        },
+        error: (err) => {
+          console.error('Error saving rule', err);
+          this.toastService.error(err.error?.message || 'Error al guardar la regla');
+        }
+      });
+  }
+
+  deleteRule(rule: any) {
+    if (!confirm('¿Eliminar esta regla?')) return;
+
+    this.http.delete<any>(`${environment.apiUrl}/providers/rules/${rule._id}`)
+      .subscribe({
+        next: (res) => {
+          if (res.success) {
+            this.toastService.success('Regla eliminada');
+            this.loadRules();
+          }
+        },
+        error: (err) => this.toastService.error('Error al eliminar')
+      });
   }
 
   // =============== UTILITY METHODS ===============

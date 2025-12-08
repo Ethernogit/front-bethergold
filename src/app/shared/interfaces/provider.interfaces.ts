@@ -63,6 +63,7 @@ export interface MaterialType {
   code: string;
   description?: string;
   unit: string;
+  karat: number;
   isGlobal: boolean;
   status: 'active' | 'inactive';
   organizationId?: string;
@@ -78,9 +79,11 @@ export interface ProviderPrice {
   id?: string;
   providerId: string;
   materialTypeId: string;
+  subcategoryId?: string | any;
   pricePerGram: number;
   finalPrice?: number;
   materialType?: MaterialType;
+  subcategory?: any;
   status: 'active' | 'inactive';
   createdBy: string;
   updatedBy?: string;
