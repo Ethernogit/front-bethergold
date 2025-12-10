@@ -18,7 +18,16 @@ export interface Sucursal {
             categoryLength?: number;
             subcategoryLength?: number;
             indexLength?: number;
-        }
+        };
+        productForm?: {
+            enableSku: boolean;
+            enableImage: boolean;
+            enableName: boolean;
+            enableStock: boolean;
+            enableSpecifications: boolean;
+            enableTags: boolean;
+            requireSku: boolean;
+        };
     };
 }
 

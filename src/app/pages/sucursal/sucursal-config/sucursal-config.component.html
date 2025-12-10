@@ -127,6 +127,57 @@
 
         </div>
 
+        <!-- Product Form Configuration Section -->
+        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Configuración de Formulario de
+                Productos</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                Controla qué campos son visibles y obligatorios en el formulario de registro de productos.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Helper to create clearer switches -->
+                <ng-container
+                    *ngTemplateOutlet="switchControl; context: { control: 'enableSku', label: 'SKU (Código de Stock)', onText: 'Visible', offText: 'Oculto' }"></ng-container>
+                <ng-container
+                    *ngTemplateOutlet="switchControl; context: { control: 'enableImage', label: 'Imágenes del Producto', onText: 'Visible', offText: 'Oculto' }"></ng-container>
+                <ng-container
+                    *ngTemplateOutlet="switchControl; context: { control: 'enableName', label: 'Nombre del Producto', onText: 'Visible', offText: 'Oculto' }"></ng-container>
+                <ng-container
+                    *ngTemplateOutlet="switchControl; context: { control: 'enableStock', label: 'Gestión de Stock', onText: 'Visible', offText: 'Oculto' }"></ng-container>
+                <ng-container
+                    *ngTemplateOutlet="switchControl; context: { control: 'enableSpecifications', label: 'Especificaciones (Peso, Material)', onText: 'Visible', offText: 'Oculto' }"></ng-container>
+                <ng-container
+                    *ngTemplateOutlet="switchControl; context: { control: 'enableTags', label: 'Etiquetas (Tags)', onText: 'Visible', offText: 'Oculto' }"></ng-container>
+                <ng-container
+                    *ngTemplateOutlet="switchControl; context: { control: 'requireSku', label: 'Requerir SKU Manual', onText: 'Obligatorio', offText: 'Opcional' }"></ng-container>
+            </div>
+        </div>
+
+        <!-- Reusable Switch Template -->
+        <ng-template #switchControl let-control="control" let-label="label" let-onText="onText" let-offText="offText">
+            <div
+                class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ label }}</span>
+                <label class="flex items-center cursor-pointer">
+                    <div class="relative">
+                        <input type="checkbox" [formControlName]="control" class="sr-only peer" />
+                        <div
+                            class="block w-14 h-8 bg-gray-300 dark:bg-gray-600 rounded-full peer-checked:bg-green-500 transition-colors">
+                        </div>
+                        <div
+                            class="absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform peer-checked:translate-x-6 flex items-center justify-center">
+                            <!-- Optional icon inside the knob -->
+                        </div>
+                    </div>
+                    <span class="ml-3 text-sm font-bold"
+                        [ngClass]="{'text-green-600 dark:text-green-400': configForm.get(control)?.value, 'text-gray-500 dark:text-gray-400': !configForm.get(control)?.value}">
+                        {{ configForm.get(control)?.value ? onText : offText }}
+                    </span>
+                </label>
+            </div>
+        </ng-template>
+
         <!-- Actions -->
         <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-200 dark:border-gray-700 mt-6">
             <button type="button"

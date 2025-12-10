@@ -32,7 +32,16 @@ export class SucursalConfigComponent implements OnInit {
             categoryLength: [3, [Validators.min(1), Validators.max(10)]],
             subcategoryLength: [3, [Validators.min(1), Validators.max(10)]],
             indexLength: [6, [Validators.min(1), Validators.max(10)]],
-            pattern: ['{sucursalCode}-{category}-{index}', [Validators.required]]
+            pattern: ['{sucursalCode}-{category}-{index}', [Validators.required]],
+
+            // Product Form Config
+            enableSku: [true],
+            enableImage: [true],
+            enableName: [true],
+            enableStock: [true],
+            enableSpecifications: [true],
+            enableTags: [true],
+            requireSku: [false]
         });
     }
 
@@ -61,21 +70,36 @@ export class SucursalConfigComponent implements OnInit {
         this.isLoading = true;
         this.sucursalService.getSucursalById(this.currentSucursalId).subscribe({
             next: (response) => {
-                const config = response.data.config?.barcode;
-                if (config) {
+                const configBarcode = response.data.config?.barcode;
+                const configProduct = response.data.config?.productForm;
+
+                if (configBarcode) {
                     this.configForm.patchValue({
-                        enabled: config.enabled,
-                        format: config.format,
-                        prefix: config.prefix || '',
-                        suffix: config.suffix || '',
-                        categoryLength: config.categoryLength || 3,
-                        subcategoryLength: config.subcategoryLength || 3,
-                        indexLength: config.indexLength || 6,
-                        pattern: config.pattern || '{sucursalCode}-{category}-{index}'
+                        enabled: configBarcode.enabled,
+                        format: configBarcode.format,
+                        prefix: configBarcode.prefix || '',
+                        suffix: configBarcode.suffix || '',
+                        categoryLength: configBarcode.categoryLength || 3,
+                        subcategoryLength: configBarcode.subcategoryLength || 3,
+                        indexLength: configBarcode.indexLength || 6,
+                        pattern: configBarcode.pattern || '{sucursalCode}-{category}-{index}'
                     });
-                    // Update preview immediately after loading data
-                    this.updatePreview(this.configForm.value);
                 }
+
+                if (configProduct) {
+                    this.configForm.patchValue({
+                        enableSku: configProduct.enableSku ?? true,
+                        enableImage: configProduct.enableImage ?? true,
+                        enableName: configProduct.enableName ?? true,
+                        enableStock: configProduct.enableStock ?? true,
+                        enableSpecifications: configProduct.enableSpecifications ?? true,
+                        enableTags: configProduct.enableTags ?? true,
+                        requireSku: configProduct.requireSku ?? false
+                    });
+                }
+
+                // Update preview only needs barcode values, which are already patched
+                this.updatePreview(this.configForm.value);
                 this.isLoading = false;
             },
             error: (error) => {
@@ -111,9 +135,32 @@ export class SucursalConfigComponent implements OnInit {
         this.isLoading = true;
         const formValue = this.configForm.value;
 
+        // Separate barcode config from product form config
+        const barcodeConfig = {
+            enabled: formValue.enabled,
+            format: formValue.format,
+            prefix: formValue.prefix,
+            suffix: formValue.suffix,
+            categoryLength: formValue.categoryLength,
+            subcategoryLength: formValue.subcategoryLength,
+            indexLength: formValue.indexLength,
+            pattern: formValue.pattern
+        };
+
+        const productFormConfig = {
+            enableSku: formValue.enableSku,
+            enableImage: formValue.enableImage,
+            enableName: formValue.enableName,
+            enableStock: formValue.enableStock,
+            enableSpecifications: formValue.enableSpecifications,
+            enableTags: formValue.enableTags,
+            requireSku: formValue.requireSku
+        };
+
         const updateData = {
             config: {
-                barcode: formValue
+                barcode: barcodeConfig,
+                productForm: productFormConfig
             }
         };
 

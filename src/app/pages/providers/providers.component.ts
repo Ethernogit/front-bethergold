@@ -97,7 +97,8 @@ export class ProvidersComponent implements OnInit {
     this.priceForm = this.fb.group({
       subcategoryId: [''], // Opcional
       materialTypeId: ['', Validators.required],
-      pricePerGram: [0, [Validators.required, Validators.min(0.01)]]
+      pricePerGram: [0, [Validators.required, Validators.min(0.01)]],
+      profitMargin: [0, [Validators.required, Validators.min(0), Validators.max(100)]]
     });
 
     this.searchForm = this.fb.group({
@@ -341,7 +342,9 @@ export class ProvidersComponent implements OnInit {
   openPriceModal(provider: Provider) {
     this.pricingProvider.set(provider);
     this.loadProviderPrices(provider.id!);
-    this.priceForm.reset();
+    this.priceForm.reset({
+      profitMargin: provider.profitMargin || 0
+    });
     this.showPriceModal.set(true);
   }
 
@@ -416,9 +419,13 @@ export class ProvidersComponent implements OnInit {
       });
   }
 
-  calculateFinalPrice(pricePerGram: number): number {
+  calculateFinalPrice(pricePerGram: number, profitMargin?: number): number {
     const provider = this.pricingProvider();
-    return provider ? this.providerService.calculateFinalPrice(pricePerGram, provider.profitMargin) : 0;
+    if (!provider) return 0;
+
+    // Si se proporciona un margen específico (del precio), usarlo. Si no, usar el del proveedor.
+    const margin = profitMargin !== undefined ? profitMargin : provider.profitMargin;
+    return this.providerService.calculateFinalPrice(pricePerGram, margin);
   }
 
   // =============== RULES MANAGEMENT ===============

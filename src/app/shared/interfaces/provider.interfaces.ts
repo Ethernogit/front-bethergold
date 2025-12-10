@@ -81,6 +81,7 @@ export interface ProviderPrice {
   materialTypeId: string;
   subcategoryId?: string | any;
   pricePerGram: number;
+  profitMargin?: number;
   finalPrice?: number;
   materialType?: MaterialType;
   subcategory?: any;

@@ -1,7 +1,9 @@
 <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="space-y-4">
-    <!-- Row 1 -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Barcode -->
+
+    <!-- Main Grid Container -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- 1. Barcode -->
         <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Código de barras*</label>
             <input type="text" formControlName="barcode"
@@ -10,7 +12,7 @@
                 class="text-red-500 text-xs mt-1">Requerido</div>
         </div>
 
-        <!-- Provider -->
+        <!-- 2. Provider -->
         <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Proveedor*</label>
             <select formControlName="providerId"
@@ -22,19 +24,7 @@
                 class="text-red-500 text-xs mt-1">Requerido</div>
         </div>
 
-        <!-- Weight -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Peso*</label>
-            <input type="number" formControlName="weight"
-                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
-            <div *ngIf="productForm.get('weight')?.touched && productForm.get('weight')?.invalid"
-                class="text-red-500 text-xs mt-1">Requerido</div>
-        </div>
-    </div>
-
-    <!-- Row 2 -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Category -->
+        <!-- 3. Category -->
         <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Categoría*</label>
             <select formControlName="category"
@@ -46,29 +36,7 @@
                 class="text-red-500 text-xs mt-1">Requerido</div>
         </div>
 
-        <!-- Gold Type -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de oro*</label>
-            <select formControlName="goldType"
-                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
-                <option value="">Seleccione</option>
-                <option *ngFor="let type of goldTypes" [value]="type">{{ type }}</option>
-            </select>
-        </div>
-
-        <!-- Purchase Price/Cost -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Precio compra*</label>
-            <input type="number" formControlName="cost"
-                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
-            <div *ngIf="productForm.get('cost')?.touched && productForm.get('cost')?.invalid"
-                class="text-red-500 text-xs mt-1">Requerido</div>
-        </div>
-    </div>
-
-    <!-- Row 3 -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Subcategory -->
+        <!-- 4. Subcategory -->
         <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Subcategoría*</label>
             <select formControlName="subcategory"
@@ -78,17 +46,52 @@
             </select>
         </div>
 
-        <!-- Karatage -->
+        <!-- 5. Material Type (Karat) -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kilataje*</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo Material (Kilataje)*</label>
             <select formControlName="karatage"
                 class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
                 <option value="">Seleccione</option>
-                <option *ngFor="let k of karatages" [value]="k">{{ k }}</option>
+                <option *ngFor="let m of materialTypes" [value]="m._id">{{ m.name }} - {{ m.karat }}k</option>
             </select>
         </div>
 
-        <!-- Sale Price -->
+        <!-- 6. Gold Type -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de oro*</label>
+            <select formControlName="goldType"
+                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
+                <option value="">Seleccione</option>
+                <option *ngFor="let type of goldTypes" [value]="type">{{ type }}</option>
+            </select>
+        </div>
+
+        <!-- 7. Weight -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Peso*</label>
+            <input type="number" formControlName="weight"
+                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
+            <div *ngIf="productForm.get('weight')?.touched && productForm.get('weight')?.invalid"
+                class="text-red-500 text-xs mt-1">Requerido</div>
+        </div>
+
+        <!-- 8. Diamond Points -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Puntos diamante*</label>
+            <input type="number" formControlName="diamondPoints"
+                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
+        </div>
+
+        <!-- 9. Purchase Price (Cost) -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Precio compra*</label>
+            <input type="number" formControlName="cost"
+                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
+            <div *ngIf="productForm.get('cost')?.touched && productForm.get('cost')?.invalid"
+                class="text-red-500 text-xs mt-1">Requerido</div>
+        </div>
+
+        <!-- 10. Sale Price -->
         <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Precio venta*</label>
             <input type="number" formControlName="price"
@@ -96,26 +99,14 @@
             <div *ngIf="productForm.get('price')?.touched && productForm.get('price')?.invalid"
                 class="text-red-500 text-xs mt-1">Requerido</div>
         </div>
-    </div>
 
-    <!-- Row 4 -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Diamond Points -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Puntos diamante*</label>
-            <input type="number" formControlName="diamondPoints"
-                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
+        <!-- 11. Description -->
+        <div class="md:col-span-2 lg:col-span-4">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descripción*</label>
+            <textarea formControlName="description" rows="3"
+                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white"></textarea>
         </div>
-        <!-- Spacer cols -->
-        <div></div>
-        <div></div>
-    </div>
 
-    <!-- Description -->
-    <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descripción*</label>
-        <textarea formControlName="description" rows="3"
-            class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white"></textarea>
     </div>
 
     <!-- Buttons -->
