@@ -162,29 +162,19 @@ export class ProductFormComponent implements OnInit {
     generateBarcode(categoryId: string, subcategoryId: string) {
         if (!this.sucursalConfig || !this.sucursalConfig.enabled) return;
 
-        // Find Category Code
-        const category = this.categories.find(c => c._id === categoryId || c.id === categoryId);
-        const categoryCode = category ? category.code : 'UNKNOWN';
+        const sucursal = this.loginService.currentSucursal();
+        if (!sucursal || !sucursal._id) return;
 
-        // Find Subcategory Code (if selected)
-        const subcategory = this.subcategories.find(s => s._id === subcategoryId || s.id === subcategoryId);
-        const subcategoryCode = subcategory ? subcategory.code : '000';
-
-        // Use a random or sequential index placeholder for now handled by backend ideally,
-        // but for frontend preview we simulate it. 
-        // Real implementation would be: request next sequence from backend.
-        // For now, we will use '000001' or similar as placeholder to show format.
-        const previewIndex = 1;
-
-        const barcode = this.sucursalService.generatePreview(
-            this.sucursalConfig,
-            categoryCode,
-            subcategoryCode,
-            previewIndex,
-            this.currentSucursalCode
-        );
-
-        this.productForm.patchValue({ barcode: barcode }, { emitEvent: false });
+        // Call backend to get real next barcode
+        // We pass the categoryId and subcategoryId
+        this.productService.getNextBarcode(sucursal._id, categoryId, subcategoryId).subscribe({
+            next: (res: any) => {
+                if (res.success && res.data && res.data.barcode) {
+                    this.productForm.patchValue({ barcode: res.data.barcode }, { emitEvent: false });
+                }
+            },
+            error: (err) => console.error('Error getting next barcode', err)
+        });
     }
 
     loadProviderPrices(providerId: string) {
