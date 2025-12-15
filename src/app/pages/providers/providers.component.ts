@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProviderService } from '../../shared/services/provider.service';
@@ -45,6 +45,20 @@ export class ProvidersComponent implements OnInit {
   deletingProvider = signal<Provider | null>(null);
   pricingProvider = signal<Provider | null>(null);
   currentProviderPrices = signal<any[]>([]);
+
+  // Pagination (Client-side)
+  currentPage = signal(1);
+  itemsPerPage = signal(10);
+
+  paginatedProviders = computed(() => {
+    const startIndex = (this.currentPage() - 1) * this.itemsPerPage();
+    const endIndex = startIndex + this.itemsPerPage();
+    return this.providers().slice(startIndex, endIndex);
+  });
+
+  totalPages = computed(() => Math.ceil(this.providers().length / this.itemsPerPage()));
+
+  // Rule Signals
 
   // Rule Signals
   showRulesModal = signal(false);
@@ -514,7 +528,17 @@ export class ProvidersComponent implements OnInit {
 
   // =============== UTILITY METHODS ===============
 
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+  }
+
+  onLimitChange(limit: number) {
+    this.itemsPerPage.set(limit);
+    this.currentPage.set(1);
+  }
+
   onSearch() {
+    this.currentPage.set(1);
     this.loadProviders();
   }
 

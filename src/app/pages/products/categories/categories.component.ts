@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CategoryService } from '../../../shared/services/category.service';
@@ -32,6 +32,18 @@ export class CategoriesComponent implements OnInit {
     showDeleteModal = signal(false);
     editingCategory = signal<Category | null>(null);
     deletingCategory = signal<Category | null>(null);
+
+    // Pagination (Client-side)
+    currentPage = signal(1);
+    itemsPerPage = signal(10);
+
+    paginatedCategories = computed(() => {
+        const startIndex = (this.currentPage() - 1) * this.itemsPerPage();
+        const endIndex = startIndex + this.itemsPerPage();
+        return this.categories().slice(startIndex, endIndex);
+    });
+
+    totalPages = computed(() => Math.ceil(this.categories().length / this.itemsPerPage()));
 
     // Forms
     categoryForm: FormGroup;
@@ -177,9 +189,19 @@ export class CategoriesComponent implements OnInit {
             });
     }
 
+    onPageChange(page: number) {
+        this.currentPage.set(page);
+    }
+
+    onLimitChange(limit: number) {
+        this.itemsPerPage.set(limit);
+        this.currentPage.set(1);
+    }
+
     // =============== UTILITY METHODS ===============
 
     onSearch() {
+        this.currentPage.set(1);
         this.loadCategories();
     }
 

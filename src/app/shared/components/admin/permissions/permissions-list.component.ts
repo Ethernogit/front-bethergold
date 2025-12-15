@@ -1,173 +1,209 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal, computed, OnChanges, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ComponentCardComponent } from '../../common/component-card/component-card.component';
 import { Permission } from '../../../interfaces/auth.interfaces';
 
 @Component({
   selector: 'app-permissions-list',
+  standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    ComponentCardComponent,
+    FormsModule
   ],
   template: `
-    <app-component-card title="Lista de Permisos" desc="Gestionar permisos del sistema">
-      <div class="space-y-4">
-        <!-- Filtros y búsqueda -->
-        <div class="flex flex-col sm:flex-row gap-4 mb-6">
-          <div class="flex-1">
-            <input
-              type="text"
-              placeholder="Buscar permisos..."
-              [(ngModel)]="searchTerm"
-              (input)="onSearch()"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
-            />
-          </div>
-          <div class="flex gap-2">
-            <select
-              [(ngModel)]="filterModule"
-              (change)="onFilter()"
-              class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            >
-              <option value="">Todos los módulos</option>
-              @for (module of availableModules; track module) {
-                <option [value]="module">{{ getModuleLabel(module) }}</option>
-              }
-            </select>
-            <button
-              (click)="onNewPermission()"
-              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
-            >
-              + Nuevo Permiso
-            </button>
-          </div>
-        </div>
-
-        <!-- Tabla de permisos -->
-        @if (isLoading) {
-          <div class="flex justify-center items-center py-8">
-            <svg class="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          </div>
-        } @else if (filteredPermissions.length === 0) {
-          <div class="text-center py-8">
-            <div class="text-gray-500 dark:text-gray-400">
-              <svg class="mx-auto h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m0 0V9a2 2 0 012-2h2m0 0V6a2 2 0 012-2h2"></path>
-              </svg>
-              <p class="text-lg font-medium">No se encontraron permisos</p>
-              <p class="text-sm mt-1">Crea tu primer permiso para comenzar</p>
+    <!-- Permissions List Component -->
+    <div class="mx-auto max-w-screen-2xl h-[calc(100vh-135px)] flex flex-col overflow-hidden">
+      <div class="flex flex-col gap-4 h-full">
+        <div
+          class="rounded-sm border border-stroke bg-white shadow-default dark:border-gray-800 dark:bg-gray-900 flex flex-col h-full">
+          <!-- Header -->
+          <div class="border-b border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <h3 class="font-medium text-black dark:text-white">
+                Lista de Permisos
+              </h3>
+              <button type="button" (click)="onNewPermission()"
+                class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200">
+                <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 4.5V15.5M4.5 10H15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                Nuevo Permiso
+              </button>
             </div>
           </div>
-        } @else {
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead class="bg-gray-50 dark:bg-gray-800">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Nombre
-                  </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Descripción
-                  </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Módulo
-                  </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Acción
-                  </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Estado
-                  </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-                @for (permission of filteredPermissions; track permission.id) {
-                  <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <div class="text-sm font-medium text-gray-900 dark:text-white">
-                        {{ permission.name }}
-                      </div>
+
+          <!-- Filters -->
+          <div class="border-b border-stroke px-4 py-3 dark:border-gray-800 shrink-0">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end">
+              <div class="flex-1">
+                <label class="mb-2.5 block text-sm font-medium text-black dark:text-white">
+                  Buscar
+                </label>
+                <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()"
+                  class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-2.5 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                  placeholder="Buscar permisos...">
+              </div>
+
+              <div class="w-full sm:w-48">
+                <label class="mb-2.5 block text-sm font-medium text-black dark:text-white">
+                  Módulo
+                </label>
+                <select [(ngModel)]="filterModule" (change)="onFilter()"
+                  class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-2.5 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500">
+                  <option value="">Todos los módulos</option>
+                  @for (module of availableModules; track module) {
+                  <option [value]="module">{{ getModuleLabel(module) }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading State -->
+          @if (isLoading) {
+          <div class="flex justify-center py-10">
+            <div class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent">
+            </div>
+          </div>
+          }
+
+          <!-- Table -->
+          @if (!isLoading) {
+          <div class="flex-1 overflow-y-auto p-0 z-0">
+            @if (paginatedPermissions().length > 0) {
+            <div class="relative">
+              <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                <thead
+                  class="sticky top-0 z-10 bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-800 dark:text-gray-400 shadow-sm">
+                  <tr>
+                    <th class="px-6 py-4 font-medium">Nombre</th>
+                    <th class="px-6 py-4 font-medium">Descripción</th>
+                    <th class="px-6 py-4 font-medium">Módulo</th>
+                    <th class="px-6 py-4 font-medium">Acción</th>
+                    <th class="px-6 py-4 font-medium">Estado</th>
+                    <th class="px-6 py-4 font-medium text-center">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                  @for (permission of paginatedPermissions(); track permission.id) {
+                  <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                    <td class="px-6 py-4 font-medium text-black dark:text-white">
+                      {{ permission.name }}
                     </td>
                     <td class="px-6 py-4">
-                      <div class="text-sm text-gray-500 dark:text-gray-300 max-w-xs truncate">
-                        {{ permission.description }}
-                      </div>
+                      <p class="truncate max-w-xs" title="{{ permission.description }}">{{ permission.description }}</p>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-6 py-4">
                       <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                            [ngClass]="getModuleBadgeClass(permission.module)">
+                        [ngClass]="getModuleBadgeClass(permission.module)">
                         {{ getModuleLabel(permission.module) }}
                       </span>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-6 py-4">
                       <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                            [ngClass]="getActionBadgeClass(permission.action)">
+                        [ngClass]="getActionBadgeClass(permission.action)">
                         {{ getActionLabel(permission.action) }}
                       </span>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                            [ngClass]="permission.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'">
+                    <td class="px-6 py-4">
+                      <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium" [ngClass]="{
+                                          'bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-400': permission.isActive,
+                                          'bg-red-100 text-red-800 dark:bg-red-800/30 dark:text-red-400': !permission.isActive
+                                        }">
                         {{ permission.isActive ? 'Activo' : 'Inactivo' }}
                       </span>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div class="flex space-x-2">
-                        <button
-                          (click)="onEditPermission(permission)"
-                          class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
-                          title="Editar"
-                        >
-                          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
+                    <td class="px-6 py-4 text-center">
+                      <div class="flex items-center justify-center gap-2">
+                        <button (click)="onEditPermission(permission)"
+                          class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-blue-400 transition-colors"
+                          title="Editar">
+                          <i class="fas fa-edit"></i>
                         </button>
-                        <button
-                          (click)="onTogglePermission(permission)"
-                          [class]="permission.isActive ? 'text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300' : 'text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300'"
-                          [title]="permission.isActive ? 'Desactivar' : 'Activar'"
-                        >
-                          @if (permission.isActive) {
-                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728" />
-                            </svg>
-                          } @else {
-                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          }
+                        <button (click)="onTogglePermission(permission)"
+                          class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-yellow-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-yellow-400 transition-colors"
+                          [title]="permission.isActive ? 'Desactivar' : 'Activar'">
+                          <i class="fas" [ngClass]="permission.isActive ? 'fa-toggle-on' : 'fa-toggle-off'"></i>
                         </button>
-                        <button
-                          (click)="onDeletePermission(permission)"
-                          class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                          title="Eliminar"
-                        >
-                          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
+                        <button (click)="onDeletePermission(permission)"
+                          class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-red-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-red-400 transition-colors"
+                          title="Eliminar">
+                          <i class="fas fa-trash"></i>
                         </button>
                       </div>
                     </td>
                   </tr>
-                }
-              </tbody>
-            </table>
+                  }
+                </tbody>
+              </table>
+            </div>
+            } @else {
+            <div class="flex flex-col items-center justify-center py-12 text-center">
+              <div class="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-800">
+                <i class="fas fa-shield-alt text-3xl text-gray-400"></i>
+              </div>
+              <h5 class="mb-2 text-lg font-medium text-gray-900 dark:text-white">No hay permisos registrados</h5>
+              <button (click)="onNewPermission()"
+                class="flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all">
+                <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 4.5V15.5M4.5 10H15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                <span>Crear Permiso</span>
+              </button>
+            </div>
+            }
           </div>
-        }
+          }
+
+          <!-- Pagination Controls -->
+          <div
+            class="border-t border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0 bg-white dark:bg-gray-900 rounded-b-sm">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div class="flex items-center gap-2">
+                <p class="text-sm font-medium text-black dark:text-white">Items por página:</p>
+                <select [ngModel]="itemsPerPage()" (ngModelChange)="onLimitChange($event)"
+                  class="rounded border border-stroke bg-transparent px-2 py-1 outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white transition focus:border-brand-500 active:border-brand-500">
+                  <option [value]="10" class="dark:bg-gray-700 dark:text-white">10</option>
+                  <option [value]="25" class="dark:bg-gray-700 dark:text-white">25</option>
+                  <option [value]="50" class="dark:bg-gray-700 dark:text-white">50</option>
+                  <option [value]="100" class="dark:bg-gray-700 dark:text-white">100</option>
+                </select>
+              </div>
+
+              <div class="flex items-center gap-4">
+                <p class="text-sm font-medium text-black dark:text-white">
+                  Página {{ currentPage() }} de {{ totalPages() || 1 }}
+                </p>
+                <div class="flex items-center gap-2">
+                  <button (click)="onPageChange(currentPage() - 1)" [disabled]="currentPage() === 1"
+                    class="flex items-center justify-center rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                    <svg class="fill-current text-black dark:text-white" width="20" height="20" viewBox="0 0 20 20"
+                      fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M12.7071 5.29289C13.0976 5.68342 13.0976 6.31658 12.7071 6.70711L9.41421 10L12.7071 13.2929C13.0976 13.6834 13.0976 14.3166 12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L7.29289 10.7071C6.90237 10.3166 6.90237 9.68342 7.29289 9.29289L11.2929 5.29289C11.6834 4.90237 12.3166 4.90237 12.7071 5.29289Z" />
+                    </svg>
+                  </button>
+                  <button (click)="onPageChange(currentPage() + 1)" [disabled]="currentPage() >= totalPages()"
+                    class="flex items-center justify-center rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                    <svg class="fill-current text-black dark:text-white" width="20" height="20" viewBox="0 0 20 20"
+                      fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </app-component-card>
+    </div>
   `,
   styles: ``
 })
-export class PermissionsListComponent {
+export class PermissionsListComponent implements OnChanges {
   @Input() permissions: Permission[] = [];
   @Input() availableModules: string[] = [];
   @Input() isLoading = false;
@@ -178,22 +214,45 @@ export class PermissionsListComponent {
 
   searchTerm = '';
   filterModule = '';
-  filteredPermissions: Permission[] = [];
 
-  ngOnInit() {
-    this.filteredPermissions = [...this.permissions];
-  }
+  // Use a signal for the filtered list to easily derive pagination
+  filteredPermissionsSignal = signal<Permission[]>([]);
 
-  ngOnChanges() {
-    this.applyFilters();
+  // Pagination
+  currentPage = signal(1);
+  itemsPerPage = signal(10);
+
+  paginatedPermissions = computed(() => {
+    const startIndex = (this.currentPage() - 1) * this.itemsPerPage();
+    const endIndex = startIndex + this.itemsPerPage();
+    return this.filteredPermissionsSignal().slice(startIndex, endIndex);
+  });
+
+  totalPages = computed(() => Math.ceil(this.filteredPermissionsSignal().length / this.itemsPerPage()));
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['permissions']) {
+      this.applyFilters();
+    }
   }
 
   onSearch() {
+    this.currentPage.set(1);
     this.applyFilters();
   }
 
   onFilter() {
+    this.currentPage.set(1);
     this.applyFilters();
+  }
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+  }
+
+  onLimitChange(limit: number) {
+    this.itemsPerPage.set(limit);
+    this.currentPage.set(1);
   }
 
   private applyFilters() {
@@ -212,7 +271,7 @@ export class PermissionsListComponent {
       filtered = filtered.filter(permission => permission.module === this.filterModule);
     }
 
-    this.filteredPermissions = filtered;
+    this.filteredPermissionsSignal.set(filtered);
   }
 
   onNewPermission() {

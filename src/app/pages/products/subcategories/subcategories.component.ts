@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SubcategoryService } from '../../../shared/services/subcategory.service';
@@ -36,6 +36,18 @@ export class SubcategoriesComponent implements OnInit {
     showDeleteModal = signal(false);
     editingSubcategory = signal<Subcategory | null>(null);
     deletingSubcategory = signal<Subcategory | null>(null);
+
+    // Pagination (Client-side)
+    currentPage = signal(1);
+    itemsPerPage = signal(10);
+
+    paginatedSubcategories = computed(() => {
+        const startIndex = (this.currentPage() - 1) * this.itemsPerPage();
+        const endIndex = startIndex + this.itemsPerPage();
+        return this.subcategories().slice(startIndex, endIndex);
+    });
+
+    totalPages = computed(() => Math.ceil(this.subcategories().length / this.itemsPerPage()));
 
     // Forms
     subcategoryForm: FormGroup;
@@ -204,9 +216,19 @@ export class SubcategoriesComponent implements OnInit {
             });
     }
 
+    onPageChange(page: number) {
+        this.currentPage.set(page);
+    }
+
+    onLimitChange(limit: number) {
+        this.itemsPerPage.set(limit);
+        this.currentPage.set(1);
+    }
+
     // =============== UTILITY METHODS ===============
 
     onSearch() {
+        this.currentPage.set(1);
         this.loadSubcategories();
     }
 

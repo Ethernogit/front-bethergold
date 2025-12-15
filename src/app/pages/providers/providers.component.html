@@ -1,202 +1,249 @@
 <!-- Providers CRUD Component -->
-<div class="p-6">
-  <!-- Header -->
-  <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-    <h2 class="text-title-md2 font-bold text-black dark:text-white">
-      Gestión de Proveedores
-    </h2>
-    <button type="button"
-      class="flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200"
-      (click)="openCreateModal()">
-      <i class="fas fa-plus"></i>
-      <span>Nuevo Proveedor</span>
-    </button>
-  </div>
+<div class="mx-auto max-w-screen-2xl h-[calc(100vh-135px)] flex flex-col overflow-hidden">
 
-  <!-- Filters -->
-  <div
-    class="mb-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-sm dark:border-gray-800 dark:bg-gray-900">
-    <form [formGroup]="searchForm" class="grid grid-cols-1 gap-4 md:grid-cols-4 lg:grid-cols-12">
-      <div class="md:col-span-2 lg:col-span-4">
-        <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-400">
-          Buscar
-        </label>
-        <div class="relative">
-          <input type="text"
-            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500 transition-colors"
-            formControlName="search" placeholder="Buscar por nombre o código...">
-          <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <i class="fas fa-search text-gray-500 dark:text-gray-400"></i>
-          </div>
+  <!-- Main Content -->
+  <div class="flex flex-col gap-4 h-full">
+    <!-- Providers Table -->
+    <div
+      class="rounded-sm border border-stroke bg-white shadow-default dark:border-gray-800 dark:bg-gray-900 flex flex-col h-full">
+      <!-- Header -->
+      <div class="border-b border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <h3 class="font-medium text-black dark:text-white">
+            Listado de Proveedores
+          </h3>
+          <button type="button"
+            class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200"
+            (click)="openCreateModal()">
+            <i class="fas fa-plus"></i>
+            <span>Nuevo Proveedor</span>
+          </button>
         </div>
       </div>
 
-      <div class="md:col-span-1 lg:col-span-3">
-        <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-400">
-          Estado
-        </label>
-        <select
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500 transition-colors"
-          formControlName="status">
-          <option value="">Todos los estados</option>
-          <option value="active">Activo</option>
-          <option value="inactive">Inactivo</option>
-          <option value="blocked">Bloqueado</option>
-        </select>
+      <!-- Filters -->
+      <div class="border-b border-stroke px-4 py-3 dark:border-gray-800 shrink-0">
+        <form [formGroup]="searchForm" class="flex flex-col gap-4 sm:flex-row sm:items-end">
+          <div class="flex-1">
+            <label class="mb-2.5 block text-sm font-medium text-black dark:text-white">
+              Buscar
+            </label>
+            <input type="text"
+              class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-2.5 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+              formControlName="search" placeholder="Buscar por nombre o código...">
+          </div>
+
+          <div class="w-full sm:w-48">
+            <label class="mb-2.5 block text-sm font-medium text-black dark:text-white">
+              Estado
+            </label>
+            <select
+              class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-2.5 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+              formControlName="status">
+              <option value="">Todos</option>
+              <option value="active">Activo</option>
+              <option value="inactive">Inactivo</option>
+              <option value="blocked">Bloqueado</option>
+            </select>
+          </div>
+
+          <div class="w-full sm:w-48">
+            <label class="mb-2.5 block text-sm font-medium text-black dark:text-white">
+              Tipo
+            </label>
+            <select
+              class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-2.5 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+              formControlName="providerTypeId">
+              <option value="">Todos</option>
+              @for (type of providerTypes(); track type._id || type.id) {
+              <option [value]="type._id || type.id">{{ type.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="flex gap-2">
+            <button type="button"
+              class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-5 py-2.5 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all"
+              (click)="onSearch()">
+              Buscar
+            </button>
+            <button type="button"
+              class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-center font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-all"
+              (click)="resetFilters()" title="Limpiar filtros">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </form>
       </div>
 
-      <div class="md:col-span-1 lg:col-span-3">
-        <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-400">
-          Tipo de Proveedor
-        </label>
-        <select
-          class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500 transition-colors"
-          formControlName="providerTypeId">
-          <option value="">Todos los tipos</option>
-          @for (type of providerTypes(); track type._id || type.id) {
-          <option [value]="type._id || type.id">{{ type.name }}</option>
-          }
-        </select>
+      <!-- Loading State -->
+      @if (loading()) {
+      <div class="flex justify-center py-10">
+        <div class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent">
+        </div>
+      </div>
+      }
+
+      <!-- Providers Table -->
+      @if (!loading()) {
+      <div class="flex-1 overflow-y-auto p-0 z-0">
+        @if (providers().length > 0) {
+        <div class="relative">
+          <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+            <thead
+              class="sticky top-0 z-10 bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-800 dark:text-gray-400 shadow-sm">
+              <tr>
+                <th class="px-6 py-4 font-medium">Código</th>
+                <th class="px-6 py-4 font-medium">Nombre</th>
+                <th class="px-6 py-4 font-medium">Tipo</th>
+                <th class="px-6 py-4 font-medium">Margen</th>
+                <th class="px-6 py-4 font-medium">Contacto</th>
+                <th class="px-6 py-4 font-medium">Estado</th>
+                <th class="px-6 py-4 text-center font-medium">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+              @for (provider of paginatedProviders(); track provider.id) {
+              <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                  {{ provider.code }}
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex flex-col">
+                    <span class="font-medium text-gray-900 dark:text-white">{{ provider.name }}</span>
+                    @if (provider.tax?.businessName) {
+                    <span class="text-xs text-gray-500">{{ provider.tax?.businessName }}</span>
+                    }
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                    {{ provider.providerTypeName }}
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="inline-flex items-center rounded-full bg-success-50 px-2.5 py-0.5 text-xs font-medium text-success-700 dark:bg-success-900/30 dark:text-success-300">
+                    {{ provider.profitMargin }}%
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex flex-col gap-1 text-xs">
+                    @if (provider.contact?.name) {
+                    <div class="flex items-center gap-1.5">
+                      <i class="fas fa-user text-gray-400"></i>
+                      <span>{{ provider.contact?.name }}</span>
+                    </div>
+                    }
+                    @if (provider.contact?.phone) {
+                    <div class="flex items-center gap-1.5">
+                      <i class="fas fa-phone text-gray-400"></i>
+                      <span>{{ provider.contact?.phone }}</span>
+                    </div>
+                    }
+                    @if (provider.contact?.email) {
+                    <div class="flex items-center gap-1.5">
+                      <i class="fas fa-envelope text-gray-400"></i>
+                      <span>{{ provider.contact?.email }}</span>
+                    </div>
+                    }
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium" [ngClass]="{
+                            'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-300': provider.status === 'active',
+                            'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300': provider.status === 'inactive',
+                            'bg-error-50 text-error-700 dark:bg-error-900/30 dark:text-error-300': provider.status === 'blocked'
+                          }">
+                    {{ provider.statusDisplay }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-center">
+                  <div class="flex items-center justify-center gap-2">
+                    <button type="button"
+                      class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-brand-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-brand-400 transition-colors"
+                      (click)="openPriceModal(provider)" title="Gestionar Precios">
+                      <i class="fas fa-dollar-sign"></i>
+                    </button>
+                    <button type="button"
+                      class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-blue-400 transition-colors"
+                      (click)="openEditModal(provider)" title="Editar">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button"
+                      class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-error-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-error-400 transition-colors"
+                      (click)="openDeleteModal(provider)" title="Eliminar">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        } @else {
+        <div class="flex flex-col items-center justify-center py-12 text-center">
+          <div class="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-800">
+            <i class="fas fa-inbox text-3xl text-gray-400"></i>
+          </div>
+          <h5 class="mb-2 text-lg font-medium text-gray-900 dark:text-white">No hay proveedores registrados</h5>
+          <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">Comienza agregando tu primer proveedor al sistema.
+          </p>
+          <button type="button"
+            class="flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all"
+            (click)="openCreateModal()">
+            <i class="fas fa-plus"></i>
+            <span>Crear Proveedor</span>
+          </button>
+        </div>
+        }
       </div>
 
-      <div class="md:col-span-4 lg:col-span-2 flex items-end gap-2">
-        <button type="button"
-          class="flex-1 rounded-lg border border-brand-500 bg-transparent px-4 py-2.5 text-sm font-medium text-brand-500 hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:hover:bg-brand-500/10 transition-all"
-          (click)="onSearch()">
-          Buscar
-        </button>
-        <button type="button"
-          class="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-all"
-          (click)="resetFilters()" title="Limpiar filtros">
-          <i class="fas fa-times"></i>
-        </button>
+      <!-- Pagination Controls -->
+      <div
+        class="border-t border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0 bg-white dark:bg-gray-900 rounded-b-sm">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex items-center gap-2">
+            <p class="text-sm font-medium text-black dark:text-white">Items por página:</p>
+            <select [ngModel]="itemsPerPage()" (ngModelChange)="onLimitChange($event)"
+              class="rounded border border-stroke bg-transparent px-2 py-1 outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white transition focus:border-brand-500 active:border-brand-500">
+              <option [value]="10" class="dark:bg-gray-700 dark:text-white">10</option>
+              <option [value]="25" class="dark:bg-gray-700 dark:text-white">25</option>
+              <option [value]="50" class="dark:bg-gray-700 dark:text-white">50</option>
+              <option [value]="100" class="dark:bg-gray-700 dark:text-white">100</option>
+            </select>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <p class="text-sm font-medium text-black dark:text-white">
+              Página {{ currentPage() }} de {{ totalPages() || 1 }}
+            </p>
+            <div class="flex items-center gap-2">
+              <button (click)="onPageChange(currentPage() - 1)" [disabled]="currentPage() === 1"
+                class="flex items-center justify-center rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                <svg class="fill-current text-black dark:text-white" width="20" height="20" viewBox="0 0 20 20"
+                  fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M12.7071 5.29289C13.0976 5.68342 13.0976 6.31658 12.7071 6.70711L9.41421 10L12.7071 13.2929C13.0976 13.6834 13.0976 14.3166 12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L7.29289 10.7071C6.90237 10.3166 6.90237 9.68342 7.29289 9.29289L11.2929 5.29289C11.6834 4.90237 12.3166 4.90237 12.7071 5.29289Z" />
+                </svg>
+              </button>
+              <button (click)="onPageChange(currentPage() + 1)" [disabled]="currentPage() >= totalPages()"
+                class="flex items-center justify-center rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                <svg class="fill-current text-black dark:text-white" width="20" height="20" viewBox="0 0 20 20"
+                  fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    </form>
-  </div>
-
-  <!-- Loading State -->
-  @if (loading()) {
-  <div class="flex justify-center py-12">
-    <div class="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-brand-500"></div>
-  </div>
-  }
-
-  <!-- Providers Table -->
-  @if (!loading()) {
-  <div
-    class="rounded-2xl border border-gray-200 bg-white shadow-theme-sm dark:border-gray-800 dark:bg-gray-900 overflow-hidden">
-    @if (providers().length > 0) {
-    <div class="overflow-x-auto">
-      <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-        <thead class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-800 dark:text-gray-400">
-          <tr>
-            <th class="px-6 py-4 font-medium">Código</th>
-            <th class="px-6 py-4 font-medium">Nombre</th>
-            <th class="px-6 py-4 font-medium">Tipo</th>
-            <th class="px-6 py-4 font-medium">Margen</th>
-            <th class="px-6 py-4 font-medium">Contacto</th>
-            <th class="px-6 py-4 font-medium">Estado</th>
-            <th class="px-6 py-4 text-center font-medium">Acciones</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-          @for (provider of providers(); track provider.id) {
-          <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
-              {{ provider.code }}
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex flex-col">
-                <span class="font-medium text-gray-900 dark:text-white">{{ provider.name }}</span>
-                @if (provider.tax?.businessName) {
-                <span class="text-xs text-gray-500">{{ provider.tax?.businessName }}</span>
-                }
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                {{ provider.providerTypeName }}
-              </span>
-            </td>
-            <td class="px-6 py-4">
-              <span
-                class="inline-flex items-center rounded-full bg-success-50 px-2.5 py-0.5 text-xs font-medium text-success-700 dark:bg-success-900/30 dark:text-success-300">
-                {{ provider.profitMargin }}%
-              </span>
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex flex-col gap-1 text-xs">
-                @if (provider.contact?.name) {
-                <div class="flex items-center gap-1.5">
-                  <i class="fas fa-user text-gray-400"></i>
-                  <span>{{ provider.contact?.name }}</span>
-                </div>
-                }
-                @if (provider.contact?.phone) {
-                <div class="flex items-center gap-1.5">
-                  <i class="fas fa-phone text-gray-400"></i>
-                  <span>{{ provider.contact?.phone }}</span>
-                </div>
-                }
-                @if (provider.contact?.email) {
-                <div class="flex items-center gap-1.5">
-                  <i class="fas fa-envelope text-gray-400"></i>
-                  <span>{{ provider.contact?.email }}</span>
-                </div>
-                }
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium" [ngClass]="{
-                        'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-300': provider.status === 'active',
-                        'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300': provider.status === 'inactive',
-                        'bg-error-50 text-error-700 dark:bg-error-900/30 dark:text-error-300': provider.status === 'blocked'
-                      }">
-                {{ provider.statusDisplay }}
-              </span>
-            </td>
-            <td class="px-6 py-4 text-center">
-              <div class="flex items-center justify-center gap-2">
-                <button type="button"
-                  class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-brand-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-brand-400 transition-colors"
-                  (click)="openPriceModal(provider)" title="Gestionar Precios">
-                  <i class="fas fa-dollar-sign"></i>
-                </button>
-                <button type="button"
-                  class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-blue-400 transition-colors"
-                  (click)="openEditModal(provider)" title="Editar">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button type="button"
-                  class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-error-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-error-400 transition-colors"
-                  (click)="openDeleteModal(provider)" title="Eliminar">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
+      }
     </div>
-    } @else {
-    <div class="flex flex-col items-center justify-center py-12 text-center">
-      <div class="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-800">
-        <i class="fas fa-inbox text-3xl text-gray-400"></i>
-      </div>
-      <h5 class="mb-2 text-lg font-medium text-gray-900 dark:text-white">No hay proveedores registrados</h5>
-      <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">Comienza agregando tu primer proveedor al sistema.</p>
-      <button type="button"
-        class="flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all"
-        (click)="openCreateModal()">
-        <i class="fas fa-plus"></i>
-        <span>Crear Proveedor</span>
-      </button>
-    </div>
-    }
   </div>
-  }
 </div>
 
 <!-- Provider Form Modal -->
