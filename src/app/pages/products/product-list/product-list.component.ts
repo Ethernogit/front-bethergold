@@ -104,4 +104,19 @@ export class ProductListComponent implements OnInit {
                 }
             });
     }
+    getCategoryName(product: Product): string {
+        if (!product.category) return '';
+        if (typeof product.category === 'object' && 'name' in product.category) {
+            return (product.category as any).name;
+        }
+        return product.category as string;
+    }
+
+    getSubcategoryName(product: Product): string {
+        if (!product.subcategory) return '';
+        if (typeof product.subcategory === 'object' && 'name' in product.subcategory) {
+            return (product.subcategory as any).name;
+        }
+        return product.subcategory as string;
+    }
 }

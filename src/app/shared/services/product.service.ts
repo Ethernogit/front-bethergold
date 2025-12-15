@@ -9,8 +9,8 @@ export interface Product {
     name: string; // Will be auto-generated or same as category/sub? The form doesn't show name field, maybe it is generated or description is used? Image has Description.
     description?: string;
     sku: string; // Often same as barcode or auto-generated
-    category: string;
-    subcategory?: string;
+    category: string | { _id: string; name: string };
+    subcategory?: string | { _id: string; name: string };
     price: number;
     cost?: number;
     stock: number;

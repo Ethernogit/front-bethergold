@@ -26,7 +26,10 @@ export interface Sucursal {
             enableStock: boolean;
             enableSpecifications: boolean;
             enableTags: boolean;
-            requireSku: boolean;
+            requireSku: { type: Boolean, default: false };
+            defaultProvider?: string;
+            defaultCategory?: string;
+            defaultSubcategory?: string;
         };
     };
 }

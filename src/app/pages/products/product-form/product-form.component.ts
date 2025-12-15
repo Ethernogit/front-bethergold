@@ -35,6 +35,7 @@ export class ProductFormComponent implements OnInit {
 
     // Barcode Configuration
     sucursalConfig: any = null;
+    productFormConfig: any = null;
     currentSucursalCode: string = '';
 
     constructor(
@@ -140,9 +141,34 @@ export class ProductFormComponent implements OnInit {
             this.sucursalService.getSucursalById(sucursal._id).subscribe({
                 next: (res: any) => {
                     this.sucursalConfig = res.data?.config?.barcode;
+                    this.productFormConfig = res.data?.config?.productForm;
+                    this.applyDefaults();
                 },
                 error: (err) => console.error('Error loading sucursal config', err)
             });
+        }
+    }
+
+    applyDefaults() {
+        if (!this.productFormConfig) return;
+
+        const { defaultProvider, defaultCategory, defaultSubcategory } = this.productFormConfig;
+
+        if (defaultProvider) {
+            this.productForm.patchValue({ providerId: defaultProvider });
+        }
+
+        if (defaultCategory) {
+            this.productForm.patchValue({ category: defaultCategory });
+        }
+
+        if (defaultCategory && defaultSubcategory) {
+            this.loadSubcategories(defaultCategory);
+            // Patch subcategory after a short delay to allow subscription to possibly fire, 
+            // though reactive forms value holds regardless of options availability.
+            setTimeout(() => {
+                this.productForm.patchValue({ subcategory: defaultSubcategory });
+            }, 100);
         }
     }
 

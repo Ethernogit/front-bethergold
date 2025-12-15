@@ -5,6 +5,9 @@ import { SucursalService, Sucursal } from '../../../shared/services/sucursal.ser
 import { ToastService } from '../../../shared/services/toast.service';
 import { ActivatedRoute } from '@angular/router';
 import { LoginService } from '../../../shared/services/auth/login.service';
+import { CategoryService } from '../../../shared/services/category.service';
+import { SubcategoryService } from '../../../shared/services/subcategory.service';
+import { ProviderService } from '../../../shared/services/provider.service';
 
 @Component({
     selector: 'app-sucursal-config',
@@ -18,11 +21,18 @@ export class SucursalConfigComponent implements OnInit {
     isLoading = false;
     previewBarcode = '';
 
+    categories: any[] = [];
+    subcategories: any[] = [];
+    providers: any[] = [];
+
     constructor(
         private fb: FormBuilder,
         private sucursalService: SucursalService,
         private toastService: ToastService,
-        private loginService: LoginService
+        private loginService: LoginService,
+        private categoryService: CategoryService,
+        private subcategoryService: SubcategoryService,
+        private providerService: ProviderService
     ) {
         this.configForm = this.fb.group({
             enabled: [true],
@@ -41,16 +51,50 @@ export class SucursalConfigComponent implements OnInit {
             enableStock: [true],
             enableSpecifications: [true],
             enableTags: [true],
-            requireSku: [false]
+            requireSku: [false],
+            defaultProvider: [''],
+            defaultCategory: [''],
+            defaultSubcategory: ['']
         });
     }
 
     ngOnInit(): void {
+        this.loadLists();
         this.loadUserData();
 
         // Subscribe to form changes to update preview
         this.configForm.valueChanges.subscribe(val => {
             this.updatePreview(val);
+        });
+
+        // Watch for category changes to load subcategories for defaults
+        this.configForm.get('defaultCategory')?.valueChanges.subscribe(catId => {
+            this.loadSubcategories(catId);
+        });
+    }
+
+    loadLists() {
+        this.categoryService.getCategories().subscribe({
+            next: (res: any) => this.categories = res.data || res,
+            error: (err) => console.error('Error loading categories', err)
+        });
+
+        this.providerService.getProviders().subscribe({
+            next: (res: any) => this.providers = res.data || res,
+            error: (err) => console.error('Error loading providers', err)
+        });
+    }
+
+    loadSubcategories(categoryId: string) {
+        if (!categoryId) {
+            this.subcategories = [];
+            return;
+        }
+        this.subcategoryService.getSubcategoriesByCategory(categoryId).subscribe({
+            next: (res: any) => {
+                this.subcategories = res.data || res;
+            },
+            error: (err) => console.error('Error loading subcategories', err)
         });
     }
 
@@ -94,8 +138,16 @@ export class SucursalConfigComponent implements OnInit {
                         enableStock: configProduct.enableStock ?? true,
                         enableSpecifications: configProduct.enableSpecifications ?? true,
                         enableTags: configProduct.enableTags ?? true,
-                        requireSku: configProduct.requireSku ?? false
+                        requireSku: configProduct.requireSku ?? false,
+                        defaultProvider: configProduct.defaultProvider || '',
+                        defaultCategory: configProduct.defaultCategory || '',
+                        defaultSubcategory: configProduct.defaultSubcategory || ''
                     });
+
+                    // Trigger subcategory load if a category is already set
+                    if (configProduct.defaultCategory) {
+                        this.loadSubcategories(configProduct.defaultCategory);
+                    }
                 }
 
                 // Update preview only needs barcode values, which are already patched
@@ -154,7 +206,10 @@ export class SucursalConfigComponent implements OnInit {
             enableStock: formValue.enableStock,
             enableSpecifications: formValue.enableSpecifications,
             enableTags: formValue.enableTags,
-            requireSku: formValue.requireSku
+            requireSku: formValue.requireSku,
+            defaultProvider: formValue.defaultProvider,
+            defaultCategory: formValue.defaultCategory,
+            defaultSubcategory: formValue.defaultSubcategory
         };
 
         const updateData = {
