@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PageBreadcrumbComponent } from '../../shared/components/common/page-breadcrumb/page-breadcrumb.component';
 import { PermissionFormComponent } from '../../shared/components/admin/permissions/permission-form.component';
 import { PermissionsListComponent } from '../../shared/components/admin/permissions/permissions-list.component';
 import { Permission } from '../../shared/interfaces/auth.interfaces';
@@ -13,7 +12,6 @@ import { LoginService } from '../../shared/services/auth/login.service';
   imports: [
     CommonModule,
     FormsModule,
-    PageBreadcrumbComponent,
     PermissionFormComponent,
     PermissionsListComponent,
   ],
@@ -34,7 +32,7 @@ export class PermissionsComponent {
   constructor(
     private permisosService: PermisosService,
     private loginService: LoginService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadPermissions();
@@ -47,7 +45,7 @@ export class PermissionsComponent {
       console.log('Iniciando carga de permisos...');
       const response = await this.permisosService.getPermissions().toPromise();
       console.log('Respuesta del servidor:', response);
-      
+
       if (response?.success) {
         this.permissions = response.data;
         console.log('Permisos cargados correctamente:', this.permissions.length);
@@ -57,7 +55,7 @@ export class PermissionsComponent {
       }
     } catch (error: any) {
       console.error('Error loading permissions:', error);
-      
+
       // Manejar errores específicos
       if (error.status === 401) {
         console.error('Error de autenticación: Token no válido o expirado');
@@ -65,7 +63,7 @@ export class PermissionsComponent {
       } else if (error.status === 403) {
         console.error('Error de permisos: No tienes acceso a esta funcionalidad');
       }
-      
+
       this.permissions = [];
       // Aquí podrías mostrar un toast de error con el mensaje específico
     } finally {
@@ -77,7 +75,7 @@ export class PermissionsComponent {
     try {
       console.log('Iniciando carga de módulos...');
       const response = await this.permisosService.getPermissionModules().toPromise();
-      
+
       if (response?.success) {
         this.availableModules = response.data;
         console.log('Módulos cargados:', this.availableModules);
@@ -128,9 +126,9 @@ export class PermissionsComponent {
 
       this.showForm = false;
       this.selectedPermission = null;
-      
+
       // Aquí podrías mostrar un toast de éxito
-      
+
     } catch (error) {
       console.error('Error saving permission:', error);
       // Aquí podrías mostrar un toast de error

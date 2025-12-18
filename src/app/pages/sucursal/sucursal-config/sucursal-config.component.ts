@@ -51,6 +51,7 @@ export class SucursalConfigComponent implements OnInit {
             enableStock: [true],
             enableSpecifications: [true],
             enableTags: [true],
+            enableDiamondPoints: [true],
             requireSku: [false],
             defaultProvider: [''],
             defaultCategory: [''],
@@ -138,6 +139,7 @@ export class SucursalConfigComponent implements OnInit {
                         enableStock: configProduct.enableStock ?? true,
                         enableSpecifications: configProduct.enableSpecifications ?? true,
                         enableTags: configProduct.enableTags ?? true,
+                        enableDiamondPoints: configProduct.enableDiamondPoints ?? true,
                         requireSku: configProduct.requireSku ?? false,
                         defaultProvider: configProduct.defaultProvider || '',
                         defaultCategory: configProduct.defaultCategory || '',
@@ -206,6 +208,7 @@ export class SucursalConfigComponent implements OnInit {
             enableStock: formValue.enableStock,
             enableSpecifications: formValue.enableSpecifications,
             enableTags: formValue.enableTags,
+            enableDiamondPoints: formValue.enableDiamondPoints,
             requireSku: formValue.requireSku,
             defaultProvider: formValue.defaultProvider,
             defaultCategory: formValue.defaultCategory,
@@ -218,6 +221,8 @@ export class SucursalConfigComponent implements OnInit {
                 productForm: productFormConfig
             }
         };
+
+        console.log('🚀 Sending Sucursal Config Update:', updateData);
 
         this.sucursalService.updateSucursal(this.currentSucursalId, updateData).subscribe({
             next: (response) => {

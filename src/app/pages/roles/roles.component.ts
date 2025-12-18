@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PageBreadcrumbComponent } from '../../shared/components/common/page-breadcrumb/page-breadcrumb.component';
 import { RoleFormComponent } from '../../shared/components/admin/roles/role-form.component';
 import { RolesListComponent } from '../../shared/components/admin/roles/roles-list.component';
 import { Permission, Role } from '../../shared/interfaces/auth.interfaces';
@@ -13,7 +12,6 @@ import { RoleService } from '../../shared/services/rbca/role.service';
   imports: [
     CommonModule,
     FormsModule,
-    PageBreadcrumbComponent,
     RoleFormComponent,
     RolesListComponent,
   ],
@@ -34,7 +32,7 @@ export class RolesComponent {
   constructor(
     private permissionService: PermissionService,
     private roleService: RoleService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadData();
@@ -163,10 +161,10 @@ export class RolesComponent {
     console.log('=== ROLE SUBMIT START ===');
     console.log('Role data received:', roleData);
     console.log('Available permissions:', this.availablePermissions);
-    
+
     try {
       // Convertir permisos a array de strings si son objetos Permission
-      const permissionIds = Array.isArray(roleData.permissions) 
+      const permissionIds = Array.isArray(roleData.permissions)
         ? roleData.permissions.map(p => typeof p === 'string' ? p : p.id).filter(id => id !== undefined) as string[]
         : [];
 
@@ -206,18 +204,18 @@ export class RolesComponent {
       this.showForm = false;
       this.selectedRole = null;
       console.log('=== ROLE SUBMIT SUCCESS ===');
-      
+
     } catch (error) {
       console.error('=== ROLE SUBMIT ERROR ===');
       console.error('Error saving role:', error);
-      
+
       // Mostrar el error al usuario
       if (error instanceof Error) {
         alert(`Error al guardar el rol: ${error.message}`);
       } else {
         alert('Error desconocido al guardar el rol');
       }
-      
+
       // Fallback: comportamiento anterior en caso de error de API
       try {
         if (this.editMode && roleData.id) {
@@ -270,10 +268,10 @@ export class RolesComponent {
           updatedAt: new Date()
         };
       }
-      
+
       console.log('Rol toggle (local):', this.roles[index]);
       // TODO: Implementar cuando el backend tenga endpoint para toggle
-      
+
     } catch (error) {
       console.error('Error toggling role:', error);
     }
@@ -291,12 +289,12 @@ export class RolesComponent {
     try {
       // Eliminar rol usando el servicio
       await this.roleService.deleteRole(this.roleToDelete.id).toPromise();
-      
+
       // Remover de la lista local
       this.roles = this.roles.filter(r => r.id !== this.roleToDelete!.id);
-      
+
       console.log('Rol eliminado:', this.roleToDelete);
-      
+
     } catch (error) {
       console.error('Error deleting role:', error);
       // Fallback: comportamiento anterior en caso de error de API

@@ -26,6 +26,7 @@ export interface Sucursal {
             enableStock: boolean;
             enableSpecifications: boolean;
             enableTags: boolean;
+            enableDiamondPoints: boolean;
             requireSku: { type: Boolean, default: false };
             defaultProvider?: string;
             defaultCategory?: string;

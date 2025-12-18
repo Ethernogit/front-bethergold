@@ -140,8 +140,10 @@ export class ProductFormComponent implements OnInit {
             this.currentSucursalCode = sucursal.code || 'SUC';
             this.sucursalService.getSucursalById(sucursal._id).subscribe({
                 next: (res: any) => {
+                    console.log('🔍 Sucursal Config Loaded:', res.data?.config);
                     this.sucursalConfig = res.data?.config?.barcode;
                     this.productFormConfig = res.data?.config?.productForm;
+                    console.log('💎 Diamond Points Config:', this.productFormConfig?.enableDiamondPoints);
                     this.applyDefaults();
                 },
                 error: (err) => console.error('Error loading sucursal config', err)
