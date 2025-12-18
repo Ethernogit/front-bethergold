@@ -1,7 +1,7 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, OnChanges, SimpleChanges, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ProductService } from '../../../shared/services/product.service';
+import { ProductService, Product } from '../../../shared/services/product.service';
 import { CategoryService } from '../../../shared/services/category.service';
 import { SubcategoryService } from '../../../shared/services/subcategory.service';
 import { ProviderService } from '../../../shared/services/provider.service';
@@ -17,7 +17,9 @@ import { combineLatest } from 'rxjs';
     imports: [CommonModule, ReactiveFormsModule],
     templateUrl: './product-form.component.html'
 })
-export class ProductFormComponent implements OnInit {
+export class ProductFormComponent implements OnInit, OnChanges {
+    @Input() product: Product | null = null;
+    @Input() isEditMode = false;
     @Output() close = new EventEmitter<void>();
     @Output() saved = new EventEmitter<void>();
 
@@ -67,19 +69,36 @@ export class ProductFormComponent implements OnInit {
     ngOnInit(): void {
         this.loadInitialData();
         this.loadSucursalConfig();
+        this.setupFormListeners();
+    }
 
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['product'] && this.product) {
+            this.patchForm(this.product);
+            // In edit mode, disable barcode manual entry if needed, but for now we leave it
+            if (this.isEditMode) {
+                this.productForm.get('barcode')?.disable(); // Usually barcode shouldn't change
+            } else {
+                this.productForm.get('barcode')?.enable();
+            }
+        }
+    }
+
+    setupFormListeners() {
         // Watch for category/subcategory changes to update barcode
         combineLatest([
             this.productForm.get('category')!.valueChanges,
             this.productForm.get('subcategory')!.valueChanges
         ]).subscribe(([categoryId, subcategoryId]) => {
-            this.generateBarcode(categoryId, subcategoryId);
+            if (!this.isEditMode) {
+                this.generateBarcode(categoryId, subcategoryId);
+            }
         });
 
         // Watch for category changes mainly to load subcategories
         this.productForm.get('category')?.valueChanges.subscribe(categoryId => {
             this.loadSubcategories(categoryId);
-            this.calculatePrices();
+            if (!this.isEditMode) this.calculatePrices();
         });
 
         // Watch for provider changes to load prices
@@ -89,7 +108,7 @@ export class ProductFormComponent implements OnInit {
             } else {
                 this.currentProviderPrices = [];
             }
-            this.calculatePrices();
+            if (!this.isEditMode) this.calculatePrices();
         });
 
         // Watch for inputs that affect price
@@ -98,13 +117,58 @@ export class ProductFormComponent implements OnInit {
             this.productForm.get('karatage')!.valueChanges, // materialTypeId
             this.productForm.get('weight')!.valueChanges
         ]).subscribe(() => {
-            this.calculatePrices();
+            if (!this.isEditMode) this.calculatePrices();
+        });
+    }
+
+    patchForm(product: Product) {
+        // Map category/subcategory if they are objects
+        const categoryId = typeof product.category === 'object' ? (product.category as any)._id : product.category;
+        const subcategoryId = ProductFormComponent.getIdFromRelation(product.subcategory);
+        const providerId = product.providerId; // Assuming product has providerId directly. Check model interface.
+
+        // Load subcategories for the product's category immediately
+        if (categoryId) {
+            this.loadSubcategories(categoryId);
+        }
+
+        // Find material type from karatage string (reverse mapping if possible) or assume karatage holds ID in frontend logic
+        // Original logic mapped ID to string on save. Now we need to map string back to ID?
+        // Or store ID in backend? The service interface says karatage: string.
+        // If we saved "10k", we need to find the material type that matches "10k".
+        // This relies on materialTypes being loaded. might need to wait or rely on simple matching.
+        let materialTypeId = '';
+        if (product.jewelryDetails?.karatage && this.materialTypes.length > 0) {
+            const m = this.materialTypes.find(mt => `${mt.karat}k` === product.jewelryDetails?.karatage || mt.karat.toString() === product.jewelryDetails?.karatage);
+            if (m) materialTypeId = m._id || m.id || '';
+        }
+
+        this.productForm.patchValue({
+            barcode: product.barcode,
+            providerId: providerId,
+            weight: product.specifications?.weight || 0,
+            category: categoryId,
+            subcategory: subcategoryId,
+            goldType: product.jewelryDetails?.goldType || '',
+            karatage: materialTypeId || product.jewelryDetails?.karatage, // Try to set ID, fallback to value
+            diamondPoints: product.jewelryDetails?.diamondPoints || 0,
+            cost: product.cost || 0,
+            price: product.price || 0,
+            description: product.description || ''
         });
 
-        // Watch for manual cost changes to update sale price (removed automatic update from cost changes to avoid overwriting calculating logic if they want manual override, or we can keep it if we persist the margin)
-        // With current logic, Price depends on ProviderPrice Margin. If user changes Cost manually, should we keep that margin?
-        // Simplified: Calculating prices is triggered by main inputs.
+        // If using provider prices, loading them might auto-calc price, so we rely on isEditMode check in listeners to prevent overwrite
+        if (providerId) {
+            this.loadProviderPrices(providerId);
+        }
     }
+
+    // Helper to extract ID
+    static getIdFromRelation(relation: any): string {
+        if (!relation) return '';
+        return typeof relation === 'object' && relation._id ? relation._id : relation as string;
+    }
+
 
     loadInitialData() {
         this.isLoading = true;
@@ -129,6 +193,10 @@ export class ProductFormComponent implements OnInit {
         this.providerService.getMaterialTypes({ status: 'active' }).subscribe({
             next: (res: any) => {
                 this.materialTypes = res.data || res;
+                // Retry patching form now that we have material types
+                if (this.product && this.isEditMode) {
+                    this.patchForm(this.product);
+                }
             },
             error: (err) => console.error('Error loading material types', err)
         });
@@ -140,10 +208,8 @@ export class ProductFormComponent implements OnInit {
             this.currentSucursalCode = sucursal.code || 'SUC';
             this.sucursalService.getSucursalById(sucursal._id).subscribe({
                 next: (res: any) => {
-                    console.log('🔍 Sucursal Config Loaded:', res.data?.config);
                     this.sucursalConfig = res.data?.config?.barcode;
                     this.productFormConfig = res.data?.config?.productForm;
-                    console.log('💎 Diamond Points Config:', this.productFormConfig?.enableDiamondPoints);
                     this.applyDefaults();
                 },
                 error: (err) => console.error('Error loading sucursal config', err)
@@ -293,18 +359,33 @@ export class ProductFormComponent implements OnInit {
             }
         };
 
-        this.productService.createProduct(productData).subscribe({
-            next: () => {
-                this.toastService.success('Producto registrado exitosamente');
-                this.saved.emit();
-                this.close.emit();
-            },
-            error: (err) => {
-                console.error('Error creating product', err);
-                this.toastService.error('Error al registrar el producto');
-                this.isSubmitting = false;
-            }
-        });
+        if (this.isEditMode && this.product && this.product._id) {
+            this.productService.updateProduct(this.product._id, productData).subscribe({
+                next: () => {
+                    this.toastService.success('Producto actualizado exitosamente');
+                    this.saved.emit();
+                    this.close.emit();
+                },
+                error: (err) => {
+                    console.error('Error updating product', err);
+                    this.toastService.error('Error al actualizar el producto');
+                    this.isSubmitting = false;
+                }
+            });
+        } else {
+            this.productService.createProduct(productData).subscribe({
+                next: () => {
+                    this.toastService.success('Producto registrado exitosamente');
+                    this.saved.emit();
+                    this.close.emit();
+                },
+                error: (err) => {
+                    console.error('Error creating product', err);
+                    this.toastService.error('Error al registrar el producto');
+                    this.isSubmitting = false;
+                }
+            });
+        }
     }
 
     onCancel() {

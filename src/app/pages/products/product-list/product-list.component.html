@@ -238,7 +238,9 @@
 
         <!-- Body -->
         <div class="p-8">
-            <app-product-form (close)="closeModal()" (saved)="onProductSaved()"></app-product-form>
+            <app-product-form [product]="editingProduct()" [isEditMode]="!!editingProduct()" (close)="closeModal()"
+                (saved)="onProductSaved()">
+            </app-product-form>
         </div>
     </div>
 </div>
@@ -254,9 +256,13 @@
             producto?</p>
         <div class="flex gap-4 justify-center">
             <button (click)="closeDeleteModal()"
-                class="rounded border border-stroke px-6 py-3 font-medium text-black hover:shadow-1 dark:border-gray-800 dark:text-white">Cancelar</button>
+                class="block w-full rounded border border-stroke bg-gray-100 p-3 text-center font-medium text-black transition hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 sm:w-auto sm:min-w-[120px]">
+                Cancelar
+            </button>
             <button (click)="confirmDelete()"
-                class="rounded bg-danger px-6 py-3 font-medium text-white hover:bg-opacity-90">Eliminar</button>
+                class="block w-full rounded border border-red-600 bg-red-600 p-3 text-center font-medium text-white transition hover:bg-opacity-90 sm:w-auto sm:min-w-[120px]">
+                Eliminar
+            </button>
         </div>
     </div>
 </div>
