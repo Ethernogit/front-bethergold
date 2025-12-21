@@ -132,17 +132,16 @@ export class PermissionFormComponent {
   @Output() formSubmit = new EventEmitter<Permission>();
   @Output() formCancel = new EventEmitter<void>();
 
+  @Input() set availableModules(modules: string[]) {
+    this.moduleOptions = modules.map(m => ({
+      value: m,
+      label: m.charAt(0).toUpperCase() + m.slice(1) // Capitalize first letter
+    }));
+  }
+
   permissionForm: FormGroup;
 
-  moduleOptions = [
-    { value: 'users', label: 'Usuarios' },
-    { value: 'products', label: 'Productos' },
-    { value: 'orders', label: 'Órdenes' },
-    { value: 'providers', label: 'Proveedores' },
-    { value: 'organizations', label: 'Organizaciones' },
-    { value: 'reports', label: 'Reportes' },
-    { value: 'admin', label: 'Administración' },
-  ];
+  moduleOptions: { value: string; label: string }[] = [];
 
   actionOptions = [
     { value: 'create', label: 'Crear' },
@@ -181,7 +180,7 @@ export class PermissionFormComponent {
   getFieldClass(fieldName: string): string {
     const field = this.permissionForm.get(fieldName);
     if (!field) return '';
-    
+
     if (field.invalid && field.touched) {
       return 'border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-600';
     }
@@ -191,7 +190,7 @@ export class PermissionFormComponent {
   getSelectClass(fieldName: string): string {
     const field = this.permissionForm.get(fieldName);
     if (!field) return 'dark:bg-dark-900';
-    
+
     if (field.invalid && field.touched) {
       return 'border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-600 dark:bg-dark-900';
     }

@@ -4,7 +4,7 @@
   <div class="space-y-6">
     @if (showForm) {
     <app-permission-form [permission]="selectedPermission" [editMode]="editMode" [isLoading]="isLoading"
-      (formSubmit)="onPermissionSubmit($event)" (formCancel)="onFormCancel()" />
+      [availableModules]="availableModules" (formSubmit)="onPermissionSubmit($event)" (formCancel)="onFormCancel()" />
     }
 
     <app-permissions-list [permissions]="permissions" [availableModules]="availableModules" [isLoading]="isLoadingList"

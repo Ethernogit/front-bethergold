@@ -44,6 +44,12 @@ export class SucursalConfigComponent implements OnInit {
             indexLength: [6, [Validators.min(1), Validators.max(10)]],
             pattern: ['{sucursalCode}-{category}-{index}', [Validators.required]],
 
+            // Folio Config
+            folioEnabled: [true],
+            folioPrefix: ['', [Validators.maxLength(10)]],
+            folioPadding: [6, [Validators.min(1), Validators.max(12)]],
+            folioNextNumber: [null, [Validators.min(1)]], // Optional, only if setting a new sequence
+
             // Product Form Config
             enableSku: [true],
             enableImage: [true],
@@ -117,6 +123,7 @@ export class SucursalConfigComponent implements OnInit {
             next: (response) => {
                 const configBarcode = response.data.config?.barcode;
                 const configProduct = response.data.config?.productForm;
+                const configFolio = response.data.config?.folio;
 
                 if (configBarcode) {
                     this.configForm.patchValue({
@@ -128,6 +135,14 @@ export class SucursalConfigComponent implements OnInit {
                         subcategoryLength: configBarcode.subcategoryLength || 3,
                         indexLength: configBarcode.indexLength || 6,
                         pattern: configBarcode.pattern || '{sucursalCode}-{category}-{index}'
+                    });
+                }
+
+                if (configFolio) {
+                    this.configForm.patchValue({
+                        folioEnabled: configFolio.enabled ?? true,
+                        folioPrefix: configFolio.prefix || '',
+                        folioPadding: configFolio.padding || 6
                     });
                 }
 
@@ -201,6 +216,13 @@ export class SucursalConfigComponent implements OnInit {
             pattern: formValue.pattern
         };
 
+        const folioConfig = {
+            enabled: formValue.folioEnabled,
+            prefix: formValue.folioPrefix,
+            padding: formValue.folioPadding,
+            nextNumber: formValue.folioNextNumber
+        };
+
         const productFormConfig = {
             enableSku: formValue.enableSku,
             enableImage: formValue.enableImage,
@@ -218,7 +240,8 @@ export class SucursalConfigComponent implements OnInit {
         const updateData = {
             config: {
                 barcode: barcodeConfig,
-                productForm: productFormConfig
+                productForm: productFormConfig,
+                folio: folioConfig
             }
         };
 

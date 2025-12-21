@@ -1,0 +1,211 @@
+<div>
+    <app-page-breadcrumb [pageTitle]="isEditMode() ? 'Editar Cliente' : 'Nuevo Cliente'"></app-page-breadcrumb>
+
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
+        <h3 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90">
+            {{ isEditMode() ? 'Editar Cliente' : 'Registro de Cliente' }}
+        </h3>
+
+        <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+            <div class="space-y-6">
+
+                <!-- Basic Info Section -->
+                <div>
+                    <h4
+                        class="mb-4 text-sm font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100 pb-1 dark:border-gray-700">
+                        Información Básica</h4>
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                        <!-- Name -->
+                        <div class="lg:col-span-2">
+                            <app-label label="Nombre Completo / Razón Social" for="name" [required]="true"></app-label>
+                            <app-input-field formControlName="name"
+                                placeholder="Ingrese el nombre completo o razón social" type="text"
+                                id="name"></app-input-field>
+                            <div *ngIf="submitted && clientForm.get('name')?.errors" class="mt-1 text-sm text-red-500">
+                                El nombre es requerido
+                            </div>
+                        </div>
+
+                        <!-- Type -->
+                        <div>
+                            <app-label label="Tipo de Cliente" for="type" [required]="true"></app-label>
+                            <div class="relative">
+                                <select formControlName="type" id="type"
+                                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500">
+                                    <option value="individual">Persona Física</option>
+                                    <option value="business">Empresa / Moral</option>
+                                </select>
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.66667"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="text-gray-500 dark:text-gray-400" />
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- RFC -->
+                        <div>
+                            <app-label label="RFC / Tax ID" for="taxId"></app-label>
+                            <app-input-field formControlName="taxId" placeholder="Ingrese el RFC" type="text"
+                                id="taxId"></app-input-field>
+                        </div>
+
+                        <!-- Status -->
+                        <div>
+                            <app-label label="Estado" for="status" [required]="true"></app-label>
+                            <div class="relative">
+                                <select formControlName="status" id="status"
+                                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500">
+                                    <option value="active">Activo</option>
+                                    <option value="inactive">Inactivo</option>
+                                    <option value="blocked">Bloqueado</option>
+                                </select>
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.66667"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="text-gray-500 dark:text-gray-400" />
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Info Section -->
+                <div>
+                    <h4
+                        class="mb-4 text-sm font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100 pb-1 dark:border-gray-700">
+                        Contacto</h4>
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                        <!-- Email -->
+                        <div>
+                            <app-label label="Email" for="email"></app-label>
+                            <app-input-field formControlName="email" placeholder="cliente@ejemplo.com" type="email"
+                                id="email"></app-input-field>
+                            <div *ngIf="submitted && clientForm.get('email')?.errors" class="mt-1 text-sm text-red-500">
+                                Email inválido
+                            </div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div>
+                            <app-label label="Teléfono" for="phone"></app-label>
+                            <app-input-field formControlName="phone" placeholder="Ingrese el teléfono" type="text"
+                                id="phone"></app-input-field>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address Section -->
+                <div formGroupName="address">
+                    <h4
+                        class="mb-4 text-sm font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100 pb-1 dark:border-gray-700">
+                        Dirección</h4>
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                        <!-- Street -->
+                        <div class="lg:col-span-2">
+                            <app-label label="Calle y Número" for="street"></app-label>
+                            <app-input-field formControlName="street" placeholder="Ingrese calle y número" type="text"
+                                id="street"></app-input-field>
+                        </div>
+
+                        <!-- City -->
+                        <div>
+                            <app-label label="Ciudad" for="city"></app-label>
+                            <app-input-field formControlName="city" placeholder="Ciudad" type="text"
+                                id="city"></app-input-field>
+                        </div>
+
+                        <!-- State -->
+                        <div>
+                            <app-label label="Estado / Provincia" for="state"></app-label>
+                            <app-input-field formControlName="state" placeholder="Estado" type="text"
+                                id="state"></app-input-field>
+                        </div>
+
+                        <!-- Country -->
+                        <div>
+                            <app-label label="País" for="country"></app-label>
+                            <app-input-field formControlName="country" placeholder="País" type="text"
+                                id="country"></app-input-field>
+                        </div>
+
+                        <!-- Zip Code -->
+                        <div>
+                            <app-label label="Código Postal" for="zipCode"></app-label>
+                            <app-input-field formControlName="zipCode" placeholder="CP" type="text"
+                                id="zipCode"></app-input-field>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Section -->
+                <div>
+                    <h4
+                        class="mb-4 text-sm font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100 pb-1 dark:border-gray-700">
+                        Financiero y Notas</h4>
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                        <!-- Credit Limit -->
+                        <div>
+                            <app-label label="Límite de Crédito" for="creditLimit"></app-label>
+                            <app-input-field formControlName="creditLimit" placeholder="0.00" type="number"
+                                id="creditLimit"></app-input-field>
+                        </div>
+
+                        <!-- Wholesale Toggle -->
+                        <div class="flex items-end pb-2">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" formControlName="isWholesale" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-brand-600">
+                                </div>
+                                <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Cliente
+                                    Mayorista</span>
+                            </label>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="lg:col-span-2">
+                            <app-label label="Notas Internas" for="notes"></app-label>
+                            <textarea formControlName="notes" id="notes" rows="3"
+                                placeholder="Notas adicionales sobre el cliente..."
+                                class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Messages -->
+            <div *ngIf="errorSubject | async as errorMsg"
+                class="mt-4 rounded-lg bg-red-50 p-4 text-sm text-red-500 dark:bg-red-500/10">
+                {{ errorMsg }}
+            </div>
+
+            <!-- Actions -->
+            <div class="mt-8 flex items-center justify-end gap-3 border-t border-gray-100 pt-6 dark:border-gray-700">
+                <button type="button" routerLink="/clients"
+                    class="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]">
+                    Cancelar
+                </button>
+                <button type="submit" [disabled]="loading()"
+                    class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50 flex items-center gap-2">
+                    <svg *ngIf="loading()" class="animate-spin -ml-1 h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    {{ isEditMode() ? 'Actualizar Cliente' : 'Crear Cliente' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

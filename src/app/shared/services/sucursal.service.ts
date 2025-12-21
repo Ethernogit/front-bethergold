@@ -32,6 +32,12 @@ export interface Sucursal {
             defaultCategory?: string;
             defaultSubcategory?: string;
         };
+        folio?: {
+            enabled: boolean;
+            prefix?: string;
+            padding?: number;
+            nextNumber?: number;
+        };
     };
 }
 

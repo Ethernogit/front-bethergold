@@ -209,6 +209,36 @@ export const routes: Routes = [
         title: 'Gestión de Productos | Bethergold'
       },
       {
+        path: 'clients',
+        loadComponent: () => import('./pages/clients/client-list/client-list.component').then(m => m.ClientListComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'clients',
+          action: 'read'
+        },
+        title: 'Gestión de Clientes | Bethergold'
+      },
+      {
+        path: 'clients/new',
+        loadComponent: () => import('./pages/clients/client-form/client-form.component').then(m => m.ClientFormComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'clients',
+          action: 'create'
+        },
+        title: 'Nuevo Cliente | Bethergold'
+      },
+      {
+        path: 'clients/:id/edit',
+        loadComponent: () => import('./pages/clients/client-form/client-form.component').then(m => m.ClientFormComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'clients',
+          action: 'update'
+        },
+        title: 'Editar Cliente | Bethergold'
+      },
+      {
         path: 'users/edit/:id',
         loadComponent: () => import('./pages/users/user-create/user-create.component').then(m => m.UserCreateComponent),
         canActivate: [AuthGuard, PermissionGuard],
