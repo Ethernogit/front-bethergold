@@ -5,12 +5,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } 
 import { UserService } from '../../../shared/services/user.service';
 
 @Component({
-  selector: 'app-user-list',
-  standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, FormsModule],
-  template: `
+    selector: 'app-user-list',
+    standalone: true,
+    imports: [CommonModule, RouterModule, ReactiveFormsModule, FormsModule],
+    template: `
 <!-- User List Component -->
-<div class="mx-auto max-w-screen-2xl h-[calc(100vh-135px)] flex flex-col overflow-hidden">
+<div class="mx-auto max-w-screen-2xl h-[calc(100vh-50px)] flex flex-col overflow-hidden">
     <div class="flex flex-col gap-4 h-full">
         <div
             class="rounded-sm border border-stroke bg-white shadow-default dark:border-gray-800 dark:bg-gray-900 flex flex-col h-full">
@@ -207,112 +207,112 @@ import { UserService } from '../../../shared/services/user.service';
 `
 })
 export class UserListComponent implements OnInit {
-  private userService = inject(UserService);
-  private fb = inject(FormBuilder);
+    private userService = inject(UserService);
+    private fb = inject(FormBuilder);
 
-  // Users State
-  users = signal<any[]>([]);
-  loading = signal(false);
+    // Users State
+    users = signal<any[]>([]);
+    loading = signal(false);
 
-  // Pagination (Client-side)
-  currentPage = signal(1);
-  itemsPerPage = signal(10);
+    // Pagination (Client-side)
+    currentPage = signal(1);
+    itemsPerPage = signal(10);
 
-  paginatedUsers = computed(() => {
-    const startIndex = (this.currentPage() - 1) * this.itemsPerPage();
-    const endIndex = startIndex + this.itemsPerPage();
-    return this.users().slice(startIndex, endIndex);
-  });
-
-  totalPages = computed(() => Math.ceil(this.users().length / this.itemsPerPage()));
-
-  // Password Modal State
-  showPasswordModal = false;
-  selectedUserId: string | null = null;
-  passwordForm: FormGroup;
-  passwordLoading = false;
-  passwordError = '';
-  passwordSuccess = '';
-
-  constructor() {
-    this.passwordForm = this.fb.group({
-      password: ['', [Validators.required, Validators.minLength(8)]]
+    paginatedUsers = computed(() => {
+        const startIndex = (this.currentPage() - 1) * this.itemsPerPage();
+        const endIndex = startIndex + this.itemsPerPage();
+        return this.users().slice(startIndex, endIndex);
     });
-  }
 
-  ngOnInit() {
-    this.loadUsers();
-  }
+    totalPages = computed(() => Math.ceil(this.users().length / this.itemsPerPage()));
 
-  loadUsers() {
-    this.loading.set(true);
-    this.userService.getUsers().subscribe({
-      next: (response: any) => {
-        this.loading.set(false);
-        if (response.success) {
-          const mappedUsers = response.data.map((item: any) => ({
-            _id: item.userId._id,
-            email: item.userId.email,
-            profile: item.userId.profile,
-            role: item.roleId ? item.roleId.name : 'N/A',
-            status: item.status
-          }));
-          this.users.set(mappedUsers);
-        }
-      },
-      error: (error) => {
-        this.loading.set(false);
-        console.error('Error loading users', error);
-      }
-    });
-  }
+    // Password Modal State
+    showPasswordModal = false;
+    selectedUserId: string | null = null;
+    passwordForm: FormGroup;
+    passwordLoading = false;
+    passwordError = '';
+    passwordSuccess = '';
 
-  onPageChange(page: number) {
-    this.currentPage.set(page);
-  }
-
-  onLimitChange(limit: number) {
-    this.itemsPerPage.set(limit);
-    this.currentPage.set(1);
-  }
-
-  openPasswordModal(userId: string) {
-    this.selectedUserId = userId;
-    this.showPasswordModal = true;
-    this.passwordForm.reset();
-    this.passwordError = '';
-    this.passwordSuccess = '';
-  }
-
-  closePasswordModal() {
-    this.showPasswordModal = false;
-    this.selectedUserId = null;
-  }
-
-  onChangePassword() {
-    if (this.passwordForm.invalid || !this.selectedUserId) {
-      this.passwordForm.markAllAsTouched();
-      return;
+    constructor() {
+        this.passwordForm = this.fb.group({
+            password: ['', [Validators.required, Validators.minLength(8)]]
+        });
     }
 
-    this.passwordLoading = true;
-    this.passwordError = '';
-    this.passwordSuccess = '';
+    ngOnInit() {
+        this.loadUsers();
+    }
 
-    const newPassword = this.passwordForm.get('password')?.value;
+    loadUsers() {
+        this.loading.set(true);
+        this.userService.getUsers().subscribe({
+            next: (response: any) => {
+                this.loading.set(false);
+                if (response.success) {
+                    const mappedUsers = response.data.map((item: any) => ({
+                        _id: item.userId._id,
+                        email: item.userId.email,
+                        profile: item.userId.profile,
+                        role: item.roleId ? item.roleId.name : 'N/A',
+                        status: item.status
+                    }));
+                    this.users.set(mappedUsers);
+                }
+            },
+            error: (error) => {
+                this.loading.set(false);
+                console.error('Error loading users', error);
+            }
+        });
+    }
 
-    this.userService.changePassword(this.selectedUserId, newPassword).subscribe({
-      next: () => {
-        this.passwordLoading = false;
-        this.passwordSuccess = 'Contraseña actualizada correctamente';
-        setTimeout(() => {
-          this.closePasswordModal();
-        }, 1500);
-      },
-      error: (err) => {
-        this.passwordLoading = false;
-        this.passwordError = err.error?.message || 'Error al actualizar la contraseña';
-      }
-    });
-  }
+    onPageChange(page: number) {
+        this.currentPage.set(page);
+    }
+
+    onLimitChange(limit: number) {
+        this.itemsPerPage.set(limit);
+        this.currentPage.set(1);
+    }
+
+    openPasswordModal(userId: string) {
+        this.selectedUserId = userId;
+        this.showPasswordModal = true;
+        this.passwordForm.reset();
+        this.passwordError = '';
+        this.passwordSuccess = '';
+    }
+
+    closePasswordModal() {
+        this.showPasswordModal = false;
+        this.selectedUserId = null;
+    }
+
+    onChangePassword() {
+        if (this.passwordForm.invalid || !this.selectedUserId) {
+            this.passwordForm.markAllAsTouched();
+            return;
+        }
+
+        this.passwordLoading = true;
+        this.passwordError = '';
+        this.passwordSuccess = '';
+
+        const newPassword = this.passwordForm.get('password')?.value;
+
+        this.userService.changePassword(this.selectedUserId, newPassword).subscribe({
+            next: () => {
+                this.passwordLoading = false;
+                this.passwordSuccess = 'Contraseña actualizada correctamente';
+                setTimeout(() => {
+                    this.closePasswordModal();
+                }, 1500);
+            },
+            error: (err) => {
+                this.passwordLoading = false;
+                this.passwordError = err.error?.message || 'Error al actualizar la contraseña';
+            }
+        });
+    }
 }

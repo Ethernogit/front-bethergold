@@ -1,0 +1,421 @@
+<div
+    class="flex flex-col h-[calc(100vh-6rem)] bg-gray-50 dark:bg-gray-900 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800">
+    <!-- Header -->
+    <!-- Header Removed to save space -->
+
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Main Content (Left): Client, Items -->
+        <main class="flex-1 overflow-y-auto p-4">
+
+            <form [formGroup]="noteForm">
+                <!-- Header Row: Search & Client -->
+                <div class="flex flex-col md:flex-row gap-4 mb-6">
+                    <!-- Search (Left) -->
+                    <div class="flex-1 relative z-20">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Buscar Producto / Código de
+                            Barras</label>
+                        <div class="relative">
+                            <div
+                                class="flex items-center bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-1 transition-colors hover:border-gray-400 dark:hover:border-gray-600 h-14">
+                                <div class="p-2 text-gray-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z" />
+                                    </svg>
+                                </div>
+                                <input [formControl]="searchControl" type="text"
+                                    placeholder="Escanear o escribir código..."
+                                    class="w-full h-full bg-transparent border-none text-gray-900 dark:text-white text-lg font-medium focus:ring-0 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 pr-10">
+
+                                <div class="p-2">
+                                    <button
+                                        class="bg-gray-100 dark:bg-gray-800 p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <!-- Loading Indicator -->
+                                <span *ngIf="isSearching"
+                                    class="absolute right-12 top-1/2 -translate-y-1/2 text-amber-500 animate-spin">⟳</span>
+                            </div>
+
+                            <!-- Results Dropdown -->
+                            <div *ngIf="searchResults.length > 0"
+                                class="absolute w-full mt-1 bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 max-h-60 overflow-y-auto overflow-x-hidden z-50">
+                                <ul>
+                                    <li *ngFor="let product of searchResults" (click)="selectProduct(product)"
+                                        class="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer border-b border-gray-100 dark:border-gray-800 last:border-0 flex justify-between items-center group transition-colors">
+                                        <div>
+                                            <p
+                                                class="font-medium text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-500">
+                                                {{ product.name || product.description }}</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">SKU: {{ product.sku }} |
+                                                Stock:
+                                                {{ product.stock }}</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="block text-sm font-bold text-gray-900 dark:text-white">{{
+                                                product.price
+                                                | currency }}</span>
+                                            <span
+                                                class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-1 rounded">{{
+                                                getCategoryName(product) }}</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Client Selector (Right) -->
+                    <div class="flex-1">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Cliente</label>
+                        <div class="relative group">
+                            <div
+                                class="flex items-center bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-1 transition-colors hover:border-gray-400 dark:hover:border-gray-600 h-14">
+                                <div class="p-2 text-gray-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-5 h-5">
+                                        <path fill-rule="evenodd"
+                                            d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <select formControlName="clientId"
+                                    class="w-full bg-transparent border-none text-gray-900 dark:text-white text-sm focus:ring-0 cursor-pointer appearance-none pl-0">
+                                    <option value="" disabled>Seleccionar Cliente...</option>
+                                    <option *ngFor="let client of clients" [value]="client._id">{{ client.name }} {{
+                                        client.lastName }}</option>
+                                </select>
+                                <span
+                                    class="text-amber-600 dark:text-amber-500 text-xs font-bold px-3 cursor-pointer hover:underline whitespace-nowrap">Cambiar</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Items Table -->
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden min-h-[400px]">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead
+                                class="bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-xs font-bold uppercase tracking-wider border-b border-gray-200 dark:border-gray-700">
+                                <tr>
+                                    <th class="px-6 py-4">Producto / Descripción</th>
+                                    <th class="px-4 py-4 text-center">Kilates</th>
+                                    <th class="px-4 py-4 text-center">Peso</th>
+                                    <th class="px-4 py-4 text-right">Precio</th>
+                                    <th class="px-4 py-4 text-right">Importe</th>
+                                    <th class="px-4 py-4 text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="items"
+                                class="divide-y divide-gray-200 dark:divide-gray-700 text-gray-700 dark:text-gray-300">
+                                <tr *ngFor="let item of items.controls; let i=index" [formGroupName]="i"
+                                    class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+
+                                    <!-- Description -->
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-start gap-3">
+                                            <div [ngSwitch]="item.get('type')?.value" class="mt-1">
+                                                <span *ngSwitchCase="'jewelry'" class="text-amber-500">💍</span>
+                                                <span *ngSwitchCase="'service'" class="text-blue-500">🔧</span>
+                                                <span *ngSwitchCase="'custom'" class="text-purple-500">💎</span>
+                                                <span *ngSwitchDefault
+                                                    class="text-gray-400 dark:text-gray-500">📦</span>
+                                            </div>
+                                            <div class="flex-1">
+                                                <input type="text" formControlName="name" placeholder="Descripción..."
+                                                    class="w-full bg-transparent border-none p-0 text-gray-900 dark:text-white font-medium placeholder-gray-400 dark:placeholder-gray-500 focus:ring-0">
+
+                                                <div formGroupName="specifications">
+                                                    <input type="text" formControlName="notes"
+                                                        placeholder="SKU / Detalles..."
+                                                        class="text-xs text-gray-500 dark:text-gray-400 bg-transparent border-none p-0 w-full focus:ring-0">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Kilates (Specs) -->
+                                    <td class="px-4 py-4 text-center" formGroupName="specifications">
+                                        <input type="text" formControlName="karatage" placeholder="-"
+                                            class="w-16 bg-transparent text-center border-b border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:border-amber-500 focus:ring-0">
+                                    </td>
+
+                                    <!-- Peso (Specs) -->
+                                    <td class="px-4 py-4 text-center" formGroupName="specifications">
+                                        <input type="text" formControlName="weight" placeholder="-"
+                                            class="w-16 bg-transparent text-center border-b border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:border-amber-500 focus:ring-0">
+                                    </td>
+
+                                    <!-- Precio -->
+                                    <td class="px-4 py-4 text-right">
+                                        <input type="number" formControlName="unitPrice"
+                                            class="w-24 bg-transparent text-right border-b border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:border-amber-500 focus:ring-0">
+                                    </td>
+
+                                    <!-- Importe (Subtotal) -->
+                                    <td class="px-4 py-4 text-right">
+                                        <span class="text-amber-600 dark:text-green-400 font-bold">{{
+                                            item.get('subtotal')?.value | currency
+                                            }}</span>
+                                    </td>
+
+                                    <!-- Acciones -->
+                                    <td class="px-4 py-4 text-center">
+                                        <button type="button" (click)="removeItem(i)"
+                                            class="text-gray-400 hover:text-red-500 transition-colors">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2">
+                                                <path
+                                                    d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <tr *ngIf="items.length === 0">
+                                    <td colspan="6" class="px-6 py-20 text-center">
+                                        <div class="flex flex-col items-center text-gray-400 dark:text-gray-600">
+                                            <span class="text-4xl mb-2 opacity-50">🛍️</span>
+                                            <p>Escanee productos para agregar a la venta</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+
+        </main>
+
+        <!-- Sidebar (Right): Totals & Payment -->
+        <aside
+            class="w-96 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col shadow-2xl z-10 text-gray-900 dark:text-white">
+            <div class="p-4 flex-1 flex flex-col h-full">
+
+                <!-- Action Grid (Sidebar) -->
+                <!-- Reduced height buttons, removed aspect-square -->
+                <div class="grid grid-cols-4 gap-2 mb-4 shrink-0">
+                    <!-- Ingreso -->
+                    <button type="button" (click)="addItem('jewelry')" title="Ingreso"
+                        class="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex flex-col items-center justify-center gap-0.5 group transition-all">
+                        <div class="relative w-6 h-6 flex items-center justify-center">
+                            <!-- Plus Icon Duotone -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
+                                <path class="fill-amber-100 dark:fill-amber-900/40 stroke-amber-500"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                        </div>
+                        <span
+                            class="text-[9px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-tight">Ingreso</span>
+                    </button>
+
+                    <!-- Taller (Repair) - Hammer/Tools -->
+                    <button type="button" (click)="addItem('service')" title="Taller"
+                        class="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex flex-col items-center justify-center gap-0.5 group transition-all">
+                        <div class="relative w-6 h-6 flex items-center justify-center">
+                            <!-- Tools Icon Duotone -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
+                                <path class="fill-blue-100 dark:fill-blue-900/40 stroke-blue-500" stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="1.5"
+                                    d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                            </svg>
+                        </div>
+                        <span
+                            class="text-[9px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-tight">Taller</span>
+                    </button>
+
+                    <!-- Hechura (Custom) - Diamond/Sparkle -->
+                    <button type="button" (click)="addItem('custom')" title="Hechura"
+                        class="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex flex-col items-center justify-center gap-0.5 group transition-all">
+                        <div class="relative w-6 h-6 flex items-center justify-center">
+                            <!-- Diamond Icon Duotone (Purple for Custom) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
+                                <path class="fill-purple-100 dark:fill-purple-900/40 stroke-purple-500"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M12 2L2 7l10 15 10-15-10-5zM2 7h20M12 22V7" />
+                                <path class="fill-purple-200 dark:fill-purple-800/40 stroke-none"
+                                    d="M7 7L12 22L17 7H7Z" />
+                            </svg>
+                        </div>
+                        <span
+                            class="text-[9px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-tight">Hechura</span>
+                    </button>
+
+                    <!-- Externo -->
+                    <button type="button" (click)="addItem('external')" title="Externo"
+                        class="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex flex-col items-center justify-center gap-0.5 group transition-all">
+                        <div class="relative w-6 h-6 flex items-center justify-center">
+                            <!-- External Box Icon Duotone -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
+                                <path class="fill-orange-100 dark:fill-orange-900/40 stroke-orange-500"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                <path class="stroke-orange-500" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.5" d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12" />
+                            </svg>
+                        </div>
+                        <span class="text-[9px] font-bold text-gray-600 dark:text-gray-300 uppercase">Externo</span>
+                    </button>
+
+                    <!-- Row 2 -->
+                    <button type="button" title="Descuento"
+                        class="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex flex-col items-center justify-center gap-0.5 opacity-75 hover:opacity-100">
+                        <span class="text-pink-400 font-bold text-xl mb-1">%</span>
+                        <span
+                            class="text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-tight">Desc.</span>
+                    </button>
+                    <button type="button" title="Apartado"
+                        class="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex flex-col items-center justify-center gap-0.5 opacity-75 hover:opacity-100">
+                        <!-- Calendar Icon -->
+                        <div class="text-indigo-400 mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="w-5 h-5">
+                                <path
+                                    d="M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM7.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM9.75 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM10.5 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM12.75 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM14.25 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
+                                <path fill-rule="evenodd"
+                                    d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span
+                            class="text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-tight">Apart.</span>
+                    </button>
+                    <button type="button" title="Precio"
+                        class="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex flex-col items-center justify-center gap-0.5 opacity-75 hover:opacity-100">
+                        <div class="text-green-400 mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="w-5 h-5">
+                                <path
+                                    d="M10.464 8.746c.227-.18.497-.311.786-.394v2.795a2.252 2.252 0 0 1-.786-.393c-.394-.313-.546-.681-.546-1.004 0-.324.152-.691.546-1.004ZM12.75 15.662v-2.824c.347.085.664.228.921.421.427.32.579.686.579.991 0 .305-.152.671-.579.991a2.534 2.534 0 0 1-.921.42Z" />
+                                <path fill-rule="evenodd"
+                                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v.816a3.836 3.836 0 0 0-1.72.656c-.89.666-1.202 1.543-1.202 2.278 0 .697.299 1.55 1.141 2.215a.75.75 0 0 0 .942-1.18c-.37-.292-.483-.655-.483-.87 0-.156.079-.38.24-.508a2.338 2.338 0 0 1 .802-.403v3.085c-.93.2-1.786.6-2.428 1.09a.75.75 0 1 0 .91 1.192c.382-.292.837-.51 1.33-.63V18a.75.75 0 0 0 1.5 0v-.81c.71-.16 1.35-.443 1.838-.809.927-.696 1.256-1.614 1.256-2.38 0-.75-.32-1.66-1.256-2.38a.75.75 0 0 0-.916 1.18c.39.296.533.682.533.91 0 .157-.083.393-.243.513a2.334 2.334 0 0 1-.809.412v-3.085c.95-.205 1.849-.619 2.502-1.134a.75.75 0 0 0-.936-1.164c-.388.297-.84.516-1.336.634V6Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span
+                            class="text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-tight">Precio</span>
+                    </button>
+                    <button type="button" (click)="cleanCart()" title="Limpiar"
+                        class="h-16 bg-white dark:bg-gray-800 border border-red-500/20 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/10 flex flex-col items-center justify-center gap-0.5 group">
+                        <div class="text-red-500 group-hover:animate-bounce mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="w-5 h-5">
+                                <path fill-rule="evenodd"
+                                    d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span class="text-[9px] font-bold text-red-500 uppercase tracking-tight">Limpiar</span>
+                    </button>
+                </div>
+
+                <!-- Financial Summary Top -->
+                <div class="space-y-1 mb-4 text-xs shrink-0">
+                    <div class="flex justify-between text-gray-500 dark:text-gray-400">
+                        <span>Subtotal</span>
+                        <span class="text-gray-900 dark:text-white">{{ noteForm.get('subtotal')?.value | currency
+                            }}</span>
+                    </div>
+                    <div class="flex justify-between text-gray-500 dark:text-gray-400">
+                        <span>Descuento</span>
+                        <span class="text-red-500">-{{ noteForm.get('discount')?.value | currency }}</span>
+                    </div>
+                    <div class="flex justify-between text-gray-500 dark:text-gray-400">
+                        <span>Impuestos</span>
+                        <span class="text-gray-900 dark:text-white">$0.00</span>
+                    </div>
+                </div>
+
+                <!-- BIG TOTAL (Horizontal) -->
+                <div
+                    class="mb-4 bg-gray-100 dark:bg-gray-800/50 p-3 rounded-lg flex justify-between items-center border border-gray-200 dark:border-gray-700/50 shrink-0">
+                    <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">Total a
+                        Pagar
+                    </h3>
+                    <div class="text-2xl font-extrabold text-amber-600 dark:text-amber-500 tracking-tight">
+                        {{ noteForm.get('total')?.value | currency }}
+                    </div>
+                </div>
+
+                <!-- Payment Methods Tabs (Visual Only for now, selects logic) -->
+                <div class="bg-gray-100 dark:bg-gray-800 p-1 rounded-lg flex mb-4 shrink-0">
+                    <button type="button"
+                        class="flex-1 py-1.5 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm text-xs font-bold flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                            class="w-4 h-4 text-emerald-500 dark:text-emerald-400">
+                            <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
+                            <path fill-rule="evenodd"
+                                d="M22.5 9.75h-21v7.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-7.5Zm-18 3.75a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        EFECTIVO
+                    </button>
+                    <button type="button"
+                        class="flex-1 py-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                            class="w-4 h-4 text-gray-400 dark:text-gray-500">
+                            <path fill-rule="evenodd"
+                                d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        TARJETA
+                    </button>
+                </div>
+
+                <form [formGroup]="noteForm" class="space-y-4 shrink-0">
+                    <!-- Recibido / Cambio Grid -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Recibido</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-2.5 text-gray-400 text-sm">$</span>
+                                <input type="number" formControlName="receivedAmount" (input)="calculateChange()"
+                                    class="w-full pl-6 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-lg font-bold focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Cambio</label>
+                            <div class="relative">
+                                <div
+                                    class="w-full py-2 px-3 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-900 rounded-lg text-emerald-600 dark:text-emerald-400 text-lg font-bold text-right">
+                                    {{ noteForm.get('changeAmount')?.value | currency }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden logic inputs kept for compatibility if needed, but driven by logic above -->
+                    <div class="hidden">
+                        <input type="number" formControlName="cashAmount">
+                    </div>
+                </form>
+
+                <!-- Footer Button (Confirm) - Pushed to bottom -->
+                <div class="pt-4">
+                    <button type="button" (click)="onSubmit()" [disabled]="isLoading"
+                        class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-gray-900 font-extrabold text-base rounded-xl shadow-lg hover:shadow-orange-500/20 transform transition-all active:scale-95 flex items-center justify-center gap-2">
+                        <span *ngIf="isLoading" class="animate-spin">↻</span>
+                        <span
+                            class="rounded-full border-2 border-gray-900 w-5 h-5 flex items-center justify-center text-[10px]">✓</span>
+                        CONFIRMAR VENTA
+                    </button>
+                </div>
+
+            </div>
+        </aside>
+    </div>
+</div>

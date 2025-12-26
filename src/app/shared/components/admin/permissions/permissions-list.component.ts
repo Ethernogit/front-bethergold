@@ -12,7 +12,7 @@ import { Permission } from '../../../interfaces/auth.interfaces';
   ],
   template: `
     <!-- Permissions List Component -->
-    <div class="mx-auto max-w-screen-2xl h-[calc(100vh-135px)] flex flex-col overflow-hidden">
+    <div class="mx-auto max-w-screen-2xl h-[calc(100vh-50px)] flex flex-col overflow-hidden">
       <div class="flex flex-col gap-4 h-full">
         <div
           class="rounded-sm border border-stroke bg-white shadow-default dark:border-gray-800 dark:bg-gray-900 flex flex-col h-full">

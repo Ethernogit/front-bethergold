@@ -67,6 +67,10 @@ export class ProductService {
         return this.http.get(`${this.apiUrl}/search`, { params: { q: term } });
     }
 
+    searchProductsByQR(term: string): Observable<any> {
+        return this.http.get(`${this.apiUrl}/searchqr`, { params: { q: term } });
+    }
+
     getNextBarcode(sucursalId: string, category?: string, subcategory?: string): Observable<any> {
         let params = new HttpParams().set('sucursalId', sucursalId);
         if (category) {

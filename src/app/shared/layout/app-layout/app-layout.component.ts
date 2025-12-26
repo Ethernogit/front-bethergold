@@ -4,14 +4,12 @@ import { CommonModule } from '@angular/common';
 import { AppSidebarComponent } from '../app-sidebar/app-sidebar.component';
 import { BackdropComponent } from '../backdrop/backdrop.component';
 import { RouterModule } from '@angular/router';
-import { AppHeaderComponent } from '../app-header/app-header.component';
 
 @Component({
   selector: 'app-layout',
   imports: [
     CommonModule,
     RouterModule,
-    AppHeaderComponent,
     AppSidebarComponent,
     BackdropComponent
   ],

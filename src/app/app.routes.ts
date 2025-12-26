@@ -29,7 +29,7 @@ import { SubcategoriesComponent } from './pages/products/subcategories/subcatego
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/dashboard',
+    redirectTo: '/sales/new',
     pathMatch: 'full'
   },
 
@@ -277,6 +277,28 @@ export const routes: Routes = [
           action: 'update'
         },
         title: 'Configuración de Sucursal | Bethergold'
+      },
+
+      // Ventas / Notas
+      {
+        path: 'sales/new',
+        loadComponent: () => import('./pages/sales/new-note/new-note.component').then(m => m.NewNoteComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'sales',
+          action: 'create'
+        },
+        title: 'Nueva Nota / POS | Bethergold'
+      },
+      {
+        path: 'sales/history',
+        loadComponent: () => import('./pages/sales/sales-history/sales-history.component').then(m => m.SalesHistoryComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'sales',
+          action: 'read'
+        },
+        title: 'Historial de Ventas | Bethergold'
       }
     ]
   },
