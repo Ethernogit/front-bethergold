@@ -1,5 +1,4 @@
-<div
-    class="flex flex-col h-[calc(100vh-6rem)] bg-gray-50 dark:bg-gray-900 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800">
+<div class="flex flex-col h-[calc(100vh)] bg-gray-50 dark:bg-gray-900 overflow-hidden">
     <!-- Header -->
     <!-- Header Removed to save space -->
 
@@ -77,10 +76,10 @@
                     <!-- Client Selector (Right) -->
                     <div class="flex-1">
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Cliente</label>
-                        <div class="relative group">
+                        <div class="relative group cursor-pointer" (click)="openClientModal()">
                             <div
-                                class="flex items-center bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-1 transition-colors hover:border-gray-400 dark:hover:border-gray-600 h-14">
-                                <div class="p-2 text-gray-400">
+                                class="flex items-center bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-1 transition-colors hover:border-amber-400 dark:hover:border-amber-600 h-14">
+                                <div class="p-2 text-gray-400 group-hover:text-amber-500 transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                         class="w-5 h-5">
                                         <path fill-rule="evenodd"
@@ -88,112 +87,203 @@
                                             clip-rule="evenodd" />
                                     </svg>
                                 </div>
-                                <select formControlName="clientId"
-                                    class="w-full bg-transparent border-none text-gray-900 dark:text-white text-sm focus:ring-0 cursor-pointer appearance-none pl-0">
-                                    <option value="" disabled>Seleccionar Cliente...</option>
-                                    <option *ngFor="let client of clients" [value]="client._id">{{ client.name }} {{
-                                        client.lastName }}</option>
-                                </select>
+
+                                <div class="flex-1 px-2">
+                                    <h4 *ngIf="selectedClient"
+                                        class="text-sm font-bold text-gray-900 dark:text-white leading-tight">
+                                        {{ selectedClient.name }}
+                                    </h4>
+                                    <p *ngIf="selectedClient" class="text-[10px] text-gray-500 dark:text-gray-400">
+                                        {{ selectedClient.phone || selectedClient.email || 'Cliente Registrado' }}
+                                    </p>
+                                    <span *ngIf="!selectedClient"
+                                        class="text-sm text-gray-400 dark:text-gray-500">Seleccionar Cliente...</span>
+                                </div>
+
                                 <span
-                                    class="text-amber-600 dark:text-amber-500 text-xs font-bold px-3 cursor-pointer hover:underline whitespace-nowrap">Cambiar</span>
+                                    class="text-amber-600 dark:text-amber-500 text-xs font-bold px-3 whitespace-nowrap">
+                                    {{ selectedClient ? 'Cambiar' : 'Buscar' }}
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Items Table -->
-                <div
-                    class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden min-h-[400px]">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead
-                                class="bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-xs font-bold uppercase tracking-wider border-b border-gray-200 dark:border-gray-700">
-                                <tr>
-                                    <th class="px-6 py-4">Producto / Descripción</th>
-                                    <th class="px-4 py-4 text-center">Kilates</th>
-                                    <th class="px-4 py-4 text-center">Peso</th>
-                                    <th class="px-4 py-4 text-right">Precio</th>
-                                    <th class="px-4 py-4 text-right">Importe</th>
-                                    <th class="px-4 py-4 text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody formArrayName="items"
-                                class="divide-y divide-gray-200 dark:divide-gray-700 text-gray-700 dark:text-gray-300">
-                                <tr *ngFor="let item of items.controls; let i=index" [formGroupName]="i"
-                                    class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                <!-- Items List (Cards) -->
+                <!-- Items List (Cards) -->
+                <div class="flex flex-col gap-3 min-h-[400px]" formArrayName="items">
 
-                                    <!-- Description -->
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-start gap-3">
-                                            <div [ngSwitch]="item.get('type')?.value" class="mt-1">
-                                                <span *ngSwitchCase="'jewelry'" class="text-amber-500">💍</span>
-                                                <span *ngSwitchCase="'service'" class="text-blue-500">🔧</span>
-                                                <span *ngSwitchCase="'custom'" class="text-purple-500">💎</span>
-                                                <span *ngSwitchDefault
-                                                    class="text-gray-400 dark:text-gray-500">📦</span>
-                                            </div>
-                                            <div class="flex-1">
-                                                <input type="text" formControlName="name" placeholder="Descripción..."
-                                                    class="w-full bg-transparent border-none p-0 text-gray-900 dark:text-white font-medium placeholder-gray-400 dark:placeholder-gray-500 focus:ring-0">
+                    <div *ngIf="items.length === 0"
+                        class="flex flex-col items-center justify-center h-64 text-gray-400 dark:text-gray-600 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl m-4">
+                        <span class="text-4xl mb-3 opacity-50">🛍️</span>
+                        <p class="font-medium">Escanee productos para agregar a la venta</p>
+                    </div>
 
-                                                <div formGroupName="specifications">
-                                                    <input type="text" formControlName="notes"
-                                                        placeholder="SKU / Detalles..."
-                                                        class="text-xs text-gray-500 dark:text-gray-400 bg-transparent border-none p-0 w-full focus:ring-0">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
+                    <div *ngFor="let item of items.controls; let i=index" [formGroupName]="i">
 
-                                    <!-- Kilates (Specs) -->
-                                    <td class="px-4 py-4 text-center" formGroupName="specifications">
-                                        <input type="text" formControlName="karatage" placeholder="-"
-                                            class="w-16 bg-transparent text-center border-b border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:border-amber-500 focus:ring-0">
-                                    </td>
+                        <!-- PRODUCT CARD (type: jewelry/product) -->
+                        <div *ngIf="item.get('type')?.value === 'jewelry'"
+                            class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm flex flex-col sm:flex-row relative group transition-all hover:border-amber-300 dark:hover:border-amber-700">
 
-                                    <!-- Peso (Specs) -->
-                                    <td class="px-4 py-4 text-center" formGroupName="specifications">
-                                        <input type="text" formControlName="weight" placeholder="-"
-                                            class="w-16 bg-transparent text-center border-b border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:border-amber-500 focus:ring-0">
-                                    </td>
+                            <!-- Badge -->
+                            <div
+                                class="absolute top-0 left-0 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-500 text-[10px] font-bold px-2 py-0.5 rounded-br">
+                                PRODUCTO
+                            </div>
 
-                                    <!-- Precio -->
-                                    <td class="px-4 py-4 text-right">
-                                        <input type="number" formControlName="unitPrice"
-                                            class="w-24 bg-transparent text-right border-b border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:border-amber-500 focus:ring-0">
-                                    </td>
+                            <!-- Content -->
+                            <div class="flex-1 p-4 pt-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
 
-                                    <!-- Importe (Subtotal) -->
-                                    <td class="px-4 py-4 text-right">
-                                        <span class="text-amber-600 dark:text-green-400 font-bold">{{
-                                            item.get('subtotal')?.value | currency
-                                            }}</span>
-                                    </td>
+                                <!-- Description & Code -->
+                                <div class="flex-1">
+                                    <h3 class="text-gray-900 dark:text-white font-bold text-lg leading-tight mb-1">
+                                        {{ item.get('name')?.value || 'Producto sin nombre' }}
+                                    </h3>
+                                    <div class="text-gray-500 dark:text-gray-400 text-sm font-medium flex flex-wrap gap-x-4 gap-y-1"
+                                        formGroupName="specifications">
+                                        <span class="flex items-center gap-1"><span class="opacity-70">CB:</span> {{
+                                            item.get('specifications.notes')?.value || 'N/A' }}</span>
+                                        <div class="hidden sm:block w-px h-4 bg-gray-300 dark:bg-gray-700"></div>
+                                        <span class="flex items-center gap-1"><span class="opacity-70">K:</span> {{
+                                            item.get('specifications.karatage')?.value || '-' }}</span>
+                                        <span class="flex items-center gap-1"><span class="opacity-70">Peso:</span> {{
+                                            item.get('specifications.weight')?.value || '-' }}g</span>
+                                    </div>
+                                </div>
 
-                                    <!-- Acciones -->
-                                    <td class="px-4 py-4 text-center">
-                                        <button type="button" (click)="removeItem(i)"
-                                            class="text-gray-400 hover:text-red-500 transition-colors">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2">
-                                                <path
-                                                    d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2">
-                                                </path>
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
+                                <!-- Financials (Right) -->
+                                <div class="flex flex-col items-end min-w-[120px]">
+                                    <span
+                                        class="text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase">Precio:
+                                        {{ item.get('unitPrice')?.value | currency }}</span>
+                                    <span class="text-amber-600 dark:text-amber-500 font-extrabold text-xl">{{
+                                        item.get('subtotal')?.value | currency }}</span>
+                                </div>
 
-                                <tr *ngIf="items.length === 0">
-                                    <td colspan="6" class="px-6 py-20 text-center">
-                                        <div class="flex flex-col items-center text-gray-400 dark:text-gray-600">
-                                            <span class="text-4xl mb-2 opacity-50">🛍️</span>
-                                            <p>Escanee productos para agregar a la venta</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                            </div>
+
+                            <!-- Actions -->
+                            <div
+                                class="bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-700/50 px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
+                                <div class="flex gap-2 w-full sm:w-auto">
+                                    <button type="button"
+                                        class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm transition-colors uppercase tracking-wider">
+                                        APARTAR
+                                    </button>
+                                    <button type="button"
+                                        class="flex-1 sm:flex-none bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm transition-colors uppercase tracking-wider">
+                                        PRECIO
+                                    </button>
+                                </div>
+                                <button type="button" (click)="removeItem(i)"
+                                    class="text-gray-400 hover:text-red-500 transition-colors p-1" title="Eliminar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- REPAIR / TALLER CARD (type: service) -->
+                        <div *ngIf="item.get('type')?.value === 'service'"
+                            class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm flex flex-col sm:flex-row relative group mt-1 transition-all hover:border-blue-300 dark:hover:border-blue-700">
+
+                            <!-- Badge -->
+                            <div
+                                class="absolute top-0 left-0 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded-br">
+                                TALLER
+                            </div>
+
+                            <!-- Content -->
+                            <div class="flex-1 p-4 pt-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                                <div class="flex-1">
+                                    <h3
+                                        class="text-gray-900 dark:text-white font-medium text-lg tracking-wide leading-tight mb-1">
+                                        {{ item.get('name')?.value || 'Reparación' }}
+                                    </h3>
+                                    <div class="text-blue-600 dark:text-blue-400 text-xs font-medium flex items-center gap-1 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded w-fit"
+                                        *ngIf="item.get('specifications.notes')?.value">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        {{ item.get('specifications.notes')?.value }}
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end min-w-[120px]">
+                                    <span
+                                        class="text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase">Importe</span>
+                                    <span class="text-gray-900 dark:text-white font-bold text-xl">{{
+                                        item.get('subtotal')?.value | currency }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div
+                                class="bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-700/50 px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
+                                <button type="button" (click)="removeItem(i)"
+                                    class="text-gray-400 hover:text-red-500 transition-colors p-1" title="Eliminar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- MANUAL / CUSTOM CARD -->
+                        <div *ngIf="item.get('type')?.value === 'custom'"
+                            class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm flex flex-col sm:flex-row relative group mt-1 transition-all hover:border-purple-300 dark:hover:border-purple-700">
+
+                            <!-- Badge -->
+                            <div
+                                class="absolute top-0 left-0 bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-400 text-[10px] font-bold px-2 py-0.5 rounded-br">
+                                INGRESO
+                            </div>
+
+                            <!-- Content -->
+                            <div class="flex-1 p-4 pt-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                                <div class="flex-1">
+                                    <h3
+                                        class="text-gray-900 dark:text-white font-medium text-lg tracking-wide leading-tight mb-1">
+                                        {{ item.get('name')?.value || 'Movimiento' }}
+                                    </h3>
+                                    <p class="text-gray-500 dark:text-gray-400 text-xs italic"
+                                        *ngIf="item.get('specifications.notes')?.value">
+                                        {{ item.get('specifications.notes')?.value }}
+                                    </p>
+                                </div>
+                                <div class="flex flex-col items-end min-w-[120px]">
+                                    <span class="text-gray-900 dark:text-white font-bold text-xl">{{
+                                        item.get('subtotal')?.value | currency }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div
+                                class="bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-700/50 px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
+                                <div class="flex gap-2 w-full sm:w-auto">
+                                    <button type="button"
+                                        class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm transition-colors uppercase tracking-wider">
+                                        APARTAR
+                                    </button>
+                                </div>
+                                <button type="button" (click)="removeItem(i)"
+                                    class="text-gray-400 hover:text-red-500 transition-colors p-1" title="Eliminar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
             </form>
@@ -209,7 +299,7 @@
                 <!-- Reduced height buttons, removed aspect-square -->
                 <div class="grid grid-cols-4 gap-2 mb-4 shrink-0">
                     <!-- Ingreso -->
-                    <button type="button" (click)="addItem('jewelry')" title="Ingreso"
+                    <button type="button" (click)="openManualEntryModal()" title="Ingreso"
                         class="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex flex-col items-center justify-center gap-0.5 group transition-all">
                         <div class="relative w-6 h-6 flex items-center justify-center">
                             <!-- Plus Icon Duotone -->
@@ -419,3 +509,8 @@
         </aside>
     </div>
 </div>
+
+<app-manual-movement-modal *ngIf="showManualEntryModal" (close)="handleManualEntry($event)"></app-manual-movement-modal>
+<app-repair-modal *ngIf="showRepairModal" (close)="handleRepairEntry($event)"></app-repair-modal>
+<app-client-selection-modal *ngIf="showClientModal" (select)="handleClientSelection($event)"
+    (close)="showClientModal = false"></app-client-selection-modal>

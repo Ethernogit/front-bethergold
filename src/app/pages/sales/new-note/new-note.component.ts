@@ -11,14 +11,18 @@ import { debounceTime, distinctUntilChanged, switchMap, catchError, filter } fro
 import { of } from 'rxjs';
 
 import { RouterModule } from '@angular/router';
+import { ManualMovementModalComponent } from './components/manual-movement-modal/manual-movement-modal.component';
+import { RepairModalComponent } from './components/repair-modal/repair-modal.component';
 
 // Imports for UI components (assuming they exist or will be used directly)
 // import { ClientSelectorComponent } from ...
 
+import { ClientSelectionModalComponent } from './components/client-selection-modal/client-selection-modal.component';
+
 @Component({
     selector: 'app-new-note',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, RouterModule],
+    imports: [CommonModule, ReactiveFormsModule, RouterModule, ManualMovementModalComponent, RepairModalComponent, ClientSelectionModalComponent],
     templateUrl: './new-note.component.html'
 })
 export class NewNoteComponent implements OnInit {
@@ -33,6 +37,10 @@ export class NewNoteComponent implements OnInit {
 
     // UX State
     showPaymentModal = false;
+    showManualEntryModal = false;
+    showRepairModal = false;
+    showClientModal = false;
+    selectedClient: any = null;
     currentDate = new Date();
 
     constructor(
@@ -59,8 +67,20 @@ export class NewNoteComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.loadClients();
+        // this.loadClients(); // Replaced by Modal
         this.setupSearch();
+    }
+
+    openClientModal() {
+        this.showClientModal = true;
+    }
+
+    handleClientSelection(client: any) {
+        this.showClientModal = false;
+        if (client) {
+            this.selectedClient = client;
+            this.noteForm.patchValue({ clientId: client._id });
+        }
     }
 
     setupSearch() {
@@ -145,11 +165,89 @@ export class NewNoteComponent implements OnInit {
         this.toastService.success('Producto agregado');
     }
 
-    addItem(type: 'jewelry' | 'service' | 'custom' | 'external' = 'jewelry') {
+    openManualEntryModal() {
+        this.showManualEntryModal = true;
+    }
+
+    openRepairModal() {
+        this.showRepairModal = true;
+    }
+
+    handleManualEntry(data: any) {
+        this.showManualEntryModal = false;
+        if (!data) return;
+
+        const { description, amount, movementType } = data;
+
         const itemGroup = this.fb.group({
             itemId: [null],
             itemModel: ['Custom'],
-            type: [type === 'external' ? 'custom' : type], // Map external to custom for now
+            type: ['custom'],
+            name: [description, Validators.required],
+            quantity: [1, [Validators.required, Validators.min(0.01)]],
+            unitPrice: [amount, [Validators.required, Validators.min(0)]],
+            discount: [0, [Validators.min(0)]],
+            subtotal: [amount],
+            specifications: this.fb.group({
+                material: [''],
+                size: [''],
+                weight: [''],
+                karatage: [''],
+                notes: [`Tipo: ${movementType.name}`]
+            })
+        });
+
+        this.subscribeToItemChanges(itemGroup);
+        this.items.push(itemGroup);
+        this.calculateTotals();
+        this.toastService.success('Movimiento agregado');
+    }
+
+    handleRepairEntry(data: any) {
+        this.showRepairModal = false;
+        if (!data) return;
+
+        const { description, deliveryDate, amount } = data;
+
+        const itemGroup = this.fb.group({
+            itemId: [null],
+            itemModel: ['Service'],
+            type: ['service'], // Taller = Service
+            name: [`Taller: ${description}`, Validators.required],
+            quantity: [1, [Validators.required, Validators.min(0.01)]],
+            unitPrice: [amount, [Validators.required, Validators.min(0)]],
+            discount: [0],
+            subtotal: [amount],
+            specifications: this.fb.group({
+                material: [''],
+                size: [''],
+                weight: [''],
+                karatage: [''],
+                notes: [`Entrega: ${deliveryDate}`]
+            })
+        });
+
+        this.subscribeToItemChanges(itemGroup);
+        this.items.push(itemGroup);
+        this.calculateTotals();
+        this.toastService.success('Taller agregado');
+    }
+
+    addItem(type: 'jewelry' | 'service' | 'custom' | 'external' = 'jewelry') {
+        if (type === 'service') {
+            this.openRepairModal();
+            return;
+        }
+
+        if (type === 'custom') {
+            this.openManualEntryModal();
+            return;
+        }
+
+        const itemGroup = this.fb.group({
+            itemId: [null],
+            itemModel: ['Single'],
+            type: [type],
             name: ['', Validators.required],
             quantity: [1, [Validators.required, Validators.min(0.01)]],
             unitPrice: [0, [Validators.required, Validators.min(0)]],
@@ -166,6 +264,7 @@ export class NewNoteComponent implements OnInit {
 
         this.subscribeToItemChanges(itemGroup);
         this.items.push(itemGroup);
+        this.calculateTotals();
     }
 
     subscribeToItemChanges(group: FormGroup) {

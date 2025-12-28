@@ -199,6 +199,16 @@ export const routes: Routes = [
         title: 'Gestión de Subcategorías | Bethergold'
       },
       {
+        path: 'products/movement-types',
+        loadComponent: () => import('./pages/products/movement-types/movement-type-list/movement-type-list.component').then(m => m.MovementTypeListComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'products',
+          action: 'read'
+        },
+        title: 'Tipos de Movimiento | Bethergold'
+      },
+      {
         path: 'products',
         loadComponent: () => import('./pages/products/product-list/product-list.component').then(m => m.ProductListComponent),
         canActivate: [AuthGuard, PermissionGuard],

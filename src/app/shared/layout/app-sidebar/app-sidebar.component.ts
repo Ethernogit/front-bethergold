@@ -55,7 +55,8 @@ export class AppSidebarComponent {
             subItems: [
                 { name: "Lista de Productos", path: "/products" },
                 { name: "Categorías", path: "/categories" },
-                { name: "Subcategorías", path: "/subcategories" }
+                { name: "Subcategorías", path: "/subcategories" },
+                { name: "Tipos de Movimiento", path: "/products/movement-types", permission: 'products:read' }
             ],
         },
         {

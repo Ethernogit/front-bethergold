@@ -1,0 +1,102 @@
+<div
+    class="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+    <!-- Overlay -->
+    <div class="fixed inset-0 bg-black/50 transition-opacity backdrop-blur-sm" (click)="onCancel()"></div>
+
+    <!-- Modal Panel -->
+    <div class="relative w-full max-w-lg mx-auto my-6 z-50 px-4">
+        <div
+            class="relative flex flex-col w-full bg-white dark:bg-gray-800 rounded-lg shadow-xl outline-none focus:outline-none overflow-hidden">
+
+            <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <!-- Icon -->
+                    <div
+                        class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/30 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                        </svg>
+                    </div>
+
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white" id="modal-title">
+                            Nuevo Taller / Reparación
+                        </h3>
+
+                        <div class="mt-4">
+                            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+
+                                <!-- Description -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Descripción de la pieza
+                                    </label>
+                                    <textarea formControlName="description" rows="3"
+                                        placeholder="Ej: Anillo de oro roto en..."
+                                        class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                    <p *ngIf="form.get('description')?.touched && form.get('description')?.hasError('required')"
+                                        class="mt-1 text-xs text-red-500">
+                                        La descripción es obligatoria.
+                                    </p>
+                                </div>
+
+                                <!-- Date & Advance Grid -->
+                                <div class="grid grid-cols-2 gap-4">
+                                    <!-- Delivery Date -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                            Fecha de Entrega
+                                        </label>
+                                        <input type="date" formControlName="deliveryDate" #datePicker
+                                            (click)="datePicker.showPicker()"
+                                            class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500 cursor-pointer">
+                                        <p *ngIf="form.get('deliveryDate')?.touched && form.get('deliveryDate')?.hasError('required')"
+                                            class="mt-1 text-xs text-red-500">
+                                            Requerido.
+                                        </p>
+                                    </div>
+
+                                    <!-- Amount -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                            Importe ($)
+                                        </label>
+                                        <div class="relative">
+                                            <div
+                                                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 dark:text-gray-400">$</span>
+                                            </div>
+                                            <input type="number" formControlName="amount"
+                                                class="w-full pl-7 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 text-gray-900 dark:text-white focus:ring-blue-500 focus:border-blue-500"
+                                                placeholder="0.00">
+                                        </div>
+                                        <p *ngIf="form.get('amount')?.touched && form.get('amount')?.hasError('required')"
+                                            class="mt-1 text-xs text-red-500">
+                                            Requerido.
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div
+                class="bg-gray-50 dark:bg-gray-700/50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-gray-100 dark:border-gray-700">
+                <button type="button" (click)="onSubmit()"
+                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    Agregar Taller
+                </button>
+                <button type="button" (click)="onCancel()"
+                    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

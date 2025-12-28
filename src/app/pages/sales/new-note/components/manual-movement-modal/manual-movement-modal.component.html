@@ -1,0 +1,83 @@
+<div
+    class="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+    <!-- Overlay -->
+    <div class="fixed inset-0 bg-black/50 transition-opacity backdrop-blur-sm" (click)="onCancel()"></div>
+
+    <!-- Modal Content -->
+    <div class="relative w-full max-w-md mx-auto my-6 z-50 px-4">
+        <div
+            class="relative flex flex-col w-full bg-white border border-stroke rounded-lg shadow-default outline-none focus:outline-none dark:bg-gray-800 dark:border-gray-700">
+
+            <!-- Header -->
+            <div class="flex items-start justify-between p-5 border-b border-stroke rounded-t dark:border-gray-700">
+                <h3 class="text-xl font-semibold text-black dark:text-white">
+                    Agregar Movimiento Manual
+                </h3>
+                <button
+                    class="ml-auto bg-transparent border-0 text-gray-500 float-right text-2xl leading-none font-semibold outline-none focus:outline-none hover:text-gray-800 dark:hover:text-gray-200"
+                    (click)="onCancel()">
+                    <span class="block h-6 w-6">×</span>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="relative p-6 flex-auto">
+                <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+                    <!-- Movement Type -->
+                    <div class="mb-5">
+                        <label class="mb-2.5 block text-black dark:text-white font-medium">Tipo de Movimiento</label>
+                        <select formControlName="movementTypeId"
+                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-brand-500 active:border-brand-500 disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-brand-500 dark:text-white">
+                            <option value="" disabled selected>Selecciona un tipo</option>
+                            <option *ngFor="let type of movementTypes" [value]="type._id">
+                                {{ type.name }} ({{ type.nature === 'in' ? 'Entrada' : 'Salida' }})
+                            </option>
+                        </select>
+                        <span *ngIf="form.get('movementTypeId')?.touched && form.get('movementTypeId')?.invalid"
+                            class="text-xs text-red-500 mt-1 block">
+                            Selecciona un tipo de movimiento
+                        </span>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-5">
+                        <label class="mb-2.5 block text-black dark:text-white font-medium">Descripción</label>
+                        <input type="text" formControlName="description" placeholder="Ej: Ajuste de caja inicial"
+                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-brand-500 active:border-brand-500 disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-brand-500 dark:text-white">
+                        <span *ngIf="form.get('description')?.touched && form.get('description')?.invalid"
+                            class="text-xs text-red-500 mt-1 block">
+                            La descripción es requerida
+                        </span>
+                    </div>
+
+                    <!-- Amount -->
+                    <div class="mb-6">
+                        <label class="mb-2.5 block text-black dark:text-white font-medium">Importe ($)</label>
+                        <input type="number" formControlName="amount" placeholder="0.00" min="0" step="0.01"
+                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-brand-500 active:border-brand-500 disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-brand-500 dark:text-white">
+                        <span *ngIf="form.get('amount')?.touched && form.get('amount')?.invalid"
+                            class="text-xs text-red-500 mt-1 block">
+                            El importe es requerido (mayor a 0)
+                        </span>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="flex items-center justify-end gap-4 pt-4 border-t border-stroke dark:border-gray-700">
+                        <button
+                            class="rounded border border-stroke py-2 px-6 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white"
+                            type="button" (click)="onCancel()">
+                            Cancelar
+                        </button>
+                        <button [disabled]="form.invalid || isLoading"
+                            class="flex justify-center rounded bg-brand-500 py-2 px-6 font-medium text-white hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                            type="submit">
+                            Agregar
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

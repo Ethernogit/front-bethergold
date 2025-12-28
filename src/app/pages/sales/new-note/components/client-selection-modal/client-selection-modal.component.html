@@ -1,0 +1,157 @@
+<div
+    class="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+    <!-- Overlay -->
+    <div class="fixed inset-0 bg-black/50 transition-opacity backdrop-blur-sm" (click)="onCancel()"></div>
+
+    <!-- Modal Panel -->
+    <div class="relative w-full max-w-lg mx-auto my-6 z-50 px-4">
+        <div
+            class="relative flex flex-col w-full bg-white dark:bg-gray-800 rounded-lg shadow-xl outline-none focus:outline-none overflow-hidden h-[600px] max-h-[80vh]">
+
+            <!-- Header -->
+            <div
+                class="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+                    {{ view === 'search' ? 'Seleccionar Cliente' : 'Nuevo Cliente' }}
+                </h3>
+                <button (click)="onCancel()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900/50">
+
+                <!-- SEARCH VIEW -->
+                <div *ngIf="view === 'search'" class="h-full flex flex-col">
+                    <!-- Search Input -->
+                    <div class="relative mb-4">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <input [formControl]="searchControl" type="text"
+                            class="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-400"
+                            placeholder="Buscar por nombre, teléfono o email..." autofocus>
+                    </div>
+
+                    <!-- Results List -->
+                    <div class="flex-1 overflow-y-auto space-y-2">
+                        <ng-container *ngIf="searchResults$ | async as clients">
+                            <!-- Loading / Empty States -->
+                            <div *ngIf="isLoadingSearch" class="text-center py-8 text-gray-400">
+                                <span class="inline-block animate-spin mr-2">⟳</span> Buscando...
+                            </div>
+
+                            <div *ngIf="!isLoadingSearch && clients.length === 0 && (searchControl.value || '').length > 1"
+                                class="text-center py-8">
+                                <p class="text-gray-500 dark:text-gray-400 mb-2">No se encontraron clientes.</p>
+                                <button (click)="toggleView()"
+                                    class="text-amber-600 hover:text-amber-700 font-bold text-sm">
+                                    + Crear nuevo cliente
+                                </button>
+                            </div>
+
+                            <!-- List -->
+                            <div *ngFor="let client of clients" (click)="onSelect(client)"
+                                class="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-100 dark:border-gray-700 cursor-pointer hover:border-amber-400 dark:hover:border-amber-600 transition-colors flex justify-between items-center group">
+                                <div>
+                                    <h4 class="font-bold text-gray-900 dark:text-white">{{ client.name }}</h4>
+                                    <div class="flex gap-3 text-xs text-gray-500">
+                                        <span *ngIf="client.phone" class="flex items-center gap-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
+                                                fill="currentColor">
+                                                <path
+                                                    d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                                            </svg>
+                                            {{ client.phone }}
+                                        </span>
+                                        <span *ngIf="client.email" class="flex items-center gap-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
+                                                fill="currentColor">
+                                                <path
+                                                    d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                            </svg>
+                                            {{ client.email }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="opacity-0 group-hover:opacity-100 text-amber-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+
+                <!-- CREATE VIEW -->
+                <div *ngIf="view === 'create'" class="h-full flex flex-col">
+                    <form [formGroup]="createForm" class="space-y-4 flex-1">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nombre
+                                Completo *</label>
+                            <input type="text" formControlName="name"
+                                class="w-full p-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-amber-500 focus:border-amber-500">
+                            <p *ngIf="createForm.get('name')?.touched && createForm.get('name')?.invalid"
+                                class="text-xs text-red-500 mt-1">Requerido.</p>
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Teléfono</label>
+                            <input type="tel" formControlName="phone"
+                                class="w-full p-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-amber-500 focus:border-amber-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                            <input type="email" formControlName="email"
+                                class="w-full p-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-amber-500 focus:border-amber-500">
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div
+                class="bg-gray-50 dark:bg-gray-900 p-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                <button (click)="toggleView()"
+                    class="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400">
+                    {{ view === 'search' ? '¿No existe? Crear nuevo' : '← Volver al buscador' }}
+                </button>
+
+                <div class="flex gap-3">
+                    <button *ngIf="view === 'create'" (click)="onCancel()"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                        Cancelar
+                    </button>
+                    <button *ngIf="view === 'create'" (click)="onSubmitCreate()"
+                        [disabled]="createForm.invalid || isCreating"
+                        class="px-4 py-2 text-sm font-medium text-white bg-amber-500 rounded-lg hover:bg-amber-600 disabled:opacity-50">
+                        {{ isCreating ? 'Guardando...' : 'Guardar y Seleccionar' }}
+                    </button>
+                    <button *ngIf="view === 'search'" (click)="onCancel()"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

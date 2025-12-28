@@ -1,0 +1,94 @@
+<div
+    class="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+    <!-- Overlay -->
+    <div class="fixed inset-0 bg-black/50 transition-opacity backdrop-blur-sm" (click)="closeModal()"></div>
+
+    <!-- Modal Content -->
+    <div class="relative w-full max-w-md mx-auto my-6 z-50 px-4">
+        <div
+            class="relative flex flex-col w-full bg-white border border-stroke rounded-lg shadow-default outline-none focus:outline-none dark:bg-gray-800 dark:border-gray-700">
+
+            <!-- Header -->
+            <div class="flex items-start justify-between p-5 border-b border-stroke rounded-t dark:border-gray-700">
+                <h3 class="text-xl font-semibold text-black dark:text-white">
+                    {{ typeId ? 'Editar Tipo' : 'Nuevo Tipo' }}
+                </h3>
+                <button
+                    class="ml-auto bg-transparent border-0 text-gray-500 float-right text-2xl leading-none font-semibold outline-none focus:outline-none hover:text-gray-800 dark:hover:text-gray-200"
+                    (click)="closeModal()">
+                    <span class="block h-6 w-6">×</span>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="relative p-6 flex-auto">
+                <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+                    <!-- Name -->
+                    <div class="mb-5">
+                        <label class="mb-2.5 block text-black dark:text-white font-medium">Nombre</label>
+                        <input type="text" formControlName="name" placeholder="Ej: Ajuste de Inventario"
+                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-brand-500 active:border-brand-500 disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-brand-500 dark:text-white">
+                        <span *ngIf="form.get('name')?.touched && form.get('name')?.invalid"
+                            class="text-xs text-red-500 mt-1 block">
+                            El nombre es requerido (min 3 caracteres)
+                        </span>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-5">
+                        <label class="mb-2.5 block text-black dark:text-white font-medium">Descripción</label>
+                        <textarea formControlName="description" rows="3" placeholder="Breve descripción..."
+                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-brand-500 active:border-brand-500 disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-brand-500 dark:text-white"></textarea>
+                    </div>
+
+                    <!-- Nature -->
+                    <div class="mb-6">
+                        <label class="mb-3 block text-black dark:text-white font-medium">Naturaleza del
+                            Movimiento</label>
+                        <div class="flex gap-6">
+                            <label class="flex cursor-pointer select-none items-center">
+                                <div class="relative">
+                                    <input type="radio" formControlName="nature" value="in" class="sr-only">
+                                    <div class="box mr-4 flex h-5 w-5 items-center justify-center rounded-full border border-brand-500"
+                                        [ngClass]="{'bg-brand-500': form.get('nature')?.value === 'in'}">
+                                        <span class="h-2.5 w-2.5 rounded-full bg-white dark:bg-gray-800"
+                                            *ngIf="form.get('nature')?.value === 'in'"></span>
+                                    </div>
+                                </div>
+                                <span class="dark:text-white">Entrada (Aumenta stock)</span>
+                            </label>
+
+                            <label class="flex cursor-pointer select-none items-center">
+                                <div class="relative">
+                                    <input type="radio" formControlName="nature" value="out" class="sr-only">
+                                    <div class="box mr-4 flex h-5 w-5 items-center justify-center rounded-full border border-brand-500"
+                                        [ngClass]="{'bg-brand-500': form.get('nature')?.value === 'out'}">
+                                        <span class="h-2.5 w-2.5 rounded-full bg-white dark:bg-gray-800"
+                                            *ngIf="form.get('nature')?.value === 'out'"></span>
+                                    </div>
+                                </div>
+                                <span class="dark:text-white">Salida (Disminuye stock)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="flex items-center justify-end gap-4 pt-4 border-t border-stroke dark:border-gray-700">
+                        <button
+                            class="rounded border border-stroke py-2 px-6 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white"
+                            type="button" (click)="closeModal()">
+                            Cancelar
+                        </button>
+                        <button [disabled]="form.invalid || isSaving"
+                            class="flex justify-center rounded bg-brand-500 py-2 px-6 font-medium text-white hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                            type="submit">
+                            {{ isSaving ? 'Guardando...' : 'Guardar' }}
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
