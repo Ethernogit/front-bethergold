@@ -128,11 +128,11 @@ export class LoginService {
    */
   preLogin(email: string, password: string): Observable<PreLoginResponse> {
     const request: PreLoginRequest = { email, password };
-    
+
     console.log('=== LOGIN SERVICE PRE-LOGIN ===');
     console.log('Request URL:', `${this.API_URL}/pre-login`);
     console.log('Request data:', { email, password: password ? '[PASSWORD PROVIDED]' : '[NO PASSWORD]' });
-    
+
     return this.http.post<PreLoginResponse>(`${this.API_URL}/pre-login`, request)
       .pipe(
         tap(response => {
@@ -156,7 +156,7 @@ export class LoginService {
     console.log('=== LOGIN SERVICE LOGIN ===');
     console.log('Request URL:', `${this.API_URL}/login`);
     console.log('Login data:', loginData);
-    
+
     return this.http.post<BackendLoginResponse>(`${this.API_URL}/login`, loginData)
       .pipe(
         tap(response => {
@@ -193,7 +193,7 @@ export class LoginService {
    */
   refreshToken(): Observable<RefreshTokenResponse> {
     const refreshToken = this.authState().refreshToken;
-    
+
     if (!refreshToken) {
       return throwError(() => new Error('No refresh token available'));
     }
@@ -222,7 +222,7 @@ export class LoginService {
    * Obtener perfil del usuario
    */
   getProfile(): Observable<AuthUser> {
-    return this.http.get<{success: boolean, data: AuthUser}>(`${this.API_URL}/profile`, {
+    return this.http.get<{ success: boolean, data: AuthUser }>(`${this.API_URL}/profile`, {
       headers: this.getAuthHeaders()
     }).pipe(
       map(response => response.data),
@@ -244,7 +244,7 @@ export class LoginService {
    */
   logout(): Observable<any> {
     const headers = this.getAuthHeaders();
-    
+
     return this.http.post(`${this.API_URL}/logout`, {}, { headers })
       .pipe(
         catchError(() => of(null)), // Continuar aunque falle la llamada al backend
@@ -256,6 +256,19 @@ export class LoginService {
   }
 
   /**
+   * Change Password
+   */
+  changePassword(currentPassword: string, newPassword: string): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.post(`${this.API_URL}/change-password`, {
+      currentPassword,
+      newPassword
+    }, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
    * Verificar si el usuario tiene un permiso específico
    */
   hasPermission(permission: string): boolean {
@@ -264,10 +277,10 @@ export class LoginService {
     if (module && action) {
       return this.hasModulePermission(module, action);
     }
-    
+
     // Fallback: buscar en permisos como antes
     const permissions = this.authState().permissions;
-    return permissions.some((p: any) => 
+    return permissions.some((p: any) =>
       `${p.module}:${p.action}` === permission
     );
   }
@@ -277,8 +290,8 @@ export class LoginService {
    */
   hasModulePermission(module: string, action: string): boolean {
     const permissions = this.authState().permissions;
-    return permissions.some((p: any) => 
-      p.module === module && 
+    return permissions.some((p: any) =>
+      p.module === module &&
       p.action === action
     );
   }
@@ -295,10 +308,10 @@ export class LoginService {
    */
   private setBackendAuthData(data: BackendLoginResponse['data']): void {
     const { user, token, organization, sucursal, role } = data;
-    
+
     // Los permisos ahora vienen como objetos completos desde el backend
     const userPermissions = user.permissions || role?.permissions || [];
-    
+
     // Adaptar la estructura del backend a nuestro formato interno
     const adaptedUser: AuthUser = {
       id: user._id || user.id,
@@ -311,7 +324,7 @@ export class LoginService {
       currentOrganization: organization,
       currentSucursal: sucursal
     };
-    
+
     // Actualizar estado
     this.authState.set({
       isAuthenticated: true,
@@ -327,11 +340,11 @@ export class LoginService {
     // Guardar en localStorage
     localStorage.setItem(this.STORAGE_KEYS.ACCESS_TOKEN, token);
     localStorage.setItem(this.STORAGE_KEYS.USER, JSON.stringify(adaptedUser));
-    
+
     if (organization) {
       localStorage.setItem(this.STORAGE_KEYS.CURRENT_ORG, JSON.stringify(organization));
     }
-    
+
     if (sucursal) {
       localStorage.setItem(this.STORAGE_KEYS.CURRENT_SUCURSAL, JSON.stringify(sucursal));
     }
@@ -348,7 +361,7 @@ export class LoginService {
    */
   private setAuthData(data: LoginResponse['data']): void {
     const { user, accessToken, refreshToken } = data;
-    
+
     // Actualizar estado
     this.authState.set({
       isAuthenticated: true,
@@ -365,11 +378,11 @@ export class LoginService {
     localStorage.setItem(this.STORAGE_KEYS.ACCESS_TOKEN, accessToken);
     localStorage.setItem(this.STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
     localStorage.setItem(this.STORAGE_KEYS.USER, JSON.stringify(user));
-    
+
     if (user.currentOrganization) {
       localStorage.setItem(this.STORAGE_KEYS.CURRENT_ORG, JSON.stringify(user.currentOrganization));
     }
-    
+
     if (user.currentSucursal) {
       localStorage.setItem(this.STORAGE_KEYS.CURRENT_SUCURSAL, JSON.stringify(user.currentSucursal));
     }
@@ -387,7 +400,7 @@ export class LoginService {
   private updateAuthData(data: LoginResponse['data']): void {
     const currentState = this.authState();
     const { user, accessToken } = data;
-    
+
     this.authState.set({
       ...currentState,
       user,
@@ -400,11 +413,11 @@ export class LoginService {
     // Actualizar localStorage
     localStorage.setItem(this.STORAGE_KEYS.ACCESS_TOKEN, accessToken);
     localStorage.setItem(this.STORAGE_KEYS.USER, JSON.stringify(user));
-    
+
     if (user.currentOrganization) {
       localStorage.setItem(this.STORAGE_KEYS.CURRENT_ORG, JSON.stringify(user.currentOrganization));
     }
-    
+
     if (user.currentSucursal) {
       localStorage.setItem(this.STORAGE_KEYS.CURRENT_SUCURSAL, JSON.stringify(user.currentSucursal));
     }
@@ -440,8 +453,8 @@ export class LoginService {
    * Obtener organizaciones almacenadas
    */
   private getStoredOrganizations(): Organization[] {
-    const stored = localStorage.getItem(this.STORAGE_KEYS.ORGANIZATIONS) || 
-                   localStorage.getItem('temp_organizations');
+    const stored = localStorage.getItem(this.STORAGE_KEYS.ORGANIZATIONS) ||
+      localStorage.getItem('temp_organizations');
     return stored ? JSON.parse(stored) : [];
   }
 
@@ -461,13 +474,13 @@ export class LoginService {
    */
   private handleError = (error: any): Observable<never> => {
     console.error('Auth service error:', error);
-    
+
     // Si es error 401, intentar refrescar token
     if (error.status === 401 && this.authState().refreshToken) {
       // El interceptor se encargará del refresh automático
       return throwError(() => error);
     }
-    
+
     // Si es error 403 o token expirado sin refresh, hacer logout
     if (error.status === 403 || (error.status === 401 && !this.authState().refreshToken)) {
       this.clearAuthData();

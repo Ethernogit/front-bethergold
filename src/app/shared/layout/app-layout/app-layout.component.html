@@ -15,3 +15,5 @@
     </div>
   </div>
 </div>
+<app-change-password-modal *ngIf="changePasswordModalVisible$ | async"
+  (close)="uiService.closeChangePasswordModal()"></app-change-password-modal>

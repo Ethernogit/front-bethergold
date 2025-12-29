@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DropdownItemTwoComponent } from '../../ui/dropdown/dropdown-item/dropdown-item.component-two';
 import { ThemeToggleButtonComponent } from '../../common/theme-toggle/theme-toggle-button.component';
+import { UiService } from '../../../services/ui.service';
 
 @Component({
   selector: 'app-user-dropdown',
@@ -14,11 +15,18 @@ export class UserDropdownComponent {
   @Input() isCollapsed = false;
   isOpen = false;
 
+  constructor(private uiService: UiService) { }
+
   toggleDropdown() {
     this.isOpen = !this.isOpen;
   }
 
   closeDropdown() {
     this.isOpen = false;
+  }
+
+  openChangePasswordModal() {
+    this.uiService.openChangePasswordModal();
+    this.closeDropdown();
   }
 }

@@ -16,15 +16,16 @@
       'justify-start': (isExpanded$ | async)
     }">
     <div class="flex items-center justify-between w-full">
-      <a routerLink="/" class="flex items-center gap-3 cursor-pointer" (click)="sidebarService.setExpanded(true)">
+      <a routerLink="/" class="flex items-center gap-3 cursor-pointer justify-center w-full"
+        (click)="sidebarService.setExpanded(true)">
         @if ((isExpanded$ | async) || (isMobileOpen$ | async)) {
-        <img class="dark:hidden" src="assets/images/bugjoya.png" alt="Logo" width="80" height="40" />
-        <img class="hidden dark:block" src="assets/images/bugjoya.png" alt="Logo" width="80" height="40" />
-        <span class="text-xl font-bold text-gray-900 dark:text-white">
-          Bether <span class="text-[#D4AF37]">Gold</span>
+        <span class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
+          Bether<span class="text-[#D4AF37]">Gold</span>
         </span>
         } @else {
-        <img src="assets/images/bugjoya.png" alt="Logo" width="40" height="40" />
+        <span class="text-xl font-bold text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 rounded-lg p-2">
+          B<span class="text-[#D4AF37]">G</span>
+        </span>
         }
       </a>
 
