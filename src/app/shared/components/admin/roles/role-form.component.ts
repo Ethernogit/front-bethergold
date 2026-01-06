@@ -99,6 +99,21 @@ import { Permission, Role } from '../../../interfaces/auth.interfaces';
           }
         </div>
 
+        <div class="flex items-center space-x-3 pb-4 border-b border-gray-200 dark:border-gray-700">
+          <input
+            type="checkbox"
+            id="isGlobal"
+            formControlName="isGlobal"
+            class="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
+          />
+          <div class="flex flex-col">
+            <app-label for="isGlobal" className="mb-0">Rol Global</app-label>
+            <span class="text-xs text-gray-500 dark:text-gray-400">Si se activa, este rol estará disponible en TODAS las sucursales.</span>
+          </div>
+        </div>
+
+
+
         <div class="flex items-center space-x-3">
           <input
             type="checkbox"
@@ -156,16 +171,17 @@ export class RoleFormComponent {
       name: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(10)]],
       permissions: [[], Validators.required],
-      isActive: [true]
+      isActive: [true],
+      isGlobal: [false]
     });
   }
 
   ngOnInit() {
     console.log('RoleForm - Available permissions:', this.availablePermissions);
-    
+
     if (this.role && this.editMode) {
       console.log('RoleForm - Editing role:', this.role);
-      
+
       // Extraer IDs de permisos de manera más robusta
       this.selectedPermissions = this.role.permissions
         .map(p => {
@@ -177,12 +193,13 @@ export class RoleFormComponent {
           return null;
         })
         .filter((id): id is string => id !== null && id !== undefined && id !== '');
-      
+
       console.log('RoleForm - Selected permissions:', this.selectedPermissions);
-      
+
       this.roleForm.patchValue({
         ...this.role,
-        permissions: this.selectedPermissions
+        permissions: this.selectedPermissions,
+        isGlobal: !(this.role as any).sucursalId // If sucursalId is falsy (null), it is Global
       });
     }
   }
@@ -193,7 +210,7 @@ export class RoleFormComponent {
 
   onPermissionChange(permissionId: string, event: any) {
     console.log('Permission change:', permissionId, 'checked:', event.target.checked);
-    
+
     if (event.target.checked) {
       if (!this.selectedPermissions.includes(permissionId)) {
         this.selectedPermissions.push(permissionId);
@@ -201,7 +218,7 @@ export class RoleFormComponent {
     } else {
       this.selectedPermissions = this.selectedPermissions.filter(id => id !== permissionId);
     }
-    
+
     console.log('Updated selected permissions:', this.selectedPermissions);
     this.roleForm.patchValue({ permissions: this.selectedPermissions });
   }
@@ -213,7 +230,7 @@ export class RoleFormComponent {
   getFieldClass(fieldName: string): string {
     const field = this.roleForm.get(fieldName);
     if (!field) return '';
-    
+
     if (field.invalid && field.touched) {
       return 'border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-600';
     }
@@ -276,11 +293,11 @@ export class RoleFormComponent {
     console.log('Form submission - Form valid:', this.roleForm.valid);
     console.log('Form values:', this.roleForm.value);
     console.log('Selected permissions:', this.selectedPermissions);
-    
+
     if (this.roleForm.valid) {
       // Validar que los permisos seleccionados existan en la lista de permisos disponibles
       const validPermissions = this.selectedPermissions.filter(permId => {
-        const exists = this.availablePermissions.some(perm => 
+        const exists = this.availablePermissions.some(perm =>
           this.getPermissionId(perm) === permId
         );
         if (!exists) {
@@ -289,21 +306,33 @@ export class RoleFormComponent {
         }
         return exists;
       });
-      
+
       if (validPermissions.length !== this.selectedPermissions.length) {
         const invalidCount = this.selectedPermissions.length - validPermissions.length;
         console.error(`Found ${invalidCount} invalid permission IDs. They will be filtered out.`);
         alert(`Atención: Se encontraron ${invalidCount} permisos inválidos que serán omitidos.`);
       }
-      
+
       console.log('Valid permissions after filtering:', validPermissions);
-      
-      const roleData: Role = {
-        ...this.roleForm.value,
-        id: this.editMode && this.role?.id ? this.role.id : Date.now().toString(),
-        permissions: validPermissions // Usar solo permisos válidos
+
+      const formValue = this.roleForm.value;
+      const isGlobal = formValue.isGlobal;
+
+      const roleData: any = {
+        name: formValue.name,
+        description: formValue.description,
+        permissions: validPermissions,
+        isActive: formValue.isActive,
+        id: this.editMode && this.role?.id ? this.role.id : undefined
       };
-      
+
+      // If Global is checked, explicitly send null to override backend default scoping
+      if (isGlobal) {
+        roleData.sucursalId = null;
+      }
+
+
+
       console.log('Final role data to submit:', roleData);
       this.formSubmit.emit(roleData);
     } else {

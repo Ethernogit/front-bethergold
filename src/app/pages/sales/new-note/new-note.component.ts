@@ -6,6 +6,7 @@ import { ClientService } from '../../../shared/services/client.service';
 import { ProductService, Product } from '../../../shared/services/product.service';
 import { LoginService } from '../../../shared/services/auth/login.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { SucursalService } from '../../../shared/services/sucursal.service';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, switchMap, catchError, filter } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -42,6 +43,8 @@ export class NewNoteComponent implements OnInit {
     showClientModal = false;
     selectedClient: any = null;
     currentDate = new Date();
+    nextFolio = '---';
+    paymentMethod: 'cash' | 'card' = 'cash';
 
     constructor(
         private fb: FormBuilder,
@@ -50,6 +53,7 @@ export class NewNoteComponent implements OnInit {
         private productService: ProductService,
         private loginService: LoginService,
         private toastService: ToastService,
+        private sucursalService: SucursalService,
         private router: Router
     ) {
         this.noteForm = this.fb.group({
@@ -62,13 +66,30 @@ export class NewNoteComponent implements OnInit {
             changeAmount: [{ value: 0, disabled: true }], // New for UI
             cashAmount: [0],
             cardAmount: [0],
-            transferAmount: [0]
+            transferAmount: [0],
+            reference: ['']
         });
     }
 
     ngOnInit(): void {
         // this.loadClients(); // Replaced by Modal
         this.setupSearch();
+        this.loadNextFolio();
+    }
+
+    loadNextFolio() {
+        const sucursal = this.loginService.currentSucursal();
+        if (sucursal?._id) {
+            this.sucursalService.getNextFolio(sucursal._id).subscribe({
+                next: (folio) => this.nextFolio = folio,
+                error: (err) => console.error('Error fetching folio', err)
+            });
+        }
+    }
+
+    setPaymentMethod(method: 'cash' | 'card') {
+        this.paymentMethod = method;
+        this.calculateTotals(); // Re-calculate to reset fields
     }
 
     openClientModal() {
@@ -137,21 +158,27 @@ export class NewNoteComponent implements OnInit {
         // Determine item type based on product category/attributes logic (simplified for now)
         const type = 'jewelry';
 
+        const isUnique = product.isUnique !== false; // Default to true if undefined
+        const maxStock = isUnique ? 1 : (product.stock || 0);
+
         const itemGroup = this.fb.group({
             itemId: [product._id],
             itemModel: ['Product'],
             type: [type],
             name: [product.name || product.description || 'Producto sin nombre', Validators.required],
-            quantity: [1, [Validators.required, Validators.min(0.01)]],
+            // If unique, lock to 1. If bulk, allow 1 to maxStock
+            quantity: [1, [Validators.required, Validators.min(0.01), ...(isUnique ? [Validators.max(1)] : [Validators.max(maxStock)])]],
             unitPrice: [product.price || 0, [Validators.required, Validators.min(0)]],
             discount: [0, [Validators.min(0)]],
             subtotal: [product.price || 0],
+            isUnique: [isUnique], // For UI condition
+            maxStock: [maxStock], // For UI validation msg
             specifications: this.fb.group({
                 material: [product.jewelryDetails?.goldType || ''],
                 size: [''],
                 weight: [product.specifications?.weight || ''],
                 karatage: [product.jewelryDetails?.karatage || ''],
-                notes: [product.sku ? `SKU: ${product.sku}` : '']
+                notes: [product.barcode || product.sku || '']
             })
         });
 
@@ -308,21 +335,50 @@ export class NewNoteComponent implements OnInit {
 
     calculateChange() {
         const total = this.noteForm.get('total')?.value || 0;
+
+        if (this.paymentMethod === 'card') {
+            // Card payment is always exact
+            this.noteForm.patchValue({
+                receivedAmount: total,
+                changeAmount: 0,
+                cashAmount: 0,
+                cardAmount: total
+            }, { emitEvent: false });
+            return;
+        }
+
+        // Cash logic
         const received = this.noteForm.get('receivedAmount')?.value || 0;
         const change = received - total;
 
         this.noteForm.patchValue({
-            changeAmount: change > 0 ? change : 0
+            changeAmount: change > 0 ? change : 0,
+            cashAmount: received >= total ? total : received, // If partial, take all received. If over, cap at total
+            cardAmount: 0
         }, { emitEvent: false });
-
-        // Auto-fill cash amount for backend logic
-        if (received > 0) {
-            const payVal = received >= total ? total : received;
-            this.noteForm.patchValue({ cashAmount: payVal }, { emitEvent: false });
-        }
     }
 
     // --- Submission ---
+
+    get confirmButtonText(): string {
+        const total = this.noteForm.get('total')?.value || 0;
+        let paid = 0;
+        if (this.paymentMethod === 'cash') {
+            const received = this.noteForm.get('receivedAmount')?.value || 0;
+            const change = this.noteForm.get('changeAmount')?.value || 0;
+            paid = received - change; // Actual paid amount logic
+            // Or simpler: Math.min(received, total) if logic holds
+            paid = (received >= total) ? total : received;
+        } else {
+            paid = this.noteForm.get('cardAmount')?.value || 0;
+        }
+
+        return (total - paid) > 0.01 ? 'GENERAR APARTADO' : 'CONFIRMAR VENTA';
+    }
+
+    get isPartialPayment(): boolean {
+        return this.confirmButtonText === 'GENERAR APARTADO';
+    }
 
     onSubmit() {
         if (this.noteForm.invalid) {
@@ -343,10 +399,18 @@ export class NewNoteComponent implements OnInit {
 
         // Prepare Payments Array
         const payments: any[] = [];
-        if (formVal.cashAmount > 0) payments.push({ amount: formVal.cashAmount || 0, method: 'cash' });
-        if (formVal.cardAmount > 0) payments.push({ amount: formVal.cardAmount || 0, method: 'card' });
-        if (formVal.transferAmount > 0) payments.push({ amount: formVal.transferAmount || 0, method: 'transfer' });
+        // Only push one payment based on selected method (for now, simpler UX)
+        if (this.paymentMethod === 'cash' && formVal.cashAmount > 0) {
+            payments.push({ amount: formVal.cashAmount, method: 'cash' });
+        } else if (this.paymentMethod === 'card' && formVal.cardAmount > 0) {
+            payments.push({ amount: formVal.cardAmount, method: 'card', reference: formVal.reference });
+        }
 
+
+        // Calculate Financials for Payload (Backend also verifies)
+        const total = formVal.total || 0;
+        const totalPaid = payments.reduce((acc, p) => acc + p.amount, 0);
+        const balanceDue = total - totalPaid;
 
         // Construct Note Object
         const noteData: Note = {
@@ -370,9 +434,9 @@ export class NewNoteComponent implements OnInit {
                 subtotal: formVal.subtotal || 0,
                 globalDiscount: formVal.discount || 0,
                 taxTotal: 0,
-                total: formVal.total || 0,
-                balancePaid: 0,
-                balanceDue: 0
+                total: total,
+                balancePaid: totalPaid,
+                balanceDue: balanceDue > 0 ? balanceDue : 0
             },
             payments: payments as any
         };
@@ -381,7 +445,8 @@ export class NewNoteComponent implements OnInit {
 
         this.noteService.createNote(noteData).subscribe({
             next: (res) => {
-                this.toastService.success(`Nota ${res.data.folio} creada exitosamente`);
+                const action = (balanceDue > 0.01) ? 'Apartado generado' : 'Venta completada';
+                this.toastService.success(`${action} exitosamente (Folio: ${res.data.folio})`);
                 this.router.navigate(['/sales/history']);
             },
             error: (err) => {

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserService } from '../../../shared/services/user.service';
 import { RoleService } from '../../../shared/services/rbca/role.service';
+import { LoginService } from '../../../shared/services/auth/login.service';
 import { InputFieldComponent } from '../../../shared/components/form/input/input-field.component';
 import { LabelComponent } from '../../../shared/components/form/label/label.component';
 // Assuming SelectComponent exists or we use standard select with styling
@@ -38,6 +39,7 @@ export class UserCreateComponent implements OnInit {
         private fb: FormBuilder,
         private userService: UserService,
         private roleService: RoleService,
+        private loginService: LoginService,
         private router: Router,
         private route: ActivatedRoute
     ) {
@@ -66,7 +68,11 @@ export class UserCreateComponent implements OnInit {
     }
 
     loadRoles(): void {
-        this.roleService.getAllRoles().subscribe({
+        const sucursal = this.loginService.currentSucursal();
+        const sucursalId = sucursal?.id || sucursal?._id || undefined;
+        console.log('Loading roles for sucursal:', sucursalId);
+
+        this.roleService.getAllRoles(false, sucursalId).subscribe({
             next: (roles: any[]) => {
                 // The service returns Role[] directly after map, not {success, data}
                 // Wait, let me check the service again.

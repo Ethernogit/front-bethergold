@@ -15,6 +15,8 @@ export interface RoleRequest {
   name: string;
   description: string;
   permissions: string[];
+  sucursalId?: string | null;
+  isActive?: boolean;
 }
 
 export interface SingleRoleResponse {
@@ -32,7 +34,7 @@ export class RoleService {
   constructor(
     private http: HttpClient,
     private loginService: LoginService
-  ) {}
+  ) { }
 
   /**
    * Generar headers de autenticación
@@ -51,21 +53,24 @@ export class RoleService {
   private handleError = (error: any): Observable<never> => {
     console.error('Role service error:', error);
     let errorMessage = 'Error en el servicio de roles';
-    
+
     if (error.error?.message) {
       errorMessage = error.error.message;
     } else if (error.message) {
       errorMessage = error.message;
     }
-    
+
     return throwError(() => new Error(errorMessage));
   };
 
   /**
    * Obtener todos los roles de la organización actual
    */
-  getAllRoles(includeInactive = false): Observable<Role[]> {
-    const params = includeInactive ? '?includeInactive=true' : '';
+  getAllRoles(includeInactive = false, sucursalId?: string): Observable<Role[]> {
+    let params = includeInactive ? '?includeInactive=true' : '?';
+    if (sucursalId) {
+      params += `${includeInactive ? '&' : ''}sucursalId=${sucursalId}`;
+    }
     return this.http.get<RoleResponse>(`${this.API_URL}${params}`, {
       headers: this.getAuthHeaders()
     }).pipe(

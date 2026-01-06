@@ -80,6 +80,7 @@ import { Permission, Role } from '../../../interfaces/auth.interfaces';
                     <th class="px-6 py-4 font-medium">Descripción</th>
                     <th class="px-6 py-4 font-medium">Permisos</th>
                     <th class="px-6 py-4 font-medium">Estado</th>
+                    <th class="px-6 py-4 font-medium">Alcance</th>
                     <th class="px-6 py-4 font-medium text-center">Acciones</th>
                   </tr>
                 </thead>
@@ -104,6 +105,14 @@ import { Permission, Role } from '../../../interfaces/auth.interfaces';
                                           'bg-red-100 text-red-800 dark:bg-red-800/30 dark:text-red-400': !role.isActive
                                         }">
                         {{ role.isActive ? 'Activo' : 'Inactivo' }}
+                      </span>
+                    </td>
+                    <td class="px-6 py-4">
+                      <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium" [ngClass]="{
+                                          'bg-purple-100 text-purple-800 dark:bg-purple-800/30 dark:text-purple-400': !role.sucursalId,
+                                          'bg-gray-100 text-gray-800 dark:bg-gray-800/30 dark:text-gray-400': role.sucursalId
+                                        }">
+                        {{ !role.sucursalId ? 'Global' : 'Local' }}
                       </span>
                     </td>
                     <td class="px-6 py-4 text-center">

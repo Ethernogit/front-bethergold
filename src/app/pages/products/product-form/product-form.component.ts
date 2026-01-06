@@ -62,7 +62,9 @@ export class ProductFormComponent implements OnInit, OnChanges {
             diamondPoints: [0],
             cost: [0, [Validators.required, Validators.min(0)]],
             price: [0, [Validators.required, Validators.min(0)]],
-            description: ['']
+            description: [''],
+            isUnique: [true],
+            stock: [1, [Validators.required, Validators.min(0)]]
         });
     }
 
@@ -109,6 +111,18 @@ export class ProductFormComponent implements OnInit, OnChanges {
                 this.currentProviderPrices = [];
             }
             if (!this.isEditMode) this.calculatePrices();
+            if (!this.isEditMode) this.calculatePrices();
+        });
+
+        // Watch for isUnique changes to toggle stock field validation/visibility logic helpers if needed
+        this.productForm.get('isUnique')?.valueChanges.subscribe(isUnique => {
+            const stockControl = this.productForm.get('stock');
+            if (isUnique) {
+                stockControl?.setValue(1);
+                stockControl?.disable();
+            } else {
+                stockControl?.enable();
+            }
         });
 
         // Watch for inputs that affect price
@@ -154,8 +168,17 @@ export class ProductFormComponent implements OnInit, OnChanges {
             diamondPoints: product.jewelryDetails?.diamondPoints || 0,
             cost: product.cost || 0,
             price: product.price || 0,
-            description: product.description || ''
+            description: product.description || '',
+            isUnique: product.isUnique !== undefined ? product.isUnique : true,
+            stock: product.stock || 1
         });
+
+        // Manually trigger simple change logic for UI state
+        if (product.isUnique !== undefined && !product.isUnique) {
+            this.productForm.get('stock')?.enable();
+        } else {
+            this.productForm.get('stock')?.disable();
+        }
 
         // If using provider prices, loading them might auto-calc price, so we rely on isEditMode check in listeners to prevent overwrite
         if (providerId) {
@@ -348,7 +371,8 @@ export class ProductFormComponent implements OnInit, OnChanges {
             subcategory: formValue.subcategory,
             price: formValue.price,
             cost: formValue.cost,
-            stock: 1, // Default to 1 for unique items
+            isUnique: formValue.isUnique,
+            stock: formValue.isUnique ? 1 : formValue.stock,
             specifications: {
                 weight: formValue.weight
             },

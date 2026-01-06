@@ -1,10 +1,30 @@
 <div class="flex flex-col h-[calc(100vh)] bg-gray-50 dark:bg-gray-900 overflow-hidden">
     <!-- Header -->
-    <!-- Header Removed to save space -->
+    <!-- Global Header Removed as per user request to keep info in left section -->
 
     <div class="flex flex-1 overflow-hidden">
         <!-- Main Content (Left): Client, Items -->
         <main class="flex-1 overflow-y-auto p-4">
+
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">Nueva Venta</h1>
+                <div
+                    class="flex items-center gap-4 text-xs font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+                    <div class="flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span>{{ currentDate | date:'dd/MM/yyyy' }}</span>
+                    </div>
+                    <div class="h-4 w-px bg-gray-300 dark:bg-gray-600"></div>
+                    <div class="flex items-center gap-1">
+                        <span class="opacity-75">Folio:</span>
+                        <span class="font-bold text-amber-600 dark:text-amber-500 text-sm">{{ nextFolio }}</span>
+                    </div>
+                </div>
+            </div>
 
             <form [formGroup]="noteForm">
                 <!-- Header Row: Search & Client -->
@@ -149,13 +169,28 @@
                                         <span class="flex items-center gap-1"><span class="opacity-70">Peso:</span> {{
                                             item.get('specifications.weight')?.value || '-' }}g</span>
                                     </div>
+
+                                    <!-- Bulk Quantity Input -->
+                                    <div *ngIf="!item.get('isUnique')?.value" class="mt-2 flex items-center gap-2">
+                                        <label class="text-xs font-bold text-gray-500 uppercase">Cant:</label>
+                                        <input type="number" formControlName="quantity" min="1"
+                                            [max]="item.get('maxStock')?.value"
+                                            class="w-20 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-amber-500 focus:border-amber-500">
+                                        <span class="text-[10px] text-gray-400">Max: {{ item.get('maxStock')?.value
+                                            }}</span>
+                                    </div>
+                                    <div *ngIf="item.get('quantity')?.errors?.['max']"
+                                        class="text-xs text-red-500 mt-1">
+                                        Excede stock
+                                    </div>
                                 </div>
 
                                 <!-- Financials (Right) -->
                                 <div class="flex flex-col items-end min-w-[120px]">
-                                    <span
-                                        class="text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase">Precio:
-                                        {{ item.get('unitPrice')?.value | currency }}</span>
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase mb-0.5">Precio
+                                        Unit.</label>
+                                    <input type="number" formControlName="unitPrice" min="0" step="0.01"
+                                        class="w-24 text-right px-2 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-bold focus:ring-amber-500 focus:border-amber-500 mb-1">
                                     <span class="text-amber-600 dark:text-amber-500 font-extrabold text-xl">{{
                                         item.get('subtotal')?.value | currency }}</span>
                                 </div>
@@ -169,10 +204,6 @@
                                     <button type="button"
                                         class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm transition-colors uppercase tracking-wider">
                                         APARTAR
-                                    </button>
-                                    <button type="button"
-                                        class="flex-1 sm:flex-none bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm transition-colors uppercase tracking-wider">
-                                        PRECIO
                                     </button>
                                 </div>
                                 <button type="button" (click)="removeItem(i)"
@@ -441,51 +472,65 @@
                     </div>
                 </div>
 
-                <!-- Payment Methods Tabs (Visual Only for now, selects logic) -->
-                <div class="bg-gray-100 dark:bg-gray-800 p-1 rounded-lg flex mb-4 shrink-0">
-                    <button type="button"
-                        class="flex-1 py-1.5 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm text-xs font-bold flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                            class="w-4 h-4 text-emerald-500 dark:text-emerald-400">
+                <!-- Payment Methods Tabs -->
+                <div class="bg-gray-100 dark:bg-gray-800 p-1 rounded-lg flex mb-4 shrink-0 gap-1">
+                    <button type="button" (click)="setPaymentMethod('cash')" [class.bg-white]="paymentMethod === 'cash'"
+                        [class.text-amber-600]="paymentMethod === 'cash'" [class.shadow-sm]="paymentMethod === 'cash'"
+                        [class.text-gray-500]="paymentMethod !== 'cash'"
+                        class="flex-1 py-2 rounded-md transition-all text-xs font-bold flex items-center justify-center gap-2 uppercase">
+                        <!-- Icon Cash -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
                             <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
                             <path fill-rule="evenodd"
                                 d="M22.5 9.75h-21v7.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-7.5Zm-18 3.75a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z"
                                 clip-rule="evenodd" />
                         </svg>
-                        EFECTIVO
+                        Efectivo
                     </button>
-                    <button type="button"
-                        class="flex-1 py-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                            class="w-4 h-4 text-gray-400 dark:text-gray-500">
+                    <button type="button" (click)="setPaymentMethod('card')" [class.bg-white]="paymentMethod === 'card'"
+                        [class.text-blue-600]="paymentMethod === 'card'" [class.shadow-sm]="paymentMethod === 'card'"
+                        [class.text-gray-500]="paymentMethod !== 'card'"
+                        class="flex-1 py-2 rounded-md transition-all text-xs font-bold flex items-center justify-center gap-2 uppercase">
+                        <!-- Icon Card -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
                             <path fill-rule="evenodd"
                                 d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z"
                                 clip-rule="evenodd" />
                         </svg>
-                        TARJETA
+                        Tarjeta
                     </button>
                 </div>
 
                 <form [formGroup]="noteForm" class="space-y-4 shrink-0">
-                    <!-- Recibido / Cambio Grid -->
-                    <div class="grid grid-cols-2 gap-3">
+                    <!-- Recibido / Cambio Grid (CASH) -->
+                    <div class="grid grid-cols-2 gap-3" *ngIf="paymentMethod === 'cash'">
                         <div>
                             <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Recibido</label>
                             <div class="relative">
                                 <span class="absolute left-3 top-2.5 text-gray-400 text-sm">$</span>
                                 <input type="number" formControlName="receivedAmount" (input)="calculateChange()"
-                                    class="w-full pl-6 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-lg font-bold focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                                    class="w-full pl-6 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-lg font-bold focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm">
                             </div>
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Cambio</label>
                             <div class="relative">
                                 <div
-                                    class="w-full py-2 px-3 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-900 rounded-lg text-emerald-600 dark:text-emerald-400 text-lg font-bold text-right">
+                                    class="w-full py-2 px-3 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-900 rounded-lg text-emerald-600 dark:text-emerald-400 text-lg font-bold text-right shadow-sm">
                                     {{ noteForm.get('changeAmount')?.value | currency }}
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Reference Input (CARD) -->
+                    <div *ngIf="paymentMethod === 'card'">
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Referencia /
+                            Voucher</label>
+                        <input type="text" formControlName="reference" placeholder="#1234..."
+                            class="w-full py-2 px-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                        <p class="text-[10px] text-gray-400 mt-1">* Se cobrará el monto exacto: {{
+                            noteForm.get('total')?.value | currency }}</p>
                     </div>
 
                     <!-- Hidden logic inputs kept for compatibility if needed, but driven by logic above -->
@@ -497,11 +542,14 @@
                 <!-- Footer Button (Confirm) - Pushed to bottom -->
                 <div class="pt-4">
                     <button type="button" (click)="onSubmit()" [disabled]="isLoading"
-                        class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-gray-900 font-extrabold text-base rounded-xl shadow-lg hover:shadow-orange-500/20 transform transition-all active:scale-95 flex items-center justify-center gap-2">
+                        [class.bg-amber-500]="!isPartialPayment" [class.hover:bg-amber-400]="!isPartialPayment"
+                        [class.bg-indigo-600]="isPartialPayment" [class.hover:bg-indigo-500]="isPartialPayment"
+                        [class.text-white]="isPartialPayment" [class.text-gray-900]="!isPartialPayment"
+                        class="w-full py-3.5 font-extrabold text-base rounded-xl shadow-lg hover:shadow-orange-500/20 transform transition-all active:scale-95 flex items-center justify-center gap-2">
                         <span *ngIf="isLoading" class="animate-spin">↻</span>
-                        <span
-                            class="rounded-full border-2 border-gray-900 w-5 h-5 flex items-center justify-center text-[10px]">✓</span>
-                        CONFIRMAR VENTA
+                        <span class="rounded-full border-2 w-5 h-5 flex items-center justify-center text-[10px]"
+                            [class.border-gray-900]="!isPartialPayment" [class.border-white]="isPartialPayment">✓</span>
+                        {{ confirmButtonText }}
                     </button>
                 </div>
 

@@ -61,7 +61,7 @@
                             class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500">
                             <option value="" disabled>Seleccione un rol</option>
                             <option *ngFor="let role of roles" [value]="role._id">
-                                {{ role.name }}
+                                {{ role.name }} {{ role.sucursalId ? '(Local)' : '(Global)' }}
                             </option>
                         </select>
                         <span class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">

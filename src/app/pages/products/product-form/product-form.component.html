@@ -100,6 +100,25 @@
                 class="text-red-500 text-xs mt-1">Requerido</div>
         </div>
 
+        <!-- 11. Is Unique (Toggle) -->
+        <div class="flex items-center h-full pt-6">
+            <div class="flex items-center">
+                <input id="isUnique" type="checkbox" formControlName="isUnique"
+                    class="w-5 h-5 text-brand-600 bg-gray-100 border-gray-300 rounded focus:ring-brand-500 dark:focus:ring-brand-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label for="isUnique" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Pieza
+                    Única</label>
+            </div>
+        </div>
+
+        <!-- 12. Stock (Conditional) -->
+        <div *ngIf="!productForm.get('isUnique')?.value">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Stock Inicial*</label>
+            <input type="number" formControlName="stock"
+                class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
+            <div *ngIf="productForm.get('stock')?.touched && productForm.get('stock')?.invalid"
+                class="text-red-500 text-xs mt-1">Requerido</div>
+        </div>
+
         <!-- 11. Description -->
         <div class="md:col-span-2 lg:col-span-4">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descripción*</label>

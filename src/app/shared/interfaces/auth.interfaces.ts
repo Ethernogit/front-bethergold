@@ -88,6 +88,7 @@ export interface Role {
   description: string;
   permissions: string[] | Permission[];
   isActive: boolean;
+  sucursalId?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

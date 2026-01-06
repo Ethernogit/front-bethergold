@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface Sucursal {
@@ -63,6 +63,14 @@ export class SucursalService {
 
     getSucursalById(id: string): Observable<{ data: Sucursal }> {
         return this.http.get<{ data: Sucursal }>(`${this.apiUrl}/${id}`);
+    }
+
+    /**
+     * Obtener siguiente folio
+     */
+    getNextFolio(sucursalId: string): Observable<string> {
+        return this.http.get<{ success: boolean, data: string }>(`${this.apiUrl}/${sucursalId}/next-folio`)
+            .pipe(map(res => res.data));
     }
 
     updateSucursal(id: string, data: any): Observable<{ data: Sucursal }> {

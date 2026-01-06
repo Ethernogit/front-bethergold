@@ -97,9 +97,9 @@ export class ClientSelectionModalComponent implements OnInit {
         };
 
         this.clientService.createClient(newClient).subscribe({
-            next: (client: Client) => {
+            next: (res: any) => {
                 this.isCreating = false;
-                this.select.emit(client);
+                this.select.emit(res.data);
             },
             error: (err: any) => {
                 console.error('Error creating client', err);

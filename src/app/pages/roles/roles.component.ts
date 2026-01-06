@@ -57,36 +57,8 @@ export class RolesComponent {
       this.roles = await this.roleService.getAllRoles(true).toPromise() || [];
     } catch (error) {
       console.error('Error loading roles:', error);
-      // Fallback con datos de ejemplo si falla la API
-      this.roles = [
-        {
-          id: '1',
-          name: 'Super Administrador',
-          description: 'Acceso completo a todas las funcionalidades del sistema',
-          permissions: ['1', '2', '3', '4'],
-          isActive: true,
-          createdAt: new Date('2024-01-15'),
-          updatedAt: new Date('2024-01-15')
-        },
-        {
-          id: '2',
-          name: 'Editor',
-          description: 'Puede crear, editar y ver contenido, pero no eliminar',
-          permissions: ['1', '2', '3'],
-          isActive: true,
-          createdAt: new Date('2024-01-16'),
-          updatedAt: new Date('2024-01-16')
-        },
-        {
-          id: '3',
-          name: 'Viewer',
-          description: 'Solo puede ver contenido, sin permisos de edición',
-          permissions: ['2'],
-          isActive: false,
-          createdAt: new Date('2024-01-17'),
-          updatedAt: new Date('2024-01-17')
-        }
-      ];
+      // Remove misleading fallback data
+      this.roles = [];
     }
   }
 
@@ -104,42 +76,7 @@ export class RolesComponent {
         console.log('Permissions loaded from permission service (fallback):', this.availablePermissions);
       } catch (fallbackError) {
         console.error('Error loading permissions (fallback):', fallbackError);
-        // Datos de ejemplo como último recurso
-        this.availablePermissions = [
-          {
-            id: '1',
-            name: 'CREATE_USER',
-            description: 'Permite crear nuevos usuarios en el sistema',
-            module: 'users',
-            action: 'create',
-            isActive: true
-          },
-          {
-            id: '2',
-            name: 'READ_PRODUCTS',
-            description: 'Permite ver la lista de productos',
-            module: 'products',
-            action: 'read',
-            isActive: true
-          },
-          {
-            id: '3',
-            name: 'UPDATE_ORDERS',
-            description: 'Permite modificar órdenes existentes',
-            module: 'orders',
-            action: 'update',
-            isActive: true
-          },
-          {
-            id: '4',
-            name: 'DELETE_PROVIDER',
-            description: 'Permite eliminar proveedores del sistema',
-            module: 'providers',
-            action: 'delete',
-            isActive: true
-          }
-        ];
-        console.log('Using fallback permissions:', this.availablePermissions);
+        this.availablePermissions = [];
       }
     }
   }
@@ -192,7 +129,9 @@ export class RolesComponent {
         const newRole = await this.roleService.createRole({
           name: roleData.name,
           description: roleData.description,
-          permissions: permissionIds
+          permissions: permissionIds,
+          sucursalId: roleData.sucursalId,
+          isActive: roleData.isActive
         }).toPromise();
 
         if (newRole) {
