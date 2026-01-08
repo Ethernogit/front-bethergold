@@ -219,6 +219,16 @@ export const routes: Routes = [
         title: 'Gestión de Productos | Bethergold'
       },
       {
+        path: 'inventory',
+        loadComponent: () => import('./pages/inventory/inventory-list/inventory-list.component').then(m => m.InventoryListComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'inventory',
+          action: 'read'
+        },
+        title: 'Inventario | Bethergold'
+      },
+      {
         path: 'clients',
         loadComponent: () => import('./pages/clients/client-list/client-list.component').then(m => m.ClientListComponent),
         canActivate: [AuthGuard, PermissionGuard],

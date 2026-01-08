@@ -53,6 +53,7 @@ export class AppSidebarComponent {
             icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.5 4.5C6.67157 4.5 6 5.17157 6 6V7.5H18V6C18 5.17157 17.3284 4.5 16.5 4.5H7.5ZM19.5 7.5V6C19.5 4.34315 18.1569 3 16.5 3H7.5C5.84315 3 4.5 4.34315 4.5 6V7.5V9V18C4.5 19.6569 5.84315 21 7.5 21H16.5C18.1569 21 19.5 19.6569 19.5 18V9V7.5ZM18 9H6V18C6 18.8284 6.67157 19.5 7.5 19.5H16.5C17.3284 19.5 18 18.8284 18 18V9Z" fill="currentColor"></path><path d="M9 12C9 11.5858 9.33579 11.25 9.75 11.25H14.25C14.6642 11.25 15 11.5858 15 12C15 12.4142 14.6642 12.75 14.25 12.75H9.75C9.33579 12.75 9 12.4142 9 12Z" fill="currentColor"></path><path d="M9.75 14.25C9.33579 14.25 9 14.5858 9 15C9 15.4142 9.33579 15.75 9.75 15.75H12.75C13.1642 15.75 13.5 15.4142 13.5 15C13.5 14.5858 13.1642 14.25 12.75 14.25H9.75Z" fill="currentColor"></path></svg>`,
             name: "Productos",
             subItems: [
+                { name: "Inventario", path: "/inventory", permission: 'inventory:read' },
                 { name: "Lista de Productos", path: "/products" },
                 { name: "Categorías", path: "/categories" },
                 { name: "Subcategorías", path: "/subcategories" },

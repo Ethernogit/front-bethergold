@@ -26,6 +26,7 @@ export interface Product {
     images?: { url: string; isPrimary: boolean }[];
     status?: 'active' | 'inactive' | 'discontinued';
     isUnique?: boolean;
+    lastInventoryRevision?: Date;
 }
 
 @Injectable({
