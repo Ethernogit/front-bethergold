@@ -51,6 +51,7 @@ import { UserService } from '../../../shared/services/user.service';
                             class="sticky top-0 z-10 bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-800 dark:text-gray-400 shadow-sm">
                             <tr>
                                 <th class="px-6 py-4 font-medium">Nombre</th>
+                                <th class="px-6 py-4 font-medium">Sucursales</th>
                                 <th class="px-6 py-4 font-medium">Email</th>
                                 <th class="px-6 py-4 font-medium">Rol</th>
                                 <th class="px-6 py-4 font-medium">Estado</th>
@@ -63,6 +64,26 @@ import { UserService } from '../../../shared/services/user.service';
                                 <td class="px-6 py-4">
                                     <p class="font-medium text-black dark:text-white">{{ user.profile?.firstName }} {{
                                         user.profile?.lastName }}</p>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-col gap-1 items-start">
+                                        @for (branch of user.branches.slice(0, 2); track branch._id) {
+                                        <span
+                                            class="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
+                                            {{ branch.name }}
+                                        </span>
+                                        }
+                                        @if (user.branches.length > 2) {
+                                        <span
+                                            class="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300 cursor-help border border-gray-200 dark:border-gray-600"
+                                            [title]="getRemainingBranches(user.branches)">
+                                            +{{ user.branches.length - 2 }}
+                                        </span>
+                                        }
+                                        @if (!user.branches || user.branches.length === 0) {
+                                        <span class="text-xs text-gray-400 italic">Global</span>
+                                        }
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <p class="text-black dark:text-white">{{ user.email }}</p>
@@ -255,7 +276,8 @@ export class UserListComponent implements OnInit {
                         email: item.userId.email,
                         profile: item.userId.profile,
                         role: item.roleId ? item.roleId.name : 'N/A',
-                        status: item.status
+                        status: item.status,
+                        branches: item.branches || []
                     }));
                     this.users.set(mappedUsers);
                 }
@@ -314,5 +336,9 @@ export class UserListComponent implements OnInit {
                 this.passwordError = err.error?.message || 'Error al actualizar la contraseña';
             }
         });
+    }
+
+    getRemainingBranches(branches: any[]): string {
+        return branches.slice(2).map(b => b.name).join(', ');
     }
 }
