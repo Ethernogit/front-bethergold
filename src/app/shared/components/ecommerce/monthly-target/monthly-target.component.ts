@@ -59,7 +59,7 @@ export class MonthlyTargetComponent {
   public stroke: ApexStroke = {
     lineCap: 'round',
   };
-  public labels: string[] = ['Progress'];
+  public labels: string[] = ['Progreso'];
   public colors: string[] = ['#465FFF'];
 
   isOpen = false;

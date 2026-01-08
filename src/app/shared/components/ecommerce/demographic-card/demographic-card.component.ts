@@ -28,16 +28,16 @@ export class DemographicCardComponent {
   countries = [
     {
       img: '/images/country/country-01.svg',
-      alt: 'usa',
-      name: 'USA',
-      customers: '2,379 Customers',
+      alt: 'sucursal-centro',
+      name: 'Sucursal Centro',
+      customers: '2,379 Clientes',
       percent: 79,
     },
     {
       img: '/images/country/country-02.svg',
-      alt: 'france',
-      name: 'France',
-      customers: '589 Customers',
+      alt: 'sucursal-plaza',
+      name: 'Sucursal Plaza',
+      customers: '589 Clientes',
       percent: 23,
     },
   ];

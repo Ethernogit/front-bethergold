@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { LoginService } from '../../../services/auth/login.service';
 import { OrganizationSelectorComponent, OrganizationSelection } from '../organization-selector/organization-selector.component';
-import { Organization, LoginData, BackendLoginResponse } from '../../../interfaces/auth.interfaces';
+import { Organization, LoginData, BackendLoginResponse, PreLoginResponse } from '../../../interfaces/auth.interfaces';
 import anime from 'animejs';
 
 @Component({
@@ -105,13 +105,30 @@ export class SigninFormComponent implements OnDestroy, OnInit, AfterViewInit {
     this.isLoading = true;
 
     try {
-      const preLoginResponse = await this.loginService.preLogin(this.email, this.password).toPromise();
+      const response: any = await this.loginService.preLogin(this.email, this.password).toPromise();
 
-      if (!preLoginResponse?.success) {
+      // Check for direct login response (backend optimization for single org/branch)
+      if (response?.data?.token) {
+        this.loginService.setBackendAuthData(response.data);
+
+        // Handle "remember me"
+        if (this.isChecked) {
+          localStorage.setItem('remember_email', this.email);
+        } else {
+          localStorage.removeItem('remember_email');
+        }
+
+        this.router.navigate(['/dashboard']);
+        return;
+      }
+
+      const preLoginResponse = response as PreLoginResponse;
+
+      if (!response?.success) {
         throw new Error('Error en pre-login');
       }
 
-      const { organizations, requiresSelection } = preLoginResponse;
+      const { organizations, requiresSelection } = response;
 
       // Verificar si necesita mostrar selector
       let needsSelection = false;

@@ -18,8 +18,8 @@ import { DropdownItemComponent } from '../../ui/dropdown/dropdown-item/dropdown-
 export class MonthlySalesChartComponent {
   public series: ApexAxisChartSeries = [
     {
-      name: 'Sales',
-      data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
+      name: 'Ventas',
+      data: [120, 380, 200, 250, 450, 190, 200, 150, 210, 280, 350, 500],
     },
   ];
   public chart: ApexChart = {
@@ -30,8 +30,8 @@ export class MonthlySalesChartComponent {
   };
   public xaxis: ApexXAxis = {
     categories: [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+      'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
     ],
     axisBorder: { show: false },
     axisTicks: { show: false },

@@ -306,7 +306,10 @@ export class LoginService {
   /**
    * Configurar datos de autenticación desde la respuesta del backend actual
    */
-  private setBackendAuthData(data: BackendLoginResponse['data']): void {
+  /**
+   * Configurar datos de autenticación desde la respuesta del backend actual
+   */
+  public setBackendAuthData(data: BackendLoginResponse['data']): void {
     const { user, token, organization, sucursal, role } = data;
 
     // Los permisos ahora vienen como objetos completos desde el backend

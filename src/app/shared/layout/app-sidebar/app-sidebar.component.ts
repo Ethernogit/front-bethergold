@@ -284,15 +284,18 @@ export class AppSidebarComponent {
     }
 
     hasPermission(item: NavItem | any): boolean {
-        if (!item.permission) {
-            return true;
+        // 1. Check direct permission if it exists
+        if (item.permission && !this.permissionService.hasPermission(item.permission)) {
+            // If explicit permission fails, hide it immediately
+            return false;
         }
-        const hasPerm = this.permissionService.hasPermission(item.permission);
-        if (item.name === 'Sucursal' && !hasPerm) {
-            console.warn('Checks for Sucursal menu item failed.');
-            console.log('Required:', item.permission);
-            console.log('Available Permissions:', this.permissionService.currentUserPermissions());
+
+        // 2. If it has sub-items, allow ONLY if at least one sub-item is permitted
+        if (item.subItems && item.subItems.length > 0) {
+            return item.subItems.some((sub: any) => this.hasPermission(sub));
         }
-        return hasPerm;
+
+        // 3. If no sub-items and no specific permission failed above, it's allowed
+        return true;
     }
 }
