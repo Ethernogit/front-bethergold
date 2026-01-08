@@ -1,4 +1,4 @@
-<div class="mx-auto max-w-screen-2xl h-[calc(100vh-50px)] flex flex-col overflow-hidden">
+<div class="h-[calc(100vh-50px)] flex flex-col overflow-hidden">
     <!-- Main Content -->
     <div class="flex flex-col gap-4 h-full">
         <!-- Products Table -->
@@ -46,7 +46,7 @@
             </div>
 
             <!-- Table -->
-            <div class="flex-1 overflow-y-auto p-0 z-0">
+            <div class="flex-1 overflow-auto p-0 z-0">
                 @if (loading()) {
                 <div class="flex justify-center py-10">
                     <div
@@ -61,7 +61,7 @@
                 <div class="relative">
                     <table class="w-full table-auto">
                         <thead class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-800 shadow-sm">
-                            <tr class="text-left">
+                            <tr class="text-left text-sm">
                                 <th class="px-4 py-3 font-medium text-black dark:text-white">Código</th>
                                 <th class="px-4 py-3 font-medium text-black dark:text-white">Nombre</th>
                                 <th class="px-4 py-3 font-medium text-black dark:text-white">Cat / Subcat</th>
@@ -76,7 +76,7 @@
                         <tbody>
                             @for (product of products(); track product._id) {
                             <tr
-                                class="border-b border-stroke dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                                class="text-sm border-b border-stroke dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                                 <td class="px-4 py-3">
                                     <span class="font-medium text-black dark:text-white">{{ product.barcode }}</span>
                                 </td>

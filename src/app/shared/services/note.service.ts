@@ -40,8 +40,8 @@ export interface Note {
     folio?: string;
     organizationId?: string;
     sucursalId: string;
-    clientId: string;
-    sellerId?: string;
+    clientId: string | { _id: string; name: string; email?: string; phone?: string };
+    sellerId?: string | { profile: { firstName: string; lastName: string } };
     items: NoteItem[];
     financials: {
         subtotal: number;
@@ -84,5 +84,9 @@ export class NoteService {
 
     addPayment(noteId: string, payment: NotePayment): Observable<{ success: boolean; data: Note; message?: string }> {
         return this.http.post<{ success: boolean; data: Note; message?: string }>(`${this.apiUrl}/${noteId}/payments`, payment);
+    }
+
+    cancelNote(noteId: string): Observable<{ success: boolean; data: Note; message?: string }> {
+        return this.http.put<{ success: boolean; data: Note; message?: string }>(`${this.apiUrl}/${noteId}/cancel`, {});
     }
 }

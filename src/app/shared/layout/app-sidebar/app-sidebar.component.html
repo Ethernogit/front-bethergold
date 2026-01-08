@@ -96,6 +96,12 @@
                   new
                 </span>
                 }
+                @if (nav.subItems && !((isExpanded$ | async) || (isMobileOpen$ | async))) {
+                <div class="absolute right-1 bottom-1 flex gap-0.5">
+                  <div class="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500"></div>
+                  <div class="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500"></div>
+                </div>
+                }
                 @if ((isExpanded$ | async) ||
                 (isMobileOpen$ | async)) {
                 <svg [ngClass]="{
@@ -239,6 +245,12 @@
                       }">
                   new
                 </span>
+                }
+                @if (nav.subItems && !((isExpanded$ | async) || (isMobileOpen$ | async))) {
+                <div class="absolute right-1 bottom-1 flex gap-0.5">
+                  <div class="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500"></div>
+                  <div class="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500"></div>
+                </div>
                 }
                 @if ((isExpanded$ | async) ||
                 (isMobileOpen$ | async)) {

@@ -209,6 +209,13 @@ export class AppSidebarComponent {
     toggleSubmenu(section: string, index: number) {
         const key = `${section}-${index}`;
 
+        // Check if sidebar is collapsed
+        this.isExpanded$.subscribe(isExpanded => {
+            if (!isExpanded) {
+                this.sidebarService.setExpanded(true);
+            }
+        }).unsubscribe();
+
         if (this.openSubmenu === key) {
             this.openSubmenu = null;
             this.subMenuHeights[key] = 0;
