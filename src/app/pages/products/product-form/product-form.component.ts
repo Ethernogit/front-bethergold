@@ -415,4 +415,123 @@ export class ProductFormComponent implements OnInit, OnChanges {
     onCancel() {
         this.close.emit();
     }
+
+    testPrint() {
+        if (!this.productForm.get('barcode')?.value) {
+            this.toastService.error('Debe ingresar un código de barras para imprimir');
+            return;
+        }
+
+        const barcode = this.productForm.get('barcode')?.value;
+        const name = this.productForm.get('description')?.value || '';
+        const price = this.productForm.get('price')?.value || 0;
+
+        // STANDARD SIZE "2.5 x 1 in" (approx 63.5mm x 25.4mm)
+        // Matches the option in user's driver list.
+        const pageW = 2.5; // inches
+        const pageH = 1;   // inches
+
+        const printWindow = window.open('', '', `width=500,height=300`);
+        if (!printWindow) return;
+
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Print Label</title>
+                    <style>
+                        @media print {
+                            @page {
+                                size: ${pageW}in ${pageH}in;
+                                margin: 0;
+                            }
+                            html, body {
+                                width: ${pageW}in;
+                                height: ${pageH}in;
+                                margin: 0 !important;
+                                padding: 0 !important;
+                            }
+                            header, footer { display: none !important; }
+                        }
+                        
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            font-family: Arial, sans-serif;
+                            font-weight: bold;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+                        
+                        /* The actual physical label content (63mm x 22mm) */
+                        .label-content {
+                            width: 63mm;
+                            height: 22mm;
+                            position: relative;
+                            overflow: hidden;
+                            /* border: 1px dashed #ccc; /* Debug */
+                        }
+
+                        .printable-area {
+                            position: absolute;
+                            top: 0; 
+                            left: 0;
+                            width: 28mm;
+                            height: 11mm; 
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            text-align: center;
+                            box-sizing: border-box;
+                        }
+
+                        .price {
+                            font-size: 8px;
+                            margin-bottom: 0px;
+                            line-height: 1;
+                        }
+                        
+                        .barcode-svg {
+                            width: 100%;
+                            height: 22px; 
+                            max-width: 26mm;
+                            display: block;
+                        }
+                    </style>
+                    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+                </head>
+                <body>
+                    <div class="label-content">
+                        <div class="printable-area">
+                            <div class="price">$${price.toFixed(2)}</div>
+                            <svg id="barcode" class="barcode-svg"></svg>
+                        </div>
+                    </div>
+                    
+                    <script>
+                        window.onload = function() {
+                            try {
+                                JsBarcode("#barcode", "${barcode}", {
+                                    format: "CODE128",
+                                    width: 1, 
+                                    height: 20,
+                                    displayValue: true,
+                                    fontSize: 9,
+                                    margin: 0,
+                                    textMargin: 0
+                                });
+                                setTimeout(function() {
+                                    window.print();
+                                }, 500);
+                            } catch (e) {
+                                document.body.innerHTML = "Error: " + e.message;
+                            }
+                        };
+                    </script>
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+    }
 }
