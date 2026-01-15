@@ -423,90 +423,116 @@ export class ProductFormComponent implements OnInit, OnChanges {
         }
 
         const barcode = this.productForm.get('barcode')?.value;
-        const name = this.productForm.get('description')?.value || '';
         const price = this.productForm.get('price')?.value || 0;
+        let description = this.productForm.get('description')?.value || '';
 
-        // STANDARD SIZE "2.5 x 1 in" (approx 63.5mm x 25.4mm)
-        // Matches the option in user's driver list.
-        const pageW = 2.5; // inches
-        const pageH = 1;   // inches
+        // Truncate description slightly less aggressive but still safe
+        if (description.length > 25) description = description.substring(0, 25) + '...';
 
-        const printWindow = window.open('', '', `width=500,height=300`);
+        // 60mm x 20mm
+        const pageW_mm = 60;
+        const pageH_mm = 20;
+
+        const printWindow = window.open('', '', `width=600,height=300`);
         if (!printWindow) return;
 
         printWindow.document.write(`
+            <!DOCTYPE html>
             <html>
                 <head>
                     <title>Print Label</title>
                     <style>
                         @media print {
                             @page {
-                                size: ${pageW}in ${pageH}in;
-                                margin: 0;
+                                size: ${pageW_mm}mm ${pageH_mm}mm;
+                                margin: 0; 
                             }
                             html, body {
-                                width: ${pageW}in;
-                                height: ${pageH}in;
+                                width: ${pageW_mm}mm;
+                                height: ${pageH_mm}mm;
                                 margin: 0 !important;
                                 padding: 0 !important;
+                                overflow: hidden !important;
                             }
-                            header, footer { display: none !important; }
+                            body * {
+                                visibility: visible;
+                                page-break-inside: avoid;
+                            }
                         }
                         
                         body {
                             margin: 0;
                             padding: 0;
                             font-family: Arial, sans-serif;
-                            font-weight: bold;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
+                            background-color: white;
+                            position: relative;
+                            width: ${pageW_mm}mm;
+                            height: ${pageH_mm}mm;
                         }
                         
-                        /* The actual physical label content (63mm x 22mm) */
-                        .label-content {
-                            width: 63mm;
-                            height: 22mm;
-                            position: relative;
-                            overflow: hidden;
-                            /* border: 1px dashed #ccc; /* Debug */
-                        }
-
-                        .printable-area {
+                        .label-container {
                             position: absolute;
-                            top: 0; 
-                            left: 0;
-                            width: 28mm;
-                            height: 11mm; 
+                            top: 0;
+                            left: 50%; /* Move to Right Half */
+                            width: 50%; /* Half width */
+                            height: 100%;
+                            
+                            /* Vertical Stack Layout */
                             display: flex;
                             flex-direction: column;
-                            justify-content: center;
-                            align-items: center;
-                            text-align: center;
+                            justify-content: space-between; /* Spread items to fill height */
+                            align-items: flex-start;     /* Left */
+                            
                             box-sizing: border-box;
+                            
+                            padding: 2mm; 
+                            
+                            transform: rotate(180deg); /* Keep 180 rotation */
                         }
 
-                        .price {
-                            font-size: 8px;
-                            margin-bottom: 0px;
-                            line-height: 1;
-                        }
-                        
                         .barcode-svg {
-                            width: 100%;
-                            height: 22px; 
-                            max-width: 26mm;
+                            width: 100%; 
+                            height: 8px; 
                             display: block;
+                            margin: 0;
+                        }
+
+                        .barcode-text {
+                            font-size: 8px;
+                            text-align: left;
+                            width: 100%;
+                            margin: 0;
+                            font-family: monospace; 
+                            word-wrap: break-word; /* Ensure clear break if needed */
+                        }
+
+                        .desc-text {
+                            font-size: 9px;
+                            text-align: left;
+                            width: 100%;
+                            white-space: normal; /* Allow wrap in narrow column */
+                            overflow: hidden;
+                            margin: 0;
+                            line-height: 1.1;
+                            font-weight: bold;
+                        }
+
+                        .price-text {
+                            font-size: 14px; 
+                            font-weight: bold;
+                            text-align: left;
+                            width: 100%;
+                            margin: 0;
                         }
                     </style>
                     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
                 </head>
                 <body>
-                    <div class="label-content">
-                        <div class="printable-area">
-                            <div class="price">$${price.toFixed(2)}</div>
-                            <svg id="barcode" class="barcode-svg"></svg>
-                        </div>
+                    <div class="label-container">
+                        <svg id="barcode" class="barcode-svg"></svg>
+                        <div class="barcode-text">${barcode}</div>
+                        <div class="desc-text">${description}</div>
+                        <div class="price-text">$${price.toFixed(2)}</div>
                     </div>
                     
                     <script>
@@ -514,16 +540,14 @@ export class ProductFormComponent implements OnInit, OnChanges {
                             try {
                                 JsBarcode("#barcode", "${barcode}", {
                                     format: "CODE128",
-                                    width: 1, 
-                                    height: 20,
-                                    displayValue: true,
-                                    fontSize: 9,
-                                    margin: 0,
-                                    textMargin: 0
+                                    width: 1.5, /* Width of bars, might need reducing if too wide for 30mm */
+                                    height: 25,
+                                    displayValue: false, 
+                                    margin: 0
                                 });
                                 setTimeout(function() {
                                     window.print();
-                                }, 500);
+                                }, 300);
                             } catch (e) {
                                 document.body.innerHTML = "Error: " + e.message;
                             }
