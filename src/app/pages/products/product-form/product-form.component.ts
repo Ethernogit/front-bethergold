@@ -480,45 +480,73 @@ export class ProductFormComponent implements OnInit, OnChanges {
                             /* Vertical Stack Layout */
                             display: flex;
                             flex-direction: column;
-                            justify-content: space-between; /* Spread items to fill height */
+                            justify-content: flex-start; 
                             align-items: flex-start;     /* Left */
                             
                             box-sizing: border-box;
                             
-                            padding: 2mm; 
+                            /* Reduced padding slightly to fit content */
+                            /* Top, Right, Bottom, Left */
+                            padding: 1mm 1mm 1mm 0; 
                             
                             transform: rotate(180deg); /* Keep 180 rotation */
                         }
 
+                        .top-section {
+                            width: 100%;
+                            height: 45%; 
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: flex-end; 
+                            align-items: flex-start; /* Align left */
+                            padding-left: 0; /* Fully Left */
+                            /* Removed border */
+                            padding-bottom: 1px;
+                            margin-bottom: 1px;
+                        }
+
+                        .bottom-section {
+                            width: 100%;
+                            height: 55%; 
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: flex-start;
+                            align-items: flex-start;
+                            padding-top: 10px; /* Push down significantly from center */
+                        }
+
                         .barcode-svg {
-                            width: 100%; 
-                            height: 8px; 
+                            width: 95%; 
+                            height: 100%; 
+                            max-height: 12px;
                             display: block;
                             margin: 0;
                         }
 
                         .barcode-text {
-                            font-size: 8px;
-                            text-align: left;
+                            font-size: 10px; 
+                            font-weight: bold;
+                            text-align: left; 
                             width: 100%;
                             margin: 0;
+                            /* Removed margin-left to align flush left */
                             font-family: monospace; 
-                            word-wrap: break-word; /* Ensure clear break if needed */
+                            line-height: 1;
                         }
 
                         .desc-text {
-                            font-size: 9px;
+                            font-size: 10px; 
                             text-align: left;
                             width: 100%;
-                            white-space: normal; /* Allow wrap in narrow column */
+                            white-space: normal; 
                             overflow: hidden;
                             margin: 0;
                             line-height: 1.1;
-                            font-weight: bold;
+                            margin-bottom: 2px;
                         }
 
                         .price-text {
-                            font-size: 14px; 
+                            font-size: 11px; 
                             font-weight: bold;
                             text-align: left;
                             width: 100%;
@@ -529,10 +557,14 @@ export class ProductFormComponent implements OnInit, OnChanges {
                 </head>
                 <body>
                     <div class="label-container">
-                        <svg id="barcode" class="barcode-svg"></svg>
-                        <div class="barcode-text">${barcode}</div>
-                        <div class="desc-text">${description}</div>
-                        <div class="price-text">$${price.toFixed(2)}</div>
+                        <div class="top-section">
+                            <svg id="barcode" class="barcode-svg"></svg>
+                            <div class="barcode-text">${barcode}</div>
+                        </div>
+                        <div class="bottom-section">
+                            <div class="desc-text">${description}</div>
+                            <div class="price-text">$${price.toFixed(2)}</div>
+                        </div>
                     </div>
                     
                     <script>
@@ -540,7 +572,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
                             try {
                                 JsBarcode("#barcode", "${barcode}", {
                                     format: "CODE128",
-                                    width: 1.5, /* Width of bars, might need reducing if too wide for 30mm */
+                                    width: 1.5, 
                                     height: 25,
                                     displayValue: false, 
                                     margin: 0
