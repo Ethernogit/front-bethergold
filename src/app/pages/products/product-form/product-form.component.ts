@@ -1,11 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, OnChanges, SimpleChanges, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnInit, OnChanges, SimpleChanges, Output, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common'; // Added isPlatformBrowser
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductService, Product } from '../../../shared/services/product.service';
 import { CategoryService } from '../../../shared/services/category.service';
 import { SubcategoryService } from '../../../shared/services/subcategory.service';
 import { ProviderService } from '../../../shared/services/provider.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { LabelPrintingService } from '../../../shared/services/label-printing.service';
 import { LoginService } from '../../../shared/services/auth/login.service';
 import { SucursalService } from '../../../shared/services/sucursal.service';
 import { MaterialType, ProviderPrice } from '../../../shared/interfaces/provider.interfaces';
@@ -47,6 +48,8 @@ export class ProductFormComponent implements OnInit, OnChanges {
         private subcategoryService: SubcategoryService,
         private providerService: ProviderService,
         private toastService: ToastService,
+        private labelService: LabelPrintingService,
+        @Inject(PLATFORM_ID) private platformId: Object,
         private loginService: LoginService,
         private sucursalService: SucursalService
     ) {
@@ -424,170 +427,12 @@ export class ProductFormComponent implements OnInit, OnChanges {
 
         const barcode = this.productForm.get('barcode')?.value;
         const price = this.productForm.get('price')?.value || 0;
-        let description = this.productForm.get('description')?.value || '';
+        const description = this.productForm.get('description')?.value || '';
 
-        // Truncate description slightly less aggressive but still safe
-        if (description.length > 25) description = description.substring(0, 25) + '...';
-
-        // 60mm x 20mm
-        const pageW_mm = 60;
-        const pageH_mm = 20;
-
-        const printWindow = window.open('', '', `width=600,height=300`);
-        if (!printWindow) return;
-
-        printWindow.document.write(`
-            <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>Print Label</title>
-                    <style>
-                        @media print {
-                            @page {
-                                size: ${pageW_mm}mm ${pageH_mm}mm;
-                                margin: 0; 
-                            }
-                            html, body {
-                                width: ${pageW_mm}mm;
-                                height: ${pageH_mm}mm;
-                                margin: 0 !important;
-                                padding: 0 !important;
-                                overflow: hidden !important;
-                            }
-                            body * {
-                                visibility: visible;
-                                page-break-inside: avoid;
-                            }
-                        }
-                        
-                        body {
-                            margin: 0;
-                            padding: 0;
-                            font-family: Arial, sans-serif;
-                            background-color: white;
-                            position: relative;
-                            width: ${pageW_mm}mm;
-                            height: ${pageH_mm}mm;
-                        }
-                        
-                        .label-container {
-                            position: absolute;
-                            top: 0;
-                            left: 50%; /* Move to Right Half */
-                            width: 50%; /* Half width */
-                            height: 100%;
-                            
-                            /* Vertical Stack Layout */
-                            display: flex;
-                            flex-direction: column;
-                            justify-content: flex-start; 
-                            align-items: flex-start;     /* Left */
-                            
-                            box-sizing: border-box;
-                            
-                            /* Reduced padding slightly to fit content */
-                            /* Top, Right, Bottom, Left */
-                            padding: 1mm 1mm 1mm 0; 
-                            
-                            transform: rotate(180deg); /* Keep 180 rotation */
-                        }
-
-                        .top-section {
-                            width: 100%;
-                            height: 45%; 
-                            display: flex;
-                            flex-direction: column;
-                            justify-content: flex-end; 
-                            align-items: flex-start; /* Align left */
-                            padding-left: 0; /* Fully Left */
-                            /* Removed border */
-                            padding-bottom: 1px;
-                            margin-bottom: 1px;
-                        }
-
-                        .bottom-section {
-                            width: 100%;
-                            height: 55%; 
-                            display: flex;
-                            flex-direction: column;
-                            justify-content: flex-start;
-                            align-items: flex-start;
-                            padding-top: 10px; /* Push down significantly from center */
-                        }
-
-                        .barcode-svg {
-                            width: 95%; 
-                            height: 100%; 
-                            max-height: 12px;
-                            display: block;
-                            margin: 0;
-                        }
-
-                        .barcode-text {
-                            font-size: 10px; 
-                            font-weight: bold;
-                            text-align: left; 
-                            width: 100%;
-                            margin: 0;
-                            /* Removed margin-left to align flush left */
-                            font-family: monospace; 
-                            line-height: 1;
-                        }
-
-                        .desc-text {
-                            font-size: 10px; 
-                            text-align: left;
-                            width: 100%;
-                            white-space: normal; 
-                            overflow: hidden;
-                            margin: 0;
-                            line-height: 1.1;
-                            margin-bottom: 2px;
-                        }
-
-                        .price-text {
-                            font-size: 11px; 
-                            font-weight: bold;
-                            text-align: left;
-                            width: 100%;
-                            margin: 0;
-                        }
-                    </style>
-                    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
-                </head>
-                <body>
-                    <div class="label-container">
-                        <div class="top-section">
-                            <svg id="barcode" class="barcode-svg"></svg>
-                            <div class="barcode-text">${barcode}</div>
-                        </div>
-                        <div class="bottom-section">
-                            <div class="desc-text">${description}</div>
-                            <div class="price-text">$${price.toFixed(2)}</div>
-                        </div>
-                    </div>
-                    
-                    <script>
-                        window.onload = function() {
-                            try {
-                                JsBarcode("#barcode", "${barcode}", {
-                                    format: "CODE128",
-                                    width: 1.5, 
-                                    height: 25,
-                                    displayValue: false, 
-                                    margin: 0
-                                });
-                                setTimeout(function() {
-                                    window.print();
-                                }, 300);
-                            } catch (e) {
-                                document.body.innerHTML = "Error: " + e.message;
-                            }
-                        };
-                    </script>
-                </body>
-            </html>
-        `);
-        printWindow.document.close();
+        this.labelService.printLabels([{
+            barcode,
+            description,
+            price
+        }]);
     }
 }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { ProductService, Product } from '../../../shared/services/product.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { LabelPrintingService } from '../../../shared/services/label-printing.service'; // Import Service
 import { finalize } from 'rxjs';
 import { ProductFormComponent } from '../product-form/product-form.component';
 
@@ -15,6 +16,7 @@ import { ProductFormComponent } from '../product-form/product-form.component';
 export class ProductListComponent implements OnInit {
     private productService = inject(ProductService);
     private toastService = inject(ToastService);
+    private labelService = inject(LabelPrintingService); // Inject Service
     private fb = inject(FormBuilder);
 
     // Signals
@@ -24,6 +26,9 @@ export class ProductListComponent implements OnInit {
     showDeleteModal = signal(false);
     deletingProduct = signal<Product | null>(null);
     editingProduct = signal<Product | null>(null); // To pass to form if editable
+
+    // Selection
+    selectedProducts = signal<Set<string>>(new Set());
 
     // Pagination
     currentPage = signal(1);
@@ -162,5 +167,56 @@ export class ProductListComponent implements OnInit {
             return (product.subcategory as any).name;
         }
         return product.subcategory as string;
+    }
+
+    // Selection Logic
+    toggleSelection(productId: string) {
+        const currentSelected = new Set(this.selectedProducts());
+        if (currentSelected.has(productId)) {
+            currentSelected.delete(productId);
+        } else {
+            currentSelected.add(productId);
+        }
+        this.selectedProducts.set(currentSelected);
+    }
+
+    toggleAllSelection(event: any) {
+        const checked = event.target.checked;
+        if (checked) {
+            const allIds = new Set(this.products().map(p => p._id!));
+            this.selectedProducts.set(allIds);
+        } else {
+            this.selectedProducts.set(new Set());
+        }
+    }
+
+    isSelected(productId: string): boolean {
+        return this.selectedProducts().has(productId);
+    }
+
+    isAllSelected(): boolean {
+        const products = this.products();
+        return products.length > 0 && products.every(p => this.selectedProducts().has(p._id!));
+    }
+
+    bulkPrintLabels() {
+        const selectedIds = this.selectedProducts();
+        if (selectedIds.size === 0) {
+            this.toastService.error('Seleccione al menos un producto para imprimir');
+            return;
+        }
+
+        const productsToPrint = this.products()
+            .filter(p => selectedIds.has(p._id!))
+            .map(p => ({
+                barcode: p.barcode,
+                description: p.description || p.name, // Fallback to name if desc is empty?
+                price: p.price
+            }));
+
+        this.labelService.printLabels(productsToPrint);
+
+        // Optional: Clear selection after print? 
+        // this.selectedProducts.set(new Set());
     }
 }
