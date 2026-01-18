@@ -41,6 +41,7 @@ export class ProvidersComponent implements OnInit {
   showModal = signal(false);
   showDeleteModal = signal(false);
   showPriceModal = signal(false);
+  showTypeModal = signal(false);
   editingProvider = signal<Provider | null>(null);
   deletingProvider = signal<Provider | null>(null);
   pricingProvider = signal<Provider | null>(null);
@@ -69,6 +70,7 @@ export class ProvidersComponent implements OnInit {
   // Forms
   providerForm: FormGroup;
   priceForm: FormGroup;
+  typeForm: FormGroup;
   searchForm: FormGroup;
 
   // Constants
@@ -113,6 +115,12 @@ export class ProvidersComponent implements OnInit {
       materialTypeId: ['', Validators.required],
       pricePerGram: [0, [Validators.required, Validators.min(0.01)]],
       profitMargin: [0, [Validators.required, Validators.min(0), Validators.max(100)]]
+    });
+
+    this.typeForm = this.fb.group({
+      name: ['', [Validators.required, Validators.maxLength(50)]],
+      code: ['', [Validators.required, Validators.maxLength(10)]],
+      description: ['', Validators.maxLength(200)]
     });
 
     this.searchForm = this.fb.group({
@@ -523,6 +531,47 @@ export class ProvidersComponent implements OnInit {
           }
         },
         error: (err) => this.toastService.error('Error al eliminar')
+      });
+  }
+
+  // =============== PROVIDER TYPE METHODS ===============
+
+  openTypeModal() {
+    this.typeForm.reset();
+    this.showTypeModal.set(true);
+  }
+
+  closeTypeModal() {
+    this.showTypeModal.set(false);
+    this.typeForm.reset();
+  }
+
+  saveProviderType() {
+    if (this.typeForm.invalid) {
+      this.typeForm.markAllAsTouched();
+      return;
+    }
+
+    this.loading.set(true);
+    this.providerService.createProviderType(this.typeForm.value)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (res) => {
+          if (res.success) {
+            this.toastService.success('Tipo de proveedor creado');
+            this.closeTypeModal();
+            this.loadProviderTypes();
+            // Optionally select the new type in the provider form
+            if (res.data) {
+              const newTypeId = res.data._id || res.data.id;
+              this.providerForm.patchValue({ providerTypeId: newTypeId });
+            }
+          }
+        },
+        error: (err) => {
+          console.error('Error creating provider type', err);
+          this.toastService.error('Error al crear el tipo de proveedor');
+        }
       });
   }
 

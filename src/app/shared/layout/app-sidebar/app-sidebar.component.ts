@@ -57,7 +57,9 @@ export class AppSidebarComponent {
                 { name: "Lista de Productos", path: "/products" },
                 { name: "Categorías", path: "/categories" },
                 { name: "Subcategorías", path: "/subcategories" },
-                { name: "Tipos de Movimiento", path: "/products/movement-types", permission: 'products:read' }
+                { name: "Tipos de Material", path: "/products/material-types", permission: 'organization:read' },
+                { name: "Tipos de Movimiento", path: "/products/movement-types", permission: 'products:read' },
+                { name: "Proveedores", path: "/providers", permission: 'providers:read' }
             ],
         },
         {
@@ -138,7 +140,7 @@ export class AppSidebarComponent {
                 { name: "Usuarios", path: "/users", permission: 'users:read' },
                 { name: "Roles", path: "/roles", permission: 'roles:read' },
                 { name: "Permisos", path: "/permisos", permission: 'permissions:read' },
-                { name: "Proveedores", path: "/providers", permission: 'providers:read' },
+
                 { name: "Sucursal", path: "/sucursal/config", permission: 'organization:update' },
             ],
         },
@@ -163,6 +165,59 @@ export class AppSidebarComponent {
         this.isExpanded$ = this.sidebarService.isExpanded$;
         this.isMobileOpen$ = this.sidebarService.isMobileOpen$;
         this.isHovered$ = this.sidebarService.isHovered$;
+    }
+
+    hoveredItem: NavItem | null = null;
+    hoveredItemIndex: number = -1;
+    hoveredGroup: string = '';
+    hoveredTop: number = 0;
+    hoverTimeout: any;
+
+    onMouseEnter(item: NavItem, index: number, group: string, event: MouseEvent) {
+        // Only valid if sidebar is collapsed
+        this.isExpanded$.subscribe(isExpanded => {
+            if (!isExpanded && item.subItems && item.subItems.length > 0) {
+                // Clear any pending close timer
+                if (this.hoverTimeout) {
+                    clearTimeout(this.hoverTimeout);
+                    this.hoverTimeout = null;
+                }
+
+                // Set hover data
+                this.hoveredItem = item;
+                this.hoveredItemIndex = index;
+                this.hoveredGroup = group;
+
+                // Calculate top position
+                const target = event.target as HTMLElement;
+                const rect = target.getBoundingClientRect();
+                this.hoveredTop = rect.top;
+            }
+        }).unsubscribe();
+    }
+
+    onMouseLeave() {
+        // Add delay before closing to allow moving to the submenu
+        this.hoverTimeout = setTimeout(() => {
+            this.hoveredItem = null;
+            this.hoveredItemIndex = -1;
+            this.hoveredGroup = '';
+        }, 300);
+    }
+
+    onSubmenuEnter() {
+        if (this.hoverTimeout) {
+            clearTimeout(this.hoverTimeout);
+            this.hoverTimeout = null;
+        }
+    }
+
+    onSubmenuLeave() {
+        this.hoverTimeout = setTimeout(() => {
+            this.hoveredItem = null;
+            this.hoveredItemIndex = -1;
+            this.hoveredGroup = '';
+        }, 300);
     }
 
     ngOnInit() {

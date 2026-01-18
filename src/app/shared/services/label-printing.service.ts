@@ -4,6 +4,16 @@ export interface ProductLabelData {
     barcode: string;
     description: string;
     price: number;
+    category?: string;
+    subcategory?: string;
+    weight?: number | string;
+    karatage?: string;
+    printConfig?: {
+        showPrice: boolean;
+        showWeight: boolean;
+        showKaratage: boolean;
+        showDescription: boolean;
+    };
 }
 
 @Injectable({
@@ -29,12 +39,61 @@ export class LabelPrintingService {
             const barcode = product.barcode;
             const price = product.price || 0;
             let description = product.description || '';
+            const category = (product.category || '').toLowerCase();
+            const weight = product.weight;
+            const karatage = product.karatage;
+            const config = product.printConfig;
 
-            // Truncate description
+            // Determining what to show
+            let showPrice = true;
+            let showWeight = false;
+            let showKaratage = false;
+
+            if (config) {
+                // Use Configuration from Category
+                showPrice = config.showPrice;
+                showWeight = config.showWeight;
+                showKaratage = config.showKaratage;
+                // If config has showDescription, we could use it too, but assumed generally always shown.
+                // If description is hidden?
+                if (config.showDescription === false) {
+                    description = '';
+                }
+            } else {
+                // Fallback to hardcoded logic
+                const isJoyeria = category.includes('joyeria') || category.includes('joyería');
+                const isBroquel = category.includes('broquel');
+                const isEstuche = category.includes('estuche');
+
+                if (isJoyeria) {
+                    showPrice = false;
+                    showWeight = true;
+                    showKaratage = true;
+                } else if (isBroquel) {
+                    showPrice = true;
+                    showWeight = false;
+                } else if (isEstuche) {
+                    showPrice = true;
+                    showWeight = false;
+                }
+            }
+
+            // Truncate description slightly less if we have more space? 
+            // Or maintain simple logic.
             if (description.length > 25) description = description.substring(0, 25) + '...';
 
             // Page break for subsequent pages
             const pageBreak = index < products.length - 1 ? 'page-break-after: always;' : '';
+
+            // Construct Extra Info Line (Weight/Karatage)
+            let extraInfoHtml = '';
+            if (showWeight || showKaratage) {
+                const weightStr = showWeight && weight ? `${weight}g` : '';
+                const karatStr = showKaratage && karatage ? `${karatage}` : '';
+                extraInfoHtml = `<div class="extra-info">${[karatStr, weightStr].filter(Boolean).join(' ')}</div>`;
+            }
+
+            const priceHtml = showPrice ? `<div class="price-text">$${price.toFixed(2)}</div>` : '';
 
             labelsHtml += `
                 <div class="label-wrapper" style="${pageBreak}">
@@ -45,7 +104,8 @@ export class LabelPrintingService {
                         </div>
                         <div class="bottom-section">
                             <div class="desc-text">${description}</div>
-                            <div class="price-text">$${price.toFixed(2)}</div>
+                            ${extraInfoHtml}
+                            ${priceHtml}
                         </div>
                     </div>
                 </div>
@@ -65,7 +125,7 @@ export class LabelPrintingService {
                             }
                             html, body {
                                 width: ${pageW_mm}mm;
-                                height: ${pageH_mm}mm; /* Use auto for bulk? No, fixed page size usually better */
+                                height: ${pageH_mm}mm;
                                 margin: 0 !important;
                                 padding: 0 !important;
                             }
@@ -91,21 +151,15 @@ export class LabelPrintingService {
                         .label-container {
                             position: absolute;
                             top: 0;
-                            left: 50%; /* Move to Right Half as verified */
-                            width: 50%; /* Half width */
+                            left: 50%;
+                            width: 50%;
                             height: 100%;
-                            
-                            /* Vertical Stack Layout */
                             display: flex;
                             flex-direction: column;
                             justify-content: flex-start; 
-                            align-items: flex-start;     /* Left */
-                            
+                            align-items: flex-start;
                             box-sizing: border-box;
-                            
-                            /* Reduced padding - Verified setting: 1mm 1mm 1mm 0 */
                             padding: 1mm 1mm 1mm 0; 
-                            
                             transform: rotate(180deg); 
                         }
 
@@ -115,8 +169,8 @@ export class LabelPrintingService {
                             display: flex;
                             flex-direction: column;
                             justify-content: flex-end; 
-                            align-items: flex-start; /* Align left */
-                            padding-left: 0; /* Fully Left */
+                            align-items: flex-start;
+                            padding-left: 0;
                             padding-bottom: 1px;
                             margin-bottom: 1px;
                         }
@@ -128,7 +182,7 @@ export class LabelPrintingService {
                             flex-direction: column;
                             justify-content: flex-start;
                             align-items: flex-start;
-                            padding-top: 10px; /* Push down significantly */
+                            padding-top: 10px;
                         }
 
                         .barcode-svg {
@@ -167,6 +221,13 @@ export class LabelPrintingService {
                             width: 100%;
                             margin: 0;
                         }
+
+                        .extra-info {
+                             font-size: 9px;
+                             width: 100%;
+                             text-align: left;
+                             margin-bottom: 1px;
+                        }
                     </style>
                     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
                 </head>
@@ -192,7 +253,7 @@ export class LabelPrintingService {
                                 setTimeout(function() {
                                     window.print();
                                     window.close();
-                                }, 500); // Slightly longer delay for multiple barocodes
+                                }, 500); 
                             } catch (e) {
                                 document.body.innerHTML = "Error: " + e.message;
                             }
@@ -204,3 +265,4 @@ export class LabelPrintingService {
         printWindow.document.close();
     }
 }
+

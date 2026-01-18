@@ -7,6 +7,13 @@ export enum ProductStatus {
 
 // =============== BASE MODELS ===============
 
+export interface CategoryPrintConfiguration {
+    showPrice: boolean;
+    showWeight: boolean;
+    showKaratage: boolean;
+    showDescription: boolean;
+}
+
 export interface Category {
     _id?: string;
     id?: string;
@@ -14,6 +21,7 @@ export interface Category {
     code: string;
     description?: string;
     status: ProductStatus;
+    printConfiguration?: CategoryPrintConfiguration;
     organizationId: string;
     createdBy?: string;
     updatedBy?: string;
@@ -59,6 +67,15 @@ export interface Product {
     updatedBy?: string;
     createdAt?: Date;
     updatedAt?: Date;
+    // Adding previous missing fields just in case they were lost in view, but keeping existing structure
+    specifications?: {
+        weight?: number;
+    };
+    jewelryDetails?: {
+        goldType?: string;
+        karatage?: string;
+        diamondPoints?: number;
+    };
 }
 
 // =============== TABLE DISPLAY MODELS ===============
@@ -85,6 +102,7 @@ export interface CreateCategoryRequest {
     code: string;
     description?: string;
     status?: ProductStatus;
+    printConfiguration?: CategoryPrintConfiguration;
 }
 
 export interface UpdateCategoryRequest {
@@ -92,6 +110,7 @@ export interface UpdateCategoryRequest {
     code?: string;
     description?: string;
     status?: ProductStatus;
+    printConfiguration?: CategoryPrintConfiguration;
 }
 
 export interface CreateSubcategoryRequest {

@@ -88,7 +88,8 @@ export class ProductListComponent implements OnInit {
                 },
                 error: (err) => {
                     console.error('Error loading products', err);
-                    this.toastService.error('Error al cargar productos');
+                    const msg = err.error?.message || err.message || 'Error desconocido';
+                    this.toastService.error(`Error al cargar productos: ${msg}`);
                 }
             });
     }
@@ -111,6 +112,11 @@ export class ProductListComponent implements OnInit {
 
     openCreateModal() {
         this.editingProduct.set(null);
+        this.showModal.set(true);
+    }
+
+    openEditModal(product: Product) {
+        this.editingProduct.set(product);
         this.showModal.set(true);
     }
 
@@ -208,15 +214,20 @@ export class ProductListComponent implements OnInit {
 
         const productsToPrint = this.products()
             .filter(p => selectedIds.has(p._id!))
-            .map(p => ({
-                barcode: p.barcode,
-                description: p.description || p.name, // Fallback to name if desc is empty?
-                price: p.price
-            }));
+            .map(p => {
+                const category = p.category as any; // Cast to access printConfiguration if populated
+                return {
+                    barcode: p.barcode,
+                    description: p.description || p.name,
+                    price: p.price,
+                    category: this.getCategoryName(p),
+                    subcategory: this.getSubcategoryName(p),
+                    weight: p.specifications?.weight,
+                    karatage: p.jewelryDetails?.karatage,
+                    printConfig: category?.printConfiguration
+                };
+            });
 
         this.labelService.printLabels(productsToPrint);
-
-        // Optional: Clear selection after print? 
-        // this.selectedProducts.set(new Set());
     }
 }

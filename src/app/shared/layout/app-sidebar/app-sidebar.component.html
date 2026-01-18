@@ -67,7 +67,7 @@
           <ul class="flex flex-col gap-1">
             @for (nav of navItems; track $index;let i = $index) {
             @if (hasPermission(nav)) {
-            <li>
+            <li (mouseenter)="onMouseEnter(nav, i, 'main', $event)" (mouseleave)="onMouseLeave()">
               @if (nav.subItems) {
               <button (click)="toggleSubmenu('main',i)" class="menu-item group cursor-pointer"
                 [class.menu-item-active]="openSubmenu === 'main-' + i"
@@ -215,7 +215,7 @@
           <ul class="flex flex-col gap-1">
             @for (nav of othersItems; track $index;let i = $index) {
             @if (hasPermission(nav)) {
-            <li>
+            <li (mouseenter)="onMouseEnter(nav, i, 'others', $event)" (mouseleave)="onMouseLeave()">
               @if (nav.subItems) {
               <button (click)="toggleSubmenu('others',i)" class="menu-item group cursor-pointer" [ngClass]="{
                        'menu-item-active': openSubmenu === 'others-' + i,
@@ -356,3 +356,33 @@
     </div>
   </div>
 </aside>
+
+<!-- Floating Submenu Template -->
+@if (hoveredItem && !((isExpanded$ | async) || (isMobileOpen$ | async))) {
+<div
+  class="fixed left-[90px] z-[100002] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl py-2 w-56 transform transition-all duration-200"
+  [style.top.px]="hoveredTop" (mouseenter)="onSubmenuEnter()" (mouseleave)="onSubmenuLeave()">
+
+  <div class="px-4 py-2 border-b border-gray-100 dark:border-gray-800 mb-2">
+    <h3 class="font-medium text-gray-900 dark:text-white">{{ hoveredItem.name }}</h3>
+  </div>
+
+  <ul class="flex flex-col gap-1 px-2">
+    @for (subItem of hoveredItem.subItems; track $index) {
+    @if (hasPermission(subItem)) {
+    <li>
+      <a [routerLink]="subItem.path"
+        class="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-400 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-brand-500 dark:hover:text-brand-400 transition-colors"
+        [ngClass]="{'bg-brand-50 dark:bg-gray-800 text-brand-600 dark:text-brand-400': isActive(subItem.path)}"
+        (click)="hoveredItem = null">
+        {{ subItem.name }}
+        @if (subItem.new) {
+        <span class="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-brand-100 text-brand-600 font-medium">NEW</span>
+        }
+      </a>
+    </li>
+    }
+    }
+  </ul>
+</div>
+}

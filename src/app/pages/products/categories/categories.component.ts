@@ -57,7 +57,13 @@ export class CategoriesComponent implements OnInit {
             name: ['', [Validators.required, Validators.maxLength(50)]],
             code: ['', [Validators.required, Validators.maxLength(10)]],
             description: ['', Validators.maxLength(200)],
-            status: [ProductStatus.ACTIVE]
+            status: [ProductStatus.ACTIVE],
+            printConfiguration: this.fb.group({
+                showPrice: [true],
+                showWeight: [false],
+                showKaratage: [false],
+                showDescription: [true]
+            })
         });
 
         this.searchForm = this.fb.group({
@@ -105,7 +111,13 @@ export class CategoriesComponent implements OnInit {
     openCreateModal() {
         this.editingCategory.set(null);
         this.categoryForm.reset({
-            status: ProductStatus.ACTIVE
+            status: ProductStatus.ACTIVE,
+            printConfiguration: {
+                showPrice: true,
+                showWeight: false,
+                showKaratage: false,
+                showDescription: true
+            }
         });
         this.showModal.set(true);
     }
@@ -116,7 +128,13 @@ export class CategoriesComponent implements OnInit {
             name: category.name,
             code: category.code,
             description: category.description,
-            status: category.status
+            status: category.status,
+            printConfiguration: category.printConfiguration || {
+                showPrice: true,
+                showWeight: false,
+                showKaratage: false,
+                showDescription: true
+            }
         });
         this.showModal.set(true);
     }
@@ -132,7 +150,8 @@ export class CategoriesComponent implements OnInit {
             name: formData.name,
             code: formData.code,
             description: formData.description,
-            status: formData.status
+            status: formData.status,
+            printConfiguration: formData.printConfiguration
         };
 
         this.loading.set(true);

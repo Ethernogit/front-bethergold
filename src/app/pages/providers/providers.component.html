@@ -292,14 +292,21 @@
             </div>
             <div>
               <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Tipo de Proveedor *</label>
-              <select
-                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
-                [class.border-error-500]="isFieldInvalid('providerTypeId')" formControlName="providerTypeId">
-                <option value="">Seleccionar tipo...</option>
-                @for (type of providerTypes(); track type._id || type.id) {
-                <option [value]="type._id || type.id">{{ type.name }}</option>
-                }
-              </select>
+              <div class="flex gap-2">
+                <select
+                  class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                  [class.border-error-500]="isFieldInvalid('providerTypeId')" formControlName="providerTypeId">
+                  <option value="">Seleccionar tipo...</option>
+                  @for (type of providerTypes(); track type._id || type.id) {
+                  <option [value]="type._id || type.id">{{ type.name }}</option>
+                  }
+                </select>
+                <button type="button"
+                  class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-3 text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all"
+                  (click)="openTypeModal()" title="Crear nuevo tipo">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
               @if (isFieldInvalid('providerTypeId')) {
               <p class="mt-1 text-xs text-error-500">{{ getFieldError('providerTypeId') }}</p>
               }
@@ -659,6 +666,81 @@
         class="rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
         (click)="closePriceModal()">
         Cerrar
+      </button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Create Provider Type Modal -->
+@if (showTypeModal()) {
+<div
+  class="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/50 p-4 backdrop-blur-sm transition-all">
+  <div
+    class="relative w-full max-w-md rounded-2xl bg-white shadow-2xl dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800">
+    <!-- Modal Header -->
+    <div class="flex items-center justify-between border-b border-gray-200 p-5 dark:border-gray-800">
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+        Nuevo Tipo de Proveedor
+      </h3>
+      <button type="button"
+        class="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
+        (click)="closeTypeModal()">
+        <i class="fas fa-times text-lg"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="p-6">
+      <form [formGroup]="typeForm">
+        <div class="flex flex-col gap-4">
+          <div>
+            <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Nombre *</label>
+            <input type="text"
+              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+              [class.border-error-500]="isFieldInvalid('name', typeForm)" formControlName="name">
+            @if (isFieldInvalid('name', typeForm)) {
+            <p class="mt-1 text-xs text-error-500">{{ getFieldError('name', typeForm) }}</p>
+            }
+          </div>
+          <div>
+            <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Código *</label>
+            <input type="text"
+              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 uppercase focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+              [class.border-error-500]="isFieldInvalid('code', typeForm)" formControlName="code">
+            @if (isFieldInvalid('code', typeForm)) {
+            <p class="mt-1 text-xs text-error-500">{{ getFieldError('code', typeForm) }}</p>
+            }
+          </div>
+          <div>
+            <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Descripción</label>
+            <textarea
+              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+              formControlName="description" rows="3"></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="flex items-center justify-end gap-3 border-t border-gray-200 p-6 dark:border-gray-800">
+      <button type="button"
+        class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-all"
+        (click)="closeTypeModal()">
+        Cancelar
+      </button>
+      <button type="button"
+        class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+        [disabled]="loading()" (click)="saveProviderType()">
+        @if (loading()) {
+        <svg class="mr-2 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+          </path>
+        </svg>
+        }
+        Crear
       </button>
     </div>
   </div>

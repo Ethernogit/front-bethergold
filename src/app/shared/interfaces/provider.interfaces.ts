@@ -62,8 +62,9 @@ export interface MaterialType {
   name: string;
   code: string;
   description?: string;
-  unit: string;
-  karat: number;
+  type: 'oro' | 'plata' | 'laminado';
+  karat?: number | null;
+  unit?: string;
   isGlobal: boolean;
   status: 'active' | 'inactive';
   organizationId?: string;
@@ -156,7 +157,8 @@ export interface CreateMaterialTypeRequest {
   name: string;
   code: string;
   description?: string;
-  unit: string;
+  type: 'oro' | 'plata' | 'laminado';
+  karat?: number | null;
 }
 
 export interface UpdateMaterialTypeRequest extends Partial<CreateMaterialTypeRequest> {

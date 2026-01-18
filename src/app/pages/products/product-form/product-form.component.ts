@@ -156,7 +156,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
         // This relies on materialTypes being loaded. might need to wait or rely on simple matching.
         let materialTypeId = '';
         if (product.jewelryDetails?.karatage && this.materialTypes.length > 0) {
-            const m = this.materialTypes.find(mt => `${mt.karat}k` === product.jewelryDetails?.karatage || mt.karat.toString() === product.jewelryDetails?.karatage);
+            const m = this.materialTypes.find(mt => mt.karat && (`${mt.karat}k` === product.jewelryDetails?.karatage || mt.karat.toString() === product.jewelryDetails?.karatage));
             if (m) materialTypeId = m._id || m.id || '';
         }
 

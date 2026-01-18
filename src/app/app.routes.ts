@@ -209,6 +209,16 @@ export const routes: Routes = [
         title: 'Tipos de Movimiento | Bethergold'
       },
       {
+        path: 'products/material-types',
+        loadComponent: () => import('./pages/products/material-types/material-types.component').then(m => m.MaterialTypesComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'organization',
+          action: 'read'
+        },
+        title: 'Tipos de Material | Bethergold'
+      },
+      {
         path: 'products',
         loadComponent: () => import('./pages/products/product-list/product-list.component').then(m => m.ProductListComponent),
         canActivate: [AuthGuard, PermissionGuard],

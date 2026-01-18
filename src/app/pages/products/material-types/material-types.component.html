@@ -1,0 +1,237 @@
+<div class="mx-auto max-w-screen-2xl h-[calc(100vh-50px)] flex flex-col overflow-hidden">
+
+    <div class="flex flex-col gap-4 h-full">
+        <!-- Header & Table Section -->
+        <div
+            class="rounded-sm border border-stroke bg-white shadow-default dark:border-gray-800 dark:bg-gray-900 flex flex-col h-full">
+            <!-- Header -->
+            <div class="border-b border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <h3 class="font-medium text-black dark:text-white">
+                        Tipos de Material
+                    </h3>
+                    <button type="button"
+                        class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200"
+                        (click)="openCreateModal()">
+                        <i class="fas fa-plus"></i>
+                        <span>Nuevo Tipo</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            @if (loading() && materialTypes().length === 0) {
+            <div class="flex justify-center py-10">
+                <div
+                    class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent">
+                </div>
+            </div>
+            }
+
+            <!-- Table -->
+            @if (!loading() || materialTypes().length > 0) {
+            <div class="flex-1 overflow-y-auto p-0 z-0">
+                @if (materialTypes().length > 0) {
+                <div class="relative">
+                    <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+                        <thead
+                            class="sticky top-0 z-10 bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-800 dark:text-gray-400 shadow-sm">
+                            <tr>
+                                <th class="px-6 py-4 font-medium">Código</th>
+                                <th class="px-6 py-4 font-medium">Nombre</th>
+                                <th class="px-6 py-4 font-medium">Tipo</th>
+                                <th class="px-6 py-4 font-medium">Quilataje</th>
+                                <th class="px-6 py-4 font-medium">Estado</th>
+                                <th class="px-6 py-4 text-center font-medium">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            @for (type of materialTypes(); track type.id) {
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                                    {{ type.code }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {{ type.name }}
+                                </td>
+                                <td class="px-6 py-4 capitalize">
+                                    {{ type.type }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    @if (type.type === 'oro') {
+                                    <span
+                                        class="inline-flex items-center rounded-full bg-yellow-50 px-2.5 py-0.5 text-xs font-medium text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">
+                                        {{ type.karat }}k
+                                    </span>
+                                    } @else {
+                                    <span class="text-gray-400">-</span>
+                                    }
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                                        [ngClass]="{
+                        'bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-300': type.status === 'active',
+                        'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300': type.status === 'inactive'
+                      }">
+                                        {{ type.status === 'active' ? 'Activo' : 'Inactivo' }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <button type="button"
+                                            class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-blue-400 transition-colors"
+                                            (click)="openEditModal(type)" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        @if (!type.organizationId) {
+                                        <!-- Disable delete for global types if logical business rule implies that, but for now assuming user manages global types or check organizationId -->
+                                        <!-- Assuming user can delete if they have permission, but usually global types are protected. Showing icon but maybe disabled logic needed. -->
+                                        }
+                                        <button type="button"
+                                            class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-error-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-error-400 transition-colors"
+                                            (click)="deleteType(type)" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                } @else {
+                <div class="flex flex-col items-center justify-center py-12 text-center">
+                    <div class="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-800">
+                        <i class="fas fa-gem text-3xl text-gray-400"></i>
+                    </div>
+                    <h5 class="mb-2 text-lg font-medium text-gray-900 dark:text-white">No hay tipos de material</h5>
+                    <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">Comienza agregando los tipos de metal (Oro,
+                        Plata, etc.).</p>
+                    <button type="button"
+                        class="flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all"
+                        (click)="openCreateModal()">
+                        <i class="fas fa-plus"></i>
+                        <span>Crear Tipo</span>
+                    </button>
+                </div>
+                }
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+@if (showModal()) {
+<div
+    class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/50 p-4 backdrop-blur-sm transition-all">
+    <div
+        class="relative w-full max-w-md rounded-2xl bg-white shadow-2xl dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-gray-200 p-5 dark:border-gray-800">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                {{ editingType() ? 'Editar Tipo' : 'Nuevo Tipo de Material' }}
+            </h3>
+            <button type="button"
+                class="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
+                (click)="closeModal()">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6">
+            <form [formGroup]="materialForm">
+                <div class="flex flex-col gap-4">
+                    <!-- Name -->
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Nombre *</label>
+                        <input type="text"
+                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                            [class.border-error-500]="isFieldInvalid('name')" formControlName="name"
+                            placeholder="Ej. Oro 10k Italiano">
+                        @if (isFieldInvalid('name')) {
+                        <p class="mt-1 text-xs text-error-500">{{ getFieldError('name') }}</p>
+                        }
+                    </div>
+
+                    <!-- Code -->
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Código *</label>
+                        <input type="text"
+                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 uppercase focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                            [class.border-error-500]="isFieldInvalid('code')" formControlName="code"
+                            placeholder="Ej. AU10">
+                        @if (isFieldInvalid('code')) {
+                        <p class="mt-1 text-xs text-error-500">{{ getFieldError('code') }}</p>
+                        }
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Type -->
+                        <div>
+                            <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Tipo Metal
+                                *</label>
+                            <select
+                                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                                formControlName="type">
+                                <option value="">Seleccionar...</option>
+                                @for (opt of materialTypeOptions; track opt.value) {
+                                <option [value]="opt.value">{{ opt.label }}</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Karat (Conditional) -->
+                        @if (isGold()) {
+                        <div>
+                            <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Quilataje
+                                *</label>
+                            <select
+                                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                                formControlName="karat">
+                                <option [ngValue]="null">Seleccionar...</option>
+                                @for (opt of karatOptions; track opt.value) {
+                                <option [value]="opt.value">{{ opt.label }}</option>
+                                }
+                            </select>
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Descripción</label>
+                        <textarea
+                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                            formControlName="description" rows="3"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex items-center justify-end gap-3 border-t border-gray-200 p-6 dark:border-gray-800">
+            <button type="button"
+                class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-all"
+                (click)="closeModal()">
+                Cancelar
+            </button>
+            <button type="button"
+                class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                [disabled]="loading()" (click)="saveType()">
+                @if (loading()) {
+                <svg class="mr-2 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+                }
+                {{ editingType() ? 'Actualizar' : 'Crear' }}
+            </button>
+        </div>
+    </div>
+</div>
+}
