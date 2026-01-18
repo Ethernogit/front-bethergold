@@ -26,14 +26,27 @@ export class LabelPrintingService {
     printLabels(products: ProductLabelData[]) {
         if (!products || products.length === 0) return;
 
-        // 60mm x 20mm
         const pageW_mm = 60;
         const pageH_mm = 20;
+
+        // SCALING: 1mm = 10 units
+        // Total viewbox: 600 x 200
+
+        // Target area: 30mm width -> 300 units
+        // Reset to exactly 300 (Fold Line) to avoid crossing into the other half.
+        // This fills the Right Half (30mm-60mm) fully.
+        const startX = 300;
+        const contentW = 300;
+        const contentH = 200;
+
+        // Rotation center: middle of the content box
+        const centerX = startX + (contentW / 2); // 300 + 150 = 450
+        const centerY = contentH / 2;            // 100
 
         const printWindow = window.open('', '', `width=600,height=300`);
         if (!printWindow) return;
 
-        let labelsHtml = '';
+        let labelsSvgContent = '';
 
         products.forEach((product, index) => {
             const barcode = product.barcode;
@@ -50,17 +63,13 @@ export class LabelPrintingService {
             let showKaratage = false;
 
             if (config) {
-                // Use Configuration from Category
                 showPrice = config.showPrice;
                 showWeight = config.showWeight;
                 showKaratage = config.showKaratage;
-                // If config has showDescription, we could use it too, but assumed generally always shown.
-                // If description is hidden?
                 if (config.showDescription === false) {
                     description = '';
                 }
             } else {
-                // Fallback to hardcoded logic
                 const isJoyeria = category.includes('joyeria') || category.includes('joyería');
                 const isBroquel = category.includes('broquel');
                 const isEstuche = category.includes('estuche');
@@ -78,14 +87,10 @@ export class LabelPrintingService {
                 }
             }
 
-            // Truncate description slightly less if we have more space? 
-            // Or maintain simple logic.
             if (description.length > 25) description = description.substring(0, 25) + '...';
 
-            // Page break for subsequent pages
             const pageBreak = index < products.length - 1 ? 'page-break-after: always;' : '';
 
-            // Construct Extra Info Line (Weight/Karatage)
             let extraInfoHtml = '';
             if (showWeight || showKaratage) {
                 const weightStr = showWeight && weight ? `${weight}g` : '';
@@ -95,19 +100,36 @@ export class LabelPrintingService {
 
             const priceHtml = showPrice ? `<div class="price-text">$${price.toFixed(2)}</div>` : '';
 
-            labelsHtml += `
-                <div class="label-wrapper" style="${pageBreak}">
-                    <div class="label-container">
-                        <div class="top-section">
-                            <svg id="barcode-${index}" class="barcode-svg" data-barcode="${barcode}"></svg>
-                            <div class="barcode-text">${barcode}</div>
-                        </div>
-                        <div class="bottom-section">
-                            <div class="desc-text">${description}</div>
-                            ${extraInfoHtml}
-                            ${priceHtml}
-                        </div>
+            // HTML Content to go inside SVG
+            const innerHtml = `
+                <div class="label-content">
+                    <div class="top-section">
+                        <svg id="barcode-${index}" class="barcode-svg" data-barcode="${barcode}"></svg>
+                        <div class="barcode-text">${barcode}</div>
                     </div>
+                    <div class="bottom-section">
+                        <div class="desc-text">${description}</div>
+                        ${extraInfoHtml}
+                        ${priceHtml}
+                    </div>
+                </div>
+            `;
+
+            // SVG wrapper for this label
+            // We use a container div with page-break for the print layout, 
+            // but the content is an SVG image.
+            labelsSvgContent += `
+                <div class="label-wrapper" style="${pageBreak}">
+                    <svg class="label-svg" width="${pageW_mm}mm" height="${pageH_mm}mm" viewBox="0 0 600 200">
+                        <!-- Rotation Group: Rotates 180 degrees around the center of the print area -->
+                        <g transform="rotate(180, ${centerX}, ${centerY})">
+                            <foreignObject x="${startX}" y="0" width="${contentW}" height="${contentH}">
+                                <div xmlns="http://www.w3.org/1999/xhtml" class="foreign-div">
+                                    ${innerHtml}
+                                </div>
+                            </foreignObject>
+                        </g>
+                    </svg>
                 </div>
             `;
         });
@@ -147,104 +169,133 @@ export class LabelPrintingService {
                             font-family: Arial, sans-serif;
                             background-color: white;
                         }
+
+                        /* SVG Container Styles */
+                        .label-svg {
+                            display: block;
+                            width: 100%;
+                            height: 100%;
+                        }
+
+                        /* Foreign Object Content Styles */
+                        .foreign-div {
+                            width: 100%;
+                            height: 100%;
+                            box-sizing: border-box;
+                            padding: 5px; /* Scaled padding */
+                            display: flex;
+                            flex-direction: column;
+                            /* Force black for high contrast */
+                            color: black !important;
+                            -webkit-print-color-adjust: exact;
+                            print-color-adjust: exact;
+                        }
                         
-                        .label-container {
-                            position: absolute;
-                            top: 0;
-                            left: 50%;
-                            width: 50%;
+                        .label-content {
+                            width: 100%;
                             height: 100%;
                             display: flex;
                             flex-direction: column;
-                            justify-content: flex-start; 
-                            align-items: flex-start;
-                            box-sizing: border-box;
-                            padding: 1mm 1mm 1mm 0; 
-                            transform: rotate(180deg); 
+                        }
+
+                        /* High contrast settings */
+                        * {
+                            -webkit-font-smoothing: none;
+                            -moz-osx-font-smoothing: grayscale;
+                            text-rendering: optimizeLegibility;
                         }
 
                         .top-section {
                             width: 100%;
-                            height: 45%; 
+                            height: 48%; /* Slightly less than 50 to leave gap */
                             display: flex;
                             flex-direction: column;
-                            justify-content: flex-end; 
+                            justify-content: flex-start; /* Push to TOP edge (away from center) */
                             align-items: flex-start;
-                            padding-left: 0;
-                            padding-bottom: 1px;
-                            margin-bottom: 1px;
+                            padding-top: 5px; /* Padding from edge */
                         }
 
                         .bottom-section {
                             width: 100%;
-                            height: 55%; 
+                            height: 48%; /* Slightly less than 50 */
                             display: flex;
                             flex-direction: column;
-                            justify-content: flex-start;
+                            justify-content: flex-end; /* Push to BOTTOM edge (away from center) */
                             align-items: flex-start;
-                            padding-top: 10px;
+                            padding-bottom: 2px; /* Padding from edge - Reduced to lower text */
                         }
 
                         .barcode-svg {
-                            width: 95%; 
+                            width: auto;      
                             height: 100%; 
-                            max-height: 12px;
+                            max-width: 100%;
+                            max-height: 45px; /* Scaled max height */
                             display: block;
                             margin: 0;
+                            shape-rendering: crispEdges; 
                         }
 
                         .barcode-text {
-                            font-size: 10px; 
-                            font-weight: bold;
-                            text-align: left; 
+                            font-size: 24px;   /* ~2.4mm height */
+                            font-weight: bold;  
+                            text-align: left;   
                             width: 100%;
                             margin: 0;
-                            font-family: monospace; 
+                            font-family: Arial, sans-serif; 
                             line-height: 1;
+                            color: black;
+                            padding-left: 5px;
+                            letter-spacing: -1px;
                         }
 
                         .desc-text {
-                            font-size: 10px; 
+                            font-size: 24px; /* ~2.4mm height */
+                            font-weight: bold; 
                             text-align: left;
                             width: 100%;
-                            white-space: normal; 
+                            white-space: nowrap; /* Prevent wrapping in tight space */
                             overflow: hidden;
+                            text-overflow: ellipsis;
                             margin: 0;
-                            line-height: 1.1;
+                            line-height: 1;
                             margin-bottom: 2px;
+                            color: black;
                         }
 
                         .price-text {
-                            font-size: 11px; 
-                            font-weight: bold;
+                            font-size: 28px; /* ~2.8mm height */
+                            font-weight: 900; 
                             text-align: left;
                             width: 100%;
                             margin: 0;
+                            color: black;
                         }
 
                         .extra-info {
-                             font-size: 9px;
+                             font-size: 22px; /* ~2.2mm height */
+                             font-weight: 700;
                              width: 100%;
                              text-align: left;
-                             margin-bottom: 1px;
+                             margin-bottom: 2px;
+                             color: black;
                         }
                     </style>
                     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
                 </head>
                 <body>
-                    ${labelsHtml}
+                    ${labelsSvgContent}
                     
                     <script>
                         window.onload = function() {
                             try {
-                                // Generate barcodes
+                                // Generate barcodes inside SVG foreignObject
                                 var svgs = document.querySelectorAll('.barcode-svg');
                                 svgs.forEach(function(svg) {
                                     var code = svg.getAttribute('data-barcode');
                                     JsBarcode(svg, code, {
                                         format: "CODE128",
-                                        width: 1.5, 
-                                        height: 25,
+                                        width: 2.8,   /* Reduced density to fit longer codes */
+                                        height: 50,   
                                         displayValue: false, 
                                         margin: 0
                                     });
