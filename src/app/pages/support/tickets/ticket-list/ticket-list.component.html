@@ -1,0 +1,106 @@
+<div>
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div>
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Mis Reportes</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Consulta el estado de tus reportes o crea uno
+                nuevo.</p>
+        </div>
+        <button (click)="openCreateModal()"
+            class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-6 py-2.5 text-center font-medium text-white hover:bg-brand-600 transition-all focus:ring-4 focus:ring-brand-500/20">
+            <svg class="fill-current w-4 h-4 mr-2" viewBox="0 0 20 20">
+                <path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+            </svg>
+            Reportar Problema
+        </button>
+    </div>
+
+    <div class="flex flex-col">
+        <div class="-m-1.5 overflow-x-auto">
+            <div class="p-1.5 min-w-full inline-block align-middle">
+                <div class="border rounded-lg border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-900">
+                            <tr>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+                                    Asunto</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider hidden sm:table-cell">
+                                    Tipo</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+                                    Estado</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider hidden md:table-cell">
+                                    Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            <tr *ngFor="let ticket of tickets"
+                                class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-medium text-gray-900 dark:text-white">{{ ticket.title
+                                            }}</span>
+                                        <!-- Mobile-only details -->
+                                        <span class="text-xs text-gray-500 dark:text-gray-400 sm:hidden mt-1">{{
+                                            ticket.createdAt | date:'short' }}</span>
+                                    </div>
+                                </td>
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hidden sm:table-cell">
+                                    <span *ngIf="ticket.type === 'bug'" class="inline-flex items-center gap-1.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-error-500"></span> Error
+                                    </span>
+                                    <span *ngIf="ticket.type === 'feature_request'"
+                                        class="inline-flex items-center gap-1.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-success-500"></span> Solicitud
+                                    </span>
+                                    <span *ngIf="ticket.type === 'other'" class="inline-flex items-center gap-1.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-warning-500"></span> Otro
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border"
+                                        [ngClass]="getStatusClass(ticket.status)" [class.border-transparent]="true">
+                                        {{ getStatusLabel(ticket.status) }}
+                                    </span>
+                                </td>
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hidden md:table-cell">
+                                    {{ ticket.createdAt | date:'mediumDate' }}
+                                </td>
+                            </tr>
+                            <tr *ngIf="tickets.length === 0 && !isLoading">
+                                <td colspan="4" class="px-6 py-12 text-center">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <svg class="w-12 h-12 text-gray-300 dark:text-gray-600 mb-4" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">
+                                            </path>
+                                        </svg>
+                                        <p class="text-base font-medium text-gray-900 dark:text-white">Aún no hay
+                                            reportes</p>
+                                        <p class="text-sm text-gray-500 mt-1">Si encuentras un error o tienes una idea,
+                                            ¡cuéntanos!</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center py-10">
+        <div class="h-8 w-8 animate-spin rounded-full border-4 border-solid border-brand-500 border-t-transparent">
+        </div>
+    </div>
+
+    <!-- Create Modal -->
+    <app-ticket-create *ngIf="showCreateModal" (close)="closeCreateModal($event)"></app-ticket-create>
+</div>

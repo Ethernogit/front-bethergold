@@ -308,6 +308,12 @@ export const routes: Routes = [
         },
         title: 'Configuración de Sucursal | Bethergold'
       },
+      {
+        path: 'help-center',
+        loadComponent: () => import('./pages/support/support-center/support-center.component').then(m => m.SupportCenterComponent),
+        canActivate: [AuthGuard],
+        title: 'Centro de Ayuda | Bethergold'
+      },
 
       // Ventas / Notas
       {

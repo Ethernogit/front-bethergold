@@ -1,0 +1,71 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
+    <div
+        class="w-full max-w-lg rounded-lg border border-gray-200 bg-white p-4 shadow-theme-xl dark:border-gray-800 dark:bg-gray-800 sm:p-8 my-auto">
+        <div class="mb-6">
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white">Reportar un Problema</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Cuéntanos qué sucedió para poder ayudarte.</p>
+        </div>
+
+        <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()">
+            <div class="mb-4.5">
+                <label class="mb-2.5 block text-gray-700 dark:text-gray-200 font-medium">Tipo de reporte</label>
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-6">
+                    <label
+                        class="flex cursor-pointer items-center space-x-2 p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <input type="radio" formControlName="type" value="bug"
+                            class="form-radio text-brand-500 h-5 w-5">
+                        <span class="text-gray-600 dark:text-gray-300">Error / Fallo</span>
+                    </label>
+                    <label
+                        class="flex cursor-pointer items-center space-x-2 p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <input type="radio" formControlName="type" value="feature_request"
+                            class="form-radio text-brand-500 h-5 w-5">
+                        <span class="text-gray-600 dark:text-gray-300">Sugerencia</span>
+                    </label>
+                    <label
+                        class="flex cursor-pointer items-center space-x-2 p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <input type="radio" formControlName="type" value="other"
+                            class="form-radio text-brand-500 h-5 w-5">
+                        <span class="text-gray-600 dark:text-gray-300">Otro</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-4.5">
+                <label class="mb-2.5 block text-gray-700 dark:text-gray-200 font-medium">
+                    Asunto <span class="text-error-500">*</span>
+                </label>
+                <input type="text" formControlName="title" placeholder="¿En qué podemos ayudarte?"
+                    class="w-full rounded-lg border border-gray-200 bg-transparent py-3 px-5 font-medium outline-none transition focus:border-brand-500 active:border-brand-500 disabled:cursor-default disabled:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:focus:border-brand-500 dark:text-white" />
+                <div *ngIf="ticketForm.get('title')?.touched && ticketForm.get('title')?.invalid"
+                    class="text-error-500 text-xs mt-1">
+                    El asunto es requerido.
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="mb-2.5 block text-gray-700 dark:text-gray-200 font-medium">
+                    Descripción <span class="text-error-500">*</span>
+                </label>
+                <textarea rows="6" formControlName="description"
+                    placeholder="Describe el problema o sugerencia con detalle..."
+                    class="w-full rounded-lg border border-gray-200 bg-transparent py-3 px-5 font-medium outline-none transition focus:border-brand-500 active:border-brand-500 disabled:cursor-default disabled:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:focus:border-brand-500 dark:text-white"></textarea>
+                <div *ngIf="ticketForm.get('description')?.touched && ticketForm.get('description')?.invalid"
+                    class="text-error-500 text-xs mt-1">
+                    La descripción es requerida.
+                </div>
+            </div>
+
+            <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4.5">
+                <button type="button" (click)="onCancel()"
+                    class="w-full sm:w-auto flex justify-center rounded-lg border border-gray-200 py-2.5 px-6 font-medium text-gray-700 hover:shadow-theme-xs dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 transition-all">
+                    Cancelar
+                </button>
+                <button type="submit" [disabled]="isSubmitting || ticketForm.invalid"
+                    class="w-full sm:w-auto flex justify-center rounded-lg bg-brand-500 py-2.5 px-6 font-medium text-white hover:bg-brand-600 disabled:opacity-50 transition-all shadow-theme-xs">
+                    {{ isSubmitting ? 'Enviando...' : 'Enviar Reporte' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

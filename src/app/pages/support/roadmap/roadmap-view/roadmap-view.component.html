@@ -1,0 +1,86 @@
+<div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+
+    <!-- In Progress -->
+    <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-3 mb-2 px-1">
+            <span
+                class="flex h-4 w-4 rounded-full bg-warning-500 border-2 border-white dark:border-gray-800 shadow-sm"></span>
+            <h3 class="font-bold text-lg text-gray-800 dark:text-white">En Desarrollo</h3>
+            <span
+                class="ml-auto text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
+                {{ getItemsByStatus('in_progress').length }}
+            </span>
+        </div>
+        <div *ngFor="let item of getItemsByStatus('in_progress')"
+            class="group rounded-lg border border-gray-200 bg-white p-5 shadow-theme-sm hover:shadow-theme-md transition-shadow dark:border-gray-700 dark:bg-gray-800">
+            <h4
+                class="font-semibold text-gray-900 dark:text-white mb-2 leading-tight group-hover:text-brand-500 transition-colors">
+                {{ item.title }}
+            </h4>
+            <div class="h-px w-full bg-gray-100 dark:bg-gray-700 my-3"></div>
+            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{{ item.description }}</p>
+        </div>
+        <div *ngIf="getItemsByStatus('in_progress').length === 0 && !isLoading"
+            class="p-4 rounded-lg border border-dashed border-gray-200 dark:border-gray-700 text-center">
+            <p class="text-sm text-gray-500 italic">No hay funciones en desarrollo activo.</p>
+        </div>
+    </div>
+
+    <!-- Planned -->
+    <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-3 mb-2 px-1">
+            <span
+                class="flex h-4 w-4 rounded-full bg-brand-500 border-2 border-white dark:border-gray-800 shadow-sm"></span>
+            <h3 class="font-bold text-lg text-gray-800 dark:text-white">Próximamente</h3>
+            <span
+                class="ml-auto text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
+                {{ getItemsByStatus('planned').length }}
+            </span>
+        </div>
+        <div *ngFor="let item of getItemsByStatus('planned')"
+            class="group rounded-lg border border-gray-200 bg-white p-5 shadow-theme-sm hover:shadow-theme-md transition-shadow dark:border-gray-700 dark:bg-gray-800">
+            <h4
+                class="font-semibold text-gray-900 dark:text-white mb-2 leading-tight group-hover:text-brand-500 transition-colors">
+                {{ item.title }}
+            </h4>
+            <div class="h-px w-full bg-gray-100 dark:bg-gray-700 my-3"></div>
+            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{{ item.description }}</p>
+        </div>
+        <div *ngIf="getItemsByStatus('planned').length === 0 && !isLoading"
+            class="p-4 rounded-lg border border-dashed border-gray-200 dark:border-gray-700 text-center">
+            <p class="text-sm text-gray-500 italic">No hay funciones planificadas visiblemente.</p>
+        </div>
+    </div>
+
+    <!-- Completed -->
+    <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-3 mb-2 px-1">
+            <span
+                class="flex h-4 w-4 rounded-full bg-success-500 border-2 border-white dark:border-gray-800 shadow-sm"></span>
+            <h3 class="font-bold text-lg text-gray-800 dark:text-white">Listo / Lanzado</h3>
+            <span
+                class="ml-auto text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
+                {{ getItemsByStatus('completed').length }}
+            </span>
+        </div>
+        <div *ngFor="let item of getItemsByStatus('completed')"
+            class="rounded-lg border border-gray-200 bg-white p-5 shadow-theme-sm dark:border-gray-700 dark:bg-gray-800 opacity-75 hover:opacity-100 transition-opacity">
+            <div class="flex items-start justify-between">
+                <h4
+                    class="font-semibold text-gray-900 dark:text-white mb-2 leading-tight line-through decoration-gray-400 dark:decoration-gray-500">
+                    {{ item.title }}
+                </h4>
+                <svg class="w-5 h-5 text-success-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <div class="h-px w-full bg-gray-100 dark:bg-gray-700 my-3"></div>
+            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{{ item.description }}</p>
+        </div>
+        <div *ngIf="getItemsByStatus('completed').length === 0 && !isLoading"
+            class="p-4 rounded-lg border border-dashed border-gray-200 dark:border-gray-700 text-center">
+            <p class="text-sm text-gray-500 italic">No hay funciones completadas recientemente.</p>
+        </div>
+    </div>
+
+</div>

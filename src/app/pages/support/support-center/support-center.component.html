@@ -1,0 +1,41 @@
+<div class="p-4 md:p-6 2xl:p-10">
+  <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <h2 class="text-title-md2 font-bold text-gray-800 dark:text-white">
+      Centro de Ayuda
+    </h2>
+    <nav>
+      <ol class="flex items-center gap-2">
+        <li><a class="font-medium text-gray-600 hover:text-brand-500 transition-colors" routerLink="/">Dashboard /</a>
+        </li>
+        <li class="font-medium text-brand-500">Ayuda</li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="rounded-lg border border-gray-200 bg-white shadow-theme-sm dark:border-gray-800 dark:bg-gray-800">
+    <div class="border-b border-gray-200 dark:border-gray-700">
+      <!-- Scrollable Tabs for Mobile -->
+      <div class="flex items-center overflow-x-auto no-scrollbar">
+        <button (click)="setActiveTab('tickets')"
+          class="shrink-0 px-4 py-3 md:px-6 md:py-4 text-sm font-medium border-b-2 hover:text-brand-500 transition-colors"
+          [ngClass]="activeTab === 'tickets' ? 'text-brand-500 border-brand-500' : 'border-transparent text-gray-500 dark:text-gray-400'">
+          Mis Reportes
+        </button>
+        <button (click)="setActiveTab('roadmap')"
+          class="shrink-0 px-4 py-3 md:px-6 md:py-4 text-sm font-medium border-b-2 hover:text-brand-500 transition-colors"
+          [ngClass]="activeTab === 'roadmap' ? 'text-brand-500 border-brand-500' : 'border-transparent text-gray-500 dark:text-gray-400'">
+          Futuras Funciones
+        </button>
+      </div>
+    </div>
+
+    <div class="p-4 md:p-6 lg:p-8">
+      <div *ngIf="activeTab === 'tickets'" class="fade-in-fast">
+        <app-ticket-list></app-ticket-list>
+      </div>
+      <div *ngIf="activeTab === 'roadmap'" class="fade-in-fast">
+        <app-roadmap-view></app-roadmap-view>
+      </div>
+    </div>
+  </div>
+</div>
