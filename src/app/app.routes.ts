@@ -309,6 +309,12 @@ export const routes: Routes = [
         title: 'Configuración de Sucursal | Bethergold'
       },
       {
+        path: 'migration',
+        loadComponent: () => import('./pages/migration/migration.component').then(m => m.MigrationComponent),
+        canActivate: [AuthGuard],
+        title: 'Migración Mory | Bethergold'
+      },
+      {
         path: 'help-center',
         loadComponent: () => import('./pages/support/support-center/support-center.component').then(m => m.SupportCenterComponent),
         canActivate: [AuthGuard],

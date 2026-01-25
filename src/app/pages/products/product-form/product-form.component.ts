@@ -10,7 +10,7 @@ import { LabelPrintingService } from '../../../shared/services/label-printing.se
 import { LoginService } from '../../../shared/services/auth/login.service';
 import { SucursalService } from '../../../shared/services/sucursal.service';
 import { MaterialType, ProviderPrice } from '../../../shared/interfaces/provider.interfaces';
-import { combineLatest } from 'rxjs';
+import { combineLatest, forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-product-form',
@@ -32,8 +32,9 @@ export class ProductFormComponent implements OnInit, OnChanges {
     currentProviderPrices: ProviderPrice[] = [];
     isLoading = false;
     isSubmitting = false;
+    isDataLoaded = false;
 
-    goldTypes = ['NAC', 'ITA', 'OTHER'];
+    goldTypes = ['Amarillo', 'Blanco', 'Rosa', '2 Oros', '3 Oros', 'NAC', 'ITA', 'OTHER'];
     // karatages removed in favor of materialTypes
 
     // Barcode Configuration
@@ -71,6 +72,9 @@ export class ProductFormComponent implements OnInit, OnChanges {
         });
     }
 
+    @Input() preloadedCategories: any[] | null = null;
+    @Input() preloadedProviders: any[] | null = null;
+
     ngOnInit(): void {
         this.loadInitialData();
         this.loadSucursalConfig();
@@ -78,15 +82,69 @@ export class ProductFormComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['product'] && this.product) {
+        if (changes['product'] && this.product && this.isDataLoaded) {
             this.patchForm(this.product);
-            // In edit mode, disable barcode manual entry if needed, but for now we leave it
             if (this.isEditMode) {
-                this.productForm.get('barcode')?.disable(); // Usually barcode shouldn't change
+                this.productForm.get('barcode')?.disable();
             } else {
                 this.productForm.get('barcode')?.enable();
             }
         }
+    }
+
+    // ... setupFormListeners ...
+
+    // ... patchForm ...
+
+    loadInitialData() {
+        this.isLoading = true;
+
+        const sources: any = {
+            materials: this.providerService.getMaterialTypes({ status: 'active' })
+        };
+
+        if (!this.preloadedCategories) {
+            sources.categories = this.categoryService.getCategories();
+        }
+
+        if (!this.preloadedProviders) {
+            sources.providers = this.providerService.getProviders();
+        }
+
+        // OPTIMIZATION: Load subcategories immediately if product exists
+        if (this.product && this.product.category) {
+            console.log("categoria", this.product.category)
+            const categoryId = typeof this.product.category === 'object' ? (this.product.category as any)._id : this.product.category;
+            console.log("categoria id", categoryId)
+            if (categoryId) {
+                sources.subcategories = this.subcategoryService.getSubcategoriesByCategory(categoryId);
+                console.log("subcategorias", sources.subcategories)
+            }
+        }
+
+        forkJoin(sources).subscribe({
+            next: (res: any) => {
+                this.categories = this.preloadedCategories || res.categories?.data || res.categories || [];
+                this.providers = this.preloadedProviders || res.providers?.data || res.providers || [];
+                this.materialTypes = res.materials?.data || res.materials || [];
+
+                if (res.subcategories) {
+                    this.subcategories = res.subcategories?.data || res.subcategories || [];
+                }
+
+                this.isDataLoaded = true;
+
+                // Patch form only ONCE after all data is loaded
+                if (this.product && this.isEditMode) {
+                    this.patchForm(this.product);
+                }
+            },
+            error: (err) => {
+                console.error('Error loading initial data', err);
+                this.toastService.error('Error cargando datos iniciales. Por favor recargue.');
+            },
+            complete: () => this.isLoading = false
+        });
     }
 
     setupFormListeners() {
@@ -142,21 +200,27 @@ export class ProductFormComponent implements OnInit, OnChanges {
         // Map category/subcategory if they are objects
         const categoryId = typeof product.category === 'object' ? (product.category as any)._id : product.category;
         const subcategoryId = ProductFormComponent.getIdFromRelation(product.subcategory);
-        const providerId = product.providerId; // Assuming product has providerId directly. Check model interface.
+        const providerId = product.providerId;
 
-        // Load subcategories for the product's category immediately
-        if (categoryId) {
-            this.loadSubcategories(categoryId);
+        // OPTIMIZATION: Check if subcategory is already in the list to avoid double-fetch
+        const subcategoryAlreadyLoaded = this.subcategories.some(s => s._id === subcategoryId);
+
+        if (subcategoryAlreadyLoaded) {
+            this.productForm.patchValue({ subcategory: subcategoryId }, { emitEvent: false });
+        } else if (categoryId) {
+            this.loadSubcategories(categoryId, subcategoryId);
         }
 
-        // Find material type from karatage string (reverse mapping if possible) or assume karatage holds ID in frontend logic
-        // Original logic mapped ID to string on save. Now we need to map string back to ID?
-        // Or store ID in backend? The service interface says karatage: string.
-        // If we saved "10k", we need to find the material type that matches "10k".
-        // This relies on materialTypes being loaded. might need to wait or rely on simple matching.
+        // Find material type from karatage string
         let materialTypeId = '';
         if (product.jewelryDetails?.karatage && this.materialTypes.length > 0) {
-            const m = this.materialTypes.find(mt => mt.karat && (`${mt.karat}k` === product.jewelryDetails?.karatage || mt.karat.toString() === product.jewelryDetails?.karatage));
+            const pKarat = product.jewelryDetails.karatage.toLowerCase();
+            const m = this.materialTypes.find(mt =>
+                mt.karat && (
+                    `${mt.karat}k`.toLowerCase() === pKarat ||
+                    mt.karat.toString().toLowerCase() === pKarat
+                )
+            );
             if (m) materialTypeId = m._id || m.id || '';
         }
 
@@ -165,16 +229,16 @@ export class ProductFormComponent implements OnInit, OnChanges {
             providerId: providerId,
             weight: product.specifications?.weight || 0,
             category: categoryId,
-            subcategory: subcategoryId,
+            // subcategory is handled above
             goldType: product.jewelryDetails?.goldType || '',
-            karatage: materialTypeId || product.jewelryDetails?.karatage, // Try to set ID, fallback to value
+            karatage: materialTypeId || product.jewelryDetails?.karatage,
             diamondPoints: product.jewelryDetails?.diamondPoints || 0,
             cost: product.cost || 0,
             price: product.price || 0,
             description: product.description || '',
             isUnique: product.isUnique !== undefined ? product.isUnique : true,
             stock: product.stock || 1
-        });
+        }, { emitEvent: false });
 
         // Manually trigger simple change logic for UI state
         if (product.isUnique !== undefined && !product.isUnique) {
@@ -196,37 +260,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
     }
 
 
-    loadInitialData() {
-        this.isLoading = true;
-        // Load categories
-        this.categoryService.getCategories().subscribe({
-            next: (res: any) => {
-                this.categories = res.data || res;
-            },
-            error: (err) => console.error('Error loading categories', err)
-        });
 
-        // Load providers
-        this.providerService.getProviders().subscribe({
-            next: (res: any) => {
-                this.providers = res.data || res;
-            },
-            error: (err) => console.error('Error loading providers', err),
-            complete: () => this.isLoading = false
-        });
-
-        // Load material types
-        this.providerService.getMaterialTypes({ status: 'active' }).subscribe({
-            next: (res: any) => {
-                this.materialTypes = res.data || res;
-                // Retry patching form now that we have material types
-                if (this.product && this.isEditMode) {
-                    this.patchForm(this.product);
-                }
-            },
-            error: (err) => console.error('Error loading material types', err)
-        });
-    }
 
     loadSucursalConfig() {
         const sucursal = this.loginService.currentSucursal();
@@ -244,7 +278,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
     }
 
     applyDefaults() {
-        if (!this.productFormConfig) return;
+        if (!this.productFormConfig || this.isEditMode) return;
 
         const { defaultProvider, defaultCategory, defaultSubcategory } = this.productFormConfig;
 
@@ -266,7 +300,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
         }
     }
 
-    loadSubcategories(categoryId: string) {
+    loadSubcategories(categoryId: string, preselectedId: string = '') {
         if (!categoryId) {
             this.subcategories = [];
             return;
@@ -274,6 +308,11 @@ export class ProductFormComponent implements OnInit, OnChanges {
         this.subcategoryService.getSubcategoriesByCategory(categoryId).subscribe({
             next: (res: any) => {
                 this.subcategories = res.data || res;
+                if (preselectedId) {
+                    this.productForm.patchValue({ subcategory: preselectedId }, { emitEvent: false });
+                    // Trigger price calc manually if needed since event is suppressed
+                    if (!this.isEditMode) this.calculatePrices();
+                }
             },
             error: (err) => console.error('Error loading subcategories', err)
         });
@@ -301,7 +340,10 @@ export class ProductFormComponent implements OnInit, OnChanges {
         this.providerService.getProviderPrices(providerId).subscribe({
             next: (res: any) => {
                 this.currentProviderPrices = res.data || res;
-                this.calculatePrices();
+                // Only calculate prices if NOT in edit mode to preserve stored values
+                if (!this.isEditMode) {
+                    this.calculatePrices();
+                }
             },
             error: (err) => console.error('Error loading prices', err)
         });

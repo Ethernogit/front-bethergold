@@ -175,7 +175,8 @@ export class CategoriesComponent implements OnInit {
                 },
                 error: (error) => {
                     console.error('Error saving category:', error);
-                    this.toastService.error('Error al guardar la categoría');
+                    const errorMessage = error.error?.message || error.message || 'Error al guardar la categoría';
+                    this.toastService.error(errorMessage);
                 }
             });
     }

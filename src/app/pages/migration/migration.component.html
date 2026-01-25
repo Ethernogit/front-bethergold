@@ -1,0 +1,50 @@
+<div class="p-6">
+    <div class="mb-4">
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Migración de Datos (Legacy Mory)</h1>
+        <p class="text-gray-600 dark:text-gray-400">Importa Categorías, Subcategorías y Productos desde un archivo JSON.
+        </p>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Seleccionar Archivo JSON de Exportación
+            </label>
+            <input type="file" accept=".json" (change)="onFileSelected($event)" class="block w-full text-sm text-gray-500
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-full file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-blue-50 file:text-blue-700
+                    hover:file:bg-blue-100
+                    dark:file:bg-gray-700 dark:file:text-gray-300" />
+        </div>
+
+        <button (click)="onImport()" [disabled]="isLoading || !selectedFile"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+            <span *ngIf="isLoading"
+                class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+            {{ isLoading ? 'Importando...' : 'Iniciar Migración' }}
+        </button>
+
+        <div *ngIf="importResults" class="mt-8">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Resultados de la Migración</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div *ngFor="let key of objectKeys(importResults)" class="p-4 border rounded-lg dark:border-gray-700">
+                    <h4 class="font-medium capitalize text-gray-700 dark:text-gray-300 mb-2">{{ key }}</h4>
+                    <div class="text-sm">
+                        <p class="text-green-600">Creados: {{ importResults[key].created }}</p>
+                        <p class="text-gray-500">Total Procesados: {{ importResults[key].total }}</p>
+
+                        <div *ngIf="importResults[key].errors?.length > 0" class="mt-2">
+                            <p class="text-red-500 font-medium">Errores ({{ importResults[key].errors.length }}):</p>
+                            <ul class="list-disc pl-4 text-xs text-red-400 mt-1 max-h-32 overflow-y-auto">
+                                <li *ngFor="let err of importResults[key].errors">{{ err }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
