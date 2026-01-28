@@ -25,6 +25,7 @@ import { PermissionGuard } from './shared/guards/permission.guard';
 import { ProvidersComponent } from './pages/providers/providers.component';
 import { CategoriesComponent } from './pages/products/categories/categories.component';
 import { SubcategoriesComponent } from './pages/products/subcategories/subcategories.component';
+import { NoteDetailsComponent } from './pages/sales/note-details/note-details.component';
 
 export const routes: Routes = [
   {
@@ -341,6 +342,16 @@ export const routes: Routes = [
           action: 'read'
         },
         title: 'Historial de Ventas | Bethergold'
+      },
+      {
+        path: 'sales/note/:folio',
+        component: NoteDetailsComponent,
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'sales',
+          action: 'read'
+        },
+        title: 'Detalle de Nota | Bethergold'
       }
     ]
   },

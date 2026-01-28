@@ -111,7 +111,7 @@ export class NewNoteComponent implements OnInit {
             filter(term => (term || '').length > 2),
             switchMap(term => {
                 this.isSearching = true;
-                return this.productService.searchProductsByQR(term || '').pipe(
+                return this.productService.searchProductsByQR({ q: term || '', minStock: 0.0001 }).pipe(
                     catchError(err => {
                         console.error(err);
                         return of({ data: [] });
@@ -166,6 +166,7 @@ export class NewNoteComponent implements OnInit {
             itemModel: ['Product'],
             type: [type],
             name: [product.name || product.description || 'Producto sin nombre', Validators.required],
+            deliveryStatus: ['immediate'], // Default: Se lo lleva
             // If unique, lock to 1. If bulk, allow 1 to maxStock
             quantity: [1, [Validators.required, Validators.min(0.01), ...(isUnique ? [Validators.max(1)] : [Validators.max(maxStock)])]],
             unitPrice: [product.price || 0, [Validators.required, Validators.min(0)]],
@@ -211,6 +212,7 @@ export class NewNoteComponent implements OnInit {
             itemModel: ['Custom'],
             type: ['custom'],
             name: [description, Validators.required],
+            deliveryStatus: ['immediate'],
             quantity: [1, [Validators.required, Validators.min(0.01)]],
             unitPrice: [amount, [Validators.required, Validators.min(0)]],
             discount: [0, [Validators.min(0)]],
@@ -241,6 +243,9 @@ export class NewNoteComponent implements OnInit {
             itemModel: ['Service'],
             type: ['service'], // Taller = Service
             name: [`Taller: ${description}`, Validators.required],
+            deliveryStatus: ['pending'], // Taller usually starts as pending/in-process, but user can change if paying full? Actually taller is service. Let's keep it consistent or simple. If it's a repair, they don't take it immediately usually, but they might pay in full. Let's stick to 'immediate' meaning "Fully Paid/active" vs 'pending' layaway. Actually for Repair, "Apartado" makes less sense, but "Pending Delivery" does. Let's default to immediate (paid) or pending (owed).
+            // User request is about "Product Apartado". Let's stick to deliveryStatus for all for uniformity.
+            // But wait, Repair logic might be different. Let's leave it as immediate for now.
             quantity: [1, [Validators.required, Validators.min(0.01)]],
             unitPrice: [amount, [Validators.required, Validators.min(0)]],
             discount: [0],
@@ -276,6 +281,7 @@ export class NewNoteComponent implements OnInit {
             itemModel: ['Single'],
             type: [type],
             name: ['', Validators.required],
+            deliveryStatus: ['immediate'],
             quantity: [1, [Validators.required, Validators.min(0.01)]],
             unitPrice: [0, [Validators.required, Validators.min(0)]],
             discount: [0, [Validators.min(0)]],
@@ -315,6 +321,32 @@ export class NewNoteComponent implements OnInit {
             this.items.removeAt(0);
         }
         this.calculateTotals();
+    }
+
+    // --- Delivery Status Logic ---
+
+    toggleDeliveryStatus(index: number) {
+        const item = this.items.at(index);
+        const current = item.get('deliveryStatus')?.value;
+        const newStatus = current === 'immediate' ? 'pending' : 'immediate';
+        item.patchValue({ deliveryStatus: newStatus });
+
+        // Recalculate or re-validate if needed (e.g. min payment check depends on this)
+        // We might want to trigger a check here. Use calculateTotals as a proxy to refresh UI/Getters if they depend on form values.
+        // Actually getters usually pull fresh value. But let's safe trigger.
+        this.calculateTotals();
+    }
+
+    get minRequiredPayment(): number {
+        // Sum of all items marked as 'immediate' (must be fully paid)
+        // Items marked as 'pending' (apartado) can be partially paid.
+        const items = this.items.getRawValue();
+        return items.reduce((acc: number, item: any) => {
+            if (item.deliveryStatus === 'immediate') {
+                return acc + (item.subtotal || 0);
+            }
+            return acc;
+        }, 0);
     }
 
     // --- Financials ---
@@ -380,14 +412,33 @@ export class NewNoteComponent implements OnInit {
         return this.confirmButtonText === 'GENERAR APARTADO';
     }
 
+    get isPaymentInsufficient(): boolean {
+        const formVal = this.noteForm.getRawValue();
+        const totalPaying = (this.paymentMethod === 'cash' ? formVal.cashAmount : formVal.cardAmount) || 0;
+        return totalPaying < (this.minRequiredPayment - 0.01);
+    }
+
     onSubmit() {
         if (this.noteForm.invalid) {
             this.toastService.error('Por favor complete todos los campos requeridos');
             return;
         }
 
-        this.isLoading = true;
         const formVal = this.noteForm.getRawValue();
+
+        // Validate Min Payment Logic
+        // Calculate total being paid now
+        const totalPaying = (this.paymentMethod === 'cash' ? formVal.cashAmount : formVal.cardAmount) || 0;
+
+        // Min Required = Sum of Immediate Items
+        const minReq = this.minRequiredPayment;
+
+        if (totalPaying < minReq - 0.01) { // 0.01 tolerance
+            this.toastService.warning(`El pago ($${totalPaying}) no cubre los productos que se lleva de contado ($${minReq}). Aumente el pago o marque productos como apartado.`);
+            return;
+        }
+
+        this.isLoading = true;
         const currentUser = this.loginService.currentUser();
         const currentSucursal = this.loginService.currentSucursal();
 
@@ -428,7 +479,8 @@ export class NewNoteComponent implements OnInit {
                     tax: 0,
                     subtotal: item.subtotal || 0
                 },
-                specifications: item.specifications
+                specifications: item.specifications,
+                deliveryStatus: item.deliveryStatus
             })),
             financials: {
                 subtotal: formVal.subtotal || 0,

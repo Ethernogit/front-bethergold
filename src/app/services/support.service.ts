@@ -35,4 +35,8 @@ export class SupportService {
     getRoadmapItems(): Observable<any> {
         return this.http.get(this.roadmapUrl);
     }
+
+    createRoadmapItem(data: any): Observable<any> {
+        return this.http.post(this.roadmapUrl, data);
+    }
 }

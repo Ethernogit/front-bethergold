@@ -1,0 +1,73 @@
+<div class="fixed inset-0 z-[9999] flex justify-end bg-black/50 transition-opacity duration-300"
+    [class.opacity-0]="!isOpen()" [class.pointer-events-none]="!isOpen()" [class.opacity-100]="isOpen()">
+
+    <!-- Backdrop (Close on click) -->
+    <div class="absolute inset-0" (click)="onClose()"></div>
+
+    <!-- Sidebar -->
+    <div class="relative w-full max-w-sm h-full bg-white dark:bg-gray-800 shadow-2xl transform transition-transform duration-300 flex flex-col"
+        [class.translate-x-full]="!isOpen()" [class.translate-x-0]="isOpen()">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-stroke dark:border-gray-700">
+            <h3 class="text-xl font-semibold text-black dark:text-white">
+                {{ title() }}
+            </h3>
+            <button (click)="onClose()"
+                class="text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white transition">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Body (Form) -->
+        <div class="flex-1 overflow-y-auto p-6">
+            <form [formGroup]="filterForm" class="flex flex-col gap-5">
+                @for (filter of filters(); track filter.key) {
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-medium text-black dark:text-white">
+                        {{ filter.label }}
+                    </label>
+
+                    @switch (filter.type) {
+                    @case ('select') {
+                    <select [formControlName]="filter.key"
+                        class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-brand-500 focus:border-brand-500 sm:text-sm text-gray-900 dark:text-white">
+                        <option value="">{{ filter.placeholder || 'Todos' }}</option>
+                        @for (opt of filter.options; track opt.value) {
+                        <option [value]="opt.value">{{ opt.label }}</option>
+                        }
+                    </select>
+                    }
+                    @case ('text') {
+                    <input type="text" [formControlName]="filter.key" [placeholder]="filter.placeholder || ''"
+                        class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-brand-500 focus:border-brand-500 sm:text-sm text-gray-900 dark:text-white" />
+                    }
+                    @case ('number') {
+                    <input type="number" [formControlName]="filter.key" [placeholder]="filter.placeholder || ''"
+                        class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-brand-500 focus:border-brand-500 sm:text-sm text-gray-900 dark:text-white" />
+                    }
+                    }
+                </div>
+                }
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-6 border-t border-stroke dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+            <div class="flex gap-4">
+                <button type="button" (click)="onClear()"
+                    class="flex-1 rounded border border-stroke bg-white px-6 py-3 font-medium text-black transition hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
+                    Limpiar
+                </button>
+                <button type="button" (click)="onApply()"
+                    class="flex-1 rounded bg-brand-500 px-6 py-3 font-medium text-white transition hover:bg-opacity-90">
+                    Aplicar Filtros
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

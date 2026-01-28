@@ -1,23 +1,30 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ProductService, Product } from '../../../shared/services/product.service';
+import { CategoryService } from '../../../shared/services/category.service';
+import { SubcategoryService } from '../../../shared/services/subcategory.service';
+import { ProviderService } from '../../../shared/services/provider.service';
 import { ToastService } from '../../../shared/services/toast.service';
-import { LabelPrintingService } from '../../../shared/services/label-printing.service'; // Import Service
+import { LabelPrintingService } from '../../../shared/services/label-printing.service';
 import { finalize } from 'rxjs';
 import { ProductFormComponent } from '../product-form/product-form.component';
-
+import { ProductStatus } from '../../../shared/interfaces/product.interfaces';
+import { FilterSidebarComponent, FilterConfig } from '../../../shared/components/ui/filter-sidebar/filter-sidebar.component';
 @Component({
     selector: 'app-product-list',
     standalone: true,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, ProductFormComponent],
+    imports: [CommonModule, FormsModule, ProductFormComponent, FilterSidebarComponent],
     templateUrl: './product-list.component.html'
 })
 export class ProductListComponent implements OnInit {
     private productService = inject(ProductService);
+    private categoryService = inject(CategoryService);
+    private subcategoryService = inject(SubcategoryService);
+    private providerService = inject(ProviderService);
     private toastService = inject(ToastService);
-    private labelService = inject(LabelPrintingService); // Inject Service
-    private fb = inject(FormBuilder);
+    private labelService = inject(LabelPrintingService);
+
 
     // Signals
     products = signal<Product[]>([]);
@@ -25,7 +32,18 @@ export class ProductListComponent implements OnInit {
     showModal = signal(false);
     showDeleteModal = signal(false);
     deletingProduct = signal<Product | null>(null);
-    editingProduct = signal<Product | null>(null); // To pass to form if editable
+    editingProduct = signal<Product | null>(null);
+
+    // Filter Sidebar State
+    showFilters = signal(false);
+    filterConfig = signal<FilterConfig[]>([]);
+    activeFilters = signal<any>({});
+
+    // Store last selected category to detect changes
+    private lastSelectedCategoryId: string = '';
+
+    // Filters
+    showOutOfStock = signal(false);
 
     // Selection
     selectedProducts = signal<Set<string>>(new Set());
@@ -36,55 +54,129 @@ export class ProductListComponent implements OnInit {
     totalItems = signal(0);
     totalPages = signal(0);
 
-    searchForm: FormGroup;
-
-    constructor() {
-        this.searchForm = this.fb.group({
-            search: ['']
-        });
-    }
+    constructor() { }
 
     ngOnInit() {
         this.loadProducts();
+        this.initFilterConfig();
     }
 
+    initFilterConfig() {
+        // Initial config placeholders
+        const baseConfig: FilterConfig[] = [
+            {
+                key: 'barcode',
+                label: 'Código de Barras',
+                type: 'text',
+                placeholder: 'Buscar por código...'
+            },
+            {
+                key: 'jewelryDetails.karatage', // Using karatage/materialType as key
+                label: 'Tipo de Material', // Changed label
+                type: 'select',
+                options: [], // Will be populated
+                placeholder: 'Seleccione Material'
+            },
+            {
+                key: 'category',
+                label: 'Categoría',
+                type: 'select',
+                options: [],
+                placeholder: 'Seleccione Categoría'
+            },
+            {
+                key: 'subcategory',
+                label: 'Subcategoría',
+                type: 'select',
+                options: [], // Dependent on category
+                placeholder: 'Seleccione Subcategoría'
+            }
+        ];
+        this.filterConfig.set(baseConfig);
+
+        // Load Material Types
+        this.providerService.getMaterialTypes({ status: 'active' }).subscribe({
+            next: (res: any) => {
+                const materials = res.data || res || [];
+                const options = materials.map((m: any) => ({
+                    value: m._id, // Use ID as value
+                    label: `${m.name} (${m.karat}k)`
+                }));
+                this.updateFilterConfig('jewelryDetails.karatage', options);
+            }
+        });
+
+        // Load Categories
+        this.categoryService.getCategories({ status: ProductStatus.ACTIVE }).subscribe({
+            next: (res) => {
+                const categories = res.data || [];
+                const categoryOptions = categories.map(c => ({ value: c._id!, label: c.name }));
+                this.updateFilterConfig('category', categoryOptions);
+            }
+        });
+    }
+
+    // Helper to update options of a filter
+    updateFilterConfig(key: string, options: any[]) {
+        this.filterConfig.update(current => {
+            return current.map(c => {
+                if (c.key === key) {
+                    return { ...c, options };
+                }
+                return c;
+            });
+        });
+    }
+
+    onFilterChange(values: any) {
+        const categoryId = values['category'];
+
+        // If category changed
+        if (categoryId !== this.lastSelectedCategoryId) {
+            this.lastSelectedCategoryId = categoryId;
+
+            // Reset subcategory selection (optional, but good UX? Or filter component handles form value?)
+            // The form value is in the child component. We don't control it directly easily unless we update defaultValue which initForm uses.
+            // But we can update the options.
+
+            if (categoryId) {
+                // Fetch subcategories
+                this.subcategoryService.getSubcategoriesByCategory(categoryId).subscribe({
+                    next: (res: any) => {
+                        const subcategories = res.data || res || [];
+                        const subOptions = subcategories.map((s: any) => ({ value: s._id, label: s.name }));
+                        this.updateFilterConfig('subcategory', subOptions);
+                    },
+                    error: () => {
+                        this.updateFilterConfig('subcategory', []);
+                    }
+                });
+            } else {
+                // Clear subcategories if no category selected
+                this.updateFilterConfig('subcategory', []);
+            }
+        }
+    }
     loadProducts() {
         this.loading.set(true);
         const params: any = {
             limit: this.itemsPerPage(),
-            skip: (this.currentPage() - 1) * this.itemsPerPage()
+            skip: (this.currentPage() - 1) * this.itemsPerPage(),
+            ...this.activeFilters() // Include active filters
         };
-        const searchValue = this.searchForm.get('search')?.value;
-        if (searchValue) params.search = searchValue;
+
+        if (!this.showOutOfStock()) {
+            params.minStock = 0.0001;
+        }
+
+
 
         this.productService.getProducts(params)
             .pipe(finalize(() => this.loading.set(false)))
             .subscribe({
                 next: (res: any) => {
-                    // Assuming API returns { data: [], meta: { total: number } } or similar
-                    // If backend just returns array, we handle it differently.
-                    // Based on controller, it returns { data: products }. It doesn't seem to return count.
-                    // We might need to handle total count if API provides it.
-                    // For now, if no total count, we can just set products.
-                    // Checking controller... it returns { data: products }.
-                    // We need to fetch total count separately or update API.
-                    // Implementation plan assumed standard pagination.
-                    // Let's assume for now we just show what we have, but to do real pagination we need count.
-                    // Controller limit/skip is implemented.
-                    // Let's assume response might change to include count or we just don't show total pages yet.
-                    // Wait, standard for this project usually wraps data.
-                    // Controller code:
-                    // res.status(200).json({ success: true, message: '...', data: products });
-                    // It does NOT return total count.
-                    // I will implement client-side pagination if needed or just simple "next" if data < limit?
-                    // No, usually we want total.
-                    // For now, I will just set products. If length < limit, we are at end.
                     const products = res.data || res;
                     this.products.set(products);
-                    // Estimate total or handle simple pagination
-                    if (products.length < this.itemsPerPage()) {
-                        // End of list
-                    }
                 },
                 error: (err) => {
                     console.error('Error loading products', err);
@@ -93,6 +185,8 @@ export class ProductListComponent implements OnInit {
                 }
             });
     }
+
+    // ... existing methods ...
 
     onPageChange(page: number) {
         this.currentPage.set(page);
@@ -105,7 +199,25 @@ export class ProductListComponent implements OnInit {
         this.loadProducts();
     }
 
-    onSearch() {
+
+
+    toggleShowOutOfStock() {
+        this.showOutOfStock.update(v => !v);
+        this.currentPage.set(1);
+        this.loadProducts();
+    }
+
+    // Filter Methods
+    openFilters() {
+        this.showFilters.set(true);
+    }
+
+    closeFilters() {
+        this.showFilters.set(false);
+    }
+
+    applyFilters(filters: any) {
+        this.activeFilters.set(filters);
         this.currentPage.set(1);
         this.loadProducts();
     }
@@ -189,7 +301,7 @@ export class ProductListComponent implements OnInit {
     toggleAllSelection(event: any) {
         const checked = event.target.checked;
         if (checked) {
-            const allIds = new Set(this.products().map(p => p._id!));
+            const allIds = new Set(this.products().map((p: Product) => p._id!));
             this.selectedProducts.set(allIds);
         } else {
             this.selectedProducts.set(new Set());
@@ -202,7 +314,7 @@ export class ProductListComponent implements OnInit {
 
     isAllSelected(): boolean {
         const products = this.products();
-        return products.length > 0 && products.every(p => this.selectedProducts().has(p._id!));
+        return products.length > 0 && products.every((p: Product) => this.selectedProducts().has(p._id!));
     }
 
     bulkPrintLabels() {
@@ -213,8 +325,8 @@ export class ProductListComponent implements OnInit {
         }
 
         const productsToPrint = this.products()
-            .filter(p => selectedIds.has(p._id!))
-            .map(p => {
+            .filter((p: Product) => selectedIds.has(p._id!))
+            .map((p: Product) => {
                 const category = p.category as any; // Cast to access printConfiguration if populated
                 return {
                     barcode: p.barcode,

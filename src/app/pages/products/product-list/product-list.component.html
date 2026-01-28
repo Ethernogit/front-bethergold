@@ -13,21 +13,7 @@
                             Listado de Productos
                         </h3>
 
-                        <!-- Search Bar -->
-                        <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="w-full sm:max-w-md">
-                            <div class="relative">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <circle cx="11" cy="11" r="8"></circle>
-                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                    </svg>
-                                </span>
-                                <input type="text" formControlName="search" placeholder="Buscar por código, nombre..."
-                                    class="w-full rounded-lg border border-gray-300 bg-gray-50 pl-11 pr-5 py-2.5 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500" />
-                            </div>
-                        </form>
+                        <!-- Search Bar REMOVED -->
                     </div>
 
                     <!-- Actions -->
@@ -49,6 +35,17 @@
                             </span>
                         </button>
                         }
+
+                        <button (click)="openFilters()"
+                            class="inline-flex items-center justify-center gap-2 rounded-lg border border-stroke bg-white px-5 py-2.5 text-center font-medium text-black hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:bg-gray-800 dark:border-strokedark dark:text-white dark:hover:bg-gray-700 transition-all duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                            </svg>
+                            Filtrar
+                        </button>
+
                         <button (click)="openCreateModal()"
                             class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200">
                             <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
@@ -57,7 +54,23 @@
                                     stroke-linecap="round" />
                             </svg>
                             Nuevo Producto
+
                         </button>
+                    </div>
+
+                    <!-- Toggle Show Out of Stock -->
+                    <div class="flex items-center gap-2 px-2 shrink-0">
+                        <label class="flex items-center cursor-pointer select-none">
+                            <div class="relative">
+                                <input type="checkbox" class="sr-only" (change)="toggleShowOutOfStock()"
+                                    [checked]="showOutOfStock()">
+                                <div class="block h-6 w-10 rounded-full bg-gray-200 dark:bg-gray-700 transition"></div>
+                                <div class="absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition transform"
+                                    [class.translate-x-4]="showOutOfStock()" [class.bg-brand-500]="showOutOfStock()">
+                                </div>
+                            </div>
+                            <span class="ml-2 text-xs font-medium text-black dark:text-white">Agotados</span>
+                        </label>
                     </div>
                 </div>
             </div>
@@ -89,6 +102,7 @@
                                 <th class="px-4 py-3 font-medium text-black dark:text-white">Código</th>
                                 <th class="px-4 py-3 font-medium text-black dark:text-white">Nombre</th>
                                 <th class="px-4 py-3 font-medium text-black dark:text-white">Cat / Subcat</th>
+                                <th class="px-4 py-3 font-medium text-black dark:text-white">Material</th>
                                 <th class="px-4 py-3 font-medium text-black dark:text-white text-center">Stock</th>
                                 <th class="px-4 py-3 font-medium text-black dark:text-white text-center">Estado</th>
                                 <th class="px-4 py-3 font-medium text-black dark:text-white text-right">Peso</th>
@@ -130,6 +144,21 @@
                                             class="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10 dark:bg-purple-900/30 dark:text-purple-400 dark:ring-purple-400/30">
                                             {{ getSubcategoryName(product) }}
                                         </span>
+                                        }
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex flex-col gap-0.5">
+                                        @if(product.jewelryDetails?.karatage) {
+                                        <span class="text-sm text-black dark:text-white">{{
+                                            product.jewelryDetails?.karatage }}K</span>
+                                        }
+                                        @if(product.jewelryDetails?.goldType) {
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">{{
+                                            product.jewelryDetails?.goldType }}</span>
+                                        }
+                                        @else {
+                                        <span class="text-xs text-gray-400 dark:text-gray-500">-</span>
                                         }
                                     </div>
                                 </td>
@@ -299,3 +328,7 @@
     </div>
 </div>
 }
+
+<app-filter-sidebar [isOpen]="showFilters()" title="Filtros de Productos" [filters]="filterConfig()"
+    (close)="closeFilters()" (apply)="applyFilters($event)" (valueChange)="onFilterChange($event)">
+</app-filter-sidebar>

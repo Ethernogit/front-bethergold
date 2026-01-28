@@ -145,6 +145,10 @@
                         <div *ngIf="item.get('type')?.value === 'jewelry'"
                             class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm flex flex-col sm:flex-row relative group transition-all hover:border-amber-300 dark:hover:border-amber-700">
 
+                            <div *ngIf="item.get('deliveryStatus')?.value === 'pending'"
+                                class="absolute top-0 right-0 bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl z-10">
+                                APARTADO
+                            </div>
                             <!-- Badge -->
                             <div
                                 class="absolute top-0 left-0 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-500 text-[10px] font-bold px-2 py-0.5 rounded-br">
@@ -201,9 +205,13 @@
                             <div
                                 class="bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-700/50 px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
                                 <div class="flex gap-2 w-full sm:w-auto">
-                                    <button type="button"
-                                        class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm transition-colors uppercase tracking-wider">
-                                        APARTAR
+                                    <button type="button" (click)="toggleDeliveryStatus(i)"
+                                        [class.bg-blue-600]="item.get('deliveryStatus')?.value !== 'pending'"
+                                        [class.hover:bg-blue-700]="item.get('deliveryStatus')?.value !== 'pending'"
+                                        [class.bg-amber-600]="item.get('deliveryStatus')?.value === 'pending'"
+                                        [class.hover:bg-amber-700]="item.get('deliveryStatus')?.value === 'pending'"
+                                        class="flex-1 sm:flex-none text-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm transition-colors uppercase tracking-wider">
+                                        {{ item.get('deliveryStatus')?.value === 'pending' ? 'ENTREGAR' : 'APARTAR' }}
                                     </button>
                                 </div>
                                 <button type="button" (click)="removeItem(i)"
@@ -270,6 +278,10 @@
                         <div *ngIf="item.get('type')?.value === 'custom'"
                             class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm flex flex-col sm:flex-row relative group mt-1 transition-all hover:border-purple-300 dark:hover:border-purple-700">
 
+                            <div *ngIf="item.get('deliveryStatus')?.value === 'pending'"
+                                class="absolute top-0 right-0 bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl z-10">
+                                APARTADO
+                            </div>
                             <!-- Badge -->
                             <div
                                 class="absolute top-0 left-0 bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-400 text-[10px] font-bold px-2 py-0.5 rounded-br">
@@ -298,9 +310,13 @@
                             <div
                                 class="bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-700/50 px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
                                 <div class="flex gap-2 w-full sm:w-auto">
-                                    <button type="button"
-                                        class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm transition-colors uppercase tracking-wider">
-                                        APARTAR
+                                    <button type="button" (click)="toggleDeliveryStatus(i)"
+                                        [class.bg-blue-600]="item.get('deliveryStatus')?.value !== 'pending'"
+                                        [class.hover:bg-blue-700]="item.get('deliveryStatus')?.value !== 'pending'"
+                                        [class.bg-amber-600]="item.get('deliveryStatus')?.value === 'pending'"
+                                        [class.hover:bg-amber-700]="item.get('deliveryStatus')?.value === 'pending'"
+                                        class="flex-1 sm:flex-none text-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm transition-colors uppercase tracking-wider">
+                                        {{ item.get('deliveryStatus')?.value === 'pending' ? 'ENTREGAR' : 'APARTAR' }}
                                     </button>
                                 </div>
                                 <button type="button" (click)="removeItem(i)"
@@ -461,6 +477,11 @@
                     </div>
                 </div>
 
+                <div *ngIf="minRequiredPayment > 0 && minRequiredPayment < noteForm.get('total')?.value"
+                    class="mb-2 px-1 text-xs text-right font-medium text-amber-600 dark:text-amber-500">
+                    Pago mín. requerido (contado): {{ minRequiredPayment | currency }}
+                </div>
+
                 <!-- BIG TOTAL (Horizontal) -->
                 <div
                     class="mb-4 bg-gray-100 dark:bg-gray-800/50 p-3 rounded-lg flex justify-between items-center border border-gray-200 dark:border-gray-700/50 shrink-0">
@@ -541,11 +562,16 @@
 
                 <!-- Footer Button (Confirm) - Pushed to bottom -->
                 <div class="pt-4">
-                    <button type="button" (click)="onSubmit()" [disabled]="isLoading"
-                        [class.bg-amber-500]="!isPartialPayment" [class.hover:bg-amber-400]="!isPartialPayment"
-                        [class.bg-indigo-600]="isPartialPayment" [class.hover:bg-indigo-500]="isPartialPayment"
-                        [class.text-white]="isPartialPayment" [class.text-gray-900]="!isPartialPayment"
-                        class="w-full py-3.5 font-extrabold text-base rounded-xl shadow-lg hover:shadow-orange-500/20 transform transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <button type="button" (click)="onSubmit()" [disabled]="isLoading || isPaymentInsufficient"
+                        [class.bg-amber-500]="!isPartialPayment && !isPaymentInsufficient"
+                        [class.hover:bg-amber-400]="!isPartialPayment && !isPaymentInsufficient"
+                        [class.bg-indigo-600]="isPartialPayment && !isPaymentInsufficient"
+                        [class.hover:bg-indigo-500]="isPartialPayment && !isPaymentInsufficient"
+                        [class.bg-gray-400]="isPaymentInsufficient" [class.cursor-not-allowed]="isPaymentInsufficient"
+                        [class.opacity-50]="isPaymentInsufficient"
+                        [class.text-white]="isPartialPayment || isPaymentInsufficient"
+                        [class.text-gray-900]="!isPartialPayment && !isPaymentInsufficient"
+                        class="w-full py-3.5 font-extrabold text-base rounded-xl shadow-lg hover:shadow-orange-500/20 transform transition-all active:scale-95 flex items-center justify-center gap-2 disabled:transform-none disabled:shadow-none">
                         <span *ngIf="isLoading" class="animate-spin">↻</span>
                         <span class="rounded-full border-2 w-5 h-5 flex items-center justify-center text-[10px]"
                             [class.border-gray-900]="!isPartialPayment" [class.border-white]="isPartialPayment">✓</span>

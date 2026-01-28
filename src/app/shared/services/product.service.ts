@@ -69,8 +69,19 @@ export class ProductService {
         return this.http.get(`${this.apiUrl}/search`, { params: { q: term } });
     }
 
-    searchProductsByQR(term: string): Observable<any> {
-        return this.http.get(`${this.apiUrl}/searchqr`, { params: { q: term } });
+    searchProductsByQR(termOrParams: string | any): Observable<any> {
+        let params = new HttpParams();
+
+        if (typeof termOrParams === 'string') {
+            params = params.set('q', termOrParams);
+        } else {
+            Object.keys(termOrParams).forEach(key => {
+                if (termOrParams[key] !== null && termOrParams[key] !== undefined) {
+                    params = params.set(key, termOrParams[key]);
+                }
+            });
+        }
+        return this.http.get(`${this.apiUrl}/searchqr`, { params });
     }
 
     getNextBarcode(sucursalId: string, category?: string, subcategory?: string): Observable<any> {
@@ -82,5 +93,9 @@ export class ProductService {
             params = params.set('subcategory', subcategory);
         }
         return this.http.get(`${this.apiUrl}/next-barcode`, { params });
+    }
+
+    getInventoryStats(): Observable<any> {
+        return this.http.get(`${this.apiUrl}/stats`);
     }
 }

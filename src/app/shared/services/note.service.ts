@@ -26,6 +26,7 @@ export interface NoteItem {
         [key: string]: any;
     };
     tags?: string[];
+    deliveryStatus?: 'immediate' | 'pending'; // immediate = Se lo lleva, pending = Apartado
 }
 
 export interface NotePayment {

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import { ProductService } from '../../../services/product.service';
 
 import {
   ApexAxisChartSeries,
@@ -23,38 +24,26 @@ import { ChartTabComponent } from '../../common/chart-tab/chart-tab.component';
   imports: [CommonModule, NgApexchartsModule, ChartTabComponent],
   templateUrl: './statics-chart.component.html'
 })
-export class StatisticsChartComponent {
-  public series: ApexAxisChartSeries = [
-    {
-      name: 'Oro',
-      data: [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
-    },
-    {
-      name: 'Plata',
-      data: [40, 30, 50, 40, 55, 40, 70, 100, 110, 120, 150, 140],
-    },
-  ];
+export class StatisticsChartComponent implements OnInit {
+  public series: ApexAxisChartSeries = [];
 
   public chart: ApexChart = {
     fontFamily: 'Outfit, sans-serif',
     height: 310,
-    type: 'area',
+    type: 'bar',
     toolbar: { show: false }
   };
 
-  public colors: string[] = ['#465FFF', '#9CB9FF'];
+  public colors: string[] = ['#465FFF'];
 
   public stroke: ApexStroke = {
     curve: 'straight',
-    width: [2, 2]
+    width: [0]
   };
 
   public fill: ApexFill = {
-    type: 'gradient',
-    gradient: {
-      opacityFrom: 0.55,
-      opacityTo: 0,
-    }
+    type: 'solid',
+    opacity: 1
   };
 
   public markers: ApexMarkers = {
@@ -73,15 +62,16 @@ export class StatisticsChartComponent {
 
   public tooltip: ApexTooltip = {
     enabled: true,
-    x: { format: 'dd MMM yyyy' }
+    y: {
+      formatter: function (val) {
+        return val + " productos"
+      }
+    }
   };
 
   public xaxis: ApexXAxis = {
     type: 'category',
-    categories: [
-      'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
-      'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
-    ],
+    categories: [],
     axisBorder: { show: false },
     axisTicks: { show: false },
     tooltip: { enabled: false }
@@ -105,4 +95,25 @@ export class StatisticsChartComponent {
     position: 'top',
     horizontalAlign: 'left'
   };
+
+  constructor(private productService: ProductService) { }
+
+  ngOnInit() {
+    this.productService.getInventoryStats().subscribe({
+      next: (response) => {
+        if (response.success) {
+          const data = response.data;
+          this.series = [{
+            name: 'Productos',
+            data: data.map((d: any) => d.count)
+          }];
+          this.xaxis = {
+            ...this.xaxis,
+            categories: data.map((d: any) => d.categoryName)
+          };
+        }
+      },
+      error: (err) => console.error('Error fetching inventory stats', err)
+    });
+  }
 }
