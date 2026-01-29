@@ -42,8 +42,7 @@ export class ProductListComponent implements OnInit {
     // Store last selected category to detect changes
     private lastSelectedCategoryId: string = '';
 
-    // Filters
-    showOutOfStock = signal(false);
+
 
     // Selection
     selectedProducts = signal<Set<string>>(new Set());
@@ -99,7 +98,7 @@ export class ProductListComponent implements OnInit {
             next: (res: any) => {
                 const materials = res.data || res || [];
                 const options = materials.map((m: any) => ({
-                    value: m._id, // Use ID as value
+                    value: m.karat, // Use Karatage string as value
                     label: `${m.name} (${m.karat}k)`
                 }));
                 this.updateFilterConfig('jewelryDetails.karatage', options);
@@ -165,9 +164,7 @@ export class ProductListComponent implements OnInit {
             ...this.activeFilters() // Include active filters
         };
 
-        if (!this.showOutOfStock()) {
-            params.minStock = 0.0001;
-        }
+
 
 
 
@@ -177,6 +174,10 @@ export class ProductListComponent implements OnInit {
                 next: (res: any) => {
                     const products = res.data || res;
                     this.products.set(products);
+                    if (res.pagination) {
+                        this.totalItems.set(res.pagination.total);
+                        this.totalPages.set(res.pagination.pages);
+                    }
                 },
                 error: (err) => {
                     console.error('Error loading products', err);
@@ -201,11 +202,7 @@ export class ProductListComponent implements OnInit {
 
 
 
-    toggleShowOutOfStock() {
-        this.showOutOfStock.update(v => !v);
-        this.currentPage.set(1);
-        this.loadProducts();
-    }
+
 
     // Filter Methods
     openFilters() {

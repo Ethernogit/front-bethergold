@@ -1,29 +1,35 @@
-<div class="space-y-6">
+<div class="h-full flex flex-col">
+    <!-- Filter Sidebar -->
+    <app-filter-sidebar [isOpen]="showFilters()" [filters]="filterConfig()" (close)="closeFilters()"
+        (apply)="onFilterApply($event)"></app-filter-sidebar>
+
     <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Historial de Ventas</h1>
             <p class="text-gray-500 dark:text-gray-400 mt-1">Administra tus ventas, procesa pagos y anula notas.</p>
         </div>
-        <!-- Search -->
-        <div class="relative w-full md:w-64">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <i class='bx bx-search text-gray-400'></i>
-            </div>
-            <input type="text" [(ngModel)]="searchTerm" (keyup.enter)="searchNotes()"
-                class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors sm:text-sm"
-                placeholder="Buscar por folio...">
+        <div class="flex items-center gap-3">
+            <button (click)="openFilters()"
+                class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <i class='bx bx-filter-alt'></i>
+                Filtros
+                <span *ngIf="(activeFilters() | json) !== '{}'" class="ml-1 w-2 h-2 rounded-full bg-primary-500"></span>
+            </button>
+            <button [routerLink]="['/sales/new']"
+                class="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+                <i class='bx bx-plus'></i>
+                Nueva Venta
+            </button>
         </div>
     </div>
 
-    <!-- Stats or Summary (Optional) -->
-
-    <!-- Table -->
+    <!-- Table Container (Flex logic specific to handle overflow with pagination footer) -->
     <div
-        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div class="overflow-x-auto">
+        class="flex-1 overflow-auto bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col">
+        <div class="flex-1 overflow-auto">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-50 dark:bg-gray-700/50">
+                <thead class="bg-gray-50 dark:bg-gray-700/50 sticky top-0 z-10">
                     <tr>
                         <th scope="col"
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -49,19 +55,34 @@
                             class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             Por Pagar
                         </th>
-                        <th scope="col"
-                            class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Acciones
-                        </th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                    <tr *ngFor="let note of notes" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    @if (loading()) {
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center">
+                            <div class="flex justify-center">
+                                <div
+                                    class="h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent">
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    } @else if (notes().length === 0) {
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                            <i class='bx bx-file-blank text-4xl mb-3 block text-gray-300'></i>
+                            No hay ventas registradas
+                        </td>
+                    </tr>
+                    } @else {
+                    <tr *ngFor="let note of notes()"
+                        class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
+                        (click)="viewNoteDetail(note)">
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                             {{ note.folio }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                            <!-- Helper to get client name safely if object or string -->
                             {{ $any(note.clientId).name || note.clientId }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -69,12 +90,12 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
                             <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
-                                    'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400': note.status === 'PAGADA',
-                                    'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400': note.status === 'ENTREGADA',
-                                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400': note.status === 'PENDIENTE_PAGO',
-                                    'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400': note.status === 'BORRADOR',
-                                    'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400': note.status === 'ANULADA'
-                                }">
+                                        'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400': note.status === 'PAGADA',
+                                        'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400': note.status === 'ENTREGADA',
+                                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400': note.status === 'PENDIENTE_PAGO',
+                                        'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400': note.status === 'BORRADOR',
+                                        'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400': note.status === 'ANULADA'
+                                    }">
                                 {{ note.status }}
                             </span>
                         </td>
@@ -85,34 +106,40 @@
                             class="px-6 py-4 whitespace-nowrap text-sm text-red-600 dark:text-red-400 font-medium text-right">
                             {{ note.financials.balanceDue | currency }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                            <button *ngIf="note.financials.balanceDue > 0 && note.status !== 'ANULADA'"
-                                (click)="openPaymentModal(note)"
-                                class="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300 font-semibold"
-                                title="Abonar">
-                                <i class='bx bx-money text-lg'></i>
-                            </button>
-                            <!-- Can add print button here too -->
-                            <button [routerLink]="['/sales/note', note.folio]"
-                                class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
-                                title="Ver Detalle">
-                                <i class='bx bx-show text-lg'></i>
-                            </button>
-                            <button *ngIf="note.status !== 'ANULADA'" (click)="confirmCancel(note)"
-                                class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                title="Anular">
-                                <i class='bx bx-block text-lg'></i>
-                            </button>
-                        </td>
                     </tr>
-                    <tr *ngIf="notes.length === 0">
-                        <td colspan="7" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                            <i class='bx bx-file-blank text-4xl mb-3 block text-gray-300'></i>
-                            No hay ventas registradas
-                        </td>
-                    </tr>
+                    }
                 </tbody>
             </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="border-t border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-sm text-gray-500 dark:text-gray-400">Mostrar</span>
+                <select [ngModel]="itemsPerPage()" (ngModelChange)="onLimitChange($event)"
+                    class="text-sm border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white">
+                    <option [value]="10">10</option>
+                    <option [value]="20">20</option>
+                    <option [value]="50">50</option>
+                </select>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <p class="text-sm font-medium text-black dark:text-white">
+                    Página {{ currentPage() }} de {{ totalPages() }} <span
+                        class="font-bold text-brand-600 dark:text-brand-400">({{ totalItems() }} items)</span>
+                </p>
+                <div class="flex items-center gap-2">
+                    <button (click)="onPageChange(currentPage() - 1)" [disabled]="currentPage() === 1"
+                        class="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class='bx bx-chevron-left text-xl text-gray-600 dark:text-gray-400'></i>
+                    </button>
+                    <button (click)="onPageChange(currentPage() + 1)" [disabled]="currentPage() >= totalPages()"
+                        class="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class='bx bx-chevron-right text-xl text-gray-600 dark:text-gray-400'></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 

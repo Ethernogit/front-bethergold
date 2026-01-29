@@ -58,20 +58,7 @@
                         </button>
                     </div>
 
-                    <!-- Toggle Show Out of Stock -->
-                    <div class="flex items-center gap-2 px-2 shrink-0">
-                        <label class="flex items-center cursor-pointer select-none">
-                            <div class="relative">
-                                <input type="checkbox" class="sr-only" (change)="toggleShowOutOfStock()"
-                                    [checked]="showOutOfStock()">
-                                <div class="block h-6 w-10 rounded-full bg-gray-200 dark:bg-gray-700 transition"></div>
-                                <div class="absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition transform"
-                                    [class.translate-x-4]="showOutOfStock()" [class.bg-brand-500]="showOutOfStock()">
-                                </div>
-                            </div>
-                            <span class="ml-2 text-xs font-medium text-black dark:text-white">Agotados</span>
-                        </label>
-                    </div>
+
                 </div>
             </div>
 
@@ -151,7 +138,7 @@
                                     <div class="flex flex-col gap-0.5">
                                         @if(product.jewelryDetails?.karatage) {
                                         <span class="text-sm text-black dark:text-white">{{
-                                            product.jewelryDetails?.karatage }}K</span>
+                                            product.jewelryDetails?.karatage }}</span>
                                         }
                                         @if(product.jewelryDetails?.goldType) {
                                         <span class="text-xs text-gray-500 dark:text-gray-400">{{
@@ -247,7 +234,8 @@
 
                     <div class="flex items-center gap-4">
                         <p class="text-sm font-medium text-black dark:text-white">
-                            Página {{ currentPage() }}
+                            Página {{ currentPage() }} de {{ totalPages() }} <span
+                                class="font-bold text-brand-600 dark:text-brand-400">({{ totalItems() }} items)</span>
                         </p>
                         <div class="flex items-center gap-2">
                             <button (click)="onPageChange(currentPage() - 1)" [disabled]="currentPage() === 1"
@@ -258,8 +246,7 @@
                                         d="M12.7071 5.29289C13.0976 5.68342 13.0976 6.31658 12.7071 6.70711L9.41421 10L12.7071 13.2929C13.0976 13.6834 13.0976 14.3166 12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L7.29289 10.7071C6.90237 10.3166 6.90237 9.68342 7.29289 9.29289L11.2929 5.29289C11.6834 4.90237 12.3166 4.90237 12.7071 5.29289Z" />
                                 </svg>
                             </button>
-                            <button (click)="onPageChange(currentPage() + 1)"
-                                [disabled]="products().length < itemsPerPage()"
+                            <button (click)="onPageChange(currentPage() + 1)" [disabled]="currentPage() >= totalPages()"
                                 class="flex items-center justify-center rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition">
                                 <svg class="fill-current text-black dark:text-white" width="20" height="20"
                                     viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">

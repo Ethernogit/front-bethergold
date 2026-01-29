@@ -71,12 +71,16 @@ export class NoteService {
         return this.http.post<{ success: boolean; data: Note; message?: string }>(this.apiUrl, note);
     }
 
-    getNotes(filters?: { term?: string }): Observable<{ success: boolean; data: Note[] }> {
+    getNotes(filters?: any): Observable<{ success: boolean; data: Note[]; pagination?: any }> {
         let params = new HttpParams();
-        if (filters?.term) {
-            params = params.set('term', filters.term);
+        if (filters) {
+            Object.keys(filters).forEach(key => {
+                if (filters[key] !== null && filters[key] !== undefined && filters[key] !== '') {
+                    params = params.set(key, filters[key]);
+                }
+            });
         }
-        return this.http.get<{ success: boolean; data: Note[] }>(this.apiUrl, { params });
+        return this.http.get<{ success: boolean; data: Note[]; pagination?: any }>(this.apiUrl, { params });
     }
 
     getNoteById(id: string): Observable<{ success: boolean; data: Note }> {
