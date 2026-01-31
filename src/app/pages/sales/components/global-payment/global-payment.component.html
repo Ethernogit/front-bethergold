@@ -1,14 +1,15 @@
 <div *ngIf="isOpen()"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-    <div class="w-full max-w-md bg-white dark:bg-boxdark rounded-lg shadow-xl border border-stroke dark:border-strokedark overflow-hidden animate-in zoom-in-95 duration-200"
+    class="fixed inset-0 z-[200000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+    <div class="w-full max-w-md bg-white dark:bg-[#1a2230] rounded-lg shadow-xl border border-gray-200 dark:border-[#2a364a] overflow-hidden animate-in zoom-in-95 duration-200"
         (click)="$event.stopPropagation()">
 
         <!-- Header -->
-        <div class="flex items-center justify-between px-6 py-4 border-b border-stroke dark:border-strokedark">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-[#2a364a]">
             <h3 class="font-semibold text-xl text-black dark:text-white">
                 Registrar Pago
             </h3>
-            <button (click)="close.emit()" class="text-body hover:text-primary dark:text-bodydark transition-colors">
+            <button (click)="close.emit()"
+                class="text-gray-500 hover:text-primary dark:text-gray-400 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                     stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -19,18 +20,43 @@
         <!-- Body -->
         <div class="p-6 space-y-5">
             <!-- Balance Info -->
-            <div class="bg-gray-50 dark:bg-meta-4 rounded-md p-4 flex justify-between items-center">
-                <div>
-                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Saldo Pendiente</label>
-                    <div class="text-2xl font-bold text-danger">
-                        {{ note()?.financials?.balanceDue || 0 | currency }}
+            <div class="bg-gray-50 dark:bg-[#111722] rounded-xl p-4 border border-gray-200 dark:border-[#2a364a]">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <label
+                            class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Saldo
+                            Actual</label>
+                        <div class="text-xl font-bold text-gray-900 dark:text-white">
+                            {{ note()?.financials?.balanceDue || 0 | currency }}
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <label
+                            class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Nuevo
+                            Saldo</label>
+                        <div class="text-xl font-bold transition-all" [ngClass]="{
+                            'text-green-600 dark:text-green-400': (note()?.financials?.balanceDue || 0) - (paymentForm.get('amount')?.value || 0) <= 0,
+                            'text-gray-900 dark:text-white': (note()?.financials?.balanceDue || 0) - (paymentForm.get('amount')?.value || 0) > 0
+                        }">
+                            {{ ((note()?.financials?.balanceDue || 0) - (paymentForm.get('amount')?.value || 0)) |
+                            currency }}
+                        </div>
                     </div>
                 </div>
-                <div class="text-right">
-                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Total Nota</label>
-                    <div class="text-lg font-semibold text-black dark:text-white">
-                        {{ note()?.financials?.total || 0 | currency }}
-                    </div>
+                <!-- Progress bar visual -->
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-3 overflow-hidden">
+                    <div class="bg-primary h-2 rounded-full transition-all duration-300" [style.width.%]="
+                        (((note()?.financials?.balancePaid || 0) + (paymentForm.get('amount')?.value || 0)) / (note()?.financials?.total || 1)) * 100
+                    "></div>
+                </div>
+                <div class="flex justify-between items-center mt-2">
+                    <span class="text-xs font-bold text-gray-500 dark:text-gray-400">
+                        Pagado: <span class="text-gray-700 dark:text-gray-200">{{ ((note()?.financials?.balancePaid ||
+                            0) + (paymentForm.get('amount')?.value || 0)) | currency }}</span>
+                    </span>
+                    <span class="text-sm font-extrabold text-gray-900 dark:text-white">
+                        Total: {{ note()?.financials?.total || 0 | currency }}
+                    </span>
                 </div>
             </div>
 
@@ -45,7 +71,7 @@
                         <span
                             class="absolute left-4 top-3 text-lg font-semibold text-gray-500 dark:text-gray-400">$</span>
                         <input type="number" formControlName="amount" placeholder="0.00"
-                            class="w-full rounded-lg border border-stroke bg-transparent py-3 pl-8 pr-4 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary transition-colors text-lg font-semibold"
+                            class="w-full rounded-lg border border-gray-200 bg-transparent py-3 pl-8 pr-4 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-[#2a364a] dark:bg-[#111722] dark:text-white dark:focus:border-primary transition-colors text-lg font-semibold"
                             [class.border-danger]="isFieldInvalid('amount')" />
                     </div>
                     <div *ngIf="isFieldInvalid('amount')" class="mt-1 text-xs text-danger">
@@ -54,12 +80,12 @@
                     <!-- Quick Suggestions -->
                     <div class="flex gap-2 mt-2">
                         <button type="button" (click)="setAmount(note()?.financials?.balanceDue || 0)"
-                            class="px-2 py-1 text-xs font-medium rounded border border-stroke dark:border-strokedark hover:bg-gray-50 dark:hover:bg-meta-4 transition-colors">
+                            class="px-2 py-1 text-xs font-medium rounded border border-gray-200 dark:border-[#2a364a] hover:bg-gray-50 dark:hover:bg-[#111722] transition-colors text-gray-700 dark:text-gray-300">
                             Liquidar Total
                         </button>
                         <button type="button" *ngIf="(note()?.financials?.balanceDue || 0) > 0"
                             (click)="setAmount((note()?.financials?.balanceDue || 0) / 2)"
-                            class="px-2 py-1 text-xs font-medium rounded border border-stroke dark:border-strokedark hover:bg-gray-50 dark:hover:bg-meta-4 transition-colors">
+                            class="px-2 py-1 text-xs font-medium rounded border border-gray-200 dark:border-[#2a364a] hover:bg-gray-50 dark:hover:bg-[#111722] transition-colors text-gray-700 dark:text-gray-300">
                             50% Anticipo
                         </button>
                     </div>
@@ -67,52 +93,57 @@
 
                 <!-- Method -->
                 <div>
-                    <label class="mb-2.5 block font-medium text-black dark:text-white">
-                        Método de Pago <span class="text-danger">*</span>
+                    <label class="mb-2 block text-sm font-medium text-black dark:text-white">
+                        Método de Pago
                     </label>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div class="flex flex-wrap gap-2">
                         <label
-                            class="cursor-pointer border border-stroke dark:border-strokedark rounded-md p-3 flex flex-col items-center justify-center gap-2 hover:border-primary dark:hover:border-primary transition-all"
-                            [class.border-primary]="paymentForm.get('method')?.value === 'cash'"
-                            [class.bg-primary-light]="paymentForm.get('method')?.value === 'cash'">
+                            class="cursor-pointer border border-gray-200 dark:border-[#2a364a] rounded-lg px-3 py-2 flex items-center gap-2 hover:border-primary dark:hover:border-primary transition-all flex-1 min-w-[100px] justify-center text-gray-600 dark:text-gray-300"
+                            [ngClass]="{
+                                'border-primary bg-brand-50 text-primary dark:bg-brand-500/20': paymentForm.get('method')?.value === 'cash'
+                            }">
                             <input type="radio" formControlName="method" value="cash" class="sr-only">
-                            <span class="text-2xl">💵</span>
+                            <span class="text-xl">💵</span>
                             <span class="text-sm font-medium">Efectivo</span>
                         </label>
 
                         <label
-                            class="cursor-pointer border border-stroke dark:border-strokedark rounded-md p-3 flex flex-col items-center justify-center gap-2 hover:border-primary dark:hover:border-primary transition-all"
-                            [class.border-primary]="paymentForm.get('method')?.value === 'card'"
-                            [class.bg-primary-light]="paymentForm.get('method')?.value === 'card'">
+                            class="cursor-pointer border border-gray-200 dark:border-[#2a364a] rounded-lg px-3 py-2 flex items-center gap-2 hover:border-primary dark:hover:border-primary transition-all flex-1 min-w-[100px] justify-center text-gray-600 dark:text-gray-300"
+                            [ngClass]="{
+                                'border-primary bg-brand-50 text-primary dark:bg-brand-500/20': paymentForm.get('method')?.value === 'card'
+                            }">
                             <input type="radio" formControlName="method" value="card" class="sr-only">
-                            <span class="text-2xl">💳</span>
+                            <span class="text-xl">💳</span>
                             <span class="text-sm font-medium">Tarjeta</span>
                         </label>
 
                         <label
-                            class="cursor-pointer border border-stroke dark:border-strokedark rounded-md p-3 flex flex-col items-center justify-center gap-2 hover:border-primary dark:hover:border-primary transition-all"
-                            [class.border-primary]="paymentForm.get('method')?.value === 'transfer'"
-                            [class.bg-primary-light]="paymentForm.get('method')?.value === 'transfer'">
+                            class="cursor-pointer border border-gray-200 dark:border-[#2a364a] rounded-lg px-3 py-2 flex items-center gap-2 hover:border-primary dark:hover:border-primary transition-all flex-1 min-w-[100px] justify-center text-gray-600 dark:text-gray-300"
+                            [ngClass]="{
+                                'border-primary bg-brand-50 text-primary dark:bg-brand-500/20': paymentForm.get('method')?.value === 'transfer'
+                            }">
                             <input type="radio" formControlName="method" value="transfer" class="sr-only">
-                            <span class="text-2xl">🏦</span>
+                            <span class="text-xl">🏦</span>
                             <span class="text-sm font-medium">Transf.</span>
                         </label>
 
                         <label
-                            class="cursor-pointer border border-stroke dark:border-strokedark rounded-md p-3 flex flex-col items-center justify-center gap-2 hover:border-primary dark:hover:border-primary transition-all"
-                            [class.border-primary]="paymentForm.get('method')?.value === 'deposit'"
-                            [class.bg-primary-light]="paymentForm.get('method')?.value === 'deposit'">
+                            class="cursor-pointer border border-gray-200 dark:border-[#2a364a] rounded-lg px-3 py-2 flex items-center gap-2 hover:border-primary dark:hover:border-primary transition-all flex-1 min-w-[100px] justify-center text-gray-600 dark:text-gray-300"
+                            [ngClass]="{
+                                'border-primary bg-brand-50 text-primary dark:bg-brand-500/20': paymentForm.get('method')?.value === 'deposit'
+                            }">
                             <input type="radio" formControlName="method" value="deposit" class="sr-only">
-                            <span class="text-2xl">📄</span>
+                            <span class="text-xl">📄</span>
                             <span class="text-sm font-medium">Depósito</span>
                         </label>
 
                         <label
-                            class="cursor-pointer border border-stroke dark:border-strokedark rounded-md p-3 flex flex-col items-center justify-center gap-2 hover:border-primary dark:hover:border-primary transition-all"
-                            [class.border-primary]="paymentForm.get('method')?.value === 'other'"
-                            [class.bg-primary-light]="paymentForm.get('method')?.value === 'other'">
+                            class="cursor-pointer border border-gray-200 dark:border-[#2a364a] rounded-lg px-3 py-2 flex items-center gap-2 hover:border-primary dark:hover:border-primary transition-all flex-1 min-w-[80px] justify-center text-gray-600 dark:text-gray-300"
+                            [ngClass]="{
+                                'border-primary bg-brand-50 text-primary dark:bg-brand-500/20': paymentForm.get('method')?.value === 'other'
+                            }">
                             <input type="radio" formControlName="method" value="other" class="sr-only">
-                            <span class="text-2xl">🔄</span>
+                            <span class="text-xl">🔄</span>
                             <span class="text-sm font-medium">Otro</span>
                         </label>
                     </div>
@@ -125,23 +156,23 @@
                         Referencia / Folio
                     </label>
                     <input type="text" formControlName="reference" placeholder="Ej. 1234, #Authorization"
-                        class="w-full rounded-lg border border-stroke bg-transparent py-3 px-5 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary transition-colors" />
+                        class="w-full rounded-lg border border-gray-200 bg-transparent py-3 px-5 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-[#2a364a] dark:bg-[#111722] dark:text-white dark:focus:border-primary transition-colors" />
                 </div>
             </form>
         </div>
 
         <!-- Footer -->
         <div
-            class="bg-gray-50 dark:bg-meta-4 px-6 py-4 flex justify-end gap-3 border-t border-stroke dark:border-strokedark">
+            class="bg-gray-50 dark:bg-[#111722] px-6 py-4 flex justify-end gap-3 border-t border-gray-200 dark:border-[#2a364a]">
             <button type="button" (click)="close.emit()"
-                class="flex justify-center rounded border border-stroke py-2 px-6 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white transition-all">
+                class="flex justify-center rounded border border-gray-200 py-2 px-6 font-medium text-black hover:shadow-1 dark:border-[#2a364a] dark:text-white transition-all bg-white dark:bg-[#1a2230] hover:bg-gray-50 dark:hover:bg-[#2a364a]">
                 Cancelar
             </button>
             <button type="button" (click)="onSubmit()" [disabled]="paymentForm.invalid || isProcessing()"
-                class="flex items-center justify-center gap-2 rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-1">
+                class="flex items-center justify-center gap-2 rounded bg-primary py-2 px-6 font-medium text-white hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-1">
                 <span *ngIf="isProcessing()"
                     class="h-4 w-4 animate-spin rounded-full border-2 border-solid border-white border-t-transparent"></span>
-                {{ isProcessing() ? 'Procesando...' : 'Confirmar Pago' }}
+                {{ isProcessing() ? 'Procesando...' : 'Confirmar' }}
             </button>
         </div>
     </div>

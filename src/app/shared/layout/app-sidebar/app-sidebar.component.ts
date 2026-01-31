@@ -52,6 +52,12 @@ export class AppSidebarComponent {
             permission: 'sales:read'
         },
         {
+            icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 18C7 16.8954 7.89543 16 9 16H15C16.1046 16 17 16.8954 17 18C17 19.1046 16.1046 20 15 20H9C7.89543 20 7 19.1046 7 18Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M3 5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V5ZM5 5H19V11H5V5ZM19 13H5V19H19V13Z" fill="currentColor"/></svg>`,
+            name: "Corte de Caja",
+            path: "/sales/cash-cut",
+            permission: 'sales:read'
+        },
+        {
             icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" fill="currentColor"/><path d="M12 14C8.13401 14 5 17.134 5 21H19C19 17.134 15.866 14 12 14Z" fill="currentColor"/></svg>`,
             name: "Clientes",
             path: "/clients",
@@ -141,8 +147,18 @@ export class AppSidebarComponent {
                 { name: "Roles", path: "/roles", permission: 'roles:read' },
                 { name: "Permisos", path: "/permisos", permission: 'permissions:read' },
 
-                { name: "Sucursal", path: "/sucursal/config", permission: 'organization:update' },
+                { name: "Permisos", path: "/permisos", permission: 'permissions:read' },
             ],
+        },
+        {
+            icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 2C15.97 2 20 6.03 20 11C20 15.97 15.97 20 11 20C6.03 20 2 15.97 2 11C2 6.03 6.03 2 11 2ZM4 11C4 14.866 7.134 18 11 18C14.866 18 18 14.866 18 11C18 7.134 14.866 4 11 4C7.134 4 4 7.134 4 11Z" fill="currentColor"/><path d="M12 7H10V11H7V13H10V17H12V13H15V11H12V7Z" fill="currentColor"/></svg>`,
+            name: "Sucursal",
+            subItems: [
+                { name: "Notas de Venta", path: "/sucursal/print", permission: 'organization:update' },
+                { name: "Códigos y Etiquetas", path: "/sucursal/barcode", permission: 'organization:update' },
+                { name: "Folios", path: "/sucursal/folio", permission: 'organization:update' },
+                { name: "Form. Productos", path: "/sucursal/products", permission: 'organization:update' }
+            ]
         },
         {
             icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" fill="currentColor"/></svg>`,

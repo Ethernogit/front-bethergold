@@ -8,6 +8,8 @@ export interface Sucursal {
     _id: string; // Handle both id and _id
     name: string;
     code: string;
+    phone?: string;
+    email?: string;
     config?: {
         barcode?: {
             enabled: boolean;
@@ -38,6 +40,27 @@ export interface Sucursal {
             padding?: number;
             nextNumber?: number;
         };
+    };
+    printConfig?: {
+        logoUrl?: string;
+        headerText?: string;
+        footerText?: string;
+        showAddress?: boolean;
+        showPhone?: boolean;
+        showClient?: boolean;
+        showSeller?: boolean;
+        ticketWidth?: '80mm' | '58mm';
+        fontFamily?: string;
+        website?: string;
+        facebook?: string;
+        instagram?: string;
+    };
+    address?: {
+        street: string;
+        city: string;
+        state: string;
+        country: string;
+        zipCode?: string;
     };
 }
 
@@ -75,6 +98,12 @@ export class SucursalService {
 
     updateSucursal(id: string, data: any): Observable<{ data: Sucursal }> {
         return this.http.put<{ data: Sucursal }>(`${this.apiUrl}/${id}`, data);
+    }
+
+    uploadLogo(file: File): Observable<{ success: boolean, data: { logoUrl: string } }> {
+        const formData = new FormData();
+        formData.append('logo', file);
+        return this.http.post<{ success: boolean, data: { logoUrl: string } }>(`${this.apiUrl}/upload-logo`, formData);
     }
 
     // Helper method to generate a preview of the barcode

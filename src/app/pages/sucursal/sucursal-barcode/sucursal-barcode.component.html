@@ -1,0 +1,112 @@
+<div class="relative w-full h-full bg-white dark:bg-gray-900 overflow-y-auto">
+    <!-- Header -->
+    <div class="px-8 py-6 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 sticky top-0 z-10">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Códigos de Barras</h1>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Configura el formato y patrón de generación de
+                    etiquetas</p>
+            </div>
+            <div>
+                <button (click)="onSubmit()" [disabled]="isLoading"
+                    class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg *ngIf="isLoading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    <span>Guardar Cambios</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="p-8 pb-32">
+        <form [formGroup]="configForm" class="w-full space-y-8">
+
+            <!-- Barcode Config -->
+            <div>
+                <!-- <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Configuración de Código de Barras</h3> -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Formato</label>
+                        <select formControlName="format"
+                            class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-brand-500 dark:focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                            <option value="standard">Estándar (EAN-13)</option>
+                            <option value="custom">Personalizado</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Patrón de
+                            Generación</label>
+                        <div class="flex space-x-2">
+                            <input type="text" formControlName="pattern"
+                                class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-brand-500 dark:focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">Variables: {{ '{' }}sucursalCode{{ '}' }}, {{ '{'
+                            }}category{{ '}' }}, {{ '{' }}subcategory{{ '}' }}, {{ '{' }}index{{ '}' }}</p>
+                        <div class="mt-2 text-xs flex flex-wrap gap-2">
+                            <button type="button" (click)="insertPlaceholder('{sucursalCode}')"
+                                class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200">code</button>
+                            <button type="button" (click)="insertPlaceholder('{category}')"
+                                class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200">cat</button>
+                            <button type="button" (click)="insertPlaceholder('{subcategory}')"
+                                class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200">sub</button>
+                            <button type="button" (click)="insertPlaceholder('{index}')"
+                                class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200">idx</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Prefijo</label>
+                        <input type="text" formControlName="prefix"
+                            class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Sufijo</label>
+                        <input type="text" formControlName="suffix"
+                            class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-brand-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Long.
+                            Categoría</label>
+                        <input type="number" formControlName="categoryLength"
+                            class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Long.
+                            Subcat</label>
+                        <input type="number" formControlName="subcategoryLength"
+                            class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Long.
+                            Índice</label>
+                        <input type="number" formControlName="indexLength"
+                            class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-brand-500">
+                    </div>
+                </div>
+
+                <!-- Preview Box -->
+                <div
+                    class="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <p class="text-xs text-gray-500 uppercase tracking-wider mb-2">Previsualización</p>
+                    <div class="text-xl font-mono font-bold text-gray-800 dark:text-white text-center">
+                        {{ previewBarcode || '---' }}
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>

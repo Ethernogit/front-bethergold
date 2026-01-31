@@ -300,14 +300,44 @@ export const routes: Routes = [
         title: 'Crear Usuario | Bethergold'
       },
       {
-        path: 'sucursal/config',
-        loadComponent: () => import('./pages/sucursal/sucursal-config/sucursal-config.component').then(m => m.SucursalConfigComponent),
+        path: 'sucursal/print',
+        loadComponent: () => import('./pages/sucursal/sucursal-print/sucursal-print.component').then(m => m.SucursalPrintConfigComponent),
         canActivate: [AuthGuard, PermissionGuard],
         data: {
           module: 'organization',
           action: 'update'
         },
-        title: 'Configuración de Sucursal | Bethergold'
+        title: 'Configuración de Tickets | Bethergold'
+      },
+      {
+        path: 'sucursal/barcode',
+        loadComponent: () => import('./pages/sucursal/sucursal-barcode/sucursal-barcode.component').then(m => m.SucursalBarcodeConfigComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'organization',
+          action: 'update'
+        },
+        title: 'Configuración de Códigos | Bethergold'
+      },
+      {
+        path: 'sucursal/folio',
+        loadComponent: () => import('./pages/sucursal/sucursal-folio/sucursal-folio.component').then(m => m.SucursalFolioConfigComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'organization',
+          action: 'update'
+        },
+        title: 'Configuración de Folios | Bethergold'
+      },
+      {
+        path: 'sucursal/products',
+        loadComponent: () => import('./pages/sucursal/sucursal-products/sucursal-products.component').then(m => m.SucursalProductConfigComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'organization',
+          action: 'update'
+        },
+        title: 'Configuración de Productos | Bethergold'
       },
       {
         path: 'migration',
@@ -323,6 +353,16 @@ export const routes: Routes = [
       },
 
       // Ventas / Notas
+      {
+        path: 'sales/cash-cut',
+        loadComponent: () => import('./pages/sales/cash-cut/cash-cut.component').then(m => m.CashCutComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'sales',
+          action: 'read'
+        },
+        title: 'Corte de Caja | Bethergold'
+      },
       {
         path: 'sales/new',
         loadComponent: () => import('./pages/sales/new-note/new-note.component').then(m => m.NewNoteComponent),
