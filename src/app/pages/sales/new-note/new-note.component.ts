@@ -7,6 +7,7 @@ import { ProductService, Product } from '../../../shared/services/product.servic
 import { LoginService } from '../../../shared/services/auth/login.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { SucursalService } from '../../../shared/services/sucursal.service';
+import { CashCutService } from '../../../shared/services/cash-cut.service'; // Import CashCutService
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, switchMap, catchError, filter } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -54,6 +55,7 @@ export class NewNoteComponent implements OnInit {
         private loginService: LoginService,
         private toastService: ToastService,
         private sucursalService: SucursalService,
+        private cashCutService: CashCutService, // Inject Service
         private router: Router
     ) {
         this.noteForm = this.fb.group({
@@ -73,8 +75,39 @@ export class NewNoteComponent implements OnInit {
 
     ngOnInit(): void {
         // this.loadClients(); // Replaced by Modal
+        this.checkOpenShift();
         this.setupSearch();
         this.loadNextFolio();
+    }
+
+    checkOpenShift() {
+        const sucursal = this.loginService.currentSucursal();
+        if (!sucursal?._id) return;
+
+        this.cashCutService.getCurrentShift(sucursal._id).subscribe({
+            next: (res) => {
+                // Shift is open, proceed
+                console.log('Caja abierta:', res);
+            },
+            error: (err) => {
+                // If 404 or error, assume closed.
+                console.warn('No active shift', err);
+
+                // Use a simple confirm or just redirect/toast
+                // Ideally prompt user to open caja.
+
+                // Simplest block:
+                this.toastService.warning('No hay caja abierta. Debe abrir caja para realizar ventas.');
+
+                // Disable form or redirect? 
+                // Let's redirect to open caja if they want, or just block submission.
+                // Redirecting might be invasive if they just want to look, but for "New Note" it implies action.
+                // Let's disable the inputs and show a big message or just redirect after a delay.
+
+                // For now, let's just show the toast and disable the form heavily or redirect.
+                this.router.navigate(['/sales/cash-cut']);
+            }
+        });
     }
 
     loadNextFolio() {

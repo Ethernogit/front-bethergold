@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Note, NoteService, NotePayment } from '../../../../shared/services/note.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
+import { ToastService } from '../../../../shared/services/toast.service'; // Import ToastService
+import { Router } from '@angular/router'; // Import Router
 
 @Component({
     selector: 'app-global-payment',
@@ -26,7 +28,9 @@ export class GlobalPaymentComponent {
 
     constructor(
         private fb: FormBuilder,
-        private noteService: NoteService
+        private noteService: NoteService,
+        private toastService: ToastService, // Inject
+        private router: Router // Inject
     ) {
         this.paymentForm = this.fb.group({
             amount: [0, [Validators.required, Validators.min(0.01)]],
@@ -76,7 +80,15 @@ export class GlobalPaymentComponent {
                 },
                 error: (err) => {
                     console.error('Error adding payment:', err);
-                    // Here ideally we'd show a toast error
+                    const msg = err.error?.message || 'Error al registrar el pago';
+                    this.toastService.error(msg);
+
+                    if (msg.includes('caja abierta') || msg.includes('Caja')) {
+                        // Optional: Redirect or suggest action. 
+                        // For now just the toast is enough as per user request to "show a message"
+                        // But if we want to be helpful:
+                        setTimeout(() => this.router.navigate(['/sales/cash-cut']), 2000);
+                    }
                 }
             });
     }

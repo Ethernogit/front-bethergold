@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { NoteService, Note, NoteItem } from '../../../shared/services/note.service';
 import { SucursalService, Sucursal } from '../../../shared/services/sucursal.service';
+import { CashCutService } from '../../../shared/services/cash-cut.service'; // Import
+import { ToastService } from '../../../shared/services/toast.service'; // Import
 import { GlobalPaymentComponent } from '../components/global-payment/global-payment.component';
 
 @Component({
@@ -16,6 +18,8 @@ export class NoteDetailsComponent implements OnInit {
     private route = inject(ActivatedRoute);
     private noteService = inject(NoteService);
     private sucursalService = inject(SucursalService);
+    private cashCutService = inject(CashCutService); // Inject
+    private toastService = inject(ToastService); // Inject
 
     isLoading = true;
     error: string | null = null;
@@ -195,6 +199,36 @@ export class NoteDetailsComponent implements OnInit {
     onPaymentSuccess(updatedNote: Note) {
         this.mapNoteData(updatedNote);
         // Maybe show a toast success?
+    }
+
+    openPaymentModal() {
+        const sucursalId = this.rawNote?.sucursalId;
+
+        // If sucursalId is an object (populated), we need the ID string. 
+        // Based on model it refers to Sucursal, usually populated as object or string.
+        const sId = (typeof sucursalId === 'object' && sucursalId !== null) ? (sucursalId as any)._id : sucursalId;
+
+        if (!sId) {
+            this.toastService.warning('No se pudo identificar la sucursal de esta nota.');
+            return;
+        }
+
+        // Check for open shift
+        // We need to inject CashCutService first. (See next edits)
+        // Since I can't inject in this method without constructor change, I will do it via separate edits or assume injected.
+        // Actually, let's use the injected service in the class property that I will add.
+
+        // Wait, I need to add the injection first or 'this.cashCutService' won't exist.
+        // I will assume I am adding 'private cashCutService = inject(CashCutService);' in the properties.
+
+        this.cashCutService.getCurrentShift(sId).subscribe({
+            next: () => {
+                this.showPaymentModal.set(true);
+            },
+            error: () => {
+                this.toastService.warning('No hay caja abierta. Debe abrir caja para registrar pagos.');
+            }
+        });
     }
 
     private formatDescription(item: NoteItem): string {
