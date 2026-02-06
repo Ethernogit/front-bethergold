@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CashCutService, ShiftReport } from '../../../shared/services/cash-cut.service';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { CashCutService, ShiftReport, CashCut } from '../../../shared/services/cash-cut.service';
 import { LoginService } from '../../../shared/services/auth/login.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { CurrencyPipe, DatePipe } from '@angular/common';
@@ -9,7 +10,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 @Component({
     selector: 'app-cash-cut',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, CurrencyPipe, DatePipe],
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, CurrencyPipe, DatePipe, RouterLink],
     templateUrl: './cash-cut.component.html'
 })
 export class CashCutComponent implements OnInit {
@@ -18,6 +19,9 @@ export class CashCutComponent implements OnInit {
     hasOpenShift = false;
     report: ShiftReport | null = null;
     currentSucursalId = '';
+
+    // UI State
+
 
     // Formularios
     openShiftForm: FormGroup;
@@ -52,6 +56,12 @@ export class CashCutComponent implements OnInit {
         });
     }
 
+    // History State
+
+
+    // State for Closing Specific Shift
+    selectedShiftToClose: CashCut | null = null;
+
     ngOnInit(): void {
         const sucursal = this.loginService.currentSucursal();
         if (!sucursal) {
@@ -60,6 +70,7 @@ export class CashCutComponent implements OnInit {
         }
         this.currentSucursalId = sucursal._id || '';
         this.loadShiftStatus();
+
     }
 
     loadShiftStatus() {
@@ -69,6 +80,7 @@ export class CashCutComponent implements OnInit {
                 this.report = res;
                 this.hasOpenShift = true;
                 this.isLoading = false;
+
             },
             error: (err) => {
                 if (err.status === 404) {
@@ -81,6 +93,8 @@ export class CashCutComponent implements OnInit {
             }
         });
     }
+
+
 
     // --- Acciones de Caja ---
 
@@ -103,18 +117,37 @@ export class CashCutComponent implements OnInit {
         });
     }
 
+    // Initiate close for a specific shift (stale) or current
+    initiateCloseShift(shift?: CashCut) {
+        if (shift) {
+            this.selectedShiftToClose = shift;
+        } else {
+            this.selectedShiftToClose = null; // Current
+        }
+        this.closeShiftForm.reset({ totalDeclared: 0, notes: '' });
+        this.showCloseModal = true;
+    }
+
     closeShift() {
         if (this.closeShiftForm.invalid) return;
 
         this.isLoading = true;
         const { totalDeclared, notes } = this.closeShiftForm.value;
+        const shiftId = this.selectedShiftToClose?._id; // If null, backend closes current
 
-        this.cashCutService.closeShift(this.currentSucursalId, totalDeclared, notes).subscribe({
+        this.cashCutService.closeShift(this.currentSucursalId, totalDeclared, notes, shiftId).subscribe({
             next: () => {
                 this.toastService.success('Caja cerrada con éxito');
                 this.showCloseModal = false;
-                this.hasOpenShift = false;
-                this.report = null;
+                this.selectedShiftToClose = null;
+
+                // If we closed the active one, reset state
+                if (!shiftId || (this.report?.shift?._id === shiftId)) {
+                    this.hasOpenShift = false;
+                    this.report = null;
+                }
+
+                this.loadShiftStatus(); // Refresh everything
                 this.isLoading = false;
             },
             error: (err) => {
@@ -164,8 +197,12 @@ export class CashCutComponent implements OnInit {
 
     // --- Getters & Helpers ---
 
-    // Calcula diferencia en tiempo real para el modal de cierre
     get calculatedDifference(): number {
+        // Only calculate for current active shift for now as stale ones might need backend calc
+        // Logic: if we are closing a stale shift, maybe use 0 or simply not show diff real-time?
+        // For now, let's show diff if closing the active report.
+        if (this.selectedShiftToClose) return 0; // Cannot calc dynamic diff for stale shift without more logic
+
         if (!this.report) return 0;
         const declared = this.closeShiftForm.get('totalDeclared')?.value || 0;
         const expected = this.report.financials.expectedCashInDrawer;

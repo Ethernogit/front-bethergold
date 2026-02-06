@@ -344,7 +344,7 @@
 
                 <!-- Action Grid (Sidebar) -->
                 <!-- Reduced height buttons, removed aspect-square -->
-                <div class="grid grid-cols-4 gap-2 mb-4 shrink-0">
+                <div class="grid grid-cols-3 gap-2 mb-4 shrink-0">
                     <!-- Ingreso -->
                     <button type="button" (click)="openManualEntryModal()" title="Ingreso"
                         class="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex flex-col items-center justify-center gap-0.5 group transition-all">
@@ -389,74 +389,8 @@
                             </svg>
                         </div>
                         <span
-                            class="text-[9px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-tight">Hechura</span>
-                    </button>
-
-                    <!-- Externo -->
-                    <button type="button" (click)="addItem('external')" title="Externo"
-                        class="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex flex-col items-center justify-center gap-0.5 group transition-all">
-                        <div class="relative w-6 h-6 flex items-center justify-center">
-                            <!-- External Box Icon Duotone -->
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
-                                <path class="fill-orange-100 dark:fill-orange-900/40 stroke-orange-500"
-                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                                <path class="stroke-orange-500" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="1.5" d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12" />
-                            </svg>
-                        </div>
-                        <span class="text-[9px] font-bold text-gray-600 dark:text-gray-300 uppercase">Externo</span>
-                    </button>
-
-                    <!-- Row 2 -->
-                    <button type="button" title="Descuento"
-                        class="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex flex-col items-center justify-center gap-0.5 opacity-75 hover:opacity-100">
-                        <span class="text-pink-400 font-bold text-xl mb-1">%</span>
-                        <span
-                            class="text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-tight">Desc.</span>
-                    </button>
-                    <button type="button" title="Apartado"
-                        class="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex flex-col items-center justify-center gap-0.5 opacity-75 hover:opacity-100">
-                        <!-- Calendar Icon -->
-                        <div class="text-indigo-400 mb-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                class="w-5 h-5">
-                                <path
-                                    d="M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM7.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM9.75 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM10.5 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM12.75 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM14.25 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
-                                <path fill-rule="evenodd"
-                                    d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <span
-                            class="text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-tight">Apart.</span>
-                    </button>
-                    <button type="button" title="Precio"
-                        class="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex flex-col items-center justify-center gap-0.5 opacity-75 hover:opacity-100">
-                        <div class="text-green-400 mb-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                class="w-5 h-5">
-                                <path
-                                    d="M10.464 8.746c.227-.18.497-.311.786-.394v2.795a2.252 2.252 0 0 1-.786-.393c-.394-.313-.546-.681-.546-1.004 0-.324.152-.691.546-1.004ZM12.75 15.662v-2.824c.347.085.664.228.921.421.427.32.579.686.579.991 0 .305-.152.671-.579.991a2.534 2.534 0 0 1-.921.42Z" />
-                                <path fill-rule="evenodd"
-                                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v.816a3.836 3.836 0 0 0-1.72.656c-.89.666-1.202 1.543-1.202 2.278 0 .697.299 1.55 1.141 2.215a.75.75 0 0 0 .942-1.18c-.37-.292-.483-.655-.483-.87 0-.156.079-.38.24-.508a2.338 2.338 0 0 1 .802-.403v3.085c-.93.2-1.786.6-2.428 1.09a.75.75 0 1 0 .91 1.192c.382-.292.837-.51 1.33-.63V18a.75.75 0 0 0 1.5 0v-.81c.71-.16 1.35-.443 1.838-.809.927-.696 1.256-1.614 1.256-2.38 0-.75-.32-1.66-1.256-2.38a.75.75 0 0 0-.916 1.18c.39.296.533.682.533.91 0 .157-.083.393-.243.513a2.334 2.334 0 0 1-.809.412v-3.085c.95-.205 1.849-.619 2.502-1.134a.75.75 0 0 0-.936-1.164c-.388.297-.84.516-1.336.634V6Z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <span
-                            class="text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-tight">Precio</span>
-                    </button>
-                    <button type="button" (click)="cleanCart()" title="Limpiar"
-                        class="h-16 bg-white dark:bg-gray-800 border border-red-500/20 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/10 flex flex-col items-center justify-center gap-0.5 group">
-                        <div class="text-red-500 group-hover:animate-bounce mb-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                class="w-5 h-5">
-                                <path fill-rule="evenodd"
-                                    d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <span class="text-[9px] font-bold text-red-500 uppercase tracking-tight">Limpiar</span>
+                            class="text-[9px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-tight text-center leading-none">Hechura
+                            /<br>Express</span>
                     </button>
                 </div>
 
@@ -585,6 +519,7 @@
 </div>
 
 <app-manual-movement-modal *ngIf="showManualEntryModal" (close)="handleManualEntry($event)"></app-manual-movement-modal>
+<app-hechura-modal *ngIf="showHechuraModal" (close)="handleHechuraEntry($event)"></app-hechura-modal>
 <app-repair-modal *ngIf="showRepairModal" (close)="handleRepairEntry($event)"></app-repair-modal>
 <app-client-selection-modal *ngIf="showClientModal" (select)="handleClientSelection($event)"
     (close)="showClientModal = false"></app-client-selection-modal>

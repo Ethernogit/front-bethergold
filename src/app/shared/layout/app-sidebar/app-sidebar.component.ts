@@ -358,11 +358,18 @@ export class AppSidebarComponent {
         });
     }
 
-    onSubmenuClick() {
-        console.log('click submenu');
+    onNavigationClick() {
+        // Handle Mobile
         this.isMobileOpen$.subscribe(isMobile => {
             if (isMobile) {
                 this.sidebarService.setMobileOpen(false);
+            }
+        }).unsubscribe();
+
+        // Handle Desktop - Auto close if expanded
+        this.isExpanded$.subscribe(isExpanded => {
+            if (isExpanded) {
+                this.sidebarService.setExpanded(false);
             }
         }).unsubscribe();
     }

@@ -44,7 +44,7 @@ export class ClientSelectionModalComponent implements OnInit {
             switchMap(term => {
                 if (!term || term.length < 2) return of([]);
                 this.isLoadingSearch = true;
-                return this.clientService.getClients({ search: term }).pipe(
+                return this.clientService.getClients({ q: term }).pipe(
                     map((response: any) => {
                         // Backend returns { success: true, data: { clients: [], total: ... } }
                         // Or sometimes plain array if service was different, but controller confirms nested

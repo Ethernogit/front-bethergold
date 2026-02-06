@@ -182,6 +182,10 @@ export class SucursalPrintConfigComponent implements OnInit {
                     .text-center { text-align: center; }
                     .totals { margin-top: 10px; font-weight: bold; }
                     .footer { text-align: center; margin-top: 15px; font-size: 10px; }
+                    .fontlittle { font-size: 9px; line-height: 1.1; margin: 0; padding: 0; }
+                    ul.fontlittle { text-align: left; padding-left: 15px; margin: 5px 0; }
+                    ul.fontlittle li { margin-bottom: 2px; }
+                    .footer p { margin: 5px 0; }
                 </style>
             </head>
             <body>

@@ -77,18 +77,19 @@ export class CashCutService {
         return this.http.get<ShiftReport>(`${this.apiUrl}/current`, { params });
     }
 
-    closeShift(sucursalId: string, totalDeclared: number, notes?: string): Observable<CashCut> {
-        return this.http.post<CashCut>(`${this.apiUrl}/close`, { sucursalId, totalDeclared, notes });
+    closeShift(sucursalId: string, totalDeclared: number, notes?: string, cashCutId?: string): Observable<CashCut> {
+        return this.http.post<CashCut>(`${this.apiUrl}/close`, { sucursalId, totalDeclared, notes, cashCutId });
     }
 
-    getHistory(sucursalId?: string, page: number = 1, limit: number = 10): Observable<any> {
+    getHistory(sucursalId?: string, page: number = 1, limit: number = 10, startDate?: string, endDate?: string, status?: string): Observable<any> {
         let params = new HttpParams()
             .set('page', page.toString())
             .set('limit', limit.toString());
 
-        if (sucursalId) {
-            params = params.set('sucursalId', sucursalId);
-        }
+        if (sucursalId) params = params.set('sucursalId', sucursalId);
+        if (startDate) params = params.set('startDate', startDate);
+        if (endDate) params = params.set('endDate', endDate);
+        if (status) params = params.set('status', status);
 
         return this.http.get<any>(`${this.apiUrl}/history`, { params });
     }

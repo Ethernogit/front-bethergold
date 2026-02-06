@@ -1,0 +1,113 @@
+<div
+    class="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+    <!-- Overlay -->
+    <div class="fixed inset-0 bg-black/50 transition-opacity backdrop-blur-sm" (click)="onCancel()"></div>
+
+    <!-- Modal Content -->
+    <div class="relative w-full max-w-2xl mx-auto my-6 z-50 px-4">
+        <div
+            class="relative flex flex-col w-full bg-white border border-stroke rounded-lg shadow-default outline-none focus:outline-none dark:bg-gray-800 dark:border-gray-700">
+
+            <!-- Header -->
+            <div class="flex items-start justify-between p-5 border-b border-stroke rounded-t dark:border-gray-700">
+                <h3 class="text-xl font-semibold text-black dark:text-white">
+                    Registro Rápido
+                </h3>
+                <button
+                    class="ml-auto bg-transparent border-0 text-gray-500 float-right text-2xl leading-none font-semibold outline-none focus:outline-none hover:text-gray-800 dark:hover:text-gray-200"
+                    (click)="onCancel()">
+                    <span class="block h-6 w-6">×</span>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="relative p-6 flex-auto">
+
+                <!-- Tabs -->
+                <div class="flex mb-6 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                    <button (click)="setTab('hechura')" [class.bg-white]="activeTab === 'hechura'"
+                        [class.dark:bg-gray-600]="activeTab === 'hechura'" [class.shadow-sm]="activeTab === 'hechura'"
+                        class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all text-center"
+                        [ngClass]="activeTab === 'hechura' ? 'text-brand-600 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'">
+                        Hechura / Pedido
+                    </button>
+                    <button (click)="setTab('express')" [class.bg-white]="activeTab === 'express'"
+                        [class.dark:bg-gray-600]="activeTab === 'express'" [class.shadow-sm]="activeTab === 'express'"
+                        class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all text-center"
+                        [ngClass]="activeTab === 'express' ? 'text-brand-600 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'">
+                        Venta Express (Externo)
+                    </button>
+                </div>
+
+                <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-5">
+                        <!-- Subcategory -->
+                        <div class="w-full">
+                            <label class="mb-2.5 block text-black dark:text-white font-medium">Subcategoría</label>
+                            <select formControlName="subcategoryId"
+                                class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-brand-500 active:border-brand-500 disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-brand-500 dark:text-white">
+                                <option value="" disabled selected>Selecciona subcategoría...</option>
+                                <option *ngFor="let sub of subcategories" [value]="sub._id">{{ sub.name }}</option>
+                            </select>
+                        </div>
+
+                        <!-- Kilate -->
+                        <div class="w-full">
+                            <label class="mb-2.5 block text-black dark:text-white font-medium">Kilate</label>
+                            <select formControlName="karatage"
+                                class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-brand-500 active:border-brand-500 disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-brand-500 dark:text-white">
+                                <option *ngFor="let k of karatOptions" [value]="k">{{ k }}</option>
+                            </select>
+                        </div>
+
+                        <!-- Peso -->
+                        <div class="w-full">
+                            <label class="mb-2.5 block text-black dark:text-white font-medium">Peso Aprox. (g)</label>
+                            <input type="number" formControlName="weight" step="0.01" placeholder="0.0"
+                                class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-brand-500 active:border-brand-500 disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-brand-500 dark:text-white">
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-5">
+                        <label class="mb-2.5 block text-black dark:text-white font-medium">Descripción</label>
+                        <textarea formControlName="description" rows="3" placeholder="Detalles sobre el ítem..."
+                            class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-brand-500 active:border-brand-500 disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-brand-500 dark:text-white resize-none"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <!-- Date (Only for Hechura) -->
+                        <div class="w-full" *ngIf="activeTab === 'hechura'">
+                            <label class="mb-2.5 block text-black dark:text-white font-medium">Fecha de Entrega</label>
+                            <input type="date" formControlName="deliveryDate"
+                                class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-brand-500 active:border-brand-500 disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-brand-500 dark:text-white">
+                        </div>
+
+                        <!-- Price -->
+                        <div class="w-full">
+                            <label class="mb-2.5 block text-black dark:text-white font-medium">Precio ($)</label>
+                            <input type="number" formControlName="price" step="0.01" placeholder="0.00"
+                                class="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-brand-500 active:border-brand-500 disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-brand-500 dark:text-white">
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="flex items-center justify-end gap-4 pt-4 border-t border-stroke dark:border-gray-700">
+                        <button
+                            class="rounded border border-stroke py-2 px-6 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white"
+                            type="button" (click)="onCancel()">
+                            Cancelar
+                        </button>
+                        <button [disabled]="form.invalid || isLoading"
+                            class="flex justify-center rounded bg-brand-500 py-2 px-6 font-medium text-white hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                            type="submit">
+                            {{ activeTab === 'hechura' ? 'Agregar Hechura' : 'Agregar Ítem Express' }}
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
