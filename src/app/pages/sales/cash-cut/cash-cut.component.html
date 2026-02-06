@@ -1,4 +1,5 @@
 <div class="p-6 max-w-7xl mx-auto space-y-6 animate-fade-in-up">
+
     <!-- Header -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -8,12 +9,19 @@
             <p class="text-gray-500 dark:text-gray-400 text-sm">Administra el flujo de efectivo y cierres de turno.</p>
         </div>
 
-        <div *ngIf="hasOpenShift && report"
-            class="bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded-lg border border-blue-100 dark:border-blue-800">
-            <div class="flex items-center gap-2 text-sm text-blue-700 dark:text-blue-300">
-                <i class="fas fa-clock"></i>
-                <span>Abierto por <strong>{{ report.shift.openedBy?.name || '---' }}</strong> el {{
-                    report.shift.startDate | date:'medium' }}</span>
+        <div class="flex items-center gap-3">
+            <a routerLink="/sales/cash-history"
+                class="px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 font-medium text-sm transition-all flex items-center gap-2">
+                <span>📚 Ver Historial</span>
+            </a>
+
+            <div *ngIf="hasOpenShift && report"
+                class="bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded-lg border border-blue-100 dark:border-blue-800">
+                <div class="flex items-center gap-2 text-sm text-blue-700 dark:text-blue-300">
+                    <i class="fas fa-clock"></i>
+                    <span>Abierto por <strong>{{ report.shift.openedBy?.name || '---' }}</strong> el {{
+                        report.shift.startDate | date:'medium' }}</span>
+                </div>
             </div>
         </div>
     </div>
@@ -208,9 +216,9 @@
                 </button>
             </div>
         </div>
-    </div>
 
-    <!-- Modals -->
+
+    </div>
 
     <!-- Movement Modal -->
     <div *ngIf="showMovementModal"

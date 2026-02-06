@@ -6,6 +6,7 @@ import { SucursalService, Sucursal } from '../../../shared/services/sucursal.ser
 import { CashCutService } from '../../../shared/services/cash-cut.service'; // Import
 import { ToastService } from '../../../shared/services/toast.service'; // Import
 import { GlobalPaymentComponent } from '../components/global-payment/global-payment.component';
+import { environment } from '../../../../environments/environment';
 
 @Component({
     selector: 'app-note-details',
@@ -159,10 +160,11 @@ export class NoteDetailsComponent implements OnInit {
                     status: item.deliveryStatus === 'pending' ? 'Pendiente de Entrega' : 'Entregado',
                     // Workshop specific
                     title: item.name || 'Servicio',
-                    jobId: typeof item.itemId === 'string' ? item.itemId : (item.itemId as any)?._id || 'N/A',
-                    estReady: item.specifications?.duration || 'Por definir',
+                    jobId: ref !== 'N/A' ? ref : (typeof item.itemId === 'string' ? item.itemId : (item.itemId as any)?._id || 'N/A'),
+                    estReady: item.specifications?.['deliveryDate'] || item.specifications?.duration || 'Por definir',
                     // Safe status fallback
-                    itemStatus: item.deliveryStatus || 'Pending'
+                    itemStatus: item.deliveryStatus || 'Pending',
+                    isHechura: !!(item.specifications && item.specifications['karatage']) // Heuristic for Hechura
                 };
 
                 const model = (item.itemModel || '').toLowerCase();
@@ -172,10 +174,10 @@ export class NoteDetailsComponent implements OnInit {
                     this.items.reserved.push(uiItem);
                 } else if (model === 'service' || type === 'service' || type === 'repair') {
                     this.items.workshop.push(uiItem);
-                } else if (model === 'custom' || type === 'custom') {
+                } else if ((model === 'custom' || type === 'custom') && type !== 'jewelry') {
                     this.items.custom.push(uiItem);
                 } else {
-                    // Default to reserved if unknown
+                    // Default to reserved (Products) - This catches Express items (model=Custom, type=jewelry)
                     this.items.reserved.push(uiItem);
                 }
             });
@@ -294,7 +296,10 @@ export class NoteDetailsComponent implements OnInit {
         const sucursal = this.sucursalDetails;
         const printConfig = sucursal?.printConfig;
 
-        const logoUrl = printConfig?.logoUrl || '';
+        let logoUrl = '';
+        if (printConfig?.logoUrl) {
+            logoUrl = environment.apiUrl.replace('/api/v1', '') + printConfig.logoUrl;
+        }
         const orgName = sucursal?.name || 'Joyería';
 
         // Dynamic fields based on config
@@ -393,6 +398,10 @@ export class NoteDetailsComponent implements OnInit {
                     .section-title { font-weight: bold; text-align: center; margin-bottom: 1mm; font-size: 11px; text-transform: uppercase; }
                     
                     .footer { text-align: center; margin-top: 5mm; font-size: 10px; }
+                    .fontlittle { font-size: 9px; line-height: 1.1; margin: 0; padding: 0; }
+                    ul.fontlittle { text-align: left; padding-left: 5mm; margin: 2mm 0; }
+                    ul.fontlittle li { margin-bottom: 1mm; }
+                    .footer p { margin: 2mm 0; }
                     
                     @media print {
                         body { width: 100%; margin: 0; padding: 2mm; }

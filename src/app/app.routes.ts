@@ -364,6 +364,16 @@ export const routes: Routes = [
         title: 'Corte de Caja | Bethergold'
       },
       {
+        path: 'sales/cash-history',
+        loadComponent: () => import('./pages/sales/cash-history/cash-history.component').then(m => m.CashHistoryComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'sales',
+          action: 'read'
+        },
+        title: 'Historial de Cajas | Bethergold'
+      },
+      {
         path: 'sales/new',
         loadComponent: () => import('./pages/sales/new-note/new-note.component').then(m => m.NewNoteComponent),
         canActivate: [AuthGuard, PermissionGuard],

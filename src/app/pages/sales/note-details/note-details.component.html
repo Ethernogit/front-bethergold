@@ -162,7 +162,7 @@
                     [ngClass]="currentTab === 'items' ? 'bg-primary/10 dark:bg-white/10 text-primary dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'"
                     class="px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap">
                     <span class="material-symbols-outlined text-[20px]">inventory_2</span>
-                    Ítems
+                    Productos
                     <span
                         [ngClass]="currentTab === 'items' ? 'bg-primary text-white dark:bg-white dark:text-[#1a2230]' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'"
                         class="px-1.5 py-0.5 rounded text-xs transition-colors">
@@ -397,31 +397,34 @@
                                     <thead
                                         class="bg-gray-50 dark:bg-[#111722] text-xs uppercase text-gray-700 dark:text-[#92a4c9]">
                                         <tr>
-                                            <th class="px-6 py-4 font-bold">Trabajo</th>
-                                            <th class="px-6 py-4 font-bold">Job ID</th>
-                                            <th class="px-6 py-4 font-bold">Entrega Est.</th>
-                                            <th class="px-6 py-4 font-bold">Estado</th>
-                                            <th class="px-6 py-4 font-bold text-right">Precio</th>
+                                            <th class="px-6 py-4 font-bold">Código</th>
+                                            <th class="px-6 py-4 font-bold">Descripción</th>
+                                            <th class="px-6 py-4 font-bold">Fecha Entrega</th>
+                                            <th class="px-6 py-4 font-bold text-right">Precio Est.</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-100 dark:divide-[#2a364a]">
                                         <tr *ngFor="let item of items.custom">
+                                            <td class="px-6 py-4 font-medium text-xs">{{item.jobId}}</td>
                                             <td class="px-6 py-4">
                                                 <div class="flex items-center gap-3">
                                                     <div
-                                                        class="size-10 rounded-full bg-pink-50 dark:bg-pink-900/20 flex items-center justify-center text-pink-500">
+                                                        class="size-10 rounded-full bg-pink-50 dark:bg-pink-900/20 flex items-center justify-center text-pink-500 shrink-0">
                                                         <span class="material-symbols-outlined">diamond</span>
                                                     </div>
-                                                    <span
-                                                        class="font-bold text-gray-900 dark:text-white">{{item.title}}</span>
+                                                    <div>
+                                                        <div class="font-bold text-gray-900 dark:text-white">
+                                                            {{item.title}}</div>
+                                                        <div class="text-xs text-gray-500 dark:text-[#92a4c9]">
+                                                            {{item.description}}</div>
+                                                        <span *ngIf="item.isHechura"
+                                                            class="mt-1 inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400 border border-teal-200 dark:border-teal-800 uppercase">
+                                                            Hechura
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-4 font-medium">{{item.jobId}}</td>
-                                            <td class="px-6 py-4">{{item.estReady}}</td>
-                                            <td class="px-6 py-4">
-                                                <span
-                                                    class="px-2 py-1 rounded bg-pink-50 text-pink-600 dark:bg-pink-900/20 dark:text-pink-400 border border-pink-100 dark:border-pink-800 text-xs font-bold">{{item.status}}</span>
-                                            </td>
+                                            <td class="px-6 py-4 text-sm">{{item.estReady}}</td>
                                             <td class="px-6 py-4 text-right font-bold text-gray-900 dark:text-white">
                                                 ${{item.price | number:'1.2-2'}}</td>
                                         </tr>

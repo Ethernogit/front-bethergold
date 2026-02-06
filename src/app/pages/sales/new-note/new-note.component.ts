@@ -15,6 +15,7 @@ import { of } from 'rxjs';
 import { RouterModule } from '@angular/router';
 import { ManualMovementModalComponent } from './components/manual-movement-modal/manual-movement-modal.component';
 import { RepairModalComponent } from './components/repair-modal/repair-modal.component';
+import { HechuraModalComponent } from './components/hechura-modal/hechura-modal.component';
 
 // Imports for UI components (assuming they exist or will be used directly)
 // import { ClientSelectorComponent } from ...
@@ -24,7 +25,7 @@ import { ClientSelectionModalComponent } from './components/client-selection-mod
 @Component({
     selector: 'app-new-note',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, RouterModule, ManualMovementModalComponent, RepairModalComponent, ClientSelectionModalComponent],
+    imports: [CommonModule, ReactiveFormsModule, RouterModule, ManualMovementModalComponent, RepairModalComponent, ClientSelectionModalComponent, HechuraModalComponent],
     templateUrl: './new-note.component.html'
 })
 export class NewNoteComponent implements OnInit {
@@ -40,6 +41,7 @@ export class NewNoteComponent implements OnInit {
     // UX State
     showPaymentModal = false;
     showManualEntryModal = false;
+    showHechuraModal = false;
     showRepairModal = false;
     showClientModal = false;
     selectedClient: any = null;
@@ -78,6 +80,7 @@ export class NewNoteComponent implements OnInit {
         this.checkOpenShift();
         this.setupSearch();
         this.loadNextFolio();
+        this.loadDefaultClient();
     }
 
     checkOpenShift() {
@@ -118,6 +121,25 @@ export class NewNoteComponent implements OnInit {
                 error: (err) => console.error('Error fetching folio', err)
             });
         }
+    }
+
+    loadDefaultClient() {
+        this.clientService.getClients({ q: 'Publico General' }).subscribe({
+            next: (res: any) => {
+                const clients = res.data?.clients || (Array.isArray(res.data) ? res.data : []);
+                if (clients.length > 0) {
+                    // Try to find exact match or take first
+                    const defaultClient = clients.find((c: any) =>
+                        c.name.toLowerCase().includes('publico') && c.name.toLowerCase().includes('general')
+                    ) || clients[0];
+
+                    if (defaultClient) {
+                        this.handleClientSelection(defaultClient);
+                    }
+                }
+            },
+            error: (err) => console.error('Error loading default client', err)
+        });
     }
 
     setPaymentMethod(method: 'cash' | 'card') {
@@ -230,6 +252,10 @@ export class NewNoteComponent implements OnInit {
         this.showManualEntryModal = true;
     }
 
+    openHechuraModal() {
+        this.showHechuraModal = true;
+    }
+
     openRepairModal() {
         this.showRepairModal = true;
     }
@@ -255,7 +281,8 @@ export class NewNoteComponent implements OnInit {
                 size: [''],
                 weight: [''],
                 karatage: [''],
-                notes: [`Tipo: ${movementType.name}`]
+                notes: [`Tipo: ${movementType.name}`],
+                deliveryDate: [null]
             })
         });
 
@@ -263,6 +290,48 @@ export class NewNoteComponent implements OnInit {
         this.items.push(itemGroup);
         this.calculateTotals();
         this.toastService.success('Movimiento agregado');
+    }
+
+    handleHechuraEntry(data: any) {
+        this.showHechuraModal = false;
+        if (!data) return;
+
+        const { subcategory, karatage, weight, description, deliveryDate, price, type } = data;
+        const isExpress = type === 'express';
+
+        const timestamp = Date.now().toString().slice(-6);
+        const prefix = isExpress ? 'EXT' : 'HECH';
+        const barcode = `${prefix}-${timestamp}`;
+
+        const itemGroup = this.fb.group({
+            itemId: [null],
+            itemModel: ['Custom'], // Both are Custom model (no inventory)
+            type: [isExpress ? 'jewelry' : 'custom'], // Express looks like a product (jewelry), Hechura is custom
+            name: [isExpress ? `Externo: ${description}` : `Hechura: ${subcategory?.name || 'Joya Personalizada'} - ${description}`, Validators.required],
+            deliveryStatus: [isExpress ? 'immediate' : 'pending'], // Express is immediate
+            quantity: [1, [Validators.required, Validators.min(0.01)]],
+            unitPrice: [price, [Validators.required, Validators.min(0)]],
+            discount: [0, [Validators.min(0)]],
+            subtotal: [price],
+            specifications: this.fb.group({
+                material: ['Oro'],
+                karatage: [karatage],
+                weight: [weight],
+                size: [''],
+                notes: [barcode],
+                deliveryDate: [isExpress ? null : deliveryDate]
+            })
+        });
+
+        this.subscribeToItemChanges(itemGroup);
+        this.items.push(itemGroup);
+        this.calculateTotals();
+
+        if (isExpress) {
+            this.toastService.success(`Ítem Express agregado (${barcode})`);
+        } else {
+            this.toastService.success(`Hechura agregada (${barcode})`);
+        }
     }
 
     handleRepairEntry(data: any) {
@@ -305,7 +374,7 @@ export class NewNoteComponent implements OnInit {
         }
 
         if (type === 'custom') {
-            this.openManualEntryModal();
+            this.openHechuraModal();
             return;
         }
 
