@@ -87,7 +87,8 @@ export class LabelPrintingService {
                 }
             }
 
-            if (description.length > 25) description = description.substring(0, 25) + '...';
+            // Description truncation removed to allow full text
+
 
             const pageBreak = index < products.length - 1 ? 'page-break-after: always;' : '';
 
@@ -249,15 +250,16 @@ export class LabelPrintingService {
                         }
 
                         .desc-text {
-                            font-size: 24px; /* ~2.4mm height */
+                            font-size: 18px; /* Reduced to fit more text */
                             font-weight: bold; 
                             text-align: left;
                             width: 100%;
-                            white-space: nowrap; /* Prevent wrapping in tight space */
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2; /* Limit to 2 lines */
+                            -webkit-box-orient: vertical;
                             overflow: hidden;
-                            text-overflow: ellipsis;
                             margin: 0;
-                            line-height: 1;
+                            line-height: 0.95; /* Tighter line height */
                             margin-bottom: 2px;
                             color: black;
                         }
@@ -294,8 +296,8 @@ export class LabelPrintingService {
                                     var code = svg.getAttribute('data-barcode');
                                     JsBarcode(svg, code, {
                                         format: "CODE128",
-                                        width: 2.8,   /* Reduced density to fit longer codes */
-                                        height: 50,   
+                                        width: 1.8,   /* Further reduced density to prevent spillover */
+                                        height: 45,   /* Slightly reduced height */
                                         displayValue: false, 
                                         margin: 0
                                     });
