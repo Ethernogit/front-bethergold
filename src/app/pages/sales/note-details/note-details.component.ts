@@ -327,10 +327,20 @@ export class NoteDetailsComponent implements OnInit {
             const unitPrice = item.financials?.unitPrice || 0;
             const subtotal = item.financials?.subtotal || 0;
 
+            // Extract Ref/SKU
+            let ref = '';
+            if (item.specifications?.notes) {
+                ref = item.specifications.notes;
+            } else if (item.itemId && typeof item.itemId === 'object' && (item.itemId as any).barcode) {
+                ref = (item.itemId as any).barcode;
+            }
+
             itemsHtml += `
                 <tr>
                     <td class="qty-col">${item.quantity}</td>
-                    <td class="desc-col">${this.formatDescription(item)}</td>
+                    <td class="desc-col">
+                        ${ref ? `<b>#${ref}</b> ` : ''}${this.formatDescription(item)}
+                    </td>
                     <td class="price-col">$${unitPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                     <td class="total-col">$${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                 </tr>
