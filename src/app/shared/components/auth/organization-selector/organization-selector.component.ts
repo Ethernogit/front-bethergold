@@ -141,12 +141,12 @@ export class OrganizationSelectorComponent implements OnInit {
 
   get canConfirm(): boolean {
     if (!this.selectedOrganizationId) return false;
-    
+
     // Si hay múltiples sucursales, debe seleccionar una
     if (this.availableSucursales.length > 1 && !this.selectedSucursalId) {
       return false;
     }
-    
+
     return true;
   }
 
@@ -160,6 +160,12 @@ export class OrganizationSelectorComponent implements OnInit {
         // No filtrar por isActive ya que no viene en la respuesta
         this.availableSucursales = org.sucursales;
         console.log('Available sucursales:', this.availableSucursales.length);
+
+        // Auto-select and submit if only 1 sucursal
+        if (this.availableSucursales.length === 1) {
+          this.selectedSucursalId = this.availableSucursales[0].id;
+          this.onConfirm();
+        }
       }
     }
   }

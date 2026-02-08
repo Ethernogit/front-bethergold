@@ -48,19 +48,22 @@
                         <th class="px-6 py-4 text-right">Total Sistema</th>
                         <th class="px-6 py-4 text-right">Diferencia</th>
                         <th class="px-6 py-4 text-center">Estado</th>
+                        <th class="px-6 py-4 text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                    <tr *ngFor="let item of history"
-                        class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    <tr *ngFor="let item of history" (click)="openDetails(item)"
+                        class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer">
                         <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
                             {{ item.startDate | date:'medium' }}
                         </td>
                         <td class="px-6 py-4 text-gray-500">
-                            {{ item.openedBy?.name || '---' }}
+                            {{ item.openedBy?.profile?.firstName || '---' }} {{ item.openedBy?.profile?.lastName || ''
+                            }}
                         </td>
                         <td class="px-6 py-4 text-gray-500">
-                            {{ item.closedBy?.name || '---' }}
+                            {{ item.closedBy?.profile?.firstName || '---' }} {{ item.closedBy?.profile?.lastName || ''
+                            }}
                         </td>
                         <td class="px-6 py-4 text-gray-500">
                             {{ (item.endDate | date:'medium') || '---' }}
@@ -87,11 +90,18 @@
                                 {{ item.status === 'open' ? 'ABIERTA' : 'CERRADA' }}
                             </span>
                         </td>
+                        <td class="px-6 py-4 text-center">
+                            <button (click)="$event.stopPropagation(); openDetails(item)"
+                                class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-full transition-all"
+                                title="Ver Detalle">
+                                <i class="fas fa-eye text-lg"></i>
+                            </button>
+                        </td>
                     </tr>
 
                     <!-- Empty State -->
                     <tr *ngIf="!historyLoading && history.length === 0">
-                        <td colspan="8" class="px-6 py-12 text-center text-gray-400">
+                        <td colspan="9" class="px-6 py-12 text-center text-gray-400">
                             No se encontraron registros con los filtros seleccionados.
                         </td>
                     </tr>
@@ -116,5 +126,245 @@
                 </button>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Details Drawer (Side Panel) -->
+<div *ngIf="showDetailsModal" class="fixed inset-0 z-50 flex justify-end">
+    <!-- Backdrop -->
+    <div (click)="closeDetails()" class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
+
+    <!-- Drawer Panel -->
+    <div
+        class="relative w-full max-w-2xl h-full bg-white dark:bg-gray-900 shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out animate-slide-in-right border-l border-gray-200 dark:border-gray-700">
+
+        <!-- Header -->
+        <div
+            class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10">
+            <div>
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                    📄 Detalle de Corte
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide border"
+                        [ngClass]="selectedShiftDetails?.shift?.status === 'open' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-100 text-gray-600 border-gray-200'">
+                        {{ selectedShiftDetails.shift?.status === 'open' ? 'ABIERTA' : 'CERRADA' }}
+                    </span>
+                </h2>
+                <div class="flex items-center gap-2 mt-1 text-sm text-gray-500">
+                    <i class="far fa-clock"></i>
+                    <span>{{ selectedShiftDetails.shift?.startDate | date:'medium' }}</span>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button (click)="printShift()"
+                    class="p-2.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:text-gray-400 dark:hover:text-blue-400 dark:hover:bg-gray-800 rounded-lg transition-all"
+                    title="Imprimir Ticket">
+                    <i class="fas fa-print text-xl"></i>
+                </button>
+                <button (click)="closeDetails()"
+                    class="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-8 bg-gray-50 dark:bg-gray-900/50"
+            *ngIf="!loadingDetails && selectedShiftDetails">
+
+            <!-- Financial Summary Grid -->
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Row 1: Key Metrics -->
+                <div class="col-span-2 grid grid-cols-3 gap-4">
+                    <div
+                        class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Fondo Inicial</p>
+                        <p class="text-xl font-bold text-gray-700 dark:text-white">{{
+                            selectedShiftDetails.details.summary.initialAmount | currency }}</p>
+                    </div>
+                    <div
+                        class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-blue-100 dark:border-blue-900/30 shadow-sm relative overflow-hidden">
+                        <div class="absolute right-0 top-0 p-2 opacity-5"><i
+                                class="fas fa-cash-register text-4xl text-blue-500"></i></div>
+                        <p class="text-[10px] text-blue-500 font-bold uppercase tracking-wider mb-1">Ventas (Efectivo)
+                        </p>
+                        <p class="text-xl font-bold text-blue-600 dark:text-blue-400">{{
+                            selectedShiftDetails.details.summary.salesCash | currency }}</p>
+                    </div>
+                    <div
+                        class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-red-100 dark:border-red-900/30 shadow-sm relative overflow-hidden">
+                        <div class="absolute right-0 top-0 p-2 opacity-5"><i
+                                class="fas fa-receipt text-4xl text-red-500"></i></div>
+                        <p class="text-[10px] text-red-500 font-bold uppercase tracking-wider mb-1">Gastos</p>
+                        <p class="text-xl font-bold text-red-600 dark:text-red-400">{{
+                            selectedShiftDetails.details.summary.expensesCash | currency }}</p>
+                    </div>
+                </div>
+
+                <!-- Row 2: Totals & Balance -->
+                <div
+                    class="bg-green-50 dark:bg-green-900/10 p-4 rounded-xl border border-green-100 dark:border-green-800 flex flex-col justify-center">
+                    <p class="text-[10px] text-green-600 dark:text-green-400 font-bold uppercase tracking-wider mb-1">
+                        Total en Caja (Sistema)</p>
+                    <p class="text-2xl font-black text-green-700 dark:text-green-300">{{
+                        selectedShiftDetails.details.summary.expectedCashInDrawer | currency }}</p>
+                </div>
+
+                <!-- Closed Shift Details -->
+                <div *ngIf="selectedShiftDetails.shift.status === 'closed'" class="space-y-2">
+                    <div
+                        class="bg-white dark:bg-gray-800 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                        <span class="text-xs text-gray-500 font-bold uppercase">Declarado</span>
+                        <span class="font-bold text-gray-900 dark:text-white">{{
+                            selectedShiftDetails.shift.totals?.totalDeclared | currency }}</span>
+                    </div>
+                    <div
+                        class="bg-white dark:bg-gray-800 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                        <span class="text-xs text-gray-500 font-bold uppercase">Diferencia</span>
+                        <span class="font-bold" [ngClass]="{
+                            'text-green-600': (selectedShiftDetails.shift.totals?.difference || 0) === 0,
+                            'text-red-600': (selectedShiftDetails.shift.totals?.difference || 0) < 0,
+                            'text-blue-600': (selectedShiftDetails.shift.totals?.difference || 0) > 0
+                        }">{{ selectedShiftDetails.shift.totals?.difference | currency }}</span>
+                    </div>
+                </div>
+                <div *ngIf="selectedShiftDetails.shift.status === 'open'"
+                    class="flex items-center justify-center p-4 border border-dashed border-gray-300 dark:border-gray-700 rounded-xl">
+                    <span class="text-xs text-gray-400">Caja aún abierta (Sin arqueo)</span>
+                </div>
+            </div>
+
+            <!-- Other Methods (Compact) -->
+            <div class="flex gap-4">
+                <div
+                    class="flex-1 bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <div
+                            class="w-8 h-8 rounded-full bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center text-purple-600">
+                            <i class="fas fa-credit-card text-xs"></i></div>
+                        <span class="text-xs font-medium text-gray-500">Tarjetas</span>
+                    </div>
+                    <span class="font-bold text-gray-800 dark:text-gray-200">{{
+                        selectedShiftDetails.details.summary.salesCard | currency }}</span>
+                </div>
+                <div
+                    class="flex-1 bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <div
+                            class="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600">
+                            <i class="fas fa-university text-xs"></i></div>
+                        <span class="text-xs font-medium text-gray-500">Transferencias</span>
+                    </div>
+                    <span class="font-bold text-gray-800 dark:text-gray-200">{{
+                        selectedShiftDetails.details.summary.salesTransfer | currency }}</span>
+                </div>
+            </div>
+
+            <hr class="border-gray-200 dark:border-gray-700">
+
+            <!-- Transactions Lists -->
+            <div class="space-y-6">
+
+                <!-- Sales -->
+                <div>
+                    <h3 class="text-sm font-bold text-gray-800 dark:text-white mb-3 flex items-center justify-between">
+                        <span class="flex items-center gap-2"><i class="fas fa-shopping-cart text-gray-400"></i> Ventas
+                            y Abonos</span>
+                        <span
+                            class="text-[10px] bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded-full">{{
+                            selectedShiftDetails.details.payments.length }}</span>
+                    </h3>
+                    <div
+                        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+                        <table class="w-full text-xs text-left">
+                            <thead
+                                class="bg-gray-50 dark:bg-gray-700/50 text-gray-500 border-b border-gray-100 dark:border-gray-700">
+                                <tr>
+                                    <th class="px-4 py-3 font-semibold">Hora</th>
+                                    <th class="px-4 py-3 font-semibold">Folio</th>
+                                    <th class="px-4 py-3 font-semibold">Método</th>
+                                    <th class="px-4 py-3 font-semibold text-right">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                                <tr *ngFor="let payment of selectedShiftDetails.details.payments"
+                                    class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                                    <td class="px-4 py-3 text-gray-500">{{ payment.paymentDate | date:'shortTime' }}
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-blue-600 hover:underline cursor-pointer">{{
+                                        payment.folio }}</td>
+                                    <td class="px-4 py-3">
+                                        <span class="capitalize" [ngClass]="{
+                                            'text-green-600': payment.paymentMethod === 'cash',
+                                            'text-purple-600': payment.paymentMethod === 'card',
+                                            'text-indigo-600': payment.paymentMethod === 'transfer'
+                                        }">{{ payment.paymentMethod }}</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right font-medium text-gray-900 dark:text-white">{{
+                                        payment.paymentAmount | currency }}</td>
+                                </tr>
+                                <tr *ngIf="selectedShiftDetails.details.payments.length === 0">
+                                    <td colspan="4" class="px-4 py-8 text-center text-gray-400 text-xs italic">No se
+                                        registraron ventas en efectivo/tarjeta.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Movements -->
+                <div>
+                    <h3 class="text-sm font-bold text-gray-800 dark:text-white mb-3 flex items-center justify-between">
+                        <span class="flex items-center gap-2"><i class="fas fa-exchange-alt text-gray-400"></i>
+                            Movimientos de Caja</span>
+                        <span
+                            class="text-[10px] bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded-full">{{
+                            selectedShiftDetails.details.movements.length }}</span>
+                    </h3>
+                    <div
+                        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+                        <table class="w-full text-xs text-left">
+                            <thead
+                                class="bg-gray-50 dark:bg-gray-700/50 text-gray-500 border-b border-gray-100 dark:border-gray-700">
+                                <tr>
+                                    <th class="px-4 py-3 font-semibold">Hora</th>
+                                    <th class="px-4 py-3 font-semibold">Concepto</th>
+                                    <th class="px-4 py-3 font-semibold text-right">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                                <tr *ngFor="let mov of selectedShiftDetails.details.movements"
+                                    class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                                    <td class="px-4 py-3 text-gray-500">{{ mov.date | date:'shortTime' }}</td>
+                                    <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-1.5 h-1.5 rounded-full"
+                                                [ngClass]="mov.type === 'IN' ? 'bg-green-500' : 'bg-red-500'"></div>
+                                            <span>{{ mov.description }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 text-right font-medium"
+                                        [ngClass]="mov.type === 'IN' ? 'text-green-600' : 'text-red-600'">
+                                        {{ mov.type === 'IN' ? '+' : '-' }}{{ mov.amount | currency }}
+                                    </td>
+                                </tr>
+                                <tr *ngIf="selectedShiftDetails.details.movements.length === 0">
+                                    <td colspan="3" class="px-4 py-8 text-center text-gray-400 text-xs italic">No hubo
+                                        movimientos de entrada/salida.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="flex-1 flex flex-col items-center justify-center p-12 bg-white dark:bg-gray-900"
+            *ngIf="loadingDetails">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500 mb-3"></div>
+            <p class="text-xs text-gray-500 animate-pulse">Consultando información del turno...</p>
+        </div>
+
     </div>
 </div>

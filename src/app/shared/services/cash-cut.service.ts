@@ -64,6 +64,13 @@ export interface ShiftReport {
 })
 export class CashCutService {
     private apiUrl = `${environment.apiUrl}/sales/cash-cuts`;
+
+    /**
+     * Get Details of a specific Shift
+     */
+    getShiftDetails(id: string): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/${id}/details`);
+    }
     private movementsUrl = `${environment.apiUrl}/sales/cash-movements`;
 
     constructor(private http: HttpClient) { }

@@ -9,7 +9,7 @@ import { ToastService } from '../../../shared/services/toast.service';
 import { LabelPrintingService } from '../../../shared/services/label-printing.service';
 import { LoginService } from '../../../shared/services/auth/login.service';
 import { SucursalService } from '../../../shared/services/sucursal.service';
-import { MaterialType, ProviderPrice } from '../../../shared/interfaces/provider.interfaces';
+import { MaterialType, ProviderPrice, GoldType } from '../../../shared/interfaces/provider.interfaces';
 import { combineLatest, forkJoin } from 'rxjs';
 
 @Component({
@@ -34,7 +34,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
     isSubmitting = false;
     isDataLoaded = false;
 
-    goldTypes = ['Amarillo', 'Blanco', 'Rosa', '2 Oros', '3 Oros', 'NAC', 'ITA', 'OTHER'];
+    goldTypes: GoldType[] = [];
     // karatages removed in favor of materialTypes
 
     // Barcode Configuration
@@ -100,7 +100,8 @@ export class ProductFormComponent implements OnInit, OnChanges {
         this.isLoading = true;
 
         const sources: any = {
-            materials: this.providerService.getMaterialTypes({ status: 'active' })
+            materials: this.providerService.getMaterialTypes({ status: 'active' }),
+            goldTypes: this.providerService.getGoldTypes({ status: 'active' })
         };
 
         if (!this.preloadedCategories) {
@@ -127,6 +128,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
                 this.categories = this.preloadedCategories || res.categories?.data || res.categories || [];
                 this.providers = this.preloadedProviders || res.providers?.data || res.providers || [];
                 this.materialTypes = res.materials?.data || res.materials || [];
+                this.goldTypes = res.goldTypes?.data || res.goldTypes || [];
 
                 if (res.subcategories) {
                     this.subcategories = res.subcategories?.data || res.subcategories || [];

@@ -221,3 +221,30 @@ export interface ProviderTableItem extends Provider {
   contactInfo?: string;
   statusDisplay?: string;
 }
+
+// Gold Type interfaces
+export interface GoldType {
+  _id?: string;
+  id?: string;
+  name: string;
+  status: 'active' | 'inactive';
+  organizationId?: string | null;
+  createdBy?: string;
+  updatedBy?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface CreateGoldTypeRequest {
+  name: string;
+  status?: 'active' | 'inactive';
+}
+
+export interface UpdateGoldTypeRequest extends Partial<CreateGoldTypeRequest> {
+  status?: 'active' | 'inactive';
+}
+
+export interface GoldTypeFilters {
+  status?: 'active' | 'inactive';
+  search?: string;
+}

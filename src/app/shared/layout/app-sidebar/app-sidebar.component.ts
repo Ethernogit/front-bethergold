@@ -81,7 +81,8 @@ export class AppSidebarComponent {
                 { name: "Lista de Productos", path: "/products" },
                 { name: "Categorías", path: "/categories" },
                 { name: "Subcategorías", path: "/subcategories" },
-                { name: "Tipos de Material", path: "/products/material-types", permission: 'organization:read' },
+                { name: "Tipos de Material", path: "/products/material-types", permission: 'products:read' },
+                { name: "Tipos de Oro", path: "/products/gold-types", permission: 'products:read' },
                 { name: "Tipos de Movimiento", path: "/products/movement-types", permission: 'products:read' },
                 { name: "Proveedores", path: "/providers", permission: 'providers:read' }
             ],

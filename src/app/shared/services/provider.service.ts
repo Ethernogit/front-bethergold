@@ -17,6 +17,10 @@ import {
   ProviderFilters,
   ProviderTypeFilters,
   MaterialTypeFilters,
+  GoldType,
+  CreateGoldTypeRequest,
+  UpdateGoldTypeRequest,
+  GoldTypeFilters,
   ApiResponse,
   PaginatedResponse
 } from '../interfaces/provider.interfaces';
@@ -228,6 +232,70 @@ export class ProviderService {
    */
   deleteMaterialType(id: string): Observable<ApiResponse<any>> {
     return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/material-types/${id}`);
+  }
+
+  // =============== GOLD TYPE METHODS ===============
+
+  /**
+   * Create a new gold type
+   */
+  createGoldType(goldType: CreateGoldTypeRequest): Observable<ApiResponse<GoldType>> {
+    return this.http.post<ApiResponse<GoldType>>(`${this.apiUrl}/gold-types`, goldType);
+  }
+
+  /**
+   * Get all gold types (global and organization)
+   */
+  getGoldTypes(filters?: GoldTypeFilters): Observable<ApiResponse<GoldType[]>> {
+    let params = new HttpParams();
+
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          params = params.set(key, value.toString());
+        }
+      });
+    }
+
+    return this.http.get<ApiResponse<GoldType[]>>(`${this.apiUrl}/gold-types`, { params });
+  }
+
+  /**
+   * Get global gold types only
+   */
+  getGlobalGoldTypes(filters?: GoldTypeFilters): Observable<ApiResponse<GoldType[]>> {
+    let params = new HttpParams();
+
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          params = params.set(key, value.toString());
+        }
+      });
+    }
+
+    return this.http.get<ApiResponse<GoldType[]>>(`${this.apiUrl}/gold-types/global`, { params });
+  }
+
+  /**
+   * Get a gold type by ID
+   */
+  getGoldTypeById(id: string): Observable<ApiResponse<GoldType>> {
+    return this.http.get<ApiResponse<GoldType>>(`${this.apiUrl}/gold-types/${id}`);
+  }
+
+  /**
+   * Update a gold type
+   */
+  updateGoldType(id: string, updates: UpdateGoldTypeRequest): Observable<ApiResponse<GoldType>> {
+    return this.http.put<ApiResponse<GoldType>>(`${this.apiUrl}/gold-types/${id}`, updates);
+  }
+
+  /**
+   * Delete (deactivate) a gold type
+   */
+  deleteGoldType(id: string): Observable<ApiResponse<any>> {
+    return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/gold-types/${id}`);
   }
 
   // =============== UTILITY METHODS ===============

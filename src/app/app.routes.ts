@@ -210,11 +210,21 @@ export const routes: Routes = [
         title: 'Tipos de Movimiento | Bethergold'
       },
       {
+        path: 'products/gold-types',
+        loadComponent: () => import('./pages/products/gold-types/gold-types.component').then(m => m.GoldTypesComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'products',
+          action: 'read'
+        },
+        title: 'Tipos de Oro | Bethergold'
+      },
+      {
         path: 'products/material-types',
         loadComponent: () => import('./pages/products/material-types/material-types.component').then(m => m.MaterialTypesComponent),
         canActivate: [AuthGuard, PermissionGuard],
         data: {
-          module: 'organization',
+          module: 'products',
           action: 'read'
         },
         title: 'Tipos de Material | Bethergold'
