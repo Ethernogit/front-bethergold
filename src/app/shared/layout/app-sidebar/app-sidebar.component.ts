@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, QueryList, ViewChildren, ChangeDetectorRef, HostListener } from '@angular/core';
 import { SidebarService } from '../../services/sidebar.service';
 import { PermissionService } from '../../services/auth/permission.service';
+import { LoginService } from '../../services/auth/login.service';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { SafeHtmlPipe } from '../../pipe/safe-html.pipe';
 import { combineLatest, Subscription } from 'rxjs';
@@ -175,6 +176,8 @@ export class AppSidebarComponent {
     readonly isExpanded$;
     readonly isMobileOpen$;
     readonly isHovered$;
+    readonly currentOrganization$;
+    readonly currentSucursal$;
 
     private subscription: Subscription = new Subscription();
 
@@ -182,11 +185,16 @@ export class AppSidebarComponent {
         public sidebarService: SidebarService,
         private router: Router,
         private cdr: ChangeDetectorRef,
-        private permissionService: PermissionService
+        private permissionService: PermissionService,
+        private loginService: LoginService
     ) {
         this.isExpanded$ = this.sidebarService.isExpanded$;
         this.isMobileOpen$ = this.sidebarService.isMobileOpen$;
         this.isHovered$ = this.sidebarService.isHovered$;
+
+        // Signals
+        this.currentOrganization$ = this.loginService.currentOrganization;
+        this.currentSucursal$ = this.loginService.currentSucursal;
     }
 
     hoveredItem: NavItem | null = null;

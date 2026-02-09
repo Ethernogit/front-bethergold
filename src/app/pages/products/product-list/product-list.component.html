@@ -36,6 +36,18 @@
                         </button>
                         }
 
+                        <button (click)="startTour()"
+                            class="hidden md:inline-flex items-center justify-center gap-2 rounded-lg border border-stroke bg-white px-5 py-2.5 text-center font-medium text-black hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:bg-gray-800 dark:border-strokedark dark:text-white dark:hover:bg-gray-700 transition-all duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                            Tutorial
+                        </button>
+
                         <button (click)="openFilters()"
                             class="inline-flex items-center justify-center gap-2 rounded-lg border border-stroke bg-white px-5 py-2.5 text-center font-medium text-black hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:bg-gray-800 dark:border-strokedark dark:text-white dark:hover:bg-gray-700 transition-all duration-200">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
@@ -46,7 +58,7 @@
                             Filtrar
                         </button>
 
-                        <button (click)="openCreateModal()"
+                        <button (click)="openCreateModal()" id="btn-new-product"
                             class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200">
                             <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">

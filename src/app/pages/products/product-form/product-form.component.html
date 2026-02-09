@@ -4,7 +4,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
         <!-- 1. Barcode -->
-        <div>
+        <div id="product-barcode">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Código de barras*</label>
             <div class="flex gap-2">
                 <input type="text" formControlName="barcode"
@@ -24,8 +24,20 @@
         </div>
 
         <!-- 2. Provider -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Proveedor*</label>
+        <div id="product-provider">
+            <div class="flex items-center justify-between">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Proveedor*</label>
+                <a [routerLink]="['/providers']" target="_blank"
+                    class="text-brand-500 hover:text-brand-600 dark:text-brand-400 dark:hover:text-brand-300"
+                    title="Administrar Proveedores">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                </a>
+            </div>
             <select formControlName="providerId"
                 class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
                 <option value="">Seleccione</option>
@@ -36,8 +48,20 @@
         </div>
 
         <!-- 3. Category -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Categoría*</label>
+        <div id="product-category">
+            <div class="flex items-center justify-between">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Categoría*</label>
+                <a [routerLink]="['/categories']" target="_blank"
+                    class="text-brand-500 hover:text-brand-600 dark:text-brand-400 dark:hover:text-brand-300"
+                    title="Administrar Categorías">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                </a>
+            </div>
             <select formControlName="category"
                 class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
                 <option value="">Seleccione</option>
@@ -48,8 +72,20 @@
         </div>
 
         <!-- 4. Subcategory -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Subcategoría*</label>
+        <div id="product-subcategory">
+            <div class="flex items-center justify-between">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Subcategoría*</label>
+                <a [routerLink]="['/subcategories']" target="_blank"
+                    class="text-brand-500 hover:text-brand-600 dark:text-brand-400 dark:hover:text-brand-300"
+                    title="Administrar Subcategorías">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                </a>
+            </div>
             <select formControlName="subcategory"
                 class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
                 <option value="">Seleccione</option>
@@ -58,8 +94,21 @@
         </div>
 
         <!-- 5. Material Type (Karat) -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo Material (Kilataje)*</label>
+        <div id="product-material">
+            <div class="flex items-center justify-between">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo Material
+                    (Kilataje)*</label>
+                <a [routerLink]="['/products/material-types']" target="_blank"
+                    class="text-brand-500 hover:text-brand-600 dark:text-brand-400 dark:hover:text-brand-300"
+                    title="Administrar Tipos de Material">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                </a>
+            </div>
             <select formControlName="karatage"
                 class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
                 <option value="">Seleccione</option>
@@ -68,8 +117,20 @@
         </div>
 
         <!-- 6. Gold Type -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de oro*</label>
+        <div id="product-gold-type">
+            <div class="flex items-center justify-between">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de oro*</label>
+                <a [routerLink]="['/products/gold-types']" target="_blank"
+                    class="text-brand-500 hover:text-brand-600 dark:text-brand-400 dark:hover:text-brand-300"
+                    title="Administrar Tipos de Oro">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                </a>
+            </div>
             <select formControlName="goldType"
                 class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
                 <option value="">Seleccione</option>
@@ -78,7 +139,7 @@
         </div>
 
         <!-- 7. Weight -->
-        <div>
+        <div id="product-weight">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Peso*</label>
             <input type="number" formControlName="weight"
                 class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
@@ -87,14 +148,14 @@
         </div>
 
         <!-- 8. Diamond Points -->
-        <div *ngIf="productFormConfig?.enableDiamondPoints !== false">
+        <div *ngIf="productFormConfig?.enableDiamondPoints !== false" id="product-diamond-points">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Puntos diamante*</label>
             <input type="number" formControlName="diamondPoints"
                 class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
         </div>
 
         <!-- 9. Purchase Price (Cost) -->
-        <div>
+        <div id="product-cost">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Precio compra*</label>
             <input type="number" formControlName="cost"
                 class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
@@ -103,7 +164,7 @@
         </div>
 
         <!-- 10. Sale Price -->
-        <div>
+        <div id="product-price">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Precio venta*</label>
             <input type="number" formControlName="price"
                 class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
@@ -112,7 +173,7 @@
         </div>
 
         <!-- 11. Is Unique (Toggle) -->
-        <div class="flex items-center h-full pt-6">
+        <div class="flex items-center h-full pt-6" id="product-unique">
             <div class="flex items-center">
                 <input id="isUnique" type="checkbox" formControlName="isUnique"
                     class="w-5 h-5 text-brand-600 bg-gray-100 border-gray-300 rounded focus:ring-brand-500 dark:focus:ring-brand-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
@@ -122,7 +183,7 @@
         </div>
 
         <!-- 12. Stock (Conditional) -->
-        <div *ngIf="!productForm.get('isUnique')?.value">
+        <div *ngIf="!productForm.get('isUnique')?.value" id="product-stock">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Stock Inicial*</label>
             <input type="number" formControlName="stock"
                 class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
@@ -131,7 +192,7 @@
         </div>
 
         <!-- 11. Description -->
-        <div class="md:col-span-2 lg:col-span-4">
+        <div class="md:col-span-2 lg:col-span-4" id="product-description">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descripción*</label>
             <textarea formControlName="description" rows="3"
                 class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white"></textarea>
@@ -141,7 +202,7 @@
 
     <!-- Buttons -->
     <div class="flex items-center justify-between pt-6 mt-6 border-t border-gray-200 dark:border-gray-700">
-        <button type="submit" [disabled]="productForm.invalid || isSubmitting"
+        <button type="submit" id="product-submit" [disabled]="productForm.invalid || isSubmitting"
             class="px-6 py-2 bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 disabled:opacity-50 transition-colors flex items-center">
             <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

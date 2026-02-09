@@ -7,18 +7,22 @@
             <!-- Header -->
             <div class="border-b border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <h3 class="font-medium text-black dark:text-white">
-                        Listado de Categorías
-                    </h3>
-                    <button (click)="openCreateModal()"
-                        class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200">
-                        <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 4.5V15.5M4.5 10H15.5" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" />
-                        </svg>
-                        Nueva Categoría
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button (click)="startTour()"
+                            class="inline-flex items-center justify-center gap-2 rounded-lg border border-brand-500 px-4 py-2 text-center font-medium text-brand-500 hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200">
+                            <i class="fas fa-question-circle"></i>
+                            Tutorial
+                        </button>
+                        <button (click)="openCreateModal()" id="btn-new-category"
+                            class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200">
+                            <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 4.5V15.5M4.5 10H15.5" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" />
+                            </svg>
+                            Nueva Categoría
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -179,7 +183,8 @@
 @if (showModal()) {
 <div
     class="fixed left-0 top-0 z-999999 flex h-full min-h-screen w-full items-center justify-center bg-black/90 px-4 py-5">
-    <div class="w-full max-w-142.5 rounded-lg bg-white px-8 py-12 text-center dark:bg-gray-900 md:px-17.5 md:py-15">
+    <div class="w-full max-w-142.5 rounded-lg bg-white px-8 py-12 text-center dark:bg-gray-900 md:px-17.5 md:py-15"
+        id="modal-category-form">
         <h3 class="pb-2 text-xl font-bold text-black dark:text-white sm:text-2xl">
             {{ editingCategory() ? 'Editar Categoría' : 'Nueva Categoría' }}
         </h3>
@@ -190,7 +195,7 @@
                     <label class="mb-3 block text-left text-sm font-medium text-black dark:text-white">
                         Código <span class="text-meta-1">*</span>
                     </label>
-                    <input type="text" formControlName="code" placeholder="Ej: CAT001"
+                    <input type="text" formControlName="code" id="input-code" placeholder="Ej: CAT001"
                         class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
                         [class.border-danger]="isFieldInvalid('code')" />
                     @if (isFieldInvalid('code')) {
@@ -202,7 +207,7 @@
                     <label class="mb-3 block text-left text-sm font-medium text-black dark:text-white">
                         Nombre <span class="text-meta-1">*</span>
                     </label>
-                    <input type="text" formControlName="name" placeholder="Ej: Anillos"
+                    <input type="text" formControlName="name" id="input-name" placeholder="Ej: Anillos"
                         class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
                         [class.border-danger]="isFieldInvalid('name')" />
                     @if (isFieldInvalid('name')) {
@@ -215,7 +220,8 @@
                 <label class="mb-3 block text-left text-sm font-medium text-black dark:text-white">
                     Descripción
                 </label>
-                <textarea rows="3" formControlName="description" placeholder="Descripción de la categoría..."
+                <textarea rows="3" formControlName="description" id="input-description"
+                    placeholder="Descripción de la categoría..."
                     class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"></textarea>
             </div>
 
@@ -223,7 +229,7 @@
                 <label class="mb-3 block text-left text-sm font-medium text-black dark:text-white">
                     Estado
                 </label>
-                <select formControlName="status"
+                <select formControlName="status" id="input-status"
                     class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500">
                     <option value="active">Activo</option>
                     <option value="inactive">Inactivo</option>
@@ -231,23 +237,23 @@
             </div>
 
             <!-- Print Configuration -->
-            <div class="mb-5.5" formGroupName="printConfiguration">
+            <div class="mb-5.5" formGroupName="printConfiguration" id="print-config-section">
                 <label class="mb-3 block text-left text-sm font-medium text-black dark:text-white">
                     Configuración de Impresión
                 </label>
                 <div class="flex flex-wrap gap-4">
-                    <label class="flex items-center gap-2 cursor-pointer">
+                    <label class="flex items-center gap-2 cursor-pointer" id="check-show-price">
                         <input type="checkbox" formControlName="showPrice"
                             class="form-checkbox h-5 w-5 text-brand-500 rounded border-gray-300 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700">
                         <span class="text-sm font-medium text-black dark:text-white">Mostrar Precio</span>
                     </label>
-                    <label class="flex items-center gap-2 cursor-pointer">
+                    <label class="flex items-center gap-2 cursor-pointer" id="check-show-weight">
                         <input type="checkbox" formControlName="showWeight"
                             class="form-checkbox h-5 w-5 text-brand-500 rounded border-gray-300 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700">
                         <span class="text-sm font-medium text-black dark:text-white">Mostrar Peso</span>
                     </label>
                     <label class="flex items-center gap-2 cursor-pointer"
-                        *ngIf="categoryForm.get('printConfiguration.showWeight')?.value">
+                        [class.opacity-50]="!categoryForm.get('printConfiguration.showWeight')?.value">
                         <input type="checkbox" formControlName="showIntegerWeight"
                             class="form-checkbox h-5 w-5 text-brand-500 rounded border-gray-300 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 ml-4">
                         <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Peso Entero (x10)</span>
@@ -257,7 +263,7 @@
                             class="form-checkbox h-5 w-5 text-brand-500 rounded border-gray-300 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700">
                         <span class="text-sm font-medium text-black dark:text-white">Mostrar Kilataje</span>
                     </label>
-                    <label class="flex items-center gap-2 cursor-pointer">
+                    <label class="flex items-center gap-2 cursor-pointer" id="check-show-gold-type">
                         <input type="checkbox" formControlName="showGoldType"
                             class="form-checkbox h-5 w-5 text-brand-500 rounded border-gray-300 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700">
                         <span class="text-sm font-medium text-black dark:text-white">Mostrar Tipo de Oro</span>
@@ -280,7 +286,7 @@
                     class="flex-1 rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-all">
                     Cancelar
                 </button>
-                <button type="submit" [disabled]="loading()"
+                <button type="submit" [disabled]="loading()" id="btn-save-category"
                     class="flex-1 rounded-lg bg-brand-500 px-6 py-3 font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all">
                     {{ loading() ? 'Guardando...' : 'Guardar' }}
                 </button>

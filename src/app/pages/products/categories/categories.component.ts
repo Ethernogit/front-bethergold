@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CategoryService } from '../../../shared/services/category.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { TourService } from '../../../shared/services/tour.service';
 import {
     Category,
     ProductStatus,
@@ -24,6 +25,7 @@ export class CategoriesComponent implements OnInit {
     private categoryService = inject(CategoryService);
     private toastService = inject(ToastService);
     private fb = inject(FormBuilder);
+    private tourService = inject(TourService);
 
     // Signals for reactive state
     categories = signal<CategoryTableItem[]>([]);
@@ -77,6 +79,11 @@ export class CategoriesComponent implements OnInit {
 
     ngOnInit() {
         this.loadCategories();
+        this.setupFormListeners();
+    }
+
+    startTour() {
+        this.tourService.startCategoryTour();
     }
 
     loadCategories() {
@@ -109,6 +116,29 @@ export class CategoriesComponent implements OnInit {
             });
     }
 
+    setupFormListeners() {
+        const printConfig = this.categoryForm.get('printConfiguration');
+        const showWeightControl = printConfig?.get('showWeight');
+        const showIntegerWeightControl = printConfig?.get('showIntegerWeight');
+
+        if (showWeightControl && showIntegerWeightControl) {
+            // Check initial state
+            if (!showWeightControl.value) {
+                showIntegerWeightControl.disable({ emitEvent: false });
+            }
+
+            // Listen for changes
+            showWeightControl.valueChanges.subscribe(show => {
+                if (show) {
+                    showIntegerWeightControl.enable({ emitEvent: false });
+                } else {
+                    showIntegerWeightControl.disable({ emitEvent: false });
+                    showIntegerWeightControl.setValue(false, { emitEvent: false });
+                }
+            });
+        }
+    }
+
     // =============== CATEGORY CRUD OPERATIONS ===============
 
     openCreateModal() {
@@ -126,6 +156,11 @@ export class CategoriesComponent implements OnInit {
             }
         });
         this.showModal.set(true);
+
+        // Continue tour if active
+        if (this.tourService.isActive()) {
+            this.tourService.continueCategoryModalTour();
+        }
     }
 
     openEditModal(category: Category) {

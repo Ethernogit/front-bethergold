@@ -11,6 +11,7 @@ import { finalize } from 'rxjs';
 import { ProductFormComponent } from '../product-form/product-form.component';
 import { ProductStatus } from '../../../shared/interfaces/product.interfaces';
 import { FilterSidebarComponent, FilterConfig } from '../../../shared/components/ui/filter-sidebar/filter-sidebar.component';
+import { TourService } from '../../../shared/services/tour.service';
 @Component({
     selector: 'app-product-list',
     standalone: true,
@@ -24,6 +25,7 @@ export class ProductListComponent implements OnInit {
     private providerService = inject(ProviderService);
     private toastService = inject(ToastService);
     private labelService = inject(LabelPrintingService);
+    public tourService = inject(TourService);
 
 
     // Signals
@@ -61,6 +63,10 @@ export class ProductListComponent implements OnInit {
     ngOnInit() {
         this.loadProducts();
         this.initFilterConfig();
+    }
+
+    startTour() {
+        this.tourService.startProductTour();
     }
 
     initFilterConfig() {
@@ -226,6 +232,8 @@ export class ProductListComponent implements OnInit {
     openCreateModal() {
         this.editingProduct.set(null);
         this.showModal.set(true);
+        // If tour is active, continue it inside the modal
+        this.tourService.continueProductFormTour();
     }
 
     openEditModal(product: Product) {

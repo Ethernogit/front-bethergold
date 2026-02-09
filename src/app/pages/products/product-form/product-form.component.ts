@@ -11,11 +11,12 @@ import { LoginService } from '../../../shared/services/auth/login.service';
 import { SucursalService } from '../../../shared/services/sucursal.service';
 import { MaterialType, ProviderPrice, GoldType } from '../../../shared/interfaces/provider.interfaces';
 import { combineLatest, forkJoin } from 'rxjs';
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-product-form',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, RouterModule],
     templateUrl: './product-form.component.html'
 })
 export class ProductFormComponent implements OnInit, OnChanges {
