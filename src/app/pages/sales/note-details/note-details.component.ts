@@ -426,7 +426,8 @@ export class NoteDetailsComponent implements OnInit {
                 <div class="header">
                     ${logoUrl ? `<img src="${logoUrl}" class="logo" alt="Logo"/>` : ''}
                     <div class="org-name">${orgName}</div>
-                    <div class="address">${address}</div>
+                    ${headerText ? `<div class="p-2" style="white-space: pre-line; text-align: center; margin-bottom: 2mm;">${headerText}</div>` : ''}
+                    ${!headerText ? `<div class="address">${address}</div>` : ''}
                     ${phone ? `<div class="address">Tel: ${phone}</div>` : ''}
                 </div>
                 
