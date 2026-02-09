@@ -11,6 +11,9 @@ export interface CategoryPrintConfiguration {
     showPrice: boolean;
     showWeight: boolean;
     showKaratage: boolean;
+    showGoldType: boolean;
+    showMaterial: boolean;
+    showIntegerWeight: boolean;
     showDescription: boolean;
 }
 
@@ -70,6 +73,7 @@ export interface Product {
     // Adding previous missing fields just in case they were lost in view, but keeping existing structure
     specifications?: {
         weight?: number;
+        material?: string;
     };
     jewelryDetails?: {
         goldType?: string;

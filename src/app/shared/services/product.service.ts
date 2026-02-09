@@ -22,6 +22,7 @@ export interface Product {
     };
     specifications?: {
         weight?: number;
+        material?: string;
     };
     images?: { url: string; isPrimary: boolean }[];
     status?: 'active' | 'inactive' | 'discontinued';

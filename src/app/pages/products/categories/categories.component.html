@@ -246,10 +246,26 @@
                             class="form-checkbox h-5 w-5 text-brand-500 rounded border-gray-300 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700">
                         <span class="text-sm font-medium text-black dark:text-white">Mostrar Peso</span>
                     </label>
+                    <label class="flex items-center gap-2 cursor-pointer"
+                        *ngIf="categoryForm.get('printConfiguration.showWeight')?.value">
+                        <input type="checkbox" formControlName="showIntegerWeight"
+                            class="form-checkbox h-5 w-5 text-brand-500 rounded border-gray-300 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 ml-4">
+                        <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Peso Entero (x10)</span>
+                    </label>
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" formControlName="showKaratage"
                             class="form-checkbox h-5 w-5 text-brand-500 rounded border-gray-300 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700">
                         <span class="text-sm font-medium text-black dark:text-white">Mostrar Kilataje</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" formControlName="showGoldType"
+                            class="form-checkbox h-5 w-5 text-brand-500 rounded border-gray-300 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700">
+                        <span class="text-sm font-medium text-black dark:text-white">Mostrar Tipo de Oro</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" formControlName="showMaterial"
+                            class="form-checkbox h-5 w-5 text-brand-500 rounded border-gray-300 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700">
+                        <span class="text-sm font-medium text-black dark:text-white">Mostrar Material</span>
                     </label>
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" formControlName="showDescription"

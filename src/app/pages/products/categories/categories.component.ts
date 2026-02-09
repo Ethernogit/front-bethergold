@@ -62,6 +62,9 @@ export class CategoriesComponent implements OnInit {
                 showPrice: [true],
                 showWeight: [false],
                 showKaratage: [false],
+                showGoldType: [false],
+                showMaterial: [false],
+                showIntegerWeight: [false],
                 showDescription: [true]
             })
         });
@@ -116,6 +119,9 @@ export class CategoriesComponent implements OnInit {
                 showPrice: true,
                 showWeight: false,
                 showKaratage: false,
+                showGoldType: false,
+                showMaterial: false,
+                showIntegerWeight: false,
                 showDescription: true
             }
         });
@@ -133,6 +139,9 @@ export class CategoriesComponent implements OnInit {
                 showPrice: true,
                 showWeight: false,
                 showKaratage: false,
+                showGoldType: false,
+                showMaterial: false,
+                showIntegerWeight: false,
                 showDescription: true
             }
         });

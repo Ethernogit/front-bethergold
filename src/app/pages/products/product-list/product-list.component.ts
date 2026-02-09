@@ -42,6 +42,9 @@ export class ProductListComponent implements OnInit {
     // Store last selected category to detect changes
     private lastSelectedCategoryId: string = '';
 
+    // Store all categories for lookup (e.g. printing config)
+    categories: any[] = [];
+
 
 
     // Selection
@@ -109,6 +112,7 @@ export class ProductListComponent implements OnInit {
         this.categoryService.getCategories({ status: ProductStatus.ACTIVE }).subscribe({
             next: (res) => {
                 const categories = res.data || [];
+                this.categories = categories; // Store for lookup
                 const categoryOptions = categories.map(c => ({ value: c._id!, label: c.name }));
                 this.updateFilterConfig('category', categoryOptions);
             }
@@ -324,7 +328,17 @@ export class ProductListComponent implements OnInit {
         const productsToPrint = this.products()
             .filter((p: Product) => selectedIds.has(p._id!))
             .map((p: Product) => {
-                const category = p.category as any; // Cast to access printConfiguration if populated
+                let category = p.category as any; // Cast to access printConfiguration if populated
+
+                // If category is just an ID or missing config, try to find it in stored categories
+                if (!category?.printConfiguration && !category?.print_configuration) {
+                    const catId = typeof p.category === 'object' ? (p.category as any)._id : p.category;
+                    const foundCat = this.categories.find(c => c._id === catId || c.id === catId);
+                    if (foundCat) {
+                        category = foundCat;
+                    }
+                }
+
                 return {
                     barcode: p.barcode,
                     description: p.description || p.name,
@@ -333,7 +347,9 @@ export class ProductListComponent implements OnInit {
                     subcategory: this.getSubcategoryName(p),
                     weight: p.specifications?.weight,
                     karatage: p.jewelryDetails?.karatage,
-                    printConfig: category?.printConfiguration
+                    goldType: p.jewelryDetails?.goldType,
+                    material: p.specifications?.material,
+                    printConfig: category?.printConfiguration || category?.print_configuration
                 };
             });
 

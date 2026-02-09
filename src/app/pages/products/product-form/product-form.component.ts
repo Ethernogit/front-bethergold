@@ -421,7 +421,8 @@ export class ProductFormComponent implements OnInit, OnChanges {
             isUnique: formValue.isUnique,
             stock: formValue.isUnique ? 1 : formValue.stock,
             specifications: {
-                weight: formValue.weight
+                weight: formValue.weight,
+                material: selectedMaterial?.name
             },
             jewelryDetails: {
                 goldType: formValue.goldType,
@@ -473,10 +474,15 @@ export class ProductFormComponent implements OnInit, OnChanges {
         const price = this.productForm.get('price')?.value || 0;
         const description = this.productForm.get('description')?.value || '';
 
+        const categoryId = this.productForm.get('category')?.value;
+        const category = this.categories.find(c => c._id === categoryId || c.id === categoryId);
+        const printConfig = category?.printConfiguration || category?.print_configuration;
+
         this.labelService.printLabels([{
             barcode,
             description,
-            price
+            price,
+            printConfig
         }]);
     }
 }
