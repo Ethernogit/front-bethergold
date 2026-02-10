@@ -143,20 +143,10 @@ export class LabelPrintingService {
             const pageBreak = index < products.length - 1 ? 'page-break-after: always;' : '';
 
             let extraInfoHtml = '';
-            const infoParts: string[] = [];
+            const line1Parts: string[] = [];
+            const line2Parts: string[] = [];
 
-            if (showKaratage && karatage) {
-                infoParts.push(karatage);
-            }
-
-            if (showMaterial && product.material) {
-                infoParts.push(product.material);
-            }
-
-            if (showGoldType && goldType) {
-                infoParts.push(goldType);
-            }
-
+            // Line 1: Weight / Gold Type
             if (showWeight && weight) {
                 let weightDisplay = weight;
                 if (showIntegerWeight) {
@@ -165,12 +155,30 @@ export class LabelPrintingService {
                         weightDisplay = Math.round(val * 10);
                     }
                 }
-                infoParts.push(`${weightDisplay}${showIntegerWeight ? '' : 'g'}`);
+                line1Parts.push(`${weightDisplay}${showIntegerWeight ? '' : 'g'}`);
             }
 
-            if (infoParts.length > 0) {
-                extraInfoHtml += `<div class="extra-info no-wrap" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; font-size: 18px;">${infoParts.join(' ')}</div>`;
+            if (showGoldType && goldType) {
+                line1Parts.push(goldType);
             }
+
+            // Line 2: Karatage Material
+            if (showKaratage && karatage) {
+                line2Parts.push(karatage);
+            }
+
+            if (showMaterial && product.material) {
+                line2Parts.push(product.material);
+            }
+
+            if (line1Parts.length > 0) {
+                extraInfoHtml += `<div class="extra-info no-wrap" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; font-size: 18px;">${line1Parts.join('/')}</div>`;
+            }
+            if (line2Parts.length > 0) {
+                extraInfoHtml += `<div class="extra-info no-wrap" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; font-size: 18px;">${line2Parts.join(' ')}</div>`;
+            }
+
+
 
             const priceHtml = showPrice ? `<div class="price-text">$${price.toFixed(2)}</div>` : '';
 
