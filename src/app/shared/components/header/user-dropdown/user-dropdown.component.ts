@@ -17,6 +17,7 @@ export class UserDropdownComponent {
   private uiService = inject(UiService);
 
   @Input() isCollapsed = false;
+  @Input() openDirection: 'up' | 'down' = 'up';
   isOpen = false;
 
   currentUser = this.loginService.currentUser;

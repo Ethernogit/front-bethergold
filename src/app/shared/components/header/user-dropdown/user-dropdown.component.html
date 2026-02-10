@@ -28,7 +28,9 @@
   <app-dropdown [isOpen]="isOpen" (close)="closeDropdown()"
     [className]="isCollapsed 
       ? 'absolute left-full bottom-0 ml-3 flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark z-[9999]' 
-      : 'absolute bottom-full left-0 mb-3 flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark z-[9999]'">
+      : (openDirection === 'down' 
+          ? 'absolute top-full right-0 mt-3 flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark z-[9999]'
+          : 'absolute bottom-full left-0 mb-3 flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark z-[9999]')">
     <div>
       <span class="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
         {{ currentUser()?.profile?.firstName }} {{ currentUser()?.profile?.lastName }}
