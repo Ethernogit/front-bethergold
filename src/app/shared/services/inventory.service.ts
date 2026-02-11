@@ -49,4 +49,25 @@ export class InventoryService {
     toggleReviewStatus(id: string, status: boolean): Observable<any> {
         return this.http.patch<{ success: boolean, data: Product }>(`${this.apiUrl}/${id}/review`, { status });
     }
+
+    /**
+     * Review product by code (scanner mode)
+     */
+    reviewByCode(code: string): Observable<any> {
+        return this.http.post<{ success: boolean, data: Product }>(`${this.apiUrl}/review-by-code`, { code });
+    }
+    /**
+     * Get inventory stats
+     */
+    getInventoryStats(params?: any): Observable<any> {
+        let httpParams = new HttpParams();
+        if (params) {
+            Object.keys(params).forEach(key => {
+                if (params[key] !== null && params[key] !== undefined) {
+                    httpParams = httpParams.set(key, params[key]);
+                }
+            });
+        }
+        return this.http.get<{ success: boolean, data: any }>(`${this.apiUrl}/stats`, { params: httpParams });
+    }
 }

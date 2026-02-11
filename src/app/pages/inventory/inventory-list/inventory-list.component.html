@@ -13,24 +13,86 @@
                             Inventario
                         </h3>
 
+                        <!-- Action Buttons -->
+                        <div class="flex items-center gap-2">
+                            <button (click)="startTour()" type="button"
+                                class="inline-flex items-center justify-center gap-2 rounded-lg border border-stroke bg-white px-4 py-2.5 text-center font-medium text-black hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:bg-gray-800 dark:border-strokedark dark:text-white dark:hover:bg-gray-700 transition-all duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                </svg>
+                                Tutorial
+                            </button>
+                            <button id="tour-inventory-summary" (click)="openSummary()" type="button"
+                                class="inline-flex items-center justify-center gap-2 rounded-lg border border-stroke bg-white px-4 py-2.5 text-center font-medium text-black hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:bg-gray-800 dark:border-strokedark dark:text-white dark:hover:bg-gray-700 transition-all duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                                    <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+                                </svg>
+                                Resumen
+                            </button>
+                            <button id="tour-inventory-filter" (click)="openFilters()" type="button"
+                                class="inline-flex items-center justify-center gap-2 rounded-lg border border-stroke bg-white px-4 py-2.5 text-center font-medium text-black hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:bg-gray-800 dark:border-strokedark dark:text-white dark:hover:bg-gray-700 transition-all duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                                </svg>
+                                Filtrar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="w-full sm:max-w-md mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3 items-center">
+                        <!-- Scanner Mode Toggle -->
+                        <div id="tour-inventory-scanner-toggle" class="flex items-center gap-2 cursor-pointer"
+                            (click)="toggleScanMode()">
+                            <div class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand-600 focus:ring-offset-2"
+                                [ngClass]="scanMode() ? 'bg-brand-600' : 'bg-gray-200 dark:bg-gray-700'">
+                                <span class="sr-only">Modo Escáner</span>
+                                <span aria-hidden="true"
+                                    class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                                    [ngClass]="scanMode() ? 'translate-x-5' : 'translate-x-0'"></span>
+                            </div>
+                            <span
+                                class="text-sm font-medium text-gray-900 dark:text-gray-100 select-none">Escáner</span>
+                        </div>
+
                         <!-- Search Bar -->
-                        <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="w-full sm:max-w-md">
+                        <form id="tour-inventory-search" [formGroup]="searchForm" (ngSubmit)="onSearch()"
+                            class="w-full flex-1">
                             <div class="relative">
                                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+                                    @if(scanMode()) {
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="text-brand-500">
+                                        <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+                                        <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+                                        <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+                                        <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+                                        <rect x="7" y="7" width="10" height="10" rx="1" />
+                                    </svg>
+                                    } @else {
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                         stroke-linejoin="round">
                                         <circle cx="11" cy="11" r="8"></circle>
                                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                                     </svg>
+                                    }
                                 </span>
-                                <input type="text" formControlName="search" placeholder="Buscar por código, nombre..."
+                                <input type="text" formControlName="search"
+                                    [placeholder]="scanMode() ? 'Escanea código para revisar...' : 'Buscar por código, nombre...'"
                                     class="w-full rounded-lg border border-gray-300 bg-gray-50 pl-11 pr-5 py-2.5 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500" />
                             </div>
                         </form>
                     </div>
-
-                    <!-- No Action Buttons for Read-Only View -->
                 </div>
             </div>
 
@@ -47,7 +109,7 @@
                     No se encontraron productos en inventario
                 </div>
                 } @else {
-                <div class="relative">
+                <div class="relative" id="tour-inventory-table">
                     <table class="w-full table-auto">
                         <thead class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-800 shadow-sm">
                             <tr class="text-left">
@@ -68,7 +130,15 @@
                                     <span class="font-medium text-black dark:text-white">{{ product.barcode }}</span>
                                 </td>
                                 <td class="px-4 py-3">
-                                    <p class="text-black dark:text-white font-medium">{{ product.name }}</p>
+                                    <div class="flex flex-wrap gap-2 items-center">
+                                        <p class="text-black dark:text-white font-medium">{{ product.name }}</p>
+                                        @if(product.reservation) {
+                                        <span
+                                            class="inline-flex items-center rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-900/30 dark:text-amber-400 dark:ring-amber-400/20">
+                                            Apartado ({{ product.reservation.folio }})
+                                        </span>
+                                        }
+                                    </div>
                                     @if(product.description) {
                                     <p class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[200px]">{{
                                         product.description }}</p>
@@ -112,7 +182,7 @@
                                         <input type="checkbox" [checked]="!!product.lastInventoryRevision"
                                             (change)="toggleReview(product, $event)" class="sr-only peer">
                                         <div
-                                            class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-300 dark:peer-focus:ring-brand-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-brand-600">
+                                            class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-500 peer-checked:bg-green-500 dark:peer-checked:bg-green-500">
                                         </div>
                                     </label>
                                 </td>
@@ -141,7 +211,8 @@
 
                     <div class="flex items-center gap-4">
                         <p class="text-sm font-medium text-black dark:text-white">
-                            Página {{ currentPage() }}
+                            Página {{ currentPage() }} de {{ totalPages() }} <span
+                                class="font-bold text-brand-600 dark:text-brand-400">({{ totalItems() }} items)</span>
                         </p>
                         <div class="flex items-center gap-2">
                             <button (click)="onPageChange(currentPage() - 1)" [disabled]="currentPage() === 1"
@@ -168,3 +239,11 @@
         </div>
     </div>
 </div>
+
+<!-- Filters Sidebar -->
+<app-filter-sidebar [isOpen]="showFilters()" [filters]="filterConfig()" (close)="closeFilters()"
+    (apply)="applyFilters($event)"></app-filter-sidebar>
+
+<!-- Summary Modal -->
+<app-inventory-summary-modal [isOpen]="showSummaryModal()" [filters]="summaryFilters()" (close)="closeSummary()">
+</app-inventory-summary-modal>

@@ -207,4 +207,51 @@ export class TourService {
             this.driverObj.drive();
         }, 500);
     }
+    startInventoryTour() {
+        this.isTourActive = true;
+        this.driverObj.setSteps([
+            {
+                element: '#tour-inventory-scanner-toggle',
+                popover: {
+                    title: 'Modo Escáner',
+                    description: 'Active este interruptor para habilitar el modo de revisión rápida. Al escanear un código, el sistema marcará el producto como "Revisado" automáticamente.',
+                    side: 'bottom',
+                    align: 'start'
+                }
+            },
+            {
+                element: '#tour-inventory-search',
+                popover: {
+                    title: 'Búsqueda / Escaneo',
+                    description: 'En modo normal, busca productos por nombre o código. En modo escáner, aquí se ingresa el código para marcarlo como revisado.',
+                    side: 'bottom'
+                }
+            },
+            {
+                element: '#tour-inventory-filter',
+                popover: {
+                    title: 'Filtros Avanzados',
+                    description: 'Utilice estos filtros para ver productos "Faltantes" (No Revisados), "Revisados", "Apartados" o por Categoría.',
+                    side: 'bottom'
+                }
+            },
+            {
+                element: '#tour-inventory-summary',
+                popover: {
+                    title: 'Resumen de Progreso',
+                    description: 'Haga clic aquí para ver gráficamente cuánto lleva avanzado del inventario (Total vs Revisados).',
+                    side: 'bottom'
+                }
+            },
+            {
+                element: '#tour-inventory-table',
+                popover: {
+                    title: 'Listado y Estado',
+                    description: 'Aquí verá sus productos. Los marcados como "Apartado" tienen una etiqueta especial. Puede validar manualmente el estado de revisión usando el check (si está habilitado).',
+                    side: 'top'
+                }
+            }
+        ]);
+        this.driverObj.drive();
+    }
 }

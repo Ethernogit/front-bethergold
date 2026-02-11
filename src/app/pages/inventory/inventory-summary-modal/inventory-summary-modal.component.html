@@ -1,0 +1,82 @@
+<div *ngIf="isOpen"
+    class="fixed inset-0 z-[200000] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm transition-opacity"
+    (click)="close.emit()">
+
+    <div class="w-full max-w-lg rounded-xl bg-white p-6 shadow-2xl dark:bg-gray-900 dark:border dark:border-gray-700 transform transition-all"
+        (click)="$event.stopPropagation()">
+
+        <div class="flex items-center justify-between border-b border-stroke pb-4 dark:border-gray-700">
+            <h3 class="text-xl font-bold text-black dark:text-white">
+                Resumen de Inventario
+            </h3>
+            <button (click)="close.emit()"
+                class="rounded-full p-1 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <div class="mt-6">
+            @if(loading()) {
+            <div class="flex justify-center py-8">
+                <div
+                    class="h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent">
+                </div>
+            </div>
+            } @else if(stats()) {
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <!-- Total -->
+                <div
+                    class="rounded-lg border border-stroke bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-800 text-center shadow-sm">
+                    <span class="block text-sm font-medium text-gray-500 dark:text-gray-300">Total Ítems</span>
+                    <span class="mt-2 block text-3xl font-bold text-black dark:text-white">{{ stats().total }}</span>
+                </div>
+
+                <!-- Reviewed -->
+                <div
+                    class="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-900/30 text-center shadow-sm">
+                    <span class="block text-sm font-medium text-green-700 dark:text-green-300">Revisados</span>
+                    <span class="mt-2 block text-3xl font-bold text-green-700 dark:text-green-400">{{ stats().reviewed
+                        }}</span>
+                </div>
+
+                <!-- Missing -->
+                <div
+                    class="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/30 text-center shadow-sm">
+                    <span class="block text-sm font-medium text-red-700 dark:text-red-300">Faltantes</span>
+                    <span class="mt-2 block text-3xl font-bold text-red-700 dark:text-red-400">{{ stats().missing
+                        }}</span>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <div class="mb-2 flex items-center justify-between text-sm">
+                    <span class="font-medium text-gray-700 dark:text-gray-300">Progreso revisión</span>
+                    <span class="font-bold text-black dark:text-white">
+                        {{ (stats().reviewed / stats().total * 100) | number:'1.0-1' }}%
+                    </span>
+                </div>
+                <div class="h-3 w-full overflow-hidden rounded-full bg-stroke dark:bg-gray-700">
+                    <div class="h-full bg-green-500 transition-all duration-500"
+                        [style.width.%]="(stats().reviewed / stats().total * 100) || 0">
+                    </div>
+                </div>
+            </div>
+            } @else {
+            <div class="text-center text-gray-500">
+                No se pudieron cargar las estadísticas.
+            </div>
+            }
+        </div>
+
+        <div class="mt-8 flex justify-end">
+            <button (click)="close.emit()"
+                class="rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90 transition">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
