@@ -142,6 +142,13 @@
                             <span>{{client?.phone}}</span>
                         </span>
 
+                        <!-- Client Edit Button -->
+                        <button (click)="showClientModal.set(true)"
+                            class="ml-2 p-1 text-gray-400 hover:text-primary transition-colors rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+                            title="Cambiar Cliente">
+                            <span class="material-symbols-outlined text-[18px]">person</span>
+                        </button>
+
                         <span class="flex items-center gap-1" *ngIf="client?.email">
                             <span class="font-medium text-gray-500 dark:text-gray-400">Email:</span>
                             <span class="truncate max-w-[200px]">{{client?.email}}</span>
@@ -504,4 +511,13 @@
     <app-global-payment [isOpen]="showPaymentModal()" [note]="rawNote" (close)="showPaymentModal.set(false)"
         (paymentSuccess)="onPaymentSuccess($event)">
     </app-global-payment>
+
+    <!-- Client Selection Modal -->
+    <div *ngIf="showClientModal()"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div class="bg-white dark:bg-[#1a2230] rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+            <app-client-selection-modal (select)="onClientSelected($event)" (close)="showClientModal.set(false)">
+            </app-client-selection-modal>
+        </div>
+    </div>
 </div>

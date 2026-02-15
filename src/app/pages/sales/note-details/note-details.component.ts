@@ -6,12 +6,13 @@ import { SucursalService, Sucursal } from '../../../shared/services/sucursal.ser
 import { CashCutService } from '../../../shared/services/cash-cut.service'; // Import
 import { ToastService } from '../../../shared/services/toast.service'; // Import
 import { GlobalPaymentComponent } from '../components/global-payment/global-payment.component';
+import { ClientSelectionModalComponent } from '../new-note/components/client-selection-modal/client-selection-modal.component';
 import { environment } from '../../../../environments/environment';
 
 @Component({
     selector: 'app-note-details',
     standalone: true,
-    imports: [CommonModule, RouterLink, GlobalPaymentComponent],
+    imports: [CommonModule, RouterLink, GlobalPaymentComponent, ClientSelectionModalComponent],
     templateUrl: './note-details.component.html',
     styleUrl: './note-details.component.css'
 })
@@ -35,6 +36,7 @@ export class NoteDetailsComponent implements OnInit {
 
     // Modal State
     showPaymentModal = signal(false);
+    showClientModal = signal(false);
 
     // Tab State
     currentTab: 'general' | 'items' | 'payments' = 'items';
@@ -511,5 +513,29 @@ export class NoteDetailsComponent implements OnInit {
 
         printWindow.document.write(htmlContent);
         printWindow.document.close();
+    }
+
+    onClientSelected(client: any) {
+        if (!this.rawNote?._id) return;
+
+        this.isLoading = true;
+        this.noteService.updateClient(this.rawNote._id, client._id).subscribe({
+            next: (response) => {
+                if (response.success) {
+                    this.showClientModal.set(false);
+                    this.toastService.success('Cliente asignado correctamente');
+                    // Refresh data
+                    this.mapNoteData(response.data);
+                } else {
+                    this.toastService.error(response.message || 'Error al actualizar cliente');
+                }
+                this.isLoading = false;
+            },
+            error: (err) => {
+                console.error(err);
+                this.toastService.error('Error al actualizar cliente');
+                this.isLoading = false;
+            }
+        });
     }
 }
