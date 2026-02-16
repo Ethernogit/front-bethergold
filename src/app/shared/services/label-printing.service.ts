@@ -142,6 +142,11 @@ export class LabelPrintingService {
 
             const pageBreak = index < products.length - 1 ? 'page-break-after: always;' : '';
 
+
+            if (showKaratage && karatage) {
+                description += ` ${karatage}`;
+            }
+
             let extraInfoHtml = '';
             const line1Parts: string[] = [];
             const line2Parts: string[] = [];
@@ -162,10 +167,9 @@ export class LabelPrintingService {
                 line1Parts.push(goldType);
             }
 
-            // Line 2: Karatage Material
-            if (showKaratage && karatage) {
-                line2Parts.push(karatage);
-            }
+            // Line 2: Material
+            // Karatage moved to Description
+
 
             if (showMaterial && product.material) {
                 line2Parts.push(product.material);
@@ -285,6 +289,7 @@ export class LabelPrintingService {
                             -webkit-font-smoothing: none;
                             -moz-osx-font-smoothing: grayscale;
                             text-rendering: optimizeLegibility;
+                            shape-rendering: geometricPrecision; /* Better for text curves */
                         }
 
                         .top-section {
@@ -314,12 +319,12 @@ export class LabelPrintingService {
                             max-height: 40px; /* Reduced max height */
                             display: block;
                             margin: 0;
-                            shape-rendering: crispEdges; 
+                            shape-rendering: crispEdges; /* Essential for barcodes */
                         }
 
                         .barcode-text {
                             font-size: 24px;   /* ~2.4mm height */
-                            font-weight: bold;  
+                            font-weight: 600;  /* Reduced from bold to prevent bleeding */
                             text-align: left;   
                             width: 100%;
                             margin: 0;
@@ -332,7 +337,7 @@ export class LabelPrintingService {
 
                         .desc-text {
                             font-size: 18px; /* Reduced to fit more text */
-                            font-weight: bold; 
+                            font-weight: 600; /* Reduced from bold */
                             text-align: left;
                             width: 100%;
                             display: -webkit-box;
@@ -340,14 +345,15 @@ export class LabelPrintingService {
                             -webkit-box-orient: vertical;
                             overflow: hidden;
                             margin: 0;
-                            line-height: 0.95; /* Tighter line height */
+                            line-height: 1.1; /* Slightly increased for readability */
                             margin-bottom: 2px;
                             color: black;
                         }
 
                         .price-text {
-                            font-size: 24px; /* Reduced from 28px */
-                            font-weight: 900; 
+                            font-size: 20px; /* Reduced from 24px */
+                            font-weight: 700; /* Reduced from 900 (Black) into Bold */ 
+ 
                             text-align: left;
                             width: 100%;
                             margin: 0;
