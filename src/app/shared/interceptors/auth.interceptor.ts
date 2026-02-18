@@ -23,6 +23,10 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError(error => {
         if (error instanceof HttpErrorResponse && error.status === 401) {
+          // Evitar bucle infinito: si falla el login o logout, no intentar manejar 401
+          if (request.url.includes('/auth/logout') || request.url.includes('/auth/login')) {
+            return throwError(() => error);
+          }
           return this.handle401Error(request, next);
         }
 
@@ -62,8 +66,9 @@ export class AuthInterceptor implements HttpInterceptor {
         }),
         catchError((error) => {
           this.isRefreshing = false;
-          loginService.logout();
-          return throwError(() => error);
+          return loginService.logout().pipe(
+            switchMap(() => throwError(() => error))
+          );
         })
       );
     }
