@@ -1,5 +1,5 @@
 <aside
-  class="fixed flex flex-col top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-[100001] border-r border-gray-200"
+  class="fixed flex flex-col top-0 px-5 left-0 bg-[#FFFDF7] dark:bg-[#1A1714] dark:border-[#3D3420] text-gray-900 h-screen transition-all duration-300 ease-in-out z-[100001] border-r border-[#E8D9A0]"
   [ngClass]="{
     'w-[290px]':
       (isExpanded$ | async) || (isMobileOpen$ | async),
@@ -19,27 +19,28 @@
       <a routerLink="/" class="flex items-center gap-3 cursor-pointer justify-center w-full"
         (click)="sidebarService.setExpanded(true)">
         @if ((isExpanded$ | async) || (isMobileOpen$ | async)) {
-        <div class="flex flex-col items-start leading-tight">
-          <span class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
-            Bether<span class="text-[#D4AF37]">Gold</span>
-          </span>
-          @if (currentOrganization$() && currentSucursal$()) {
-          <span class="text-[10px] text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide">
+        <div class="flex flex-col items-start leading-tight gap-0.5">
+          <!-- Logo modo claro (Horizontal) -->
+          <img src="assets/brand/logo-horizontal.svg" alt="Bether Gold" class="h-8 w-auto dark:hidden mb-1" />
+          <!-- Logo modo oscuro (Horizontal) -->
+          <img src="assets/brand/logo-horizontal-negativo.svg" alt="Bether Gold"
+            class="h-8 w-auto hidden dark:block mb-1" />@if (currentOrganization$() && currentSucursal$()) {
+          <span class="font-display text-[10px] font-medium uppercase tracking-wide text-[#6B6560] dark:text-gray-400">
             {{ currentOrganization$()?.name }} | {{ currentSucursal$()?.name }}
           </span>
           }
         </div>
         } @else {
-        <span class="text-xl font-bold text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 rounded-lg p-2">
-          B<span class="text-[#D4AF37]">G</span>
-        </span>
+        <!-- Isotipo colapsado -->
+        <img src="assets/brand/isotipo.svg" alt="BG" class="size-9 dark:hidden" />
+        <img src="assets/brand/isotipo-negativo.svg" alt="BG" class="size-9 hidden dark:block" />
         }
       </a>
 
       <!-- Sidebar Toggle Button (Visible when expanded) -->
       @if ((isExpanded$ | async) || (isMobileOpen$ | async)) {
       <button (click)="$event.stopPropagation(); sidebarService.toggleExpanded()"
-        class="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 lg:block hidden">
+        class="p-1.5 rounded-lg text-[#6B6560] hover:bg-[#FFF8E7] dark:text-gray-400 dark:hover:bg-[#252017] lg:block hidden transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           class="w-5 h-5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
@@ -54,7 +55,9 @@
       <div class="flex flex-col gap-4">
         <!-- Menu Section -->
         <div>
-          <h2 class="mb-4 text-xs uppercase flex leading-[20px] text-gray-400" [ngClass]="{
+          <h2
+            class="mb-4 font-outfit text-theme-xs font-semibold uppercase tracking-wider flex leading-[20px] text-[#9A6F0A] dark:text-[#E8C97A]"
+            [ngClass]="{
                 'lg:justify-center': !(
                   (isExpanded$ | async)
                 ),
@@ -105,16 +108,16 @@
                 }
                 @if (nav.subItems && !((isExpanded$ | async) || (isMobileOpen$ | async))) {
                 <div class="absolute right-1 bottom-1 flex gap-0.5">
-                  <div class="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500"></div>
-                  <div class="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500"></div>
+                  <div class="w-1 h-1 rounded-full bg-[#C69214] dark:bg-[#E8C97A]"></div>
+                  <div class="w-1 h-1 rounded-full bg-[#C69214] dark:bg-[#E8C97A]"></div>
                 </div>
                 }
                 @if ((isExpanded$ | async) ||
                 (isMobileOpen$ | async)) {
                 <svg [ngClass]="{
-                        'rotate-180 text-brand-500': openSubmenu === 'main-' + i
+                        'rotate-180 text-[#C69214] dark:text-[#FAC600]': openSubmenu === 'main-' + i
                       }" width="1em" height="1em" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"
-                  class="ml-auto w-5 h-5 transition-transform duration-200">
+                  class="ml-auto w-5 h-5 transition-transform duration-200 text-[#6B6560] dark:text-gray-400">
                   <path d="M4.79175 7.396L10.0001 12.6043L15.2084 7.396" stroke="currentColor" stroke-width="1.5"
                     stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
@@ -198,7 +201,9 @@
 
         <!-- Others Section -->
         <div>
-          <h2 class="mb-4 text-xs uppercase flex leading-[20px] text-gray-400" [ngClass]="{
+          <h2
+            class="mb-4 font-outfit text-theme-xs font-semibold uppercase tracking-wider flex leading-[20px] text-[#9A6F0A] dark:text-[#E8C97A]"
+            [ngClass]="{
                 'lg:justify-center': !(
                   (isExpanded$ | async)
                 ),
@@ -208,7 +213,7 @@
             (isExpanded$ | async) ||
             (isMobileOpen$ | async)
             ) {
-            Others
+            Otros
             } @else {
             <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
               class="size-6">
@@ -255,16 +260,16 @@
                 }
                 @if (nav.subItems && !((isExpanded$ | async) || (isMobileOpen$ | async))) {
                 <div class="absolute right-1 bottom-1 flex gap-0.5">
-                  <div class="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500"></div>
-                  <div class="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-500"></div>
+                  <div class="w-1 h-1 rounded-full bg-[#C69214] dark:bg-[#E8C97A]"></div>
+                  <div class="w-1 h-1 rounded-full bg-[#C69214] dark:bg-[#E8C97A]"></div>
                 </div>
                 }
                 @if ((isExpanded$ | async) ||
                 (isMobileOpen$ | async)) {
                 <svg [ngClass]="{
-                        'rotate-180 text-brand-500': openSubmenu === 'others-' + i
+                        'rotate-180 text-[#C69214] dark:text-[#FAC600]': openSubmenu === 'others-' + i
                       }" width="1em" height="1em" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"
-                  class="ml-auto w-5 h-5 transition-transform duration-200">
+                  class="ml-auto w-5 h-5 transition-transform duration-200 text-[#6B6560] dark:text-gray-400">
                   <path d="M4.79175 7.396L10.0001 12.6043L15.2084 7.396" stroke="currentColor" stroke-width="1.5"
                     stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
@@ -350,7 +355,7 @@
   </div>
 
   <!-- Bottom Section: User & Theme -->
-  <div class="mt-auto pb-4 pt-4 border-t border-gray-100 dark:border-gray-800 flex flex-col gap-3" [ngClass]="{
+  <div class="mt-auto pb-4 pt-4 border-t border-[#E8D9A0] dark:border-[#3D3420] flex flex-col gap-3" [ngClass]="{
         'items-center': !((isExpanded$ | async) || (isMobileOpen$ | async))
       }">
 
@@ -367,11 +372,11 @@
 <!-- Floating Submenu Template -->
 @if (hoveredItem && !((isExpanded$ | async) || (isMobileOpen$ | async))) {
 <div
-  class="fixed left-[90px] z-[100002] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl py-2 w-56 transform transition-all duration-200"
+  class="fixed left-[90px] z-[100002] bg-[#FFFDF7] dark:bg-[#252017] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl shadow-theme-lg py-2 w-56 transform transition-all duration-200"
   [style.top.px]="hoveredTop" (mouseenter)="onSubmenuEnter()" (mouseleave)="onSubmenuLeave()">
 
-  <div class="px-4 py-2 border-b border-gray-100 dark:border-gray-800 mb-2">
-    <h3 class="font-medium text-gray-900 dark:text-white">{{ hoveredItem.name }}</h3>
+  <div class="px-4 py-2 border-b border-[#E8D9A0] dark:border-[#3D3420] mb-2">
+    <h3 class="font-outfit font-semibold text-theme-sm text-[#191817] dark:text-white">{{ hoveredItem.name }}</h3>
   </div>
 
   <ul class="flex flex-col gap-1 px-2">
@@ -379,12 +384,13 @@
     @if (hasPermission(subItem)) {
     <li>
       <a [routerLink]="subItem.path"
-        class="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-400 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-brand-500 dark:hover:text-brand-400 transition-colors"
-        [ngClass]="{'bg-brand-50 dark:bg-gray-800 text-brand-600 dark:text-brand-400': isActive(subItem.path)}"
+        class="flex items-center gap-2 px-3 py-2 font-display text-theme-sm text-[#46424A] dark:text-gray-300 rounded-lg hover:bg-[#FFF8E7] dark:hover:bg-[#1A1714] hover:text-[#C69214] dark:hover:text-[#FAC600] transition-colors"
+        [ngClass]="{'bg-[#FBF0C9] dark:bg-[#3D3420] text-[#9A6F0A] dark:text-[#E8C97A]': isActive(subItem.path)}"
         (click)="hoveredItem = null; onNavigationClick()">
         {{ subItem.name }}
         @if (subItem.new) {
-        <span class="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-brand-100 text-brand-600 font-medium">NEW</span>
+        <span
+          class="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-[#FBF0C9] text-[#9A6F0A] font-medium dark:bg-[#3D3420] dark:text-[#E8C97A]">NEW</span>
         }
       </a>
     </li>

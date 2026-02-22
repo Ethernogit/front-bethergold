@@ -1,95 +1,101 @@
 <!-- Modal de Selector de Organizaciones -->
 @if (showOrganizationSelector) {
-<div class="fixed inset-0 z-[9999] overflow-y-auto" style="z-index: 9999 !important;">
+<div class="fixed inset-0 z-[9999] overflow-y-auto">
   <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
     <!-- Overlay -->
-    <div class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-50 z-[9998]" aria-hidden="true"
-      style="z-index: 9998 !important;"></div>
+    <div class="fixed inset-0 transition-opacity bg-[#191817]/60 backdrop-blur-sm z-[9998]" aria-hidden="true"></div>
 
     <!-- Modal -->
-    <div
-      class="inline-block w-full max-w-md my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl dark:bg-gray-800 relative z-[9999]"
-      style="z-index: 9999 !important;">
+    <div class="inline-block w-full max-w-md my-8 overflow-hidden text-left align-middle transition-all transform
+             bg-[#FFFDF7] dark:bg-[#252017]
+             border border-[#E8D9A0] dark:border-[#3D3420]
+             shadow-2xl rounded-2xl relative z-[9999]">
       <app-organization-selector [organizations]="availableOrganizations" [isLoading]="isOrgSelectionLoading"
-        (organizationSelected)="onOrganizationSelected($event)"
-        (cancelled)="onOrganizationSelectionCancelled()"></app-organization-selector>
+        (organizationSelected)="onOrganizationSelected($event)" (cancelled)="onOrganizationSelectionCancelled()">
+      </app-organization-selector>
     </div>
   </div>
 </div>
 }
 
-<div class="min-h-screen w-full flex bg-gray-50 dark:bg-gray-900 overflow-hidden">
+<div class="min-h-screen w-full flex overflow-hidden bg-[#FFFDF7] dark:bg-[#1A1714]">
 
-  <!-- Left Side: Form -->
-  <div
-    class="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 lg:p-12 relative z-10 bg-white dark:bg-gray-900/95 backdrop-blur-sm">
+  <!-- ─── Left Side: Form ─────────────────────────────────────────────── -->
+  <div class="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 lg:p-14 relative z-10
+              bg-[#FFFDF7] dark:bg-[#1A1714]">
+
     <div class="w-full max-w-md space-y-8">
+
+      <!-- Logo -->
+      <div class="flex justify-center">
+        <img src="assets/brand/logo-horizontal.svg" alt="Bether Gold" class="w-44 lg:w-64 h-auto dark:hidden" />
+        <img src="assets/brand/logo-horizontal-negativo.svg" alt="Bether Gold"
+          class="w-44 lg:w-64 h-auto hidden dark:block" />
+      </div>
 
       <!-- Header -->
       <div class="text-center lg:text-left">
-        <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">
-          Bienvenido a <span class="text-[#D4AF37]">Bether Gold</span>
+        <h1 class="font-outfit text-2xl lg:text-title-sm font-bold tracking-tight text-[#191817] dark:text-white mb-2">
+          Bienvenido de <span class="text-[#C69214]">vuelta</span>
         </h1>
-        <p class="text-gray-500 dark:text-gray-400">
-          Ingresa a tu panel de control tecnológico
+        <p class="font-display text-theme-sm text-[#6B6560] dark:text-gray-400">
+          Ingresa tus credenciales para acceder a tu panel
         </p>
       </div>
 
-      <!-- Error Messages -->
+      <!-- Error Message -->
       @if (errorMessage) {
-      <div
-        class="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 flex items-center gap-3 animate-fade-in">
-        <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+      <div class="p-4 rounded-xl bg-error-50 dark:bg-error-500/10
+                  border border-error-200 dark:border-error-500/30
+                  flex items-center gap-3">
+        <svg class="h-5 w-5 shrink-0 text-error-500" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd"
             d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
             clip-rule="evenodd"></path>
         </svg>
-        <p class="text-sm text-red-700 dark:text-red-300 font-medium">{{ errorMessage }}</p>
+        <p class="font-display text-theme-sm text-error-700 dark:text-error-400 font-medium">
+          {{ errorMessage }}
+        </p>
       </div>
       }
 
       <!-- Form -->
-      <form (ngSubmit)="onSignIn()" class="space-y-6 mt-8">
+      <form (ngSubmit)="onSignIn()" class="space-y-4">
 
         <!-- Email -->
-        <div class="space-y-2">
-          <app-label>Correo Electrónico</app-label>
-          <div class="relative group">
-            <div
-              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
-              <i class="fas fa-envelope"></i>
-            </div>
-            <app-input-field type="email" placeholder="nombre@empresa.com" [(ngModel)]="email" name="email"
-              class="pl-10" [class.border-red-500]="fieldErrors['email']" required />
-          </div>
+        <div class="flex flex-col gap-px">
+          <label class="font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+            Correo Electrónico
+          </label>
+          <app-input-field type="email" placeholder="nombre@empresa.com" [(ngModel)]="email" name="email"
+            [class.border-error-500]="fieldErrors['email']" required />
           @if (fieldErrors['email']) {
-          <p class="text-xs text-red-500 mt-1 ml-1">{{ fieldErrors['email'] }}</p>
+          <p class="font-display text-theme-xs text-error-500 ml-1">{{ fieldErrors['email'] }}</p>
           }
         </div>
 
         <!-- Password -->
-        <div class="space-y-2">
+        <div class="flex flex-col gap-px">
           <div class="flex items-center justify-between">
-            <app-label>Contraseña</app-label>
+            <label class="font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+              Contraseña
+            </label>
             <a routerLink="/reset-password"
-              class="text-xs font-medium text-brand-500 hover:text-brand-400 transition-colors">
+              class="font-display text-theme-xs font-medium text-[#C69214] hover:text-[#9A6F0A] transition-colors">
               ¿Olvidaste tu contraseña?
             </a>
           </div>
-          <div class="relative group">
-            <div
-              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-brand-500 transition-colors">
-              <i class="fas fa-lock"></i>
-            </div>
+          <div class="relative">
             <app-input-field [type]="showPassword ? 'text' : 'password'" placeholder="••••••••" [(ngModel)]="password"
-              name="password" class="pl-10 pr-10" [class.border-red-500]="fieldErrors['password']" required />
-            <button type="button" (click)="togglePasswordVisibility()"
-              class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors focus:outline-none">
-              <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+              name="password" class="block pr-10" [class.border-error-500]="fieldErrors['password']" required />
+            <button type="button" (click)="togglePasswordVisibility()" class="absolute top-1/2 -translate-y-1/2 right-3.5 flex items-center
+                     text-[#6B6560] hover:text-[#46424A] dark:hover:text-gray-300
+                     transition-colors focus:outline-none">
+              <i class="fas text-sm" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
             </button>
           </div>
           @if (fieldErrors['password']) {
-          <p class="text-xs text-red-500 mt-1 ml-1">{{ fieldErrors['password'] }}</p>
+          <p class="font-display text-theme-xs text-error-500 ml-1">{{ fieldErrors['password'] }}</p>
           }
         </div>
 
@@ -99,14 +105,21 @@
         </div>
 
         <!-- Submit Button -->
-        <app-button className="w-full relative overflow-hidden group" size="md" [disabled]="isLoading"
-          (btnClick)="onSignIn()">
-          <div
-            class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer">
-          </div>
+        <button type="submit" [disabled]="isLoading" (click)="onSignIn()" class="w-full relative overflow-hidden flex items-center justify-center gap-2 rounded-xl
+                 bg-gradient-to-br from-[#C69214] to-[#FAC600]
+                 px-5 py-3 font-outfit text-sm font-semibold text-[#191817]
+                 shadow-theme-sm transition-all
+                 hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md
+                 active:scale-[0.98]
+                 disabled:cursor-not-allowed disabled:opacity-60">
+
+          <!-- Shimmer effect -->
+          <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent
+                      -translate-x-full hover:animate-[shimmer_2s_infinite]"></div>
+
           @if (isLoading) {
           <span class="flex items-center justify-center gap-2">
-            <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+            <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor"
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
@@ -117,61 +130,67 @@
           } @else {
           <span>Iniciar Sesión</span>
           }
-        </app-button>
+        </button>
       </form>
 
       <!-- Footer -->
-      <p class="text-center text-sm text-gray-500 dark:text-gray-400 mt-8">
+      <p class="text-center font-display text-theme-sm text-[#6B6560] dark:text-gray-500">
         ¿No tienes una cuenta?
-        <a routerLink="/signup" class="font-semibold text-brand-500 hover:text-brand-400 transition-colors">
+        <a routerLink="/signup" class="font-semibold text-[#C69214] hover:text-[#9A6F0A] transition-colors">
           Regístrate aquí
         </a>
       </p>
+
     </div>
   </div>
 
-  <!-- Right Side: Anime.js Animation Area -->
-  <div class="hidden lg:flex w-1/2 bg-gray-900 relative overflow-hidden items-center justify-center">
+  <!-- ─── Right Side: Brand Panel ─────────────────────────────────────── -->
+  <div class="hidden lg:flex w-1/2 bg-[#191817] relative overflow-hidden items-center justify-center">
 
-    <!-- Animated Background Elements -->
-    <div class="absolute inset-0" id="anime-background">
-      <!-- Grid lines generated by JS or CSS -->
-      <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
-
-      <!-- Tech Circles (Animated) -->
-      <div
-        class="anime-circle absolute w-96 h-96 border border-brand-500/20 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-      </div>
-      <div
-        class="anime-circle absolute w-[30rem] h-[30rem] border border-brand-500/10 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-dashed">
-      </div>
-      <div
-        class="anime-circle absolute w-[40rem] h-[40rem] border border-brand-500/5 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-      </div>
+    <!-- Patrón decorativo de fondo -->
+    <div class="absolute inset-0 opacity-[0.06]"
+      style="background-image: url('assets/brand/patron-fondo.jpg'); background-size: cover; background-position: center;">
     </div>
 
-    <!-- Mascot Container -->
-    <div class="relative z-10 flex flex-col items-center justify-center p-12 text-center">
-      <div class="relative z-10 flex flex-col items-center justify-center text-center p-8">
-        <!-- Logo/Mascot -->
-        <div class="relative group">
-          <div
-            class="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full group-hover:bg-[#D4AF37]/30 transition-all duration-500">
-          </div>
-          <img src="/assets/images/bugjoya.png" alt="Bether Gold Mascot"
-            class="relative w-48 h-48 lg:w-64 lg:h-64 object-contain drop-shadow-2xl transform transition-transform duration-500 group-hover:scale-105" />
-        </div>
+    <!-- Círculos decorativos dorados -->
+    <div class="absolute inset-0">
+      <div class="anime-circle absolute w-[28rem] h-[28rem] border border-[#C69214]/20 rounded-full
+                  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+      <div class="anime-circle absolute w-[36rem] h-[36rem] border border-[#C69214]/10 rounded-full
+                  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-dashed"></div>
+      <div class="anime-circle absolute w-[44rem] h-[44rem] border border-[#C69214]/5 rounded-full
+                  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+    </div>
 
-        <!-- Title -->
-        <h2 class="text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight">
-          Bether <span class="text-[#D4AF37]">Gold</span>
-        </h2>
+    <!-- Glow central -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                w-80 h-80 bg-[#C69214]/10 blur-3xl rounded-full pointer-events-none"></div>
 
-        <p class="text-gray-300 text-lg max-w-md mx-auto leading-relaxed">
-          El sistema que te ayudara a gestionar tu joyeria.
+    <!-- Contenido -->
+    <div class="relative z-10 flex flex-col items-center justify-center p-12 text-center gap-8">
+
+      <!-- Logo blanco grande -->
+      <img src="assets/brand/logo-negativo.svg" alt="Bether Gold" class="w-72 h-auto drop-shadow-2xl opacity-95" />
+
+      <!-- Separador dorado -->
+      <div class="w-16 h-px bg-gradient-to-r from-transparent via-[#C69214] to-transparent"></div>
+
+      <!-- Tagline -->
+      <div class="space-y-3 max-w-sm">
+        <p class="font-outfit text-white/90 text-lg font-medium leading-relaxed">
+          El sistema que te ayuda a gestionar tu joyería
+        </p>
+        <p class="font-display text-[#E8C97A] text-sm">
+          Elegancia atemporal · Tecnología moderna
         </p>
       </div>
-    </div>
 
+      <!-- Isotipo como detalle decorativo -->
+      <div class="mt-4 opacity-20">
+        <img src="assets/brand/isotipo.svg" alt="" class="w-16 h-16" />
+      </div>
+
+    </div>
   </div>
+
 </div>

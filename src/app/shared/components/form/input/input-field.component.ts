@@ -61,8 +61,8 @@ export class InputFieldComponent implements ControlValueAccessor {
   @Output() valueChange = new EventEmitter<string | number>();
 
   // ControlValueAccessor methods
-  private onChange = (value: string | number) => {};
-  onTouched = () => {};
+  private onChange = (value: string | number) => { };
+  onTouched = () => { };
 
   get inputClasses(): string {
     let inputClasses = `h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 ${this.className}`;
@@ -74,7 +74,7 @@ export class InputFieldComponent implements ControlValueAccessor {
     } else if (this.success) {
       inputClasses += ` border-success-500 focus:border-success-300 focus:ring-success-500/20 dark:text-success-400 dark:border-success-500 dark:focus:border-success-800`;
     } else {
-      inputClasses += ` bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90  dark:focus:border-brand-800`;
+      inputClasses += ` bg-transparent text-gray-800 border-gray-300 focus:border-[#C69214] focus:ring-[#C69214]/20 dark:border-gray-700 dark:text-white/90 dark:focus:border-[#FAC600]`;
     }
     return inputClasses;
   }

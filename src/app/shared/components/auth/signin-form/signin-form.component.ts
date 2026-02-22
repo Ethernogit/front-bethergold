@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, AfterViewInit, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { LabelComponent } from '../../form/label/label.component';
 import { CheckboxComponent } from '../../form/input/checkbox.component';
-import { ButtonComponent } from '../../ui/button/button.component';
 import { InputFieldComponent } from '../../form/input/input-field.component';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -16,9 +14,7 @@ import anime from 'animejs';
   selector: 'app-signin-form',
   imports: [
     CommonModule,
-    LabelComponent,
     CheckboxComponent,
-    ButtonComponent,
     InputFieldComponent,
     RouterModule,
     FormsModule,

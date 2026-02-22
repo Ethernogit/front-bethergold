@@ -168,6 +168,25 @@
   --z-index-9999: 9999;
   --z-index-99999: 99999;
   --z-index-999999: 999999;
+
+  /* === BETHER GOLD BRAND COLORS === */
+  --color-gold-primary: #C69214;
+  --color-gold-bright: #FAC600;
+  --color-gold-deep: #9A6F0A;
+  --color-gold-pale: #FBF0C9;
+  --color-gold-muted: #E8C97A;
+
+  --color-brand-black: #191817;
+  --color-brand-charcoal: #46424A;
+  --color-brand-warm-gray: #6B6560;
+
+  --color-bg-brand-light: #FFFDF7;
+  --color-bg-brand-surface-light: #FFF8E7;
+  --color-border-brand-light: #E8D9A0;
+
+  --color-bg-brand-dark: #1A1714;
+  --color-bg-brand-surface-dark: #252017;
+  --color-border-brand-dark: #3D3420;
 }
 
 /*
@@ -199,23 +218,23 @@
 }
 
 @utility menu-item {
-  @apply relative flex items-center w-full gap-3 px-3 py-2 font-medium rounded-lg text-theme-sm;
+  @apply relative flex items-center w-full gap-3 px-3 py-2 font-outfit font-medium rounded-lg text-theme-sm;
 }
 
 @utility menu-item-active {
-  @apply bg-brand-50 text-brand-500 dark:bg-brand-500/[0.12] dark:text-brand-400;
+  @apply bg-gold-pale text-gold-deep dark:bg-border-brand-dark dark:text-gold-muted;
 }
 
 @utility menu-item-inactive {
-  @apply text-gray-700 hover:bg-gray-100 group-hover:text-gray-700 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-gray-300;
+  @apply text-brand-charcoal hover:bg-bg-brand-surface-light group-hover:text-brand-charcoal dark:text-gray-300 dark:hover:bg-bg-brand-surface-dark dark:hover:text-gray-200;
 }
 
 @utility menu-item-icon {
-  @apply text-gray-500 group-hover:text-gray-700 dark:text-gray-400;
+  @apply text-brand-warm-gray group-hover:text-gold-primary dark:text-gray-400 dark:group-hover:text-gold-bright;
 }
 
 @utility menu-item-icon-active {
-  @apply text-brand-500 dark:text-brand-400;
+  @apply text-gold-primary dark:text-gold-bright;
 }
 
 @utility menu-item-icon-size {
@@ -225,7 +244,7 @@
 }
 
 @utility menu-item-icon-inactive {
-  @apply text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300;
+  @apply text-brand-warm-gray group-hover:text-gold-primary dark:text-gray-400 dark:group-hover:text-gold-bright;
 }
 
 @utility menu-item-arrow {
@@ -233,23 +252,23 @@
 }
 
 @utility menu-item-arrow-active {
-  @apply rotate-180 text-brand-500 dark:text-brand-400;
+  @apply rotate-180 text-gold-primary dark:text-gold-bright;
 }
 
 @utility menu-item-arrow-inactive {
-  @apply text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300;
+  @apply text-brand-warm-gray group-hover:text-gold-primary dark:text-gray-400 dark:group-hover:text-gold-bright;
 }
 
 @utility menu-dropdown-item {
-  @apply relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-theme-sm font-medium;
+  @apply relative flex items-center gap-3 rounded-lg px-3 py-2.5 font-display text-theme-sm font-medium;
 }
 
 @utility menu-dropdown-item-active {
-  @apply bg-brand-50 text-brand-500 dark:bg-brand-500/[0.12] dark:text-brand-400;
+  @apply bg-gold-pale text-gold-deep dark:bg-border-brand-dark dark:text-gold-muted;
 }
 
 @utility menu-dropdown-item-inactive {
-  @apply text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5;
+  @apply text-brand-charcoal hover:bg-bg-brand-surface-light dark:text-gray-300 dark:hover:bg-bg-brand-surface-dark;
 }
 
 @utility menu-dropdown-badge {
