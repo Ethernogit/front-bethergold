@@ -36,6 +36,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
     isDataLoaded = false;
 
     goldTypes: GoldType[] = [];
+    filteredGoldTypes: GoldType[] = [];
     // karatages removed in favor of materialTypes
 
     // Barcode Configuration
@@ -130,6 +131,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
                 this.providers = this.preloadedProviders || res.providers?.data || res.providers || [];
                 this.materialTypes = res.materials?.data || res.materials || [];
                 this.goldTypes = res.goldTypes?.data || res.goldTypes || [];
+                this.filteredGoldTypes = [...this.goldTypes];
 
                 if (res.subcategories) {
                     this.subcategories = res.subcategories?.data || res.subcategories || [];
@@ -175,7 +177,28 @@ export class ProductFormComponent implements OnInit, OnChanges {
                 this.currentProviderPrices = [];
             }
             if (!this.isEditMode) this.calculatePrices();
-            if (!this.isEditMode) this.calculatePrices();
+        });
+
+        // Watch for material changes mainly to filter variants
+        this.productForm.get('karatage')?.valueChanges.subscribe(materialId => {
+            if (materialId) {
+                // Filtrar Variantes: Mostrar si está ligada al material seleccionado OR si es global (null u "")
+                this.filteredGoldTypes = this.goldTypes.filter(type => {
+                    const typeMaterialId = type.materialType ? (typeof type.materialType === 'object' ? (type.materialType as any)._id || (type.materialType as any).id : type.materialType) : null;
+                    return !typeMaterialId || typeMaterialId === '' || typeMaterialId === materialId;
+                });
+            } else {
+                // Si no hay material seleccionado, mostrar todas por defecto (o solo las globales)
+                // En este caso, mostraremos todas las registradas (como el comportamiento original)
+                this.filteredGoldTypes = [...this.goldTypes];
+            }
+
+            // Validate if currently selected goldType is still valid
+            const currentGoldType = this.productForm.get('goldType')?.value;
+            if (currentGoldType) {
+                const isValid = this.filteredGoldTypes.some(g => g.name === currentGoldType);
+                if (!isValid) this.productForm.get('goldType')?.setValue('');
+            }
         });
 
         // Watch for isUnique changes to toggle stock field validation/visibility logic helpers if needed
@@ -408,7 +431,12 @@ export class ProductFormComponent implements OnInit, OnChanges {
         // Map materialTypeId to karat text for backend if needed
         const materialId = formValue.karatage;
         const selectedMaterial = this.materialTypes.find(m => m._id === materialId || m.id === materialId);
-        const karatText = selectedMaterial ? `${selectedMaterial.karat}k` : (formValue.karatage || '');
+        let karatText = '';
+        if (selectedMaterial) {
+            karatText = selectedMaterial.karat ? `${selectedMaterial.karat}` : '';
+        } else {
+            karatText = formValue.karatage || '';
+        }
 
         const productData: any = {
             barcode: formValue.barcode,

@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProviderService } from '../../../shared/services/provider.service';
 import { ToastService } from '../../../shared/services/toast.service';
-import { GoldType } from '../../../shared/interfaces/provider.interfaces';
-import { finalize } from 'rxjs';
+import { GoldType, MaterialType } from '../../../shared/interfaces/provider.interfaces';
+import { finalize, forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-gold-types',
@@ -18,6 +18,7 @@ export class GoldTypesComponent implements OnInit {
     private fb = inject(FormBuilder);
 
     goldTypes = signal<GoldType[]>([]);
+    materialTypes = signal<MaterialType[]>([]);
     loading = signal(false);
     showModal = signal(false);
     editingType = signal<GoldType | null>(null);
@@ -27,7 +28,8 @@ export class GoldTypesComponent implements OnInit {
     constructor() {
         this.goldForm = this.fb.group({
             name: ['', [Validators.required, Validators.maxLength(50)]],
-            status: ['active']
+            status: ['active'],
+            materialType: [null]
         });
     }
 
@@ -37,25 +39,31 @@ export class GoldTypesComponent implements OnInit {
 
     loadGoldTypes() {
         this.loading.set(true);
-        // Fetch all types including global ones
-        this.providerService.getGoldTypes()
+        // Fetch types and materials
+        forkJoin({
+            gold: this.providerService.getGoldTypes(),
+            materials: this.providerService.getMaterialTypes()
+        })
             .pipe(finalize(() => this.loading.set(false)))
             .subscribe({
                 next: (res) => {
-                    if (res.success) {
-                        this.goldTypes.set(res.data);
+                    if (res.gold.success) {
+                        this.goldTypes.set(res.gold.data);
+                    }
+                    if (res.materials.success) {
+                        this.materialTypes.set(res.materials.data.filter(m => m.status === 'active'));
                     }
                 },
                 error: (err) => {
-                    console.error('Error loading gold types', err);
-                    this.toastService.error('Error al cargar tipos de oro');
+                    console.error('Error loading data', err);
+                    this.toastService.error('Error al cargar datos necesarios');
                 }
             });
     }
 
     openCreateModal() {
         this.editingType.set(null);
-        this.goldForm.reset({ status: 'active' });
+        this.goldForm.reset({ status: 'active', materialType: '' });
         this.showModal.set(true);
     }
 
@@ -63,7 +71,8 @@ export class GoldTypesComponent implements OnInit {
         this.editingType.set(type);
         this.goldForm.patchValue({
             name: type.name,
-            status: type.status
+            status: type.status,
+            materialType: type.materialType ? (typeof type.materialType === 'string' ? type.materialType : type.materialType._id || type.materialType.id) : ''
         });
         this.showModal.set(true);
     }
@@ -81,7 +90,12 @@ export class GoldTypesComponent implements OnInit {
         }
 
         this.loading.set(true);
-        const formData = this.goldForm.value;
+        const formData = { ...this.goldForm.value };
+
+        // Handle optional material selection
+        if (!formData.materialType || formData.materialType === '') {
+            formData.materialType = null;
+        }
 
         const request = this.editingType()
             ? this.providerService.updateGoldType(this.editingType()!.id || this.editingType()!._id!, formData)
@@ -94,8 +108,8 @@ export class GoldTypesComponent implements OnInit {
                     if (res.success) {
                         this.toastService.success(
                             this.editingType()
-                                ? 'Tipo de oro actualizado'
-                                : 'Tipo de oro creado'
+                                ? 'Variante actualizada'
+                                : 'Variante creada'
                         );
                         this.closeModal();
                         this.loadGoldTypes();
@@ -103,13 +117,13 @@ export class GoldTypesComponent implements OnInit {
                 },
                 error: (err) => {
                     console.error('Error saving gold type', err);
-                    this.toastService.error(err.error?.message || 'Error al guardar tipo de oro');
+                    this.toastService.error(err.error?.message || 'Error al guardar variante');
                 }
             });
     }
 
     deleteType(type: GoldType) {
-        if (!confirm(`¿Estás seguro de eliminar el tipo "${type.name}"?`)) return;
+        if (!confirm(`¿Estás seguro de eliminar la variante "${type.name}"?`)) return;
 
         this.loading.set(true);
         this.providerService.deleteGoldType(type.id || type._id!)
@@ -117,13 +131,13 @@ export class GoldTypesComponent implements OnInit {
             .subscribe({
                 next: (res) => {
                     if (res.success) {
-                        this.toastService.success('Tipo de oro eliminado');
+                        this.toastService.success('Variante eliminada');
                         this.loadGoldTypes();
                     }
                 },
                 error: (err) => {
                     console.error('Error deleting gold type', err);
-                    this.toastService.error(err.error?.message || 'Error al eliminar tipo de oro');
+                    this.toastService.error(err.error?.message || 'Error al eliminar variante');
                 }
             });
     }
@@ -140,5 +154,14 @@ export class GoldTypesComponent implements OnInit {
             if (field.errors['maxlength']) return `Máximo ${field.errors['maxlength'].requiredLength} caracteres`;
         }
         return '';
+    }
+
+    getMaterialName(type: GoldType): string {
+        if (!type.materialType) return 'Global (Aplica a todos)';
+        if (typeof type.materialType === 'string') {
+            const mat = this.materialTypes().find(m => (m.id || m._id) === type.materialType);
+            return mat?.name || 'Material desconocido';
+        }
+        return type.materialType.name || 'Desconocido';
     }
 }

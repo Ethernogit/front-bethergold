@@ -8,13 +8,13 @@
             <div class="border-b border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <h3 class="font-medium text-black dark:text-white">
-                        Tipos de Oro
+                        Variantes
                     </h3>
                     <button type="button"
                         class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200"
                         (click)="openCreateModal()">
                         <i class="fas fa-plus"></i>
-                        <span>Nuevo Tipo</span>
+                        <span>Nueva Variante</span>
                     </button>
                 </div>
             </div>
@@ -38,6 +38,7 @@
                             class="sticky top-0 z-10 bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-800 dark:text-gray-400 shadow-sm">
                             <tr>
                                 <th class="px-6 py-4 font-medium">Nombre</th>
+                                <th class="px-6 py-4 font-medium">Material Base</th>
                                 <th class="px-6 py-4 font-medium">Estado</th>
                                 <th class="px-6 py-4 text-center font-medium">Acciones</th>
                             </tr>
@@ -47,6 +48,9 @@
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                                 <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
                                     {{ type.name }}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                    {{ getMaterialName(type) }}
                                 </td>
                                 <td class="px-6 py-4">
                                     <span
@@ -83,14 +87,15 @@
                     <div class="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-800">
                         <i class="fas fa-palette text-3xl text-gray-400"></i>
                     </div>
-                    <h5 class="mb-2 text-lg font-medium text-gray-900 dark:text-white">No hay tipos de oro</h5>
-                    <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">Comienza agregando los tipos de oro
-                        (Amarillo, Blanco, etc.).</p>
+                    <h5 class="mb-2 text-lg font-medium text-gray-900 dark:text-white">No hay variantes</h5>
+                    <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">Comienza agregando las variantes o
+                        características
+                        (Amarillo, Blanco, Madera, Cartón, etc.).</p>
                     <button type="button"
                         class="flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all"
                         (click)="openCreateModal()">
                         <i class="fas fa-plus"></i>
-                        <span>Crear Tipo</span>
+                        <span>Crear Variante</span>
                     </button>
                 </div>
                 }
@@ -109,7 +114,7 @@
         <!-- Header -->
         <div class="flex items-center justify-between border-b border-gray-200 p-5 dark:border-gray-800">
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                {{ editingType() ? 'Editar Tipo de Oro' : 'Nuevo Tipo de Oro' }}
+                {{ editingType() ? 'Editar Variante' : 'Nueva Variante' }}
             </h3>
             <button type="button"
                 class="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
@@ -132,6 +137,22 @@
                         @if (isFieldInvalid('name')) {
                         <p class="mt-1 text-xs text-error-500">{{ getFieldError('name') }}</p>
                         }
+                    </div>
+
+                    <!-- Material Type (Optional) -->
+                    <div>
+                        <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Material Base
+                            (Opcional)</label>
+                        <select formControlName="materialType"
+                            class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-brand-500 dark:focus:ring-brand-500">
+                            <option value="" [selected]="!goldForm.get('materialType')?.value">Global (Aplica a todos)
+                            </option>
+                            @for (material of materialTypes(); track material.id || material._id) {
+                            <option [value]="material.id || material._id">{{ material.name }}</option>
+                            }
+                        </select>
+                        <p class="mt-1 text-xs text-gray-500">Si dejas esto en "Global", esta variante aparecerá en
+                            todos los productos sin importar qué material elijan.</p>
                     </div>
                 </div>
             </form>

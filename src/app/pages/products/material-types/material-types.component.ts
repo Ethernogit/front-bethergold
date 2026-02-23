@@ -30,14 +30,17 @@ export class MaterialTypesComponent implements OnInit {
     readonly materialTypeOptions = [
         { value: 'oro', label: 'Oro' },
         { value: 'plata', label: 'Plata' },
-        { value: 'laminado', label: 'Laminado' }
+        { value: 'laminado', label: 'Laminado' },
+        { value: 'alianzas', label: 'Alianzas' },
+        { value: 'empaque', label: 'Empaque / Estuche' },
+        { value: 'accesorio', label: 'Accesorio / Lazo' },
+        { value: 'otro', label: 'Otro' }
     ];
 
-    readonly karatOptions = [
-        { value: 10, label: '10k' },
-        { value: 14, label: '14k' },
-        { value: 18, label: '18k' }
-    ];
+    // Ya no lo usaremos como Dropdown estricto para karat,
+    // sino que el usuario podrá teclear un número o usar referencias,
+    // pero mantenemos algunas sugerencias para oro si es deseado o directamente dejamos input numérico.
+    // De momento, quitamos karatOptions porque lo cambiaremos a input type="number" en HTML.
 
     constructor() {
         this.materialForm = this.fb.group({
@@ -56,10 +59,12 @@ export class MaterialTypesComponent implements OnInit {
 
             const karatControl = this.materialForm.get('karat');
             if (isGold) {
-                karatControl?.setValidators([Validators.required]);
+                // Hacemos el quilate requerido solo si explícitamente es 'oro'
+                karatControl?.setValidators([Validators.required, Validators.min(1)]);
             } else {
                 karatControl?.clearValidators();
-                karatControl?.setValue(null);
+                // Permitir que si alguien quiere poner quilataje a plata, se conserve,
+                // de lo contrario, no forzamos a nulo automáticamente para dar flexibilidad.
             }
             karatControl?.updateValueAndValidity();
         });

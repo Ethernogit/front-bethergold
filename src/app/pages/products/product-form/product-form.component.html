@@ -96,11 +96,10 @@
         <!-- 5. Material Type (Karat) -->
         <div id="product-material">
             <div class="flex items-center justify-between">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo Material
-                    (Kilataje)*</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Material*</label>
                 <a [routerLink]="['/products/material-types']" target="_blank"
                     class="text-brand-500 hover:text-brand-600 dark:text-brand-400 dark:hover:text-brand-300"
-                    title="Administrar Tipos de Material">
+                    title="Administrar Materiales">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -112,17 +111,18 @@
             <select formControlName="karatage"
                 class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
                 <option value="">Seleccione</option>
-                <option *ngFor="let m of materialTypes" [value]="m._id">{{ m.name }} - {{ m.karat }}k</option>
+                <option *ngFor="let m of materialTypes" [value]="m._id">{{ m.name }}{{ m.karat ? ' - ' + m.karat : '' }}
+                </option>
             </select>
         </div>
 
-        <!-- 6. Gold Type -->
+        <!-- 6. Variant (Formerly Gold Type) -->
         <div id="product-gold-type">
             <div class="flex items-center justify-between">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de oro*</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Variante</label>
                 <a [routerLink]="['/products/gold-types']" target="_blank"
                     class="text-brand-500 hover:text-brand-600 dark:text-brand-400 dark:hover:text-brand-300"
-                    title="Administrar Tipos de Oro">
+                    title="Administrar Variantes">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -134,7 +134,7 @@
             <select formControlName="goldType"
                 class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 sm:text-sm text-gray-900 dark:text-white">
                 <option value="">Seleccione</option>
-                <option *ngFor="let type of goldTypes" [value]="type.name">{{ type.name }}</option>
+                <option *ngFor="let type of filteredGoldTypes" [value]="type.name">{{ type.name }}</option>
             </select>
         </div>
 

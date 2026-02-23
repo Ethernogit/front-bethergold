@@ -118,8 +118,8 @@ export class TourService {
                 {
                     element: '#check-show-gold-type',
                     popover: {
-                        title: 'Tipo de Oro',
-                        description: 'Muestra si es Oro Amarillo, Blanco o Rosa.',
+                        title: 'Variante',
+                        description: 'Característica o subtipo del producto (ej. Amarillo, Madera).',
                         side: 'top'
                     }
                 },
@@ -181,7 +181,7 @@ export class TourService {
                 },
                 {
                     element: '#product-gold-type',
-                    popover: { title: 'Tipo de Oro', description: 'Color del oro (Amarillo, Blanco, Rosa).', side: 'top' }
+                    popover: { title: 'Variante', description: 'Atributo adicional (Amarillo, Madera).', side: 'top' }
                 },
                 {
                     element: '#product-weight',

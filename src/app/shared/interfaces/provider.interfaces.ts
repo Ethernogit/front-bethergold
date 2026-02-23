@@ -228,6 +228,7 @@ export interface GoldType {
   id?: string;
   name: string;
   status: 'active' | 'inactive';
+  materialType?: string | MaterialType | null;
   organizationId?: string | null;
   createdBy?: string;
   updatedBy?: string;
@@ -238,6 +239,7 @@ export interface GoldType {
 export interface CreateGoldTypeRequest {
   name: string;
   status?: 'active' | 'inactive';
+  materialType?: string | null;
 }
 
 export interface UpdateGoldTypeRequest extends Partial<CreateGoldTypeRequest> {

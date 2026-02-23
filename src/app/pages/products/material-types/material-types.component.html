@@ -8,7 +8,7 @@
             <div class="border-b border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <h3 class="font-medium text-black dark:text-white">
-                        Tipos de Material
+                        Materiales
                     </h3>
                     <button type="button"
                         class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200"
@@ -39,8 +39,8 @@
                             <tr>
                                 <th class="px-6 py-4 font-medium">Código</th>
                                 <th class="px-6 py-4 font-medium">Nombre</th>
-                                <th class="px-6 py-4 font-medium">Tipo</th>
-                                <th class="px-6 py-4 font-medium">Quilataje</th>
+                                <th class="px-6 py-4 font-medium">Material Base</th>
+                                <th class="px-6 py-4 font-medium">Aleación</th>
                                 <th class="px-6 py-4 font-medium">Estado</th>
                                 <th class="px-6 py-4 text-center font-medium">Acciones</th>
                             </tr>
@@ -58,7 +58,7 @@
                                     {{ type.type }}
                                 </td>
                                 <td class="px-6 py-4">
-                                    @if (type.type === 'oro') {
+                                    @if (type.karat) {
                                     <span
                                         class="inline-flex items-center rounded-full bg-yellow-50 px-2.5 py-0.5 text-xs font-medium text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300">
                                         {{ type.karat }}k
@@ -106,8 +106,8 @@
                         <i class="fas fa-gem text-3xl text-gray-400"></i>
                     </div>
                     <h5 class="mb-2 text-lg font-medium text-gray-900 dark:text-white">No hay tipos de material</h5>
-                    <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">Comienza agregando los tipos de metal (Oro,
-                        Plata, etc.).</p>
+                    <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">Comienza agregando los tipos de material
+                        base (Empaque, Madera, Metal, etc.).</p>
                     <button type="button"
                         class="flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all"
                         (click)="openCreateModal()">
@@ -150,7 +150,7 @@
                         <input type="text"
                             class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
                             [class.border-error-500]="isFieldInvalid('name')" formControlName="name"
-                            placeholder="Ej. Oro 10k Italiano">
+                            placeholder="Ej. Cartón Kraft">
                         @if (isFieldInvalid('name')) {
                         <p class="mt-1 text-xs text-error-500">{{ getFieldError('name') }}</p>
                         }
@@ -171,7 +171,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <!-- Type -->
                         <div>
-                            <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Tipo Metal
+                            <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Material Base
                                 *</label>
                             <select
                                 class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
@@ -183,21 +183,17 @@
                             </select>
                         </div>
 
-                        <!-- Karat (Conditional) -->
-                        @if (isGold()) {
+                        <!-- Karat/Alloy (Optional for non-gold, but available for all) -->
                         <div>
-                            <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Quilataje
-                                *</label>
-                            <select
+                            <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Aleación (K,
+                                Ley)
+                                @if(isGold()) { <span class="text-error-500">*</span> }
+                            </label>
+                            <!-- Changed from select to input alphanumeric for broader alloy types -->
+                            <input type="text"
                                 class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
-                                formControlName="karat">
-                                <option [ngValue]="null">Seleccionar...</option>
-                                @for (opt of karatOptions; track opt.value) {
-                                <option [value]="opt.value">{{ opt.label }}</option>
-                                }
-                            </select>
+                                formControlName="karat" placeholder="Ej. 10k, 14k, 925, 950">
                         </div>
-                        }
                     </div>
 
                     <!-- Description -->

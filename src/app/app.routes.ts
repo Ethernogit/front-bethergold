@@ -217,7 +217,7 @@ export const routes: Routes = [
           module: 'products',
           action: 'read'
         },
-        title: 'Tipos de Oro | Bethergold'
+        title: 'Variantes | Bethergold'
       },
       {
         path: 'products/material-types',
@@ -227,7 +227,7 @@ export const routes: Routes = [
           module: 'products',
           action: 'read'
         },
-        title: 'Tipos de Material | Bethergold'
+        title: 'Materiales | Bethergold'
       },
       {
         path: 'products',
