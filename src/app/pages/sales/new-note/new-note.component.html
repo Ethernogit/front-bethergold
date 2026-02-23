@@ -1,15 +1,12 @@
-<div class="flex flex-col h-[calc(100vh)] bg-gray-50 dark:bg-gray-900 overflow-hidden">
-    <!-- Header -->
-    <!-- Global Header Removed as per user request to keep info in left section -->
-
+<div class="flex flex-col h-[calc(100vh)] bg-[#FFFDF7] dark:bg-[#120F0B] overflow-hidden">
     <div class="flex flex-1 overflow-hidden">
         <!-- Main Content (Left): Client, Items -->
         <main class="flex-1 overflow-y-auto p-4">
 
             <div class="flex items-center justify-between mb-4">
-                <h1 class="text-xl font-bold text-gray-900 dark:text-white">Nueva Venta</h1>
+                <h1 class="font-outfit text-xl font-bold text-[#191817] dark:text-white">Nueva Venta</h1>
                 <div
-                    class="flex items-center gap-4 text-xs font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+                    class="flex items-center gap-4 font-display text-theme-xs font-medium text-[#46424A] dark:text-gray-400 bg-white dark:bg-[#1A1714] px-3 py-1.5 rounded-xl border border-[#E8D9A0] dark:border-[#3D3420] shadow-theme-sm">
                     <div class="flex items-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -18,10 +15,11 @@
                         </svg>
                         <span>{{ currentDate | date:'dd/MM/yyyy' }}</span>
                     </div>
-                    <div class="h-4 w-px bg-gray-300 dark:bg-gray-600"></div>
+                    <div class="h-4 w-px bg-[#E8D9A0] dark:bg-[#3D3420]"></div>
                     <div class="flex items-center gap-1">
                         <span class="opacity-75">Folio:</span>
-                        <span class="font-bold text-amber-600 dark:text-amber-500 text-sm">{{ nextFolio }}</span>
+                        <span class="font-outfit font-bold text-[#C69214] dark:text-[#FAC600] text-sm">{{ nextFolio
+                            }}</span>
                     </div>
                 </div>
             </div>
@@ -31,12 +29,13 @@
                 <div class="flex flex-col md:flex-row gap-4 mb-6">
                     <!-- Search (Left) -->
                     <div class="flex-1 relative z-20">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Buscar Producto / Código de
-                            Barras</label>
+                        <label
+                            class="block font-outfit text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Buscar
+                            Producto / Código de Barras</label>
                         <div class="relative">
                             <div
-                                class="flex items-center bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-1 transition-colors hover:border-gray-400 dark:hover:border-gray-600 h-14">
-                                <div class="p-2 text-gray-400">
+                                class="flex items-center bg-white dark:bg-[#1A1714] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl p-1 transition-colors hover:border-[#C69214] dark:hover:border-[#FAC600] h-14">
+                                <div class="p-2 text-[#6B6560] dark:text-gray-400">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                         stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -47,11 +46,10 @@
                                 </div>
                                 <input [formControl]="searchControl" type="text"
                                     placeholder="Escanear o escribir código..."
-                                    class="w-full h-full bg-transparent border-none text-gray-900 dark:text-white text-lg font-medium focus:ring-0 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 pr-10">
-
+                                    class="w-full h-full bg-transparent border-none font-display text-[#191817] dark:text-white text-lg font-medium focus:ring-0 focus:outline-none placeholder-[#6B6560] dark:placeholder-gray-500 pr-10">
                                 <div class="p-2">
                                     <button
-                                        class="bg-gray-100 dark:bg-gray-800 p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                        class="bg-[#FBF0C9] dark:bg-[#3D3420] p-2 rounded-lg hover:bg-[#E8D9A0] dark:hover:bg-[#4A3F25] text-[#9A6F0A] dark:text-[#E8C97A] transition-colors">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -59,32 +57,29 @@
                                         </svg>
                                     </button>
                                 </div>
-
-                                <!-- Loading Indicator -->
                                 <span *ngIf="isSearching"
-                                    class="absolute right-12 top-1/2 -translate-y-1/2 text-amber-500 animate-spin">⟳</span>
+                                    class="absolute right-12 top-1/2 -translate-y-1/2 text-[#C69214] animate-spin">⟳</span>
                             </div>
 
                             <!-- Results Dropdown -->
                             <div *ngIf="searchResults.length > 0"
-                                class="absolute w-full mt-1 bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 max-h-60 overflow-y-auto overflow-x-hidden z-50">
+                                class="absolute w-full mt-1 bg-white dark:bg-[#1A1714] rounded-xl shadow-xl border border-[#E8D9A0] dark:border-[#3D3420] max-h-60 overflow-y-auto z-50">
                                 <ul>
                                     <li *ngFor="let product of searchResults" (click)="selectProduct(product)"
-                                        class="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer border-b border-gray-100 dark:border-gray-800 last:border-0 flex justify-between items-center group transition-colors">
+                                        class="px-4 py-3 hover:bg-[#FBF0C9]/50 dark:hover:bg-[#252017] cursor-pointer border-b border-[#E8D9A0] dark:border-[#3D3420] last:border-0 flex justify-between items-center group transition-colors">
                                         <div>
                                             <p
-                                                class="font-medium text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-500">
+                                                class="font-outfit font-medium text-[#191817] dark:text-white group-hover:text-[#C69214] dark:group-hover:text-[#FAC600]">
                                                 {{ product.name || product.description }}</p>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">SKU: {{ product.sku }} |
-                                                Stock:
-                                                {{ product.stock }}</p>
+                                            <p class="font-display text-theme-xs text-[#6B6560] dark:text-gray-400">SKU:
+                                                {{ product.sku }} | Stock: {{ product.stock }}</p>
                                         </div>
                                         <div class="text-right">
-                                            <span class="block text-sm font-bold text-gray-900 dark:text-white">{{
-                                                product.price
-                                                | currency }}</span>
                                             <span
-                                                class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-1 rounded">{{
+                                                class="block font-outfit text-theme-sm font-bold text-[#191817] dark:text-white">{{
+                                                product.price | currency }}</span>
+                                            <span
+                                                class="font-outfit text-theme-xs text-[#9A6F0A] dark:text-[#E8C97A] bg-[#FBF0C9] dark:bg-[#3D3420] px-1.5 rounded">{{
                                                 getCategoryName(product) }}</span>
                                         </div>
                                     </li>
@@ -95,11 +90,13 @@
 
                     <!-- Client Selector (Right) -->
                     <div class="flex-1">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Cliente</label>
+                        <label
+                            class="block font-outfit text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Cliente</label>
                         <div class="relative group cursor-pointer" (click)="openClientModal()">
                             <div
-                                class="flex items-center bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-1 transition-colors hover:border-amber-400 dark:hover:border-amber-600 h-14">
-                                <div class="p-2 text-gray-400 group-hover:text-amber-500 transition-colors">
+                                class="flex items-center bg-white dark:bg-[#1A1714] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl p-1 transition-colors hover:border-[#C69214] dark:hover:border-[#FAC600] h-14">
+                                <div
+                                    class="p-2 text-[#6B6560] group-hover:text-[#C69214] dark:text-gray-400 dark:group-hover:text-[#FAC600] transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                         class="w-5 h-5">
                                         <path fill-rule="evenodd"
@@ -107,115 +104,96 @@
                                             clip-rule="evenodd" />
                                     </svg>
                                 </div>
-
                                 <div class="flex-1 px-2">
                                     <h4 *ngIf="selectedClient"
-                                        class="text-sm font-bold text-gray-900 dark:text-white leading-tight">
-                                        {{ selectedClient.name }}
-                                    </h4>
-                                    <p *ngIf="selectedClient" class="text-[10px] text-gray-500 dark:text-gray-400">
-                                        {{ selectedClient.phone || selectedClient.email || 'Cliente Registrado' }}
-                                    </p>
+                                        class="font-outfit text-theme-sm font-bold text-[#191817] dark:text-white leading-tight">
+                                        {{ selectedClient.name }}</h4>
+                                    <p *ngIf="selectedClient"
+                                        class="font-display text-[10px] text-[#6B6560] dark:text-gray-400">{{
+                                        selectedClient.phone || selectedClient.email || 'Cliente Registrado' }}</p>
                                     <span *ngIf="!selectedClient"
-                                        class="text-sm text-gray-400 dark:text-gray-500">Seleccionar Cliente...</span>
+                                        class="font-display text-theme-sm text-[#6B6560] dark:text-gray-500">Seleccionar
+                                        Cliente...</span>
                                 </div>
-
                                 <span
-                                    class="text-amber-600 dark:text-amber-500 text-xs font-bold px-3 whitespace-nowrap">
-                                    {{ selectedClient ? 'Cambiar' : 'Buscar' }}
-                                </span>
+                                    class="font-outfit text-theme-xs font-bold text-[#C69214] dark:text-[#FAC600] px-3 whitespace-nowrap">{{
+                                    selectedClient ? 'Cambiar' : 'Buscar' }}</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Items List (Cards) -->
-                <!-- Items List (Cards) -->
+                <!-- Items List -->
                 <div class="flex flex-col gap-3 min-h-[400px]" formArrayName="items">
 
                     <div *ngIf="items.length === 0"
-                        class="flex flex-col items-center justify-center h-64 text-gray-400 dark:text-gray-600 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl m-4">
+                        class="flex flex-col items-center justify-center h-64 text-[#6B6560] dark:text-gray-500 border-2 border-dashed border-[#E8D9A0] dark:border-[#3D3420] rounded-2xl m-4">
                         <span class="text-4xl mb-3 opacity-50">🛍️</span>
-                        <p class="font-medium">Escanee productos para agregar a la venta</p>
+                        <p class="font-display font-medium">Escanee productos para agregar a la venta</p>
                     </div>
 
                     <div *ngFor="let item of items.controls; let i=index" [formGroupName]="i">
 
-                        <!-- PRODUCT CARD (type: jewelry/product) -->
+                        <!-- PRODUCT CARD (jewelry) -->
                         <div *ngIf="item.get('type')?.value === 'jewelry'"
-                            class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm flex flex-col sm:flex-row relative group transition-all hover:border-amber-300 dark:hover:border-amber-700">
-
+                            class="bg-white dark:bg-[#1A1714] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl overflow-hidden shadow-theme-sm flex flex-col sm:flex-row relative group transition-all hover:border-[#C69214] dark:hover:border-[#FAC600]">
                             <div *ngIf="item.get('deliveryStatus')?.value === 'pending'"
-                                class="absolute top-0 right-0 bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl z-10">
-                                APARTADO
-                            </div>
-                            <!-- Badge -->
+                                class="absolute top-0 right-0 bg-[#C69214] text-[#191817] text-[10px] font-bold px-2 py-0.5 rounded-bl z-10">
+                                APARTADO</div>
                             <div
-                                class="absolute top-0 left-0 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-500 text-[10px] font-bold px-2 py-0.5 rounded-br">
-                                PRODUCTO
-                            </div>
-
-                            <!-- Content -->
+                                class="absolute top-0 left-0 bg-[#FBF0C9] dark:bg-[#3D3420] text-[#9A6F0A] dark:text-[#E8C97A] text-[10px] font-bold px-2 py-0.5 rounded-br">
+                                PRODUCTO</div>
                             <div class="flex-1 p-4 pt-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-
-                                <!-- Description & Code -->
                                 <div class="flex-1">
-                                    <h3 class="text-gray-900 dark:text-white font-bold text-lg leading-tight mb-1">
-                                        {{ item.get('name')?.value || 'Producto sin nombre' }}
-                                    </h3>
-                                    <div class="text-gray-500 dark:text-gray-400 text-sm font-medium flex flex-wrap gap-x-4 gap-y-1"
+                                    <h3
+                                        class="font-outfit text-[#191817] dark:text-white font-bold text-lg leading-tight mb-1">
+                                        {{ item.get('name')?.value || 'Producto sin nombre' }}</h3>
+                                    <div class="font-display text-[#6B6560] dark:text-gray-400 text-theme-sm flex flex-wrap gap-x-4 gap-y-1"
                                         formGroupName="specifications">
                                         <span class="flex items-center gap-1"><span class="opacity-70">CB:</span> {{
                                             item.get('specifications.notes')?.value || 'N/A' }}</span>
-                                        <div class="hidden sm:block w-px h-4 bg-gray-300 dark:bg-gray-700"></div>
+                                        <div class="hidden sm:block w-px h-4 bg-[#E8D9A0] dark:bg-[#3D3420]"></div>
                                         <span class="flex items-center gap-1"><span class="opacity-70">K:</span> {{
                                             item.get('specifications.karatage')?.value || '-' }}</span>
                                         <span class="flex items-center gap-1"><span class="opacity-70">Peso:</span> {{
                                             item.get('specifications.weight')?.value || '-' }}g</span>
                                     </div>
-
-                                    <!-- Bulk Quantity Input -->
                                     <div *ngIf="!item.get('isUnique')?.value" class="mt-2 flex items-center gap-2">
-                                        <label class="text-xs font-bold text-gray-500 uppercase">Cant:</label>
+                                        <label
+                                            class="font-outfit text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">Cant:</label>
                                         <input type="number" formControlName="quantity" min="1"
                                             [max]="item.get('maxStock')?.value"
-                                            class="w-20 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-amber-500 focus:border-amber-500">
-                                        <span class="text-[10px] text-gray-400">Max: {{ item.get('maxStock')?.value
-                                            }}</span>
+                                            class="w-20 px-2 py-1 font-display text-theme-sm border border-[#E8D9A0] dark:border-[#3D3420] rounded-lg bg-white dark:bg-[#1A1714] text-[#191817] dark:text-white focus:ring-[#C69214]/20 focus:border-[#C69214]">
+                                        <span class="font-display text-theme-xs text-[#6B6560] dark:text-gray-400">Max:
+                                            {{ item.get('maxStock')?.value }}</span>
                                     </div>
                                     <div *ngIf="item.get('quantity')?.errors?.['max']"
-                                        class="text-xs text-red-500 mt-1">
-                                        Excede stock
-                                    </div>
+                                        class="font-display text-theme-xs text-error-500 mt-1">Excede stock</div>
                                 </div>
-
-                                <!-- Financials (Right) -->
                                 <div class="flex flex-col items-end min-w-[120px]">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase mb-0.5">Precio
+                                    <label
+                                        class="font-outfit text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-0.5">Precio
                                         Unit.</label>
                                     <input type="number" formControlName="unitPrice" min="0" step="0.01"
-                                        class="w-24 text-right px-2 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-bold focus:ring-amber-500 focus:border-amber-500 mb-1">
-                                    <span class="text-amber-600 dark:text-amber-500 font-extrabold text-xl">{{
+                                        class="w-24 text-right px-2 py-1 font-display text-theme-sm border border-[#E8D9A0] dark:border-[#3D3420] rounded-lg bg-white dark:bg-[#1A1714] text-[#191817] dark:text-white font-bold focus:ring-[#C69214]/20 focus:border-[#C69214] mb-1">
+                                    <span
+                                        class="font-outfit font-extrabold text-xl text-[#C69214] dark:text-[#FAC600]">{{
                                         item.get('subtotal')?.value | currency }}</span>
                                 </div>
-
                             </div>
-
-                            <!-- Actions -->
                             <div
-                                class="bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-700/50 px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
+                                class="bg-[#FBF0C9]/30 dark:bg-[#252017]/50 border-t border-[#E8D9A0] dark:border-[#3D3420] px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
                                 <div class="flex gap-2 w-full sm:w-auto">
                                     <button type="button" (click)="toggleDeliveryStatus(i)"
-                                        [class.bg-blue-600]="item.get('deliveryStatus')?.value !== 'pending'"
-                                        [class.hover:bg-blue-700]="item.get('deliveryStatus')?.value !== 'pending'"
-                                        [class.bg-amber-600]="item.get('deliveryStatus')?.value === 'pending'"
-                                        [class.hover:bg-amber-700]="item.get('deliveryStatus')?.value === 'pending'"
-                                        class="flex-1 sm:flex-none text-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm transition-colors uppercase tracking-wider">
+                                        [class.bg-[#C69214]]="item.get('deliveryStatus')?.value === 'pending'"
+                                        [class.bg-[#46424A]]="item.get('deliveryStatus')?.value !== 'pending'"
+                                        class="flex-1 sm:flex-none text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-sm transition-colors uppercase tracking-wider">
                                         {{ item.get('deliveryStatus')?.value === 'pending' ? 'ENTREGAR' : 'APARTAR' }}
                                     </button>
                                 </div>
                                 <button type="button" (click)="removeItem(i)"
-                                    class="text-gray-400 hover:text-red-500 transition-colors p-1" title="Eliminar">
+                                    class="text-[#6B6560] hover:text-error-500 dark:text-gray-400 transition-colors p-1"
+                                    title="Eliminar">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -225,24 +203,18 @@
                             </div>
                         </div>
 
-                        <!-- REPAIR / TALLER CARD (type: service) -->
+                        <!-- SERVICE / TALLER CARD -->
                         <div *ngIf="item.get('type')?.value === 'service'"
-                            class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm flex flex-col sm:flex-row relative group mt-1 transition-all hover:border-blue-300 dark:hover:border-blue-700">
-
-                            <!-- Badge -->
+                            class="bg-white dark:bg-[#1A1714] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl overflow-hidden shadow-theme-sm flex flex-col sm:flex-row relative group mt-1 transition-all hover:border-[#46424A] dark:hover:border-gray-500">
                             <div
-                                class="absolute top-0 left-0 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded-br">
-                                TALLER
-                            </div>
-
-                            <!-- Content -->
+                                class="absolute top-0 left-0 bg-[#F5F0EC] dark:bg-white/5 text-[#46424A] dark:text-gray-400 text-[10px] font-bold px-2 py-0.5 rounded-br">
+                                TALLER</div>
                             <div class="flex-1 p-4 pt-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                 <div class="flex-1">
                                     <h3
-                                        class="text-gray-900 dark:text-white font-medium text-lg tracking-wide leading-tight mb-1">
-                                        {{ item.get('name')?.value || 'Reparación' }}
-                                    </h3>
-                                    <div class="text-blue-600 dark:text-blue-400 text-xs font-medium flex items-center gap-1 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded w-fit"
+                                        class="font-outfit text-[#191817] dark:text-white font-medium text-lg tracking-wide leading-tight mb-1">
+                                        {{ item.get('name')?.value || 'Reparación' }}</h3>
+                                    <div class="font-display text-[#46424A] dark:text-gray-300 text-theme-xs flex items-center gap-1 bg-[#F5F0EC] dark:bg-white/5 px-2 py-1 rounded-lg w-fit"
                                         *ngIf="item.get('specifications.notes')?.value">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
@@ -254,17 +226,16 @@
                                 </div>
                                 <div class="flex flex-col items-end min-w-[120px]">
                                     <span
-                                        class="text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase">Importe</span>
-                                    <span class="text-gray-900 dark:text-white font-bold text-xl">{{
+                                        class="font-outfit text-[#6B6560] dark:text-gray-400 text-theme-xs font-semibold uppercase">Importe</span>
+                                    <span class="font-outfit text-[#191817] dark:text-white font-bold text-xl">{{
                                         item.get('subtotal')?.value | currency }}</span>
                                 </div>
                             </div>
-
-                            <!-- Actions -->
                             <div
-                                class="bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-700/50 px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
+                                class="bg-[#F5F0EC]/50 dark:bg-white/[0.02] border-t border-[#E8D9A0] dark:border-[#3D3420] px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
                                 <button type="button" (click)="removeItem(i)"
-                                    class="text-gray-400 hover:text-red-500 transition-colors p-1" title="Eliminar">
+                                    class="text-[#6B6560] hover:text-error-500 dark:text-gray-400 transition-colors p-1"
+                                    title="Eliminar">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -274,53 +245,42 @@
                             </div>
                         </div>
 
-                        <!-- MANUAL / CUSTOM CARD -->
+                        <!-- CUSTOM / HECHURA CARD -->
                         <div *ngIf="item.get('type')?.value === 'custom'"
-                            class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm flex flex-col sm:flex-row relative group mt-1 transition-all hover:border-purple-300 dark:hover:border-purple-700">
-
+                            class="bg-white dark:bg-[#1A1714] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl overflow-hidden shadow-theme-sm flex flex-col sm:flex-row relative group mt-1 transition-all hover:border-[#C69214] dark:hover:border-[#FAC600]/50">
                             <div *ngIf="item.get('deliveryStatus')?.value === 'pending'"
-                                class="absolute top-0 right-0 bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl z-10">
-                                APARTADO
-                            </div>
-                            <!-- Badge -->
+                                class="absolute top-0 right-0 bg-[#C69214] text-[#191817] text-[10px] font-bold px-2 py-0.5 rounded-bl z-10">
+                                APARTADO</div>
                             <div
-                                class="absolute top-0 left-0 bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-400 text-[10px] font-bold px-2 py-0.5 rounded-br">
-                                INGRESO
-                            </div>
-
-                            <!-- Content -->
+                                class="absolute top-0 left-0 bg-[#FBF0C9] dark:bg-[#3D3420] text-[#9A6F0A] dark:text-[#E8C97A] text-[10px] font-bold px-2 py-0.5 rounded-br">
+                                INGRESO</div>
                             <div class="flex-1 p-4 pt-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                 <div class="flex-1">
                                     <h3
-                                        class="text-gray-900 dark:text-white font-medium text-lg tracking-wide leading-tight mb-1">
-                                        {{ item.get('name')?.value || 'Movimiento' }}
-                                    </h3>
-                                    <p class="text-gray-500 dark:text-gray-400 text-xs italic"
-                                        *ngIf="item.get('specifications.notes')?.value">
-                                        {{ item.get('specifications.notes')?.value }}
-                                    </p>
+                                        class="font-outfit text-[#191817] dark:text-white font-medium text-lg tracking-wide leading-tight mb-1">
+                                        {{ item.get('name')?.value || 'Movimiento' }}</h3>
+                                    <p class="font-display text-[#6B6560] dark:text-gray-400 text-theme-xs italic"
+                                        *ngIf="item.get('specifications.notes')?.value">{{
+                                        item.get('specifications.notes')?.value }}</p>
                                 </div>
                                 <div class="flex flex-col items-end min-w-[120px]">
-                                    <span class="text-gray-900 dark:text-white font-bold text-xl">{{
+                                    <span class="font-outfit text-[#191817] dark:text-white font-bold text-xl">{{
                                         item.get('subtotal')?.value | currency }}</span>
                                 </div>
                             </div>
-
-                            <!-- Actions -->
                             <div
-                                class="bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-700/50 px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
+                                class="bg-[#FBF0C9]/30 dark:bg-[#252017]/50 border-t border-[#E8D9A0] dark:border-[#3D3420] px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
                                 <div class="flex gap-2 w-full sm:w-auto">
                                     <button type="button" (click)="toggleDeliveryStatus(i)"
-                                        [class.bg-blue-600]="item.get('deliveryStatus')?.value !== 'pending'"
-                                        [class.hover:bg-blue-700]="item.get('deliveryStatus')?.value !== 'pending'"
-                                        [class.bg-amber-600]="item.get('deliveryStatus')?.value === 'pending'"
-                                        [class.hover:bg-amber-700]="item.get('deliveryStatus')?.value === 'pending'"
-                                        class="flex-1 sm:flex-none text-white text-[10px] font-bold px-3 py-1.5 rounded shadow-sm transition-colors uppercase tracking-wider">
+                                        [class.bg-[#C69214]]="item.get('deliveryStatus')?.value === 'pending'"
+                                        [class.bg-[#46424A]]="item.get('deliveryStatus')?.value !== 'pending'"
+                                        class="flex-1 sm:flex-none text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-sm transition-colors uppercase tracking-wider">
                                         {{ item.get('deliveryStatus')?.value === 'pending' ? 'ENTREGAR' : 'APARTAR' }}
                                     </button>
                                 </div>
                                 <button type="button" (click)="removeItem(i)"
-                                    class="text-gray-400 hover:text-red-500 transition-colors p-1" title="Eliminar">
+                                    class="text-[#6B6560] hover:text-error-500 dark:text-gray-400 transition-colors p-1"
+                                    title="Eliminar">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -328,112 +288,92 @@
                                     </svg>
                                 </button>
                             </div>
-
                         </div>
 
                     </div>
                 </div>
             </form>
-
         </main>
 
         <!-- Sidebar (Right): Totals & Payment -->
         <aside
-            class="w-96 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col shadow-2xl z-10 text-gray-900 dark:text-white">
+            class="w-96 bg-white dark:bg-[#1A1714] border-l border-[#E8D9A0] dark:border-[#3D3420] flex flex-col shadow-2xl z-10 text-[#191817] dark:text-white">
             <div class="p-4 flex-1 flex flex-col h-full">
 
-                <!-- Action Grid (Sidebar) -->
-                <!-- Reduced height buttons, removed aspect-square -->
+                <!-- Action Grid -->
                 <div class="grid grid-cols-3 gap-2 mb-4 shrink-0">
-                    <!-- Ingreso -->
                     <button type="button" (click)="openManualEntryModal()" title="Ingreso"
-                        class="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex flex-col items-center justify-center gap-0.5 group transition-all">
-                        <div class="relative w-6 h-6 flex items-center justify-center">
-                            <!-- Plus Icon Duotone -->
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
-                                <path class="fill-amber-100 dark:fill-amber-900/40 stroke-amber-500"
-                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4v16m8-8H4" />
-                            </svg>
-                        </div>
+                        class="h-16 bg-white dark:bg-[#252017] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl hover:bg-[#FBF0C9]/50 dark:hover:bg-[#3D3420] flex flex-col items-center justify-center gap-0.5 group transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
+                            <path class="fill-[#FBF0C9] dark:fill-[#3D3420] stroke-[#C69214]" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
                         <span
-                            class="text-[9px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-tight">Ingreso</span>
+                            class="font-outfit text-[9px] font-bold text-[#46424A] dark:text-gray-300 uppercase tracking-tight">Ingreso</span>
                     </button>
-
-                    <!-- Taller (Repair) - Hammer/Tools -->
                     <button type="button" (click)="addItem('service')" title="Taller"
-                        class="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex flex-col items-center justify-center gap-0.5 group transition-all">
-                        <div class="relative w-6 h-6 flex items-center justify-center">
-                            <!-- Tools Icon Duotone -->
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
-                                <path class="fill-blue-100 dark:fill-blue-900/40 stroke-blue-500" stroke-linecap="round"
-                                    stroke-linejoin="round" stroke-width="1.5"
-                                    d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-                            </svg>
-                        </div>
+                        class="h-16 bg-white dark:bg-[#252017] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl hover:bg-[#FBF0C9]/50 dark:hover:bg-[#3D3420] flex flex-col items-center justify-center gap-0.5 group transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
+                            <path class="fill-[#F5F0EC] dark:fill-white/5 stroke-[#46424A] dark:stroke-gray-400"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                        </svg>
                         <span
-                            class="text-[9px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-tight">Taller</span>
+                            class="font-outfit text-[9px] font-bold text-[#46424A] dark:text-gray-300 uppercase tracking-tight">Taller</span>
                     </button>
-
-                    <!-- Hechura (Custom) - Diamond/Sparkle -->
                     <button type="button" (click)="addItem('custom')" title="Hechura"
-                        class="h-16 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 flex flex-col items-center justify-center gap-0.5 group transition-all">
-                        <div class="relative w-6 h-6 flex items-center justify-center">
-                            <!-- Diamond Icon Duotone (Purple for Custom) -->
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
-                                <path class="fill-purple-100 dark:fill-purple-900/40 stroke-purple-500"
-                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M12 2L2 7l10 15 10-15-10-5zM2 7h20M12 22V7" />
-                                <path class="fill-purple-200 dark:fill-purple-800/40 stroke-none"
-                                    d="M7 7L12 22L17 7H7Z" />
-                            </svg>
-                        </div>
+                        class="h-16 bg-white dark:bg-[#252017] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl hover:bg-[#FBF0C9]/50 dark:hover:bg-[#3D3420] flex flex-col items-center justify-center gap-0.5 group transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
+                            <path class="fill-[#FBF0C9] dark:fill-[#3D3420] stroke-[#C69214]" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="1.5"
+                                d="M12 2L2 7l10 15 10-15-10-5zM2 7h20M12 22V7" />
+                            <path class="fill-[#E8D9A0] dark:fill-[#4A3F25] stroke-none" d="M7 7L12 22L17 7H7Z" />
+                        </svg>
                         <span
-                            class="text-[9px] font-bold text-gray-600 dark:text-gray-300 uppercase tracking-tight text-center leading-none">Hechura
-                            /<br>Express</span>
+                            class="font-outfit text-[9px] font-bold text-[#46424A] dark:text-gray-300 uppercase tracking-tight text-center leading-none">Hechura<br>Express</span>
                     </button>
                 </div>
 
-                <!-- Financial Summary Top -->
-                <div class="space-y-1 mb-4 text-xs shrink-0">
-                    <div class="flex justify-between text-gray-500 dark:text-gray-400">
+                <!-- Financial Summary -->
+                <div class="space-y-1 mb-4 font-display text-theme-xs shrink-0">
+                    <div class="flex justify-between text-[#6B6560] dark:text-gray-400">
                         <span>Subtotal</span>
-                        <span class="text-gray-900 dark:text-white">{{ noteForm.get('subtotal')?.value | currency
+                        <span class="text-[#191817] dark:text-white">{{ noteForm.get('subtotal')?.value | currency
                             }}</span>
                     </div>
-                    <div class="flex justify-between text-gray-500 dark:text-gray-400">
+                    <div class="flex justify-between text-[#6B6560] dark:text-gray-400">
                         <span>Descuento</span>
-                        <span class="text-red-500">-{{ noteForm.get('discount')?.value | currency }}</span>
+                        <span class="text-error-500">-{{ noteForm.get('discount')?.value | currency }}</span>
                     </div>
-                    <div class="flex justify-between text-gray-500 dark:text-gray-400">
+                    <div class="flex justify-between text-[#6B6560] dark:text-gray-400">
                         <span>Impuestos</span>
-                        <span class="text-gray-900 dark:text-white">$0.00</span>
+                        <span class="text-[#191817] dark:text-white">$0.00</span>
                     </div>
                 </div>
 
                 <div *ngIf="minRequiredPayment > 0 && minRequiredPayment < noteForm.get('total')?.value"
-                    class="mb-2 px-1 text-xs text-right font-medium text-amber-600 dark:text-amber-500">
+                    class="mb-2 px-1 font-display text-theme-xs text-right font-medium text-[#C69214] dark:text-[#FAC600]">
                     Pago mín. requerido (contado): {{ minRequiredPayment | currency }}
                 </div>
 
-                <!-- BIG TOTAL (Horizontal) -->
+                <!-- Big Total -->
                 <div
-                    class="mb-4 bg-gray-100 dark:bg-gray-800/50 p-3 rounded-lg flex justify-between items-center border border-gray-200 dark:border-gray-700/50 shrink-0">
-                    <h3 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">Total a
-                        Pagar
-                    </h3>
-                    <div class="text-2xl font-extrabold text-amber-600 dark:text-amber-500 tracking-tight">
-                        {{ noteForm.get('total')?.value | currency }}
-                    </div>
+                    class="mb-4 bg-[#FBF0C9]/40 dark:bg-[#252017] p-3 rounded-xl flex justify-between items-center border border-[#E8D9A0] dark:border-[#3D3420] shrink-0">
+                    <h3
+                        class="font-outfit text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase tracking-widest">
+                        Total a Pagar</h3>
+                    <div class="font-outfit text-2xl font-extrabold text-[#C69214] dark:text-[#FAC600] tracking-tight">
+                        {{ noteForm.get('total')?.value | currency }}</div>
                 </div>
 
-                <!-- Payment Methods Tabs -->
-                <div class="bg-gray-100 dark:bg-gray-800 p-1 rounded-lg flex mb-4 shrink-0 gap-1">
+                <!-- Payment Methods -->
+                <div
+                    class="bg-[#FBF0C9]/40 dark:bg-[#252017] p-1 rounded-xl flex mb-4 shrink-0 gap-1 border border-[#E8D9A0] dark:border-[#3D3420]">
                     <button type="button" (click)="setPaymentMethod('cash')" [class.bg-white]="paymentMethod === 'cash'"
-                        [class.text-amber-600]="paymentMethod === 'cash'" [class.shadow-sm]="paymentMethod === 'cash'"
-                        [class.text-gray-500]="paymentMethod !== 'cash'"
-                        class="flex-1 py-2 rounded-md transition-all text-xs font-bold flex items-center justify-center gap-2 uppercase">
-                        <!-- Icon Cash -->
+                        [class.dark:bg-[#1A1714]]="paymentMethod === 'cash'"
+                        [class.text-[#C69214]]="paymentMethod === 'cash'" [class.shadow-sm]="paymentMethod === 'cash'"
+                        [class.text-[#6B6560]]="paymentMethod !== 'cash'"
+                        class="flex-1 py-2 rounded-lg transition-all font-outfit text-theme-xs font-bold flex items-center justify-center gap-2 uppercase">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
                             <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
                             <path fill-rule="evenodd"
@@ -443,10 +383,10 @@
                         Efectivo
                     </button>
                     <button type="button" (click)="setPaymentMethod('card')" [class.bg-white]="paymentMethod === 'card'"
-                        [class.text-blue-600]="paymentMethod === 'card'" [class.shadow-sm]="paymentMethod === 'card'"
-                        [class.text-gray-500]="paymentMethod !== 'card'"
-                        class="flex-1 py-2 rounded-md transition-all text-xs font-bold flex items-center justify-center gap-2 uppercase">
-                        <!-- Icon Card -->
+                        [class.dark:bg-[#1A1714]]="paymentMethod === 'card'"
+                        [class.text-[#C69214]]="paymentMethod === 'card'" [class.shadow-sm]="paymentMethod === 'card'"
+                        [class.text-[#6B6560]]="paymentMethod !== 'card'"
+                        class="flex-1 py-2 rounded-lg transition-all font-outfit text-theme-xs font-bold flex items-center justify-center gap-2 uppercase">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
                             <path fill-rule="evenodd"
                                 d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z"
@@ -457,58 +397,56 @@
                 </div>
 
                 <form [formGroup]="noteForm" class="space-y-4 shrink-0">
-                    <!-- Recibido / Cambio Grid (CASH) -->
+                    <!-- Cash flow -->
                     <div class="grid grid-cols-2 gap-3" *ngIf="paymentMethod === 'cash'">
                         <div>
-                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Recibido</label>
+                            <label
+                                class="block font-outfit text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Recibido</label>
                             <div class="relative">
-                                <span class="absolute left-3 top-2.5 text-gray-400 text-sm">$</span>
+                                <span class="absolute left-3 top-2.5 font-display text-[#6B6560] text-theme-sm">$</span>
                                 <input type="number" formControlName="receivedAmount" (input)="calculateChange()"
-                                    class="w-full pl-6 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-lg font-bold focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm">
+                                    class="w-full pl-6 py-2 bg-white dark:bg-[#252017] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl font-display text-[#191817] dark:text-white text-lg font-bold focus:ring-2 focus:ring-[#C69214]/20 focus:border-[#C69214] shadow-sm">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Cambio</label>
-                            <div class="relative">
-                                <div
-                                    class="w-full py-2 px-3 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-900 rounded-lg text-emerald-600 dark:text-emerald-400 text-lg font-bold text-right shadow-sm">
-                                    {{ noteForm.get('changeAmount')?.value | currency }}
-                                </div>
+                            <label
+                                class="block font-outfit text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Cambio</label>
+                            <div
+                                class="w-full py-2 px-3 bg-success-50 dark:bg-success-500/10 border border-success-200 dark:border-success-800/30 rounded-xl font-outfit text-success-700 dark:text-success-400 text-lg font-bold text-right shadow-sm">
+                                {{ noteForm.get('changeAmount')?.value | currency }}
                             </div>
                         </div>
                     </div>
 
-                    <!-- Reference Input (CARD) -->
+                    <!-- Card reference -->
                     <div *ngIf="paymentMethod === 'card'">
-                        <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Referencia /
-                            Voucher</label>
+                        <label
+                            class="block font-outfit text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Referencia
+                            / Voucher</label>
                         <input type="text" formControlName="reference" placeholder="#1234..."
-                            class="w-full py-2 px-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
-                        <p class="text-[10px] text-gray-400 mt-1">* Se cobrará el monto exacto: {{
-                            noteForm.get('total')?.value | currency }}</p>
+                            class="w-full py-2 px-3 bg-white dark:bg-[#252017] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl font-display text-[#191817] dark:text-white focus:ring-2 focus:ring-[#C69214]/20 focus:border-[#C69214] shadow-sm">
+                        <p class="font-display text-[10px] text-[#6B6560] dark:text-gray-400 mt-1">* Se cobrará el monto
+                            exacto: {{ noteForm.get('total')?.value | currency }}</p>
                     </div>
 
-                    <!-- Hidden logic inputs kept for compatibility if needed, but driven by logic above -->
                     <div class="hidden">
                         <input type="number" formControlName="cashAmount">
                     </div>
                 </form>
 
-                <!-- Footer Button (Confirm) - Pushed to bottom -->
+                <!-- Confirm Button -->
                 <div class="pt-4">
                     <button type="button" (click)="onSubmit()" [disabled]="isLoading || isPaymentInsufficient"
-                        [class.bg-amber-500]="!isPartialPayment && !isPaymentInsufficient"
-                        [class.hover:bg-amber-400]="!isPartialPayment && !isPaymentInsufficient"
-                        [class.bg-indigo-600]="isPartialPayment && !isPaymentInsufficient"
-                        [class.hover:bg-indigo-500]="isPartialPayment && !isPaymentInsufficient"
-                        [class.bg-gray-400]="isPaymentInsufficient" [class.cursor-not-allowed]="isPaymentInsufficient"
-                        [class.opacity-50]="isPaymentInsufficient"
-                        [class.text-white]="isPartialPayment || isPaymentInsufficient"
-                        [class.text-gray-900]="!isPartialPayment && !isPaymentInsufficient"
-                        class="w-full py-3.5 font-extrabold text-base rounded-xl shadow-lg hover:shadow-orange-500/20 transform transition-all active:scale-95 flex items-center justify-center gap-2 disabled:transform-none disabled:shadow-none">
+                        [ngClass]="{
+                            'bg-gradient-to-br from-[#C69214] to-[#FAC600] text-[#191817] hover:from-[#9A6F0A] hover:to-[#C69214]': !isPartialPayment && !isPaymentInsufficient,
+                            'bg-[#46424A] text-white hover:bg-[#191817]': isPartialPayment && !isPaymentInsufficient,
+                            'bg-[#6B6560] text-white cursor-not-allowed opacity-50': isPaymentInsufficient
+                        }"
+                        class="w-full py-3.5 font-outfit font-extrabold text-base rounded-xl shadow-theme-md transition-all active:scale-95 flex items-center justify-center gap-2 disabled:transform-none disabled:shadow-none">
                         <span *ngIf="isLoading" class="animate-spin">↻</span>
                         <span class="rounded-full border-2 w-5 h-5 flex items-center justify-center text-[10px]"
-                            [class.border-gray-900]="!isPartialPayment" [class.border-white]="isPartialPayment">✓</span>
+                            [class.border-[#191817]]="!isPartialPayment && !isPaymentInsufficient"
+                            [class.border-white]="isPartialPayment || isPaymentInsufficient">✓</span>
                         {{ confirmButtonText }}
                     </button>
                 </div>

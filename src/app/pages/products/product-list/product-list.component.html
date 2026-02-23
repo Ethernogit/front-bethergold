@@ -3,24 +3,28 @@
     <div class="flex flex-col gap-4 h-full">
         <!-- Products Table -->
         <div
-            class="rounded-sm border border-stroke bg-white shadow-default dark:border-gray-800 dark:bg-gray-900 flex flex-col h-full">
+            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#3D3420] dark:bg-[#252017] flex flex-col h-full">
             <!-- Consolidated Header & Search -->
-            <div class="border-b border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0">
+            <div class="border-b border-[#E8D9A0] px-4 py-3 dark:border-[#3D3420] sm:px-6 shrink-0">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <!-- Title & Search Group -->
                     <div class="flex flex-1 flex-col gap-4 sm:flex-row sm:items-center">
-                        <h3 class="font-medium text-black dark:text-white whitespace-nowrap">
-                            Listado de Productos
-                        </h3>
-
-                        <!-- Search Bar REMOVED -->
+                        <div>
+                            <h1
+                                class="font-outfit text-title-sm font-semibold text-[#191817] dark:text-white whitespace-nowrap">
+                                Listado de Productos
+                            </h1>
+                            <p class="mt-1 font-display text-theme-sm text-[#6B6560] dark:text-gray-500">
+                                Gestiona tu inventario de joyería
+                            </p>
+                        </div>
                     </div>
 
                     <!-- Actions -->
                     <div class="flex items-center gap-2 shrink-0">
                         @if (selectedProducts().size > 0) {
                         <button (click)="bulkPrintLabels()" title="Imprimir Etiquetas Seleccionadas"
-                            class="relative inline-flex items-center justify-center rounded-lg border border-brand-500 bg-white p-2.5 text-center font-medium text-brand-500 hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:bg-gray-800 dark:border-brand-400 dark:text-brand-400 dark:hover:bg-gray-700 transition-all duration-200">
+                            class="relative flex items-center gap-2 rounded-xl border border-[#C69214] bg-transparent p-2.5 font-outfit text-sm font-semibold text-[#C69214] transition-all hover:bg-[#FBF0C9] dark:hover:bg-[#3D3420]">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round">
@@ -30,14 +34,14 @@
                                 <rect x="6" y="14" width="12" height="8"></rect>
                             </svg>
                             <span
-                                class="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white shadow-sm ring-2 ring-white dark:ring-gray-900 icon-print-badge animate-in zoom-in">
+                                class="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-error-500 text-xs font-bold text-white shadow-sm ring-2 ring-white dark:ring-[#252017] animate-in zoom-in">
                                 {{ selectedProducts().size }}
                             </span>
                         </button>
                         }
 
                         <button (click)="startTour()"
-                            class="hidden md:inline-flex items-center justify-center gap-2 rounded-lg border border-stroke bg-white px-5 py-2.5 text-center font-medium text-black hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:bg-gray-800 dark:border-strokedark dark:text-white dark:hover:bg-gray-700 transition-all duration-200">
+                            class="hidden md:inline-flex items-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-5 py-2.5 font-outfit text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-gray-300 dark:hover:bg-white/5">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round">
@@ -49,7 +53,7 @@
                         </button>
 
                         <button (click)="openFilters()"
-                            class="inline-flex items-center justify-center gap-2 rounded-lg border border-stroke bg-white px-5 py-2.5 text-center font-medium text-black hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/50 dark:bg-gray-800 dark:border-strokedark dark:text-white dark:hover:bg-gray-700 transition-all duration-200">
+                            class="inline-flex items-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-5 py-2.5 font-outfit text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-gray-300 dark:hover:bg-white/5">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round">
@@ -59,156 +63,167 @@
                         </button>
 
                         <button (click)="openCreateModal()" id="btn-new-product"
-                            class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200">
+                            class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md active:scale-[0.98]">
                             <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path d="M10 4.5V15.5M4.5 10H15.5" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" />
                             </svg>
                             Nuevo Producto
-
                         </button>
                     </div>
-
-
                 </div>
             </div>
-
-
 
             <!-- Table -->
             <div class="flex-1 overflow-auto p-0 z-0">
                 @if (loading()) {
                 <div class="flex justify-center py-10">
                     <div
-                        class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent">
+                        class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent">
                     </div>
                 </div>
                 } @else if (products().length === 0) {
-                <div class="py-10 text-center text-gray-500 dark:text-gray-400">
+                <div class="py-10 text-center font-display text-[#46424A] dark:text-gray-400">
                     No se encontraron productos
                 </div>
                 } @else {
                 <div class="relative">
                     <table class="w-full table-auto">
-                        <thead class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-800 shadow-sm">
-                            <tr class="text-left text-sm">
+                        <thead class="sticky top-0 z-10 bg-[#FBF0C9] dark:bg-[#252017] shadow-sm">
+                            <tr
+                                class="text-left font-outfit text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
                                 <th class="px-4 py-3 w-12 text-center">
                                     <input type="checkbox" [checked]="isAllSelected()"
                                         (change)="toggleAllSelection($event)"
-                                        class="h-5 w-5 rounded border-gray-300 text-brand-600 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-900 cursor-pointer">
+                                        class="h-5 w-5 rounded border-[#E8D9A0] text-[#C69214] focus:ring-[#C69214] bg-white dark:border-[#3D3420] dark:bg-[#1A1714] dark:ring-offset-[#1A1714] cursor-pointer">
                                 </th>
-                                <th class="px-4 py-3 font-medium text-black dark:text-white">Código</th>
-                                <th class="px-4 py-3 font-medium text-black dark:text-white">Nombre</th>
-                                <th class="px-4 py-3 font-medium text-black dark:text-white">Cat / Subcat</th>
-                                <th class="px-4 py-3 font-medium text-black dark:text-white">Material</th>
-                                <th class="px-4 py-3 font-medium text-black dark:text-white text-center">Stock</th>
-                                <th class="px-4 py-3 font-medium text-black dark:text-white text-center">Estado</th>
-                                <th class="px-4 py-3 font-medium text-black dark:text-white text-right">Peso</th>
-                                <th class="px-4 py-3 font-medium text-black dark:text-white text-right">Costo</th>
-                                <th class="px-4 py-3 font-medium text-black dark:text-white text-right">Precio</th>
-                                <th class="px-4 py-3 font-medium text-black dark:text-white text-center">Acciones</th>
+                                <th class="px-4 py-3">Código</th>
+                                <th class="px-4 py-3">Nombre</th>
+                                <th class="px-4 py-3">Cat / Subcat</th>
+                                <th class="px-4 py-3">Material</th>
+                                <th class="px-4 py-3 text-center">Stock</th>
+                                <th class="px-4 py-3 text-center">Estado</th>
+                                <th class="px-4 py-3 text-right">Peso</th>
+                                <th class="px-4 py-3 text-right">Costo</th>
+                                <th class="px-4 py-3 text-right">Precio</th>
+                                <th class="px-4 py-3 text-center">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-[#E8D9A0] bg-white dark:divide-[#3D3420] dark:bg-[#1A1714]">
                             @for (product of products(); track product._id) {
-                            <tr class="text-sm border-b border-stroke dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
-                                [ngClass]="{
-                                    'bg-blue-50': isSelected(product._id!),
-                                    'dark:bg-blue-900/10': isSelected(product._id!)
+                            <tr class="transition-colors hover:bg-[#FBF0C9]/40 dark:hover:bg-[#252017]" [ngClass]="{
+                                    'bg-[#FBF0C9]/20': isSelected(product._id!),
+                                    'dark:bg-[#252017]/50': isSelected(product._id!)
                                 }">
                                 <td class="px-4 py-3 text-center">
                                     <input type="checkbox" [checked]="isSelected(product._id!)"
                                         (change)="toggleSelection(product._id!)"
-                                        class="h-5 w-5 rounded border-gray-300 text-brand-600 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-900 cursor-pointer">
+                                        class="h-5 w-5 rounded border-[#E8D9A0] text-[#C69214] focus:ring-[#C69214] bg-white dark:border-[#3D3420] dark:bg-[#1A1714] dark:ring-offset-[#1A1714] cursor-pointer">
                                 </td>
                                 <td class="px-4 py-3">
-                                    <span class="font-medium text-black dark:text-white">{{ product.barcode }}</span>
+                                    <span
+                                        class="font-display text-theme-sm font-medium text-[#191817] dark:text-white">{{
+                                        product.barcode }}</span>
                                 </td>
                                 <td class="px-4 py-3">
-                                    <p class="text-black dark:text-white font-medium">{{ product.name }}</p>
+                                    <p class="font-display text-theme-sm font-medium text-[#191817] dark:text-white">{{
+                                        product.name }}</p>
                                     @if(product.description) {
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[200px]">{{
+                                    <p
+                                        class="font-display text-theme-xs text-[#6B6560] dark:text-gray-400 truncate max-w-[200px]">
+                                        {{
                                         product.description }}</p>
                                     }
                                 </td>
                                 <td class="px-4 py-3">
-                                    <div class="flex flex-col gap-1 items-start">
+                                    <div class="flex flex-col gap-1.5 items-start">
                                         <span
-                                            class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-900/30 dark:text-blue-400 dark:ring-blue-400/30">
+                                            class="inline-flex items-center gap-1.5 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 text-theme-xs font-medium text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]">
                                             {{ getCategoryName(product) }}
                                         </span>
                                         @if(product.subcategory) {
                                         <span
-                                            class="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10 dark:bg-purple-900/30 dark:text-purple-400 dark:ring-purple-400/30">
+                                            class="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-2.5 py-0.5 text-theme-xs font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-300">
                                             {{ getSubcategoryName(product) }}
                                         </span>
                                         }
                                     </div>
                                 </td>
                                 <td class="px-4 py-3">
-                                    <div class="flex flex-col gap-0.5">
+                                    <div
+                                        class="flex flex-col gap-0.5 text-[#46424A] dark:text-gray-300 font-display text-theme-sm">
                                         @if(product.jewelryDetails?.karatage) {
-                                        <span class="text-sm text-black dark:text-white">{{
+                                        <span class="text-[#191817] dark:text-white font-medium">{{
                                             product.jewelryDetails?.karatage }}</span>
                                         }
                                         @if(product.jewelryDetails?.goldType) {
-                                        <span class="text-xs text-gray-500 dark:text-gray-400">{{
+                                        <span class="text-theme-xs text-[#6B6560] dark:text-gray-400">{{
                                             product.jewelryDetails?.goldType }}</span>
                                         }
                                         @else {
-                                        <span class="text-xs text-gray-400 dark:text-gray-500">-</span>
+                                        <span class="text-theme-xs text-[#6B6560] dark:text-gray-500">-</span>
                                         }
                                     </div>
                                 </td>
                                 <td class="px-4 py-3 text-center">
                                     <span
-                                        class="inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-sm font-medium"
+                                        class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-theme-xs font-medium"
                                         [ngClass]="{
-                                            'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400': product.stock > 5,
-                                            'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400': product.stock <= 5 && product.stock > 0,
-                                            'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400': product.stock === 0
+                                            'bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-400': product.stock > 5,
+                                            'bg-warning-50 text-warning-700 dark:bg-warning-500/15 dark:text-warning-400': product.stock <= 5 && product.stock > 0,
+                                            'bg-error-50 text-error-700 dark:bg-error-500/15 dark:text-error-400': product.stock === 0
                                         }">
+                                        <span class="size-1.5 rounded-full" [ngClass]="{
+                                            'bg-success-500': product.stock > 5,
+                                            'bg-warning-500': product.stock <= 5 && product.stock > 0,
+                                            'bg-error-500': product.stock === 0
+                                        }"></span>
                                         {{ product.stock }}
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 text-center">
                                     <span
-                                        class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
+                                        class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-theme-xs font-medium"
                                         [ngClass]="{
-                                            'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-900/30 dark:text-green-400 dark:ring-green-400/20': product.status === 'active',
-                                            'bg-red-50 text-red-700 ring-red-600/10 dark:bg-red-900/30 dark:text-red-400 dark:ring-red-400/20': product.status !== 'active'
+                                            'bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-400': product.status === 'active',
+                                            'bg-error-50 text-error-700 dark:bg-error-500/15 dark:text-error-400': product.status !== 'active'
                                         }">
+                                        <span class="size-1.5 rounded-full" [ngClass]="{
+                                            'bg-success-500': product.status === 'active',
+                                            'bg-error-500': product.status !== 'active'
+                                        }"></span>
                                         {{ product.status === 'active' ? 'Activo' : 'Inactivo' }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 text-right">
-                                    <span class="text-black dark:text-white">{{ product.specifications?.weight
-                                        }}g</span>
+                                <td
+                                    class="px-4 py-3 text-right font-display text-theme-sm text-[#46424A] dark:text-gray-300">
+                                    {{ product.specifications?.weight }}g
                                 </td>
-                                <td class="px-4 py-3 text-right">
-                                    <span class="text-black dark:text-white">{{ product.cost | currency }}</span>
+                                <td
+                                    class="px-4 py-3 text-right font-display text-theme-sm text-[#46424A] dark:text-gray-300">
+                                    {{ product.cost | currency }}
                                 </td>
-                                <td class="px-4 py-3 text-right">
-                                    <span class="text-success font-medium dark:text-green-400">{{ product.price |
-                                        currency }}</span>
+                                <td
+                                    class="px-4 py-3 text-right font-display text-theme-sm font-semibold text-[#191817] dark:text-white">
+                                    {{ product.price | currency }}
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="flex items-center justify-center gap-2">
                                         <button (click)="openEditModal(product)"
-                                            class="text-primary hover:text-primary-dark dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                                            class="text-[#46424A] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors"
                                             title="Editar">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                                 stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2-2h14a2 2 0 0 0 2-2v-7">
                                                 </path>
                                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z">
                                                 </path>
                                             </svg>
                                         </button>
                                         <button (click)="openDeleteModal(product)"
-                                            class="text-danger hover:text-danger-dark dark:text-red-400 dark:hover:text-red-300 transition-colors"
+                                            class="text-error-500 hover:text-error-700 dark:text-error-400 dark:hover:text-error-300 transition-colors"
                                             title="Eliminar">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -231,42 +246,41 @@
 
             <!-- Pagination Controls -->
             <div
-                class="border-t border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0 bg-white dark:bg-gray-900 rounded-b-sm">
-                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div class="flex items-center gap-2">
-                        <p class="text-sm font-medium text-black dark:text-white">Items por página:</p>
-                        <select [ngModel]="itemsPerPage()" (ngModelChange)="onLimitChange($event)"
-                            class="rounded border border-stroke bg-transparent px-2 py-1 outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white transition focus:border-brand-500 active:border-brand-500">
-                            <option [value]="10" class="dark:bg-gray-700 dark:text-white">10</option>
-                            <option [value]="25" class="dark:bg-gray-700 dark:text-white">25</option>
-                            <option [value]="50" class="dark:bg-gray-700 dark:text-white">50</option>
-                            <option [value]="100" class="dark:bg-gray-700 dark:text-white">100</option>
-                        </select>
-                    </div>
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t border-[#E8D9A0] px-4 py-3 dark:border-[#3D3420] sm:px-6 shrink-0 bg-white dark:bg-[#252017] rounded-b-2xl">
+                <div class="flex items-center gap-2">
+                    <p class="font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Items por
+                        página:</p>
+                    <select [ngModel]="itemsPerPage()" (ngModelChange)="onLimitChange($event)"
+                        class="rounded-xl border border-[#E8D9A0] bg-white px-3 py-1.5 font-display text-theme-sm text-[#191817] outline-none dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20">
+                        <option [value]="10" class="dark:bg-[#1A1714] dark:text-white">10</option>
+                        <option [value]="25" class="dark:bg-[#1A1714] dark:text-white">25</option>
+                        <option [value]="50" class="dark:bg-[#1A1714] dark:text-white">50</option>
+                        <option [value]="100" class="dark:bg-[#1A1714] dark:text-white">100</option>
+                    </select>
+                </div>
 
-                    <div class="flex items-center gap-4">
-                        <p class="text-sm font-medium text-black dark:text-white">
-                            Página {{ currentPage() }} de {{ totalPages() }} <span
-                                class="font-bold text-brand-600 dark:text-brand-400">({{ totalItems() }} items)</span>
-                        </p>
-                        <div class="flex items-center gap-2">
-                            <button (click)="onPageChange(currentPage() - 1)" [disabled]="currentPage() === 1"
-                                class="flex items-center justify-center rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition">
-                                <svg class="fill-current text-black dark:text-white" width="20" height="20"
-                                    viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                        d="M12.7071 5.29289C13.0976 5.68342 13.0976 6.31658 12.7071 6.70711L9.41421 10L12.7071 13.2929C13.0976 13.6834 13.0976 14.3166 12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L7.29289 10.7071C6.90237 10.3166 6.90237 9.68342 7.29289 9.29289L11.2929 5.29289C11.6834 4.90237 12.3166 4.90237 12.7071 5.29289Z" />
-                                </svg>
-                            </button>
-                            <button (click)="onPageChange(currentPage() + 1)" [disabled]="currentPage() >= totalPages()"
-                                class="flex items-center justify-center rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition">
-                                <svg class="fill-current text-black dark:text-white" width="20" height="20"
-                                    viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                        d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" />
-                                </svg>
-                            </button>
-                        </div>
+                <div class="flex items-center gap-4">
+                    <p class="font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+                        Página {{ currentPage() }} de {{ totalPages() }} <span
+                            class="font-semibold text-[#191817] dark:text-white">({{ totalItems() }} items)</span>
+                    </p>
+                    <div class="flex items-center gap-2">
+                        <button (click)="onPageChange(currentPage() - 1)" [disabled]="currentPage() === 1"
+                            class="flex items-center justify-center rounded-xl p-2 text-[#46424A] hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                            <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M12.7071 5.29289C13.0976 5.68342 13.0976 6.31658 12.7071 6.70711L9.41421 10L12.7071 13.2929C13.0976 13.6834 13.0976 14.3166 12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L7.29289 10.7071C6.90237 10.3166 6.90237 9.68342 7.29289 9.29289L11.2929 5.29289C11.6834 4.90237 12.3166 4.90237 12.7071 5.29289Z" />
+                            </svg>
+                        </button>
+                        <button (click)="onPageChange(currentPage() + 1)" [disabled]="currentPage() >= totalPages()"
+                            class="flex items-center justify-center rounded-xl p-2 text-[#46424A] hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                            <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -276,12 +290,14 @@
 
 <!-- Modal for Product Form -->
 @if (showModal()) {
-<div class="fixed inset-0 z-999999 flex items-center justify-center bg-black/90 p-4 overflow-y-auto">
+<div
+    class="fixed inset-0 z-999999 flex items-center justify-center bg-[#191817]/60 backdrop-blur-sm p-4 overflow-y-auto">
     <!-- Modal Wrapper -->
-    <div class="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg bg-white dark:bg-gray-800 shadow-xl">
+    <div
+        class="relative w-full max-w-4xl max-h-[90vh] flex flex-col rounded-2xl border border-[#E8D9A0] bg-[#FFFDF7] dark:border-[#3D3420] dark:bg-[#1A1714] shadow-xl overflow-hidden">
         <!-- Close Button -->
         <button (click)="closeModal()"
-            class="absolute right-4 top-4 text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white z-50">
+            class="absolute right-4 top-4 text-[#6B6560] hover:text-[#191817] dark:text-gray-400 dark:hover:text-white z-50 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -290,14 +306,14 @@
         </button>
 
         <!-- Header -->
-        <div class="px-8 py-6 border-b border-gray-200 dark:border-gray-700">
-            <h3 class="text-xl font-bold text-black dark:text-white">
+        <div class="px-8 py-4 border-b border-[#E8D9A0] dark:border-[#3D3420] shrink-0">
+            <h3 class="font-outfit text-title-sm font-semibold text-[#191817] dark:text-white">
                 {{ editingProduct() ? 'Editar Producto' : 'Nuevo Producto' }}
             </h3>
         </div>
 
         <!-- Body -->
-        <div class="p-8">
+        <div class="p-8 overflow-y-auto">
             <app-product-form [product]="editingProduct()" [isEditMode]="!!editingProduct()" (close)="closeModal()"
                 (saved)="onProductSaved()">
             </app-product-form>
@@ -309,18 +325,28 @@
 <!-- Delete Confirmation Modal -->
 @if (showDeleteModal()) {
 <div
-    class="fixed left-0 top-0 z-999999 flex h-full min-h-screen w-full items-center justify-center bg-black/90 px-4 py-5">
-    <div class="w-full max-w-142.5 rounded-lg bg-white px-8 py-12 text-center dark:bg-gray-900 md:px-17.5 md:py-15">
-        <h3 class="mb-5 text-xl font-bold text-black dark:text-white">¿Eliminar Producto?</h3>
-        <p class="mb-10 font-medium text-gray-500 dark:text-gray-400">¿Estás seguro de que deseas eliminar este
+    class="fixed left-0 top-0 z-999999 flex h-full min-h-screen w-full items-center justify-center bg-[#191817]/60 backdrop-blur-sm px-4 py-5">
+    <div
+        class="w-full max-w-[142.5rem] md:max-w-md rounded-2xl border border-[#E8D9A0] bg-[#FFFDF7] px-8 py-12 text-center shadow-xl dark:border-[#3D3420] dark:bg-[#1A1714] md:px-10 md:py-10">
+        <div
+            class="mx-auto mb-6 flex size-14 items-center justify-center rounded-full bg-error-50 dark:bg-error-500/15">
+            <svg class="size-7 text-error-600 dark:text-error-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+        </div>
+        <h3 class="font-outfit text-title-sm font-semibold text-[#191817] dark:text-white mb-2">¿Eliminar Producto?</h3>
+        <p class="mb-10 font-display text-theme-sm text-[#46424A] dark:text-gray-400">¿Estás seguro de que deseas
+            eliminar este
             producto?</p>
         <div class="flex gap-4 justify-center">
             <button (click)="closeDeleteModal()"
-                class="block w-full rounded border border-stroke bg-gray-100 p-3 text-center font-medium text-black transition hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 sm:w-auto sm:min-w-[120px]">
+                class="flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 font-outfit text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 sm:w-auto sm:min-w-[120px]">
                 Cancelar
             </button>
             <button (click)="confirmDelete()"
-                class="block w-full rounded border border-red-600 bg-red-600 p-3 text-center font-medium text-white transition hover:bg-opacity-90 sm:w-auto sm:min-w-[120px]">
+                class="flex items-center justify-center gap-2 rounded-xl bg-error-600 px-5 py-2.5 font-outfit text-sm font-semibold text-white shadow-theme-sm transition-all hover:bg-error-700 active:scale-[0.98] sm:w-auto sm:min-w-[120px]">
                 Eliminar
             </button>
         </div>

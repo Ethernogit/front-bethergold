@@ -1,156 +1,183 @@
-<div class="min-h-screen bg-gray-50 dark:bg-[#0b1120] relative flex">
-    <!-- Sidebar -->
-    <!-- Assuming Sidebar is in app-layout, not here. If it was here, we'd preserve it.
-         Based on previous file, there was no sidebar component *inside* this file, 
-         so we assume it's handled by a parent layout. -->
-
-    <!-- Main Content -->
+<div class="min-h-screen bg-[#FFFDF7] dark:bg-[#120F0B] relative flex">
     <main class="w-full h-screen overflow-hidden flex flex-col">
-        <!-- Header (Fixed) -->
-        <header class="bg-white dark:bg-[#1a2230] border-b border-gray-200 dark:border-[#2a364a] flex-shrink-0 z-20">
+        <!-- Header -->
+        <header class="bg-white dark:bg-[#1A1714] border-b border-[#E8D9A0] dark:border-[#3D3420] flex-shrink-0 z-20">
             <div class="px-6 py-4">
-                <!-- Top Row: Back link & Refresh/Actions -->
+                <!-- Top Row: Back link & Refresh -->
                 <div class="flex items-center justify-between mb-4">
                     <a routerLink="/sales/history"
-                        class="flex items-center gap-2 text-gray-500 hover:text-primary transition-colors cursor-pointer group">
-                        <span
-                            class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
-                        <span class="font-medium text-sm">Volver al listado</span>
+                        class="flex items-center gap-2 font-display text-theme-sm text-[#6B6560] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors cursor-pointer group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="group-hover:-translate-x-1 transition-transform">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                        <span class="font-medium">Volver al listado</span>
                     </a>
-                    <button class="text-gray-400 hover:text-primary transition-colors">
-                        <span class="material-symbols-outlined">refresh</span>
+                    <button
+                        class="text-[#6B6560] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                        </svg>
                     </button>
                 </div>
 
                 <!-- Main Title Row -->
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div class="flex items-center gap-4">
-                        <div
-                            class="size-12 rounded-lg bg-gray-100 dark:bg-[#111722] flex items-center justify-center text-gray-500 dark:text-gray-400">
-                            <span class="material-symbols-outlined text-2xl">receipt_long</span>
+                        <div class="size-12 rounded-xl bg-[#FBF0C9] dark:bg-[#3D3420] flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" class="text-[#C69214]">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
                         </div>
                         <div>
                             <div
-                                class="text-xs text-gray-500 dark:text-[#92a4c9] font-medium tracking-wide uppercase mb-0.5">
+                                class="font-outfit text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] mb-0.5">
                                 Orden de Venta</div>
-                            <h1 class="text-2xl font-bold text-gray-900 dark:text-white leading-none">
-                                {{note?.id || 'Cargando...'}}
-                            </h1>
+                            <h1 class="font-outfit text-2xl font-bold text-[#191817] dark:text-white leading-none">
+                                {{note?.id || 'Cargando...'}}</h1>
                         </div>
                     </div>
 
-                    <!-- Middle Info: Order Details -->
+                    <!-- Middle Info -->
                     <div
-                        class="hidden xl:flex items-center gap-8 border-l border-gray-200 dark:border-[#2a364a] pl-8 ml-4 mr-auto">
-                        <!-- Date -->
+                        class="hidden xl:flex items-center gap-8 border-l border-[#E8D9A0] dark:border-[#3D3420] pl-8 ml-4 mr-auto">
                         <div>
                             <div
-                                class="text-[10px] font-bold text-gray-500 dark:text-[#92a4c9] uppercase tracking-wider mb-0.5">
+                                class="font-outfit text-[10px] font-bold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] mb-0.5">
                                 Fecha</div>
-                            <div class="text-sm font-bold text-gray-900 dark:text-white">{{note?.dateCreated}}</div>
+                            <div class="font-outfit text-theme-sm font-bold text-[#191817] dark:text-white">
+                                {{note?.dateCreated}}</div>
                         </div>
-                        <!-- Location -->
                         <div>
                             <div
-                                class="text-[10px] font-bold text-gray-500 dark:text-[#92a4c9] uppercase tracking-wider mb-0.5">
+                                class="font-outfit text-[10px] font-bold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] mb-0.5">
                                 Sucursal</div>
-                            <div class="text-sm font-bold text-gray-900 dark:text-white">{{note?.location}}</div>
+                            <div class="font-outfit text-theme-sm font-bold text-[#191817] dark:text-white">
+                                {{note?.location}}</div>
                         </div>
-                        <!-- Agent -->
                         <div>
                             <div
-                                class="text-[10px] font-bold text-gray-500 dark:text-[#92a4c9] uppercase tracking-wider mb-0.5">
+                                class="font-outfit text-[10px] font-bold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] mb-0.5">
                                 Vendedor</div>
                             <div class="flex items-center gap-2">
                                 <div
-                                    class="size-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">
+                                    class="size-5 rounded-full bg-[#FBF0C9] dark:bg-[#3D3420] flex items-center justify-center font-outfit text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A]">
                                     {{note?.agent?.charAt(0)}}
                                 </div>
-                                <span class="text-sm font-bold text-gray-900 dark:text-white">{{note?.agent}}</span>
+                                <span
+                                    class="font-outfit text-theme-sm font-bold text-[#191817] dark:text-white">{{note?.agent}}</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Status Badge -->
+                    <!-- Actions & Status -->
                     <div class="flex items-center gap-3 flex-shrink-0">
-                        <!-- Print Button -->
                         <button (click)="printNote()"
-                            class="bg-white dark:bg-[#1a2230] text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm">
-                            <span class="material-symbols-outlined text-[20px]">print</span>
+                            class="flex items-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-4 py-2 font-outfit text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-gray-300 dark:hover:bg-white/5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2">
+                                </path>
+                                <rect x="6" y="14" width="12" height="8"></rect>
+                            </svg>
                             <span class="hidden sm:inline">Imprimir</span>
                         </button>
 
-                        <!-- Pay Button (Conditional) -->
                         <button *ngIf="financials?.balance > 0" (click)="openPaymentModal()"
-                            class="bg-primary hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-sm">
-                            <span class="material-symbols-outlined text-[20px]">payments</span>
+                            class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-4 py-2 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98]">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
                             <span>Abonar</span>
                         </button>
 
                         <span *ngIf="note" [ngClass]="{
-                            'bg-green-600 text-white border-green-700 shadow-lg shadow-green-500/30': note.status === 'Pagado' || note.status === 'Entregado',
-                            'bg-amber-500 text-white border-amber-600 shadow-lg shadow-amber-500/30': note.status === 'Pago Pendiente',
-                            'bg-gray-500 text-white border-gray-600': note.status === 'Borrador',
-                            'bg-red-500 text-white border-red-600': note.status === 'Anulada'
+                            'bg-success-50 text-success-700 border-success-200 dark:bg-success-500/15 dark:text-success-400 dark:border-success-500/30': note.status === 'Pagado' || note.status === 'Entregado',
+                            'bg-[#FBF0C9] text-[#9A6F0A] border-[#E8D9A0] dark:bg-[#3D3420] dark:text-[#E8C97A] dark:border-[#3D3420]': note.status === 'Pago Pendiente',
+                            'bg-[#F5F0EC] text-[#46424A] border-[#E8D9A0] dark:bg-white/5 dark:text-gray-400': note.status === 'Borrador',
+                            'bg-error-50 text-error-700 border-error-200 dark:bg-error-500/15 dark:text-error-400': note.status === 'Anulada'
                         }"
-                            class="px-5 py-2 rounded-full text-base font-bold border flex items-center gap-2 transition-all transform hover:scale-105">
-                            <span class="material-symbols-outlined text-[22px] font-bold"
-                                *ngIf="note.status === 'Pagado' || note.status === 'Entregado'">check_circle</span>
-                            <span class="material-symbols-outlined text-[22px] font-bold"
-                                *ngIf="note.status === 'Pago Pendiente'">hourglass_empty</span>
-                            <span class="material-symbols-outlined text-[22px] font-bold"
-                                *ngIf="note.status === 'Borrador'">edit_note</span>
-                            <span class="material-symbols-outlined text-[22px] font-bold"
-                                *ngIf="note.status === 'Anulada'">cancel</span>
+                            class="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 font-outfit text-sm font-bold">
+                            <svg *ngIf="note.status === 'Pagado' || note.status === 'Entregado'"
+                                xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <svg *ngIf="note.status === 'Pago Pendiente'" xmlns="http://www.w3.org/2000/svg" width="16"
+                                height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
                             {{note.status | uppercase}}
                         </span>
                     </div>
                 </div>
             </div>
 
-            <!-- Summary Bar (Stats) -->
+            <!-- Summary Bar -->
             <div
-                class="px-6 py-3 bg-gray-50/50 dark:bg-[#111722]/50 border-t border-gray-200 dark:border-[#2a364a] flex overflow-x-auto gap-4 md:gap-8 hide-scrollbar">
-                <div class="flex items-center gap-3 pr-4 border-r border-gray-200 dark:border-[#2a364a] last:border-0">
-                    <div class="text-xs font-medium text-gray-500 dark:text-[#92a4c9] uppercase">Total</div>
-                    <span class="text-base font-bold text-gray-900 dark:text-white">${{financials?.total |
+                class="px-6 py-2.5 bg-[#FBF0C9]/40 dark:bg-[#252017]/60 border-t border-[#E8D9A0] dark:border-[#3D3420] flex overflow-x-auto gap-4 md:gap-8 hide-scrollbar">
+                <div class="flex items-center gap-3 pr-4 border-r border-[#E8D9A0] dark:border-[#3D3420] last:border-0">
+                    <div class="font-outfit text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">
+                        Total</div>
+                    <span class="font-outfit text-base font-bold text-[#191817] dark:text-white">${{financials?.total |
                         number:'1.2-2'}}</span>
                 </div>
-                <!-- Paid (Acuenta) -->
                 <div *ngIf="financials?.paid > 0"
-                    class="flex items-center gap-3 pr-4 border-r border-gray-200 dark:border-[#2a364a] last:border-0">
-                    <div class="text-xs font-medium text-gray-500 dark:text-[#92a4c9] uppercase">Acuenta</div>
-                    <span class="text-sm font-bold text-green-600 dark:text-green-400">${{financials?.paid |
-                        number:'1.2-2'}}</span>
+                    class="flex items-center gap-3 pr-4 border-r border-[#E8D9A0] dark:border-[#3D3420] last:border-0">
+                    <div class="font-outfit text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">A
+                        cuenta</div>
+                    <span
+                        class="font-outfit text-sm font-bold text-success-600 dark:text-success-400">${{financials?.paid
+                        | number:'1.2-2'}}</span>
                 </div>
-                <!-- Remaining (Restante) -->
                 <div *ngIf="financials?.balance > 0"
-                    class="flex items-center gap-3 pr-4 border-r border-gray-200 dark:border-[#2a364a] last:border-0">
-                    <div class="text-xs font-medium text-gray-500 dark:text-[#92a4c9] uppercase">Restante</div>
-                    <span class="text-sm font-bold text-red-500 dark:text-red-400">${{financials?.balance |
-                        number:'1.2-2'}}</span>
+                    class="flex items-center gap-3 pr-4 border-r border-[#E8D9A0] dark:border-[#3D3420] last:border-0">
+                    <div class="font-outfit text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">
+                        Restante</div>
+                    <span
+                        class="font-outfit text-sm font-bold text-error-500 dark:text-error-400">${{financials?.balance
+                        | number:'1.2-2'}}</span>
                 </div>
-
-                <div class="flex items-center gap-3 last:border-0 pl-4 border-l border-gray-200 dark:border-[#2a364a]">
-                    <span class="text-xs font-medium text-gray-500 dark:text-[#92a4c9] uppercase">CLIENTE:</span>
-                    <div class="flex items-center gap-4 text-sm text-gray-900 dark:text-white">
+                <div class="flex items-center gap-3 last:border-0 pl-4 border-l border-[#E8D9A0] dark:border-[#3D3420]">
+                    <span
+                        class="font-outfit text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">Cliente:</span>
+                    <div class="flex items-center gap-4 font-display text-theme-sm text-[#191817] dark:text-white">
                         <span
-                            class="font-bold border-r border-gray-300 dark:border-gray-600 pr-3 mr-1">{{client?.name}}</span>
-
+                            class="font-bold border-r border-[#E8D9A0] dark:border-[#3D3420] pr-3 mr-1">{{client?.name}}</span>
                         <span class="flex items-center gap-1" *ngIf="client?.phone">
-                            <span class="font-medium text-gray-500 dark:text-gray-400">Tel:</span>
+                            <span class="font-medium text-[#6B6560] dark:text-gray-400">Tel:</span>
                             <span>{{client?.phone}}</span>
                         </span>
-
-                        <!-- Client Edit Button -->
                         <button (click)="showClientModal.set(true)"
-                            class="ml-2 p-1 text-gray-400 hover:text-primary transition-colors rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+                            class="ml-2 p-1.5 text-[#6B6560] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors rounded-lg hover:bg-[#FBF0C9] dark:hover:bg-[#3D3420]"
                             title="Cambiar Cliente">
-                            <span class="material-symbols-outlined text-[18px]">person</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
                         </button>
-
                         <span class="flex items-center gap-1" *ngIf="client?.email">
-                            <span class="font-medium text-gray-500 dark:text-gray-400">Email:</span>
+                            <span class="font-medium text-[#6B6560] dark:text-gray-400">Email:</span>
                             <span class="truncate max-w-[200px]">{{client?.email}}</span>
                         </span>
                     </div>
@@ -158,110 +185,155 @@
             </div>
 
             <!-- Tab Navigation -->
-            <div class="px-6 flex gap-2 overflow-x-auto hide-scrollbar items-center">
+            <div
+                class="px-6 flex gap-1 overflow-x-auto hide-scrollbar items-center border-t border-[#E8D9A0] dark:border-[#3D3420]">
                 <button (click)="setTab('general')"
-                    [ngClass]="currentTab === 'general' ? 'bg-primary/10 dark:bg-white/10 text-primary dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'"
-                    class="px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap">
-                    <span class="material-symbols-outlined text-[20px]">info</span>
+                    [ngClass]="currentTab === 'general'
+                        ? 'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]'
+                        : 'text-[#6B6560] dark:text-gray-400 hover:text-[#191817] dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'"
+                    class="px-4 py-3 rounded-t-lg font-outfit text-theme-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
                     Información
                 </button>
                 <button (click)="setTab('items')"
-                    [ngClass]="currentTab === 'items' ? 'bg-primary/10 dark:bg-white/10 text-primary dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'"
-                    class="px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap">
-                    <span class="material-symbols-outlined text-[20px]">inventory_2</span>
+                    [ngClass]="currentTab === 'items'
+                        ? 'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]'
+                        : 'text-[#6B6560] dark:text-gray-400 hover:text-[#191817] dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'"
+                    class="px-4 py-3 rounded-t-lg font-outfit text-theme-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
                     Productos
-                    <span
-                        [ngClass]="currentTab === 'items' ? 'bg-primary text-white dark:bg-white dark:text-[#1a2230]' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'"
-                        class="px-1.5 py-0.5 rounded text-xs transition-colors">
+                    <span [ngClass]="currentTab === 'items'
+                            ? 'bg-[#9A6F0A] text-white dark:bg-[#E8C97A] dark:text-[#1A1714]'
+                            : 'bg-[#E8D9A0] text-[#46424A] dark:bg-[#3D3420] dark:text-gray-300'"
+                        class="px-1.5 py-0.5 rounded font-outfit text-theme-xs font-bold transition-colors">
                         {{(items.reserved.length + items.workshop.length + items.custom.length)}}
                     </span>
                 </button>
                 <button (click)="setTab('payments')"
-                    [ngClass]="currentTab === 'payments' ? 'bg-primary/10 dark:bg-white/10 text-primary dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'"
-                    class="px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap">
-                    <span class="material-symbols-outlined text-[20px]">payments</span>
+                    [ngClass]="currentTab === 'payments'
+                        ? 'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]'
+                        : 'text-[#6B6560] dark:text-gray-400 hover:text-[#191817] dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'"
+                    class="px-4 py-3 rounded-t-lg font-outfit text-theme-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                        <line x1="1" y1="10" x2="23" y2="10"></line>
+                    </svg>
                     Pagos / Historial
                 </button>
             </div>
         </header>
 
         <!-- Loading State -->
-        <div *ngIf="isLoading" class="flex-1 flex items-center justify-center bg-gray-50 dark:bg-[#0b1120]">
-            <div class="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+        <div *ngIf="isLoading" class="flex-1 flex items-center justify-center bg-[#FFFDF7] dark:bg-[#120F0B]">
+            <div
+                class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent">
+            </div>
         </div>
 
         <!-- Error State -->
         <div *ngIf="error && !isLoading"
-            class="flex-1 flex items-center justify-center bg-gray-50 dark:bg-[#0b1120] p-4 text-center">
-            <div class="max-w-md bg-white dark:bg-[#1a2230] p-8 rounded-xl shadow-lg">
-                <span class="material-symbols-outlined text-6xl text-red-500 mb-4">error</span>
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Error al cargar</h3>
-                <p class="text-gray-500 dark:text-[#92a4c9] mb-6">{{error}}</p>
+            class="flex-1 flex items-center justify-center bg-[#FFFDF7] dark:bg-[#120F0B] p-4 text-center">
+            <div
+                class="max-w-md rounded-2xl border border-[#E8D9A0] bg-white p-8 shadow-lg dark:border-[#3D3420] dark:bg-[#1A1714]">
+                <div
+                    class="mb-4 flex size-16 items-center justify-center rounded-full bg-error-50 dark:bg-error-500/15 mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                        class="text-error-600 dark:text-error-400">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <h3 class="font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white mb-2">Error al cargar
+                </h3>
+                <p class="font-display text-theme-sm text-[#6B6560] dark:text-gray-400 mb-6">{{error}}</p>
                 <button (click)="loadNote(note?.id || '')"
-                    class="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-opacity-90 transition-all">
+                    class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] mx-auto">
                     Reintentar
                 </button>
             </div>
         </div>
 
         <!-- Content Area -->
-        <div *ngIf="!isLoading && !error" class="flex-1 overflow-y-auto bg-gray-50 dark:bg-[#0b1120] p-4 lg:p-8">
+        <div *ngIf="!isLoading && !error" class="flex-1 overflow-y-auto bg-[#FFFDF7] dark:bg-[#120F0B] p-4 lg:p-8">
             <div class="max-w-[1200px] mx-auto">
 
                 <!-- TAB 1: General Info -->
                 <div *ngIf="currentTab === 'general'" class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fadeIn">
-
-                    <!-- Main Column: Financials -->
                     <div class="lg:col-span-2 space-y-6">
                         <!-- Payment Summary -->
                         <div
-                            class="bg-white dark:bg-[#1a2230] border border-gray-200 dark:border-[#2a364a] rounded-xl overflow-hidden shadow-sm relative">
-                            <div class="h-1.5 w-full bg-gradient-to-r from-primary to-blue-400 absolute top-0"></div>
+                            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#3D3420] dark:bg-[#1A1714] overflow-hidden relative">
+                            <div class="h-1.5 w-full bg-gradient-to-r from-[#C69214] to-[#FAC600] absolute top-0"></div>
                             <div class="p-6">
-                                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6">Resumen Financiero</h3>
+                                <h3 class="font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white mb-6">
+                                    Resumen Financiero</h3>
                                 <div class="space-y-4">
-                                    <div class="flex justify-between text-sm">
-                                        <span class="text-gray-500 dark:text-[#92a4c9]">Subtotal</span>
-                                        <span class="font-medium text-gray-900 dark:text-white">${{financials?.subtotal
+                                    <div class="flex justify-between font-display text-theme-sm">
+                                        <span class="text-[#6B6560] dark:text-gray-400">Subtotal</span>
+                                        <span class="font-medium text-[#191817] dark:text-white">${{financials?.subtotal
                                             | number:'1.2-2'}}</span>
                                     </div>
-                                    <div class="flex justify-between text-sm">
-                                        <span class="text-gray-500 dark:text-[#92a4c9]">Impuestos</span>
-                                        <span class="font-medium text-gray-900 dark:text-white">${{financials?.tax |
+                                    <div class="flex justify-between font-display text-theme-sm">
+                                        <span class="text-[#6B6560] dark:text-gray-400">Impuestos</span>
+                                        <span class="font-medium text-[#191817] dark:text-white">${{financials?.tax |
                                             number:'1.2-2'}}</span>
                                     </div>
-                                    <div class="border-t border-gray-100 dark:border-[#2a364a] my-2"></div>
+                                    <div class="border-t border-[#E8D9A0] dark:border-[#3D3420] my-2"></div>
                                     <div class="flex justify-between items-end">
-                                        <span class="text-lg font-bold text-gray-900 dark:text-white">Total</span>
                                         <span
-                                            class="text-2xl font-bold text-gray-900 dark:text-white">${{financials?.total
+                                            class="font-outfit text-theme-xl font-bold text-[#191817] dark:text-white">Total</span>
+                                        <span
+                                            class="font-outfit text-2xl font-bold text-[#191817] dark:text-white">${{financials?.total
                                             | number:'1.2-2'}}</span>
                                     </div>
-
                                     <div
-                                        class="bg-gray-50 dark:bg-[#111722] rounded-lg p-4 mt-4 space-y-3 border border-gray-100 dark:border-[#2a364a]">
-                                        <div class="flex justify-between items-center text-sm">
+                                        class="rounded-xl bg-[#FBF0C9]/40 border border-[#E8D9A0] dark:border-[#3D3420] dark:bg-[#252017]/60 p-4 mt-4 space-y-3">
+                                        <div class="flex justify-between items-center font-display text-theme-sm">
                                             <span
-                                                class="text-green-600 dark:text-green-400 font-medium flex items-center gap-1">
-                                                <span class="material-symbols-outlined text-[16px]">check_circle</span>
+                                                class="text-success-600 dark:text-success-400 font-medium flex items-center gap-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                                </svg>
                                                 Pagado
                                             </span>
                                             <span
-                                                class="font-bold text-green-600 dark:text-green-400">${{financials?.paid
+                                                class="font-bold text-success-600 dark:text-success-400">${{financials?.paid
                                                 | number:'1.2-2'}}</span>
                                         </div>
-                                        <div class="flex justify-between items-center text-sm">
-                                            <span class="text-primary font-bold uppercase tracking-wide">Saldo
+                                        <div class="flex justify-between items-center">
+                                            <span
+                                                class="font-outfit text-theme-sm font-bold uppercase tracking-wide text-[#C69214] dark:text-[#FAC600]">Saldo
                                                 Pendiente</span>
-                                            <span class="font-extrabold text-primary text-lg">${{financials?.balance |
-                                                number:'1.2-2'}}</span>
+                                            <span
+                                                class="font-outfit font-extrabold text-lg text-[#C69214] dark:text-[#FAC600]">${{financials?.balance
+                                                | number:'1.2-2'}}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <button (click)="setTab('payments')"
-                                    class="w-full mt-6 py-3 bg-primary text-white rounded-lg font-bold hover:bg-opacity-90 transition-all flex items-center justify-center gap-2">
+                                    class="w-full mt-6 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] py-3 font-outfit text-sm font-bold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98]">
                                     Ir a Pagos
-                                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
+                                    </svg>
                                 </button>
                             </div>
                         </div>
@@ -269,15 +341,20 @@
 
                     <!-- Right Column: Notes -->
                     <div class="space-y-6">
-                        <!-- Private Notes -->
                         <div
-                            class="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800/30 rounded-xl p-6 h-full">
+                            class="rounded-2xl border border-[#E8D9A0] bg-[#FBF0C9]/30 dark:border-[#3D3420] dark:bg-[#3D3420]/20 p-6 h-full">
                             <h3
-                                class="text-sm font-bold text-amber-800 dark:text-amber-400 mb-4 flex items-center gap-2">
-                                <span class="material-symbols-outlined">lock</span> Notas Privadas
+                                class="font-outfit text-theme-sm font-bold text-[#9A6F0A] dark:text-[#E8C97A] mb-4 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                                Notas Privadas
                             </h3>
                             <p
-                                class="text-sm text-gray-700 dark:text-gray-300 italic whitespace-pre-wrap leading-relaxed">
+                                class="font-display text-theme-sm text-[#46424A] dark:text-gray-300 italic whitespace-pre-wrap leading-relaxed">
                                 "{{note?.privateNotes || 'No hay notas privadas registradas.'}}"
                             </p>
                         </div>
@@ -286,46 +363,57 @@
 
                 <!-- TAB 2: Items -->
                 <div *ngIf="currentTab === 'items'" class="space-y-8 animate-fadeIn">
-                    <!-- Products -->
+                    <!-- Products (Apartados) -->
                     <section *ngIf="items.reserved.length > 0">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <span class="material-symbols-outlined text-amber-500">inventory_2</span>
+                            <h3
+                                class="font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="text-[#C69214]">
+                                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                                </svg>
                                 Apartados
                             </h3>
                             <span
-                                class="text-xs bg-gray-100 dark:bg-[#1a2230] text-gray-500 dark:text-[#92a4c9] px-2 py-1 rounded font-medium">{{items.reserved.length}}
+                                class="inline-flex items-center gap-1 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 font-outfit text-theme-xs font-medium text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]">{{items.reserved.length}}
                                 Ítems</span>
                         </div>
                         <div
-                            class="bg-white dark:bg-[#1a2230] border border-gray-200 dark:border-[#2a364a] rounded-xl overflow-hidden shadow-sm">
+                            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#3D3420] dark:bg-[#1A1714] overflow-hidden">
                             <div class="overflow-x-auto">
-                                <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-                                    <thead
-                                        class="bg-gray-50 dark:bg-[#111722] text-xs uppercase text-gray-700 dark:text-[#92a4c9]">
-                                        <tr>
-                                            <th class="px-6 py-4 font-bold">Codebar</th>
-                                            <th class="px-6 py-4 font-bold">Producto</th>
-                                            <th class="px-6 py-4 font-bold">Estado</th>
-                                            <th class="px-6 py-4 font-bold text-right">Precio</th>
+                                <table class="w-full text-left">
+                                    <thead class="bg-[#FBF0C9] dark:bg-[#252017]">
+                                        <tr
+                                            class="font-outfit text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                                            <th class="px-6 py-4">Codebar</th>
+                                            <th class="px-6 py-4">Producto</th>
+                                            <th class="px-6 py-4">Estado</th>
+                                            <th class="px-6 py-4 text-right">Precio</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-gray-100 dark:divide-[#2a364a]">
-                                        <tr *ngFor="let item of items.reserved">
-                                            <td class="px-6 py-4 font-medium">{{item.ref}}</td>
+                                    <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#3D3420]">
+                                        <tr *ngFor="let item of items.reserved"
+                                            class="hover:bg-[#FBF0C9]/30 dark:hover:bg-[#252017] transition-colors">
+                                            <td
+                                                class="px-6 py-4 font-display text-theme-sm font-medium text-[#191817] dark:text-white">
+                                                {{item.ref}}</td>
                                             <td class="px-6 py-4">
-                                                <div>
-                                                    <div class="font-bold text-gray-900 dark:text-white">
-                                                        {{item.name}}</div>
-                                                    <div class="text-xs text-gray-500 dark:text-[#92a4c9]">
-                                                        {{item.description}}</div>
-                                                </div>
+                                                <div
+                                                    class="font-outfit text-theme-sm font-bold text-[#191817] dark:text-white">
+                                                    {{item.name}}</div>
+                                                <div
+                                                    class="font-display text-theme-xs text-[#6B6560] dark:text-gray-400">
+                                                    {{item.description}}</div>
                                             </td>
                                             <td class="px-6 py-4">
                                                 <span
-                                                    class="px-2 py-1 rounded bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400 border border-amber-100 dark:border-amber-800 text-xs font-bold">{{item.status}}</span>
+                                                    class="inline-flex items-center gap-1.5 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 font-outfit text-theme-xs font-bold text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]">{{item.status}}</span>
                                             </td>
-                                            <td class="px-6 py-4 text-right font-bold text-gray-900 dark:text-white">
+                                            <td
+                                                class="px-6 py-4 text-right font-outfit text-theme-sm font-bold text-[#191817] dark:text-white">
                                                 ${{item.price | number:'1.2-2'}}</td>
                                         </tr>
                                     </tbody>
@@ -337,47 +425,65 @@
                     <!-- Workshop -->
                     <section *ngIf="items.workshop.length > 0">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <span class="material-symbols-outlined text-blue-500">build</span>
+                            <h3
+                                class="font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="text-[#46424A] dark:text-gray-300">
+                                    <path
+                                        d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                                </svg>
                                 Servicios de Taller
                             </h3>
                             <span
-                                class="text-xs bg-gray-100 dark:bg-[#1a2230] text-gray-500 dark:text-[#92a4c9] px-2 py-1 rounded font-medium">{{items.workshop.length}}
+                                class="inline-flex items-center gap-1 rounded-full bg-[#F5F0EC] px-2.5 py-0.5 font-outfit text-theme-xs font-medium text-[#46424A] dark:bg-white/5 dark:text-gray-400">{{items.workshop.length}}
                                 Servicios</span>
                         </div>
                         <div
-                            class="bg-white dark:bg-[#1a2230] border border-gray-200 dark:border-[#2a364a] rounded-xl overflow-hidden shadow-sm">
+                            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#3D3420] dark:bg-[#1A1714] overflow-hidden">
                             <div class="overflow-x-auto">
-                                <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-                                    <thead
-                                        class="bg-gray-50 dark:bg-[#111722] text-xs uppercase text-gray-700 dark:text-[#92a4c9]">
-                                        <tr>
-                                            <th class="px-6 py-4 font-bold">Servicio</th>
-                                            <th class="px-6 py-4 font-bold">Job ID</th>
-                                            <th class="px-6 py-4 font-bold">Entrega Est.</th>
-                                            <th class="px-6 py-4 font-bold">Estado</th>
-                                            <th class="px-6 py-4 font-bold text-right">Costo</th>
+                                <table class="w-full text-left">
+                                    <thead class="bg-[#FBF0C9] dark:bg-[#252017]">
+                                        <tr
+                                            class="font-outfit text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                                            <th class="px-6 py-4">Servicio</th>
+                                            <th class="px-6 py-4">Job ID</th>
+                                            <th class="px-6 py-4">Entrega Est.</th>
+                                            <th class="px-6 py-4">Estado</th>
+                                            <th class="px-6 py-4 text-right">Costo</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-gray-100 dark:divide-[#2a364a]">
-                                        <tr *ngFor="let item of items.workshop">
+                                    <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#3D3420]">
+                                        <tr *ngFor="let item of items.workshop"
+                                            class="hover:bg-[#FBF0C9]/30 dark:hover:bg-[#252017] transition-colors">
                                             <td class="px-6 py-4">
                                                 <div class="flex items-center gap-3">
                                                     <div
-                                                        class="size-10 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-500">
-                                                        <span class="material-symbols-outlined">ring_volume</span>
+                                                        class="size-10 rounded-full bg-[#F5F0EC] dark:bg-white/5 flex items-center justify-center text-[#46424A] dark:text-gray-400">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <path
+                                                                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                                                        </svg>
                                                     </div>
                                                     <span
-                                                        class="font-bold text-gray-900 dark:text-white">{{item.title}}</span>
+                                                        class="font-outfit text-theme-sm font-bold text-[#191817] dark:text-white">{{item.title}}</span>
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-4 font-medium">{{item.jobId}}</td>
-                                            <td class="px-6 py-4">{{item.estReady}}</td>
+                                            <td
+                                                class="px-6 py-4 font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+                                                {{item.jobId}}</td>
+                                            <td
+                                                class="px-6 py-4 font-display text-theme-sm text-[#6B6560] dark:text-gray-400">
+                                                {{item.estReady}}</td>
                                             <td class="px-6 py-4">
                                                 <span
-                                                    class="px-2 py-1 rounded bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400 border border-purple-100 dark:border-purple-800 text-xs font-bold">{{item.status}}</span>
+                                                    class="inline-flex items-center gap-1.5 rounded-full bg-[#F5F0EC] px-2.5 py-0.5 font-outfit text-theme-xs font-bold text-[#46424A] dark:bg-white/5 dark:text-gray-400">{{item.status}}</span>
                                             </td>
-                                            <td class="px-6 py-4 text-right font-bold text-gray-900 dark:text-white">
+                                            <td
+                                                class="px-6 py-4 text-right font-outfit font-bold text-[#191817] dark:text-white">
                                                 ${{item.price | number:'1.2-2'}}</td>
                                         </tr>
                                     </tbody>
@@ -386,53 +492,73 @@
                         </div>
                     </section>
 
-                    <!-- Custom -->
+                    <!-- Custom / Hechuras -->
                     <section *ngIf="items.custom.length > 0">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <span class="material-symbols-outlined text-pink-500">diamond</span>
+                            <h3
+                                class="font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="text-[#C69214]">
+                                    <polygon
+                                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                    </polygon>
+                                </svg>
                                 Hechuras / Personalizados
                             </h3>
                             <span
-                                class="text-xs bg-gray-100 dark:bg-[#1a2230] text-gray-500 dark:text-[#92a4c9] px-2 py-1 rounded font-medium">{{items.custom.length}}
+                                class="inline-flex items-center gap-1 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 font-outfit text-theme-xs font-medium text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]">{{items.custom.length}}
                                 Trabajos</span>
                         </div>
                         <div
-                            class="bg-white dark:bg-[#1a2230] border border-gray-200 dark:border-[#2a364a] rounded-xl overflow-hidden shadow-sm">
+                            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#3D3420] dark:bg-[#1A1714] overflow-hidden">
                             <div class="overflow-x-auto">
-                                <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-                                    <thead
-                                        class="bg-gray-50 dark:bg-[#111722] text-xs uppercase text-gray-700 dark:text-[#92a4c9]">
-                                        <tr>
-                                            <th class="px-6 py-4 font-bold">Código</th>
-                                            <th class="px-6 py-4 font-bold">Descripción</th>
-                                            <th class="px-6 py-4 font-bold">Fecha Entrega</th>
-                                            <th class="px-6 py-4 font-bold text-right">Precio Est.</th>
+                                <table class="w-full text-left">
+                                    <thead class="bg-[#FBF0C9] dark:bg-[#252017]">
+                                        <tr
+                                            class="font-outfit text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                                            <th class="px-6 py-4">Código</th>
+                                            <th class="px-6 py-4">Descripción</th>
+                                            <th class="px-6 py-4">Fecha Entrega</th>
+                                            <th class="px-6 py-4 text-right">Precio Est.</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-gray-100 dark:divide-[#2a364a]">
-                                        <tr *ngFor="let item of items.custom">
-                                            <td class="px-6 py-4 font-medium text-xs">{{item.jobId}}</td>
+                                    <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#3D3420]">
+                                        <tr *ngFor="let item of items.custom"
+                                            class="hover:bg-[#FBF0C9]/30 dark:hover:bg-[#252017] transition-colors">
+                                            <td
+                                                class="px-6 py-4 font-display text-theme-xs font-medium text-[#191817] dark:text-white">
+                                                {{item.jobId}}</td>
                                             <td class="px-6 py-4">
                                                 <div class="flex items-center gap-3">
                                                     <div
-                                                        class="size-10 rounded-full bg-pink-50 dark:bg-pink-900/20 flex items-center justify-center text-pink-500 shrink-0">
-                                                        <span class="material-symbols-outlined">diamond</span>
+                                                        class="size-10 rounded-full bg-[#FBF0C9] dark:bg-[#3D3420] flex items-center justify-center text-[#C69214] shrink-0">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <polygon
+                                                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                                            </polygon>
+                                                        </svg>
                                                     </div>
                                                     <div>
-                                                        <div class="font-bold text-gray-900 dark:text-white">
+                                                        <div
+                                                            class="font-outfit text-theme-sm font-bold text-[#191817] dark:text-white">
                                                             {{item.title}}</div>
-                                                        <div class="text-xs text-gray-500 dark:text-[#92a4c9]">
+                                                        <div
+                                                            class="font-display text-theme-xs text-[#6B6560] dark:text-gray-400">
                                                             {{item.description}}</div>
                                                         <span *ngIf="item.isHechura"
-                                                            class="mt-1 inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400 border border-teal-200 dark:border-teal-800 uppercase">
-                                                            Hechura
-                                                        </span>
+                                                            class="mt-1 inline-block rounded-full bg-[#FBF0C9] px-2 py-0.5 font-outfit text-[10px] font-bold uppercase text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]">Hechura</span>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-4 text-sm">{{item.estReady}}</td>
-                                            <td class="px-6 py-4 text-right font-bold text-gray-900 dark:text-white">
+                                            <td
+                                                class="px-6 py-4 font-display text-theme-sm text-[#6B6560] dark:text-gray-400">
+                                                {{item.estReady}}</td>
+                                            <td
+                                                class="px-6 py-4 text-right font-outfit font-bold text-[#191817] dark:text-white">
                                                 ${{item.price | number:'1.2-2'}}</td>
                                         </tr>
                                     </tbody>
@@ -445,64 +571,82 @@
                 <!-- TAB 3: Payments -->
                 <div *ngIf="currentTab === 'payments'" class="space-y-6 animate-fadeIn">
                     <div
-                        class="bg-white dark:bg-[#1a2230] border border-gray-200 dark:border-[#2a364a] rounded-xl p-6 shadow-sm">
+                        class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#3D3420] dark:bg-[#1A1714] p-6">
                         <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Transacciones & Pagos</h3>
+                            <h3 class="font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white">
+                                Transacciones & Pagos</h3>
                             <button (click)="openPaymentModal()"
-                                class="px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg shadow hover:bg-opacity-90 transition-all flex items-center gap-2">
-                                <span class="material-symbols-outlined">payments</span>
+                                class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-4 py-2 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                                </svg>
                                 Nuevo Pago
                             </button>
                         </div>
 
-                        <div *ngIf="financials.transactions.length === 0"
-                            class="p-12 text-center text-gray-500 dark:text-[#92a4c9]">
-                            <span class="material-symbols-outlined text-4xl mb-2 opacity-50">receipt</span>
-                            <p>No hay transacciones registradas.</p>
+                        <div *ngIf="financials.transactions.length === 0" class="py-12 text-center">
+                            <div class="flex flex-col items-center gap-3">
+                                <div
+                                    class="flex size-16 items-center justify-center rounded-full bg-[#FBF0C9] dark:bg-[#3D3420]">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" class="text-[#C69214]">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                    </svg>
+                                </div>
+                                <p class="font-display text-theme-sm text-[#6B6560] dark:text-gray-400">No hay
+                                    transacciones registradas.</p>
+                            </div>
                         </div>
 
                         <div *ngIf="financials.transactions.length > 0"
-                            class="overflow-hidden rounded-lg border border-gray-100 dark:border-[#2a364a]">
-                            <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
-                                <thead
-                                    class="bg-gray-50 dark:bg-[#111722] text-xs uppercase text-gray-700 dark:text-[#92a4c9]">
-                                    <tr>
-                                        <th class="px-6 py-4 font-bold">Fecha</th>
-                                        <th class="px-6 py-4 font-bold">Tipo</th>
-                                        <th class="px-6 py-4 font-bold">Método</th>
-                                        <th class="px-6 py-4 font-bold text-right">Monto</th>
+                            class="rounded-xl overflow-hidden border border-[#E8D9A0] dark:border-[#3D3420]">
+                            <table class="w-full text-left">
+                                <thead class="bg-[#FBF0C9] dark:bg-[#252017]">
+                                    <tr
+                                        class="font-outfit text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                                        <th class="px-6 py-4">Fecha</th>
+                                        <th class="px-6 py-4">Tipo</th>
+                                        <th class="px-6 py-4">Método</th>
+                                        <th class="px-6 py-4 text-right">Monto</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-100 dark:divide-[#2a364a]">
-                                    <tr *ngFor="let txn of financials.transactions">
-                                        <td class="px-6 py-4 font-medium">{{txn.date}}</td>
+                                <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#3D3420]">
+                                    <tr *ngFor="let txn of financials.transactions"
+                                        class="hover:bg-[#FBF0C9]/30 dark:hover:bg-[#252017] transition-colors">
+                                        <td
+                                            class="px-6 py-4 font-display text-theme-sm font-medium text-[#191817] dark:text-white">
+                                            {{txn.date}}</td>
                                         <td class="px-6 py-4">
                                             <span
-                                                class="flex items-center gap-1 text-green-600 dark:text-green-400 font-bold">
-                                                <span
-                                                    class="material-symbols-outlined text-[16px]">arrow_downward</span>
+                                                class="flex items-center gap-1 text-success-600 dark:text-success-400 font-bold font-outfit text-theme-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                    <polyline points="19 12 12 19 5 12"></polyline>
+                                                </svg>
                                                 Abono
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 font-medium">{{txn.type}}</td>
-                                        <td class="px-6 py-4 text-right font-bold text-green-600 dark:text-green-400">
+                                        <td
+                                            class="px-6 py-4 font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+                                            {{txn.type}}</td>
+                                        <td
+                                            class="px-6 py-4 text-right font-outfit font-bold text-success-600 dark:text-success-400">
                                             +${{txn.amount | number:'1.2-2'}}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-
-                    <!-- Placeholder for Global Payment Module -->
-                    <!-- <div
-                        class="bg-gray-50 dark:bg-[#111722]/50 border-2 border-dashed border-gray-300 dark:border-[#2a364a] rounded-xl p-8 text-center">
-                        <p class="text-gray-500 dark:text-[#92a4c9] font-medium">Módulo de Pago Global Próximamente...
-                        </p>
-                    </div> -->
                 </div>
 
             </div>
-            <!-- Footer Spacer -->
             <div class="h-20"></div>
         </div>
     </main>
@@ -514,8 +658,9 @@
 
     <!-- Client Selection Modal -->
     <div *ngIf="showClientModal()"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-        <div class="bg-white dark:bg-[#1a2230] rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#191817]/60 backdrop-blur-sm">
+        <div
+            class="bg-white dark:bg-[#1A1714] rounded-2xl border border-[#E8D9A0] dark:border-[#3D3420] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
             <app-client-selection-modal (select)="onClientSelected($event)" (close)="showClientModal.set(false)">
             </app-client-selection-modal>
         </div>

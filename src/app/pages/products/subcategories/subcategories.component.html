@@ -1,17 +1,18 @@
 <div class="mx-auto max-w-screen-2xl h-[calc(100vh-50px)] flex flex-col overflow-hidden">
-    <!-- Main Content -->
     <div class="flex flex-col gap-4 h-full">
-        <!-- Subcategories Table -->
         <div
-            class="rounded-sm border border-stroke bg-white shadow-default dark:border-gray-800 dark:bg-gray-900 flex flex-col h-full">
+            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#3D3420] dark:bg-[#252017] flex flex-col h-full">
             <!-- Header -->
-            <div class="border-b border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0">
+            <div class="border-b border-[#E8D9A0] px-4 py-3 dark:border-[#3D3420] sm:px-6 shrink-0">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <h3 class="font-medium text-black dark:text-white">
-                        Listado de Subcategorías
-                    </h3>
+                    <div>
+                        <h1 class="font-outfit text-title-sm font-semibold text-[#191817] dark:text-white">Subcategorías
+                        </h1>
+                        <p class="mt-1 font-display text-theme-sm text-[#6B6560] dark:text-gray-500">Gestiona las
+                            subcategorías de tus productos</p>
+                    </div>
                     <button (click)="openCreateModal()"
-                        class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200">
+                        class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md active:scale-[0.98]">
                         <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path d="M10 4.5V15.5M4.5 10H15.5" stroke="currentColor" stroke-width="2"
@@ -23,21 +24,19 @@
             </div>
 
             <!-- Filters -->
-            <div class="border-b border-stroke px-4 py-3 dark:border-gray-800 shrink-0">
+            <div class="border-b border-[#E8D9A0] px-4 py-3 dark:border-[#3D3420] shrink-0">
                 <form [formGroup]="searchForm" class="flex flex-col gap-4 sm:flex-row sm:items-end">
                     <div class="flex-1">
-                        <label class="mb-2.5 block text-sm font-medium text-black dark:text-white">
-                            Buscar
-                        </label>
+                        <label
+                            class="mb-2 block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Buscar</label>
                         <input type="text" formControlName="search" placeholder="Buscar por nombre o código..."
-                            class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-2.5 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500" />
+                            class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]" />
                     </div>
                     <div class="w-full sm:w-48">
-                        <label class="mb-2.5 block text-sm font-medium text-black dark:text-white">
-                            Categoría
-                        </label>
+                        <label
+                            class="mb-2 block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Categoría</label>
                         <select formControlName="categoryId"
-                            class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-2.5 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500">
+                            class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:focus:border-[#FAC600]">
                             <option value="">Todas</option>
                             @for (category of categories(); track category.id || category._id) {
                             <option [value]="category._id || category.id">{{ category.name }}</option>
@@ -45,11 +44,10 @@
                         </select>
                     </div>
                     <div class="w-full sm:w-48">
-                        <label class="mb-2.5 block text-sm font-medium text-black dark:text-white">
-                            Estado
-                        </label>
+                        <label
+                            class="mb-2 block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Estado</label>
                         <select formControlName="status"
-                            class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-2.5 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500">
+                            class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:focus:border-[#FAC600]">
                             <option value="">Todos</option>
                             <option value="active">Activo</option>
                             <option value="inactive">Inactivo</option>
@@ -57,11 +55,11 @@
                     </div>
                     <div class="flex gap-2">
                         <button type="button" (click)="onSearch()"
-                            class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-5 py-2.5 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all">
+                            class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98]">
                             Buscar
                         </button>
                         <button type="button" (click)="resetFilters()"
-                            class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-center font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-all">
+                            class="flex items-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-5 py-2.5 font-outfit text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-gray-300 dark:hover:bg-white/5">
                             Limpiar
                         </button>
                     </div>
@@ -73,72 +71,71 @@
                 @if (loading()) {
                 <div class="flex justify-center py-10">
                     <div
-                        class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent">
+                        class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent">
                     </div>
                 </div>
                 } @else if (subcategories().length === 0) {
-                <div class="py-10 text-center text-gray-500 dark:text-gray-400">
-                    No se encontraron subcategorías
-                </div>
+                <div class="py-10 text-center font-display text-[#46424A] dark:text-gray-400">No se encontraron
+                    subcategorías</div>
                 } @else {
                 <div class="relative">
                     <table class="w-full table-auto">
-                        <thead class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-800 shadow-sm">
-                            <tr class="text-left">
-                                <th class="px-4 py-3 font-medium text-black dark:text-white">
-                                    Código
-                                </th>
-                                <th class="px-4 py-3 font-medium text-black dark:text-white">
-                                    Nombre
-                                </th>
-                                <th class="px-4 py-3 font-medium text-black dark:text-white">
-                                    Categoría
-                                </th>
-                                <th class="px-4 py-3 font-medium text-black dark:text-white">
-                                    Descripción
-                                </th>
-                                <th class="px-4 py-3 font-medium text-black dark:text-white">
-                                    Estado
-                                </th>
-                                <th class="px-4 py-3 font-medium text-black dark:text-white">
-                                    Acciones
-                                </th>
+                        <thead class="sticky top-0 z-10 bg-[#FBF0C9] dark:bg-[#252017] shadow-sm">
+                            <tr
+                                class="text-left font-outfit text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                                <th class="px-4 py-3">Código</th>
+                                <th class="px-4 py-3">Nombre</th>
+                                <th class="px-4 py-3">Categoría</th>
+                                <th class="px-4 py-3">Descripción</th>
+                                <th class="px-4 py-3">Estado</th>
+                                <th class="px-4 py-3">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-[#E8D9A0] bg-white dark:divide-[#3D3420] dark:bg-[#1A1714]">
                             @for (subcategory of paginatedSubcategories(); track subcategory.id) {
-                            <tr
-                                class="border-b border-stroke dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                            <tr class="transition-colors hover:bg-[#FBF0C9]/40 dark:hover:bg-[#252017]">
+                                <td class="px-4 py-3"><span
+                                        class="font-display text-theme-sm font-medium text-[#191817] dark:text-white">{{
+                                        subcategory.code }}</span></td>
+                                <td class="px-4 py-3"><span
+                                        class="font-display text-theme-sm font-medium text-[#191817] dark:text-white">{{
+                                        subcategory.name }}</span></td>
                                 <td class="px-4 py-3">
-                                    <p class="text-black dark:text-white">{{ subcategory.code }}</p>
+                                    <span
+                                        class="inline-flex items-center gap-1.5 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 text-theme-xs font-medium text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]">{{
+                                        subcategory.categoryName }}</span>
                                 </td>
                                 <td class="px-4 py-3">
-                                    <p class="text-black dark:text-white">{{ subcategory.name }}</p>
+                                    <p class="font-display text-theme-sm text-[#6B6560] dark:text-gray-400">{{
+                                        subcategory.description || '-' }}</p>
                                 </td>
-                                <td class="px-4 py-3">
-                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ subcategory.categoryName }}
-                                    </p>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ subcategory.description ||
-                                        '-' }}</p>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <span [ngClass]="getStatusClass(subcategory.status)">
-                                        {{ subcategory.statusDisplay }}
-                                    </span>
-                                </td>
+                                <td class="px-4 py-3"><span [ngClass]="getStatusClass(subcategory.status)">{{
+                                        subcategory.statusDisplay }}</span></td>
                                 <td class="px-4 py-3">
                                     <div class="flex items-center gap-2">
                                         <button (click)="openEditModal(subcategory)"
-                                            class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-blue-400 transition-colors"
+                                            class="text-[#46424A] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors p-1.5 rounded-lg hover:bg-[#FBF0C9] dark:hover:bg-[#3D3420]"
                                             title="Editar">
-                                            <i class="fas fa-edit"></i>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7">
+                                                </path>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z">
+                                                </path>
+                                            </svg>
                                         </button>
                                         <button (click)="openDeleteModal(subcategory)"
-                                            class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-error-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-error-400 transition-colors"
+                                            class="text-error-500 hover:text-error-700 dark:text-error-400 dark:hover:text-error-300 transition-colors p-1.5 rounded-lg hover:bg-error-50 dark:hover:bg-error-500/10"
                                             title="Eliminar">
-                                            <i class="fas fa-trash"></i>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                <path
+                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                </path>
+                                            </svg>
                                         </button>
                                     </div>
                                 </td>
@@ -150,38 +147,37 @@
                 }
             </div>
 
-            <!-- Pagination Controls -->
+            <!-- Pagination -->
             <div
-                class="border-t border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0 bg-white dark:bg-gray-900 rounded-b-sm">
+                class="border-t border-[#E8D9A0] px-4 py-3 dark:border-[#3D3420] sm:px-6 shrink-0 bg-white dark:bg-[#252017] rounded-b-2xl">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div class="flex items-center gap-2">
-                        <p class="text-sm font-medium text-black dark:text-white">Items por página:</p>
+                        <p class="font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Items por
+                            página:</p>
                         <select [ngModel]="itemsPerPage()" (ngModelChange)="onLimitChange($event)"
-                            class="rounded border border-stroke bg-transparent px-2 py-1 outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white transition focus:border-brand-500 active:border-brand-500">
-                            <option [value]="10" class="dark:bg-gray-700 dark:text-white">10</option>
-                            <option [value]="25" class="dark:bg-gray-700 dark:text-white">25</option>
-                            <option [value]="50" class="dark:bg-gray-700 dark:text-white">50</option>
-                            <option [value]="100" class="dark:bg-gray-700 dark:text-white">100</option>
+                            class="rounded-xl border border-[#E8D9A0] bg-white px-3 py-1.5 font-display text-theme-sm text-[#191817] outline-none dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20">
+                            <option [value]="10" class="dark:bg-[#1A1714]">10</option>
+                            <option [value]="25" class="dark:bg-[#1A1714]">25</option>
+                            <option [value]="50" class="dark:bg-[#1A1714]">50</option>
+                            <option [value]="100" class="dark:bg-[#1A1714]">100</option>
                         </select>
                     </div>
-
                     <div class="flex items-center gap-4">
-                        <p class="text-sm font-medium text-black dark:text-white">
-                            Página {{ currentPage() }} de {{ totalPages() || 1 }}
-                        </p>
+                        <p class="font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Página {{
+                            currentPage() }} de {{ totalPages() || 1 }}</p>
                         <div class="flex items-center gap-2">
                             <button (click)="onPageChange(currentPage() - 1)" [disabled]="currentPage() === 1"
-                                class="flex items-center justify-center rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition">
-                                <svg class="fill-current text-black dark:text-white" width="20" height="20"
-                                    viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                class="flex items-center justify-center rounded-xl p-2 text-[#46424A] hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                                <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                         d="M12.7071 5.29289C13.0976 5.68342 13.0976 6.31658 12.7071 6.70711L9.41421 10L12.7071 13.2929C13.0976 13.6834 13.0976 14.3166 12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L7.29289 10.7071C6.90237 10.3166 6.90237 9.68342 7.29289 9.29289L11.2929 5.29289C11.6834 4.90237 12.3166 4.90237 12.7071 5.29289Z" />
                                 </svg>
                             </button>
                             <button (click)="onPageChange(currentPage() + 1)" [disabled]="currentPage() >= totalPages()"
-                                class="flex items-center justify-center rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition">
-                                <svg class="fill-current text-black dark:text-white" width="20" height="20"
-                                    viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                class="flex items-center justify-center rounded-xl p-2 text-[#46424A] hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                                <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                         d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" />
                                 </svg>
@@ -190,7 +186,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -198,81 +193,73 @@
 <!-- Create/Edit Modal -->
 @if (showModal()) {
 <div
-    class="fixed left-0 top-0 z-999999 flex h-full min-h-screen w-full items-center justify-center bg-black/90 px-4 py-5">
-    <div class="w-full max-w-142.5 rounded-lg bg-white px-8 py-12 text-center dark:bg-gray-900 md:px-17.5 md:py-15">
-        <h3 class="pb-2 text-xl font-bold text-black dark:text-white sm:text-2xl">
-            {{ editingSubcategory() ? 'Editar Subcategoría' : 'Nueva Subcategoría' }}
-        </h3>
-
-        <form [formGroup]="subcategoryForm" (ngSubmit)="saveSubcategory()" class="mt-6.5">
-            <div class="mb-5.5">
-                <label class="mb-3 block text-left text-sm font-medium text-black dark:text-white">
-                    Categoría <span class="text-meta-1">*</span>
-                </label>
+    class="fixed left-0 top-0 z-999999 flex h-full min-h-screen w-full items-center justify-center bg-[#191817]/60 backdrop-blur-sm px-4 py-5">
+    <div
+        class="w-full max-w-xl rounded-2xl border border-[#E8D9A0] bg-[#FFFDF7] px-8 py-8 dark:border-[#3D3420] dark:bg-[#1A1714] shadow-xl">
+        <div class="mb-6 border-b border-[#E8D9A0] pb-4 dark:border-[#3D3420]">
+            <h3 class="font-outfit text-title-sm font-semibold text-[#191817] dark:text-white">{{ editingSubcategory() ?
+                'Editar Subcategoría' : 'Nueva Subcategoría' }}</h3>
+        </div>
+        <form [formGroup]="subcategoryForm" (ngSubmit)="saveSubcategory()">
+            <div class="mb-5">
+                <label
+                    class="mb-2 block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Categoría
+                    <span class="text-error-500">*</span></label>
                 <select formControlName="categoryId"
-                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
-                    [class.border-danger]="isFieldInvalid('categoryId')">
+                    class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:focus:border-[#FAC600]"
+                    [class.border-error-500]="isFieldInvalid('categoryId')">
                     <option value="">Seleccionar categoría</option>
                     @for (category of categories(); track category.id || category._id) {
                     <option [value]="category._id || category.id">{{ category.name }}</option>
                     }
                 </select>
-                @if (isFieldInvalid('categoryId')) {
-                <p class="mt-1 text-left text-xs text-danger dark:text-red-400">{{ getFieldError('categoryId') }}</p>
-                }
+                @if (isFieldInvalid('categoryId')) { <p class="mt-1 text-theme-xs text-error-500">{{
+                    getFieldError('categoryId') }}</p> }
             </div>
-
-            <div class="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+            <div class="mb-5 flex flex-col gap-5 sm:flex-row">
                 <div class="w-full sm:w-1/2">
-                    <label class="mb-3 block text-left text-sm font-medium text-black dark:text-white">
-                        Código <span class="text-meta-1">*</span>
-                    </label>
+                    <label
+                        class="mb-2 block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Código
+                        <span class="text-error-500">*</span></label>
                     <input type="text" formControlName="code" placeholder="Ej: SUB001"
-                        class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
-                        [class.border-danger]="isFieldInvalid('code')" />
-                    @if (isFieldInvalid('code')) {
-                    <p class="mt-1 text-left text-xs text-danger dark:text-red-400">{{ getFieldError('code') }}</p>
-                    }
+                        class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]"
+                        [class.border-error-500]="isFieldInvalid('code')" />
+                    @if (isFieldInvalid('code')) { <p class="mt-1 text-theme-xs text-error-500">{{ getFieldError('code')
+                        }}</p> }
                 </div>
                 <div class="w-full sm:w-1/2">
-                    <label class="mb-3 block text-left text-sm font-medium text-black dark:text-white">
-                        Nombre <span class="text-meta-1">*</span>
-                    </label>
+                    <label
+                        class="mb-2 block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Nombre
+                        <span class="text-error-500">*</span></label>
                     <input type="text" formControlName="name" placeholder="Ej: Anillos de Boda"
-                        class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
-                        [class.border-danger]="isFieldInvalid('name')" />
-                    @if (isFieldInvalid('name')) {
-                    <p class="mt-1 text-left text-xs text-danger dark:text-red-400">{{ getFieldError('name') }}</p>
-                    }
+                        class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]"
+                        [class.border-error-500]="isFieldInvalid('name')" />
+                    @if (isFieldInvalid('name')) { <p class="mt-1 text-theme-xs text-error-500">{{ getFieldError('name')
+                        }}</p> }
                 </div>
             </div>
-
-            <div class="mb-5.5">
-                <label class="mb-3 block text-left text-sm font-medium text-black dark:text-white">
-                    Descripción
-                </label>
+            <div class="mb-5">
+                <label
+                    class="mb-2 block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Descripción</label>
                 <textarea rows="3" formControlName="description" placeholder="Descripción de la subcategoría..."
-                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"></textarea>
+                    class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]"></textarea>
             </div>
-
-            <div class="mb-5.5">
-                <label class="mb-3 block text-left text-sm font-medium text-black dark:text-white">
-                    Estado
-                </label>
+            <div class="mb-5">
+                <label
+                    class="mb-2 block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Estado</label>
                 <select formControlName="status"
-                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500">
+                    class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:focus:border-[#FAC600]">
                     <option value="active">Activo</option>
                     <option value="inactive">Inactivo</option>
                 </select>
             </div>
-
-            <div class="flex gap-4.5">
+            <div class="flex gap-3 pt-2">
                 <button type="button" (click)="closeModal()"
-                    class="flex-1 rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-all">
+                    class="flex-1 flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 font-outfit text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5">
                     Cancelar
                 </button>
                 <button type="submit" [disabled]="loading()"
-                    class="flex-1 rounded-lg bg-brand-500 px-6 py-3 font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all">
+                    class="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">
                     {{ loading() ? 'Guardando...' : 'Guardar' }}
                 </button>
             </div>
@@ -284,29 +271,28 @@
 <!-- Delete Confirmation Modal -->
 @if (showDeleteModal()) {
 <div
-    class="fixed left-0 top-0 z-999999 flex h-full min-h-screen w-full items-center justify-center bg-black/90 px-4 py-5">
-    <div class="w-full max-w-142.5 rounded-lg bg-white px-8 py-12 text-center dark:bg-gray-900 md:px-17.5 md:py-15">
-        <span class="mx-auto inline-block">
-            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect opacity="0.1" width="60" height="60" rx="30" fill="#DC2626" />
-                <path
-                    d="M30 27.2498V29.9998V27.2498ZM30 35.4999H30.0134H30ZM20.6914 41H39.3086C41.3778 41 42.6704 38.7078 41.6358 36.8749L32.3272 20.3747C31.2926 18.5418 28.7074 18.5418 27.6728 20.3747L18.3642 36.8749C17.3296 38.7078 18.6222 41 20.6914 41Z"
-                    stroke="#DC2626" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+    class="fixed left-0 top-0 z-999999 flex h-full min-h-screen w-full items-center justify-center bg-[#191817]/60 backdrop-blur-sm px-4 py-5">
+    <div
+        class="w-full max-w-md rounded-2xl border border-[#E8D9A0] bg-[#FFFDF7] px-8 py-10 text-center shadow-xl dark:border-[#3D3420] dark:bg-[#1A1714]">
+        <div
+            class="mx-auto mb-6 flex size-14 items-center justify-center rounded-full bg-error-50 dark:bg-error-500/15">
+            <svg class="size-7 text-error-600 dark:text-error-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
-        </span>
-        <h3 class="mt-5.5 pb-2 text-xl font-bold text-black dark:text-white sm:text-2xl">
-            ¿Eliminar Subcategoría?
+        </div>
+        <h3 class="font-outfit text-title-sm font-semibold text-[#191817] dark:text-white mb-2">¿Eliminar Subcategoría?
         </h3>
-        <p class="mb-10 text-gray-600 dark:text-gray-300">
-            ¿Estás seguro de que deseas eliminar la subcategoría "{{ deletingSubcategory()?.name }}"?
-        </p>
-        <div class="flex gap-4.5">
+        <p class="mb-8 font-display text-theme-sm text-[#46424A] dark:text-gray-400">¿Estás seguro de que deseas
+            eliminar la subcategoría "{{ deletingSubcategory()?.name }}"?</p>
+        <div class="flex gap-3 justify-center">
             <button (click)="closeDeleteModal()"
-                class="flex-1 rounded border border-stroke px-6 py-3 font-medium hover:shadow-1 dark:border-gray-800">
+                class="flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 font-outfit text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 min-w-[120px]">
                 Cancelar
             </button>
             <button (click)="confirmDelete()" [disabled]="loading()"
-                class="flex-1 rounded bg-danger px-6 py-3 font-medium text-white hover:bg-opacity-90">
+                class="flex items-center justify-center gap-2 rounded-xl bg-error-600 px-5 py-2.5 font-outfit text-sm font-semibold text-white shadow-theme-sm transition-all hover:bg-error-700 active:scale-[0.98] min-w-[120px] disabled:opacity-50">
                 {{ loading() ? 'Eliminando...' : 'Eliminar' }}
             </button>
         </div>
