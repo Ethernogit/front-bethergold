@@ -1,63 +1,60 @@
-<div class="p-6 max-w-7xl mx-auto space-y-6 animate-fade-in-up">
+<div class="p-4 lg:p-6 max-w-7xl mx-auto space-y-4 lg:space-y-6 animate-fade-in-up font-instrument">
 
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <!-- Header (Only when NO active shift) -->
+    <div *ngIf="!hasOpenShift || !report"
+        class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-            <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-500 to-amber-700">
+            <h1 class="font-instrument text-title-md font-semibold text-[#191817] dark:text-white">
                 💰 Corte de Caja
             </h1>
-            <p class="text-gray-500 dark:text-gray-400 text-sm">Administra el flujo de efectivo y cierres de turno.</p>
+            <p class="mt-1 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-500">Administra el flujo de
+                efectivo y cierres de turno.</p>
         </div>
 
         <div class="flex items-center gap-3">
             <a routerLink="/sales/cash-history"
-                class="px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 font-medium text-sm transition-all flex items-center gap-2">
+                class="flex items-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:bg-[#232126] dark:text-white dark:hover:bg-[#3a383d]">
                 <span>📚 Ver Historial</span>
             </a>
-
-            <div *ngIf="hasOpenShift && report"
-                class="bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded-lg border border-blue-100 dark:border-blue-800">
-                <div class="flex items-center gap-2 text-sm text-blue-700 dark:text-blue-300">
-                    <i class="fas fa-clock"></i>
-                    <span>Abierto por <strong>{{ report.shift.openedBy?.name || '---' }}</strong> el {{
-                        report.shift.startDate | date:'medium' }}</span>
-                </div>
-            </div>
         </div>
     </div>
 
     <!-- Loading State -->
     <div *ngIf="isLoading" class="flex justify-center items-center h-64">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
+        <div class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent">
+        </div>
     </div>
 
     <!-- NO CAJA ABIERTA (Open Shift Form) -->
     <div *ngIf="!isLoading && !hasOpenShift" class="flex justify-center items-center py-12">
         <div
-            class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 max-w-md w-full border border-gray-100 dark:border-gray-700">
+            class="bg-[#FFFDF7] dark:bg-[#232126] rounded-2xl shadow-theme-lg p-8 max-w-md w-full border border-[#E8D9A0] dark:border-[#4A474D]">
             <div class="text-center mb-6">
                 <div
-                    class="w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                    class="flex h-16 w-16 items-center justify-center rounded-full bg-[#FBF0C9] text-[#C69214] mx-auto mb-4 text-2xl dark:bg-[#3D3420] dark:text-[#E8C97A]">
                     🔓
                 </div>
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Abrir Caja</h2>
-                <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Ingresa el fondo inicial para comenzar el
+                <h2 class="font-instrument text-title-sm font-semibold text-[#191817] dark:text-white">Abrir Caja</h2>
+                <p class="mt-1 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-500">Ingresa el fondo inicial
+                    para comenzar el
                     turno.</p>
             </div>
 
             <form [formGroup]="openShiftForm" (ngSubmit)="openShift()" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fondo Inicial</label>
+                    <label
+                        class="font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300 block mb-1">Fondo
+                        Inicial</label>
                     <div class="relative">
                         <span class="absolute left-3 top-2.5 text-gray-400">$</span>
                         <input type="number" formControlName="initialAmount"
-                            class="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all outline-none"
+                            class="w-full pl-8 pr-4 py-2.5 rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] bg-white dark:bg-[#232126] text-[#191817] dark:text-white font-instrument text-base outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:focus:border-[#FAC600]"
                             placeholder="0.00">
                     </div>
                 </div>
 
                 <button type="submit" [disabled]="openShiftForm.invalid || isLoading"
-                    class="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white font-bold py-3 rounded-lg shadow-lg transform active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                    class="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] py-3 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">
                     <span *ngIf="!isLoading">Abrir Turno</span>
                     <span *ngIf="isLoading" class="flex justify-center items-center gap-2">
                         <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -78,253 +75,364 @@
     <!-- CAJA ABIERTA (Dashboard) -->
     <div *ngIf="!isLoading && hasOpenShift && report" class="space-y-6">
 
-        <!-- KPIs Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-            <!-- Ventas Efectivo -->
-            <div class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Ventas (Efectivo)</p>
-                <div class="text-2xl font-bold text-green-600 dark:text-green-400 mt-1">
-                    {{ report.financials.sales.cash | currency }}
+        <!-- Top Header & KPIs -->
+        <div class="flex flex-col gap-4">
+            <!-- Active Header -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                <div>
+                    <h1 class="font-instrument text-title-md font-semibold text-[#191817] dark:text-white">
+                        💰 Corte de Caja
+                    </h1>
+                    <p class="mt-1 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-500">Administra el flujo
+                        de efectivo y cierres de turno.</p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <a routerLink="/sales/cash-history"
+                        class="flex items-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:bg-[#232126] dark:text-white dark:hover:bg-[#3a383d]">
+                        <span>📚 Ver Historial</span>
+                    </a>
+
+                    <div
+                        class="bg-[#FBF0C9] dark:bg-[#3D3420] px-3 py-1.5 rounded-xl border border-[#E8D9A0] dark:border-[#4A474D]">
+                        <div
+                            class="flex items-center gap-2 font-instrument text-theme-xs font-medium text-[#9A6F0A] dark:text-[#E8C97A]">
+                            <i class="fas fa-clock"></i>
+                            <span>Abierto el {{ report.shift.startDate | date:'shortTime' }} por <strong>{{
+                                    report.shift.openedBy?.name?.split(' ')[0] || '---' }}</strong></span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Ventas Digitales -->
-            <div class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Ventas (Tarjeta/Transf.)</p>
-                <div class="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">
-                    {{ (report.financials.sales.card + report.financials.sales.transfer) | currency }}
+            <!-- Horizontal KPIs -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div
+                    class="bg-[#FFFDF7] dark:bg-[#232126] p-3 rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] shadow-theme-sm flex flex-col justify-center">
+                    <p class="font-instrument text-[11px] font-medium text-[#6B6560] dark:text-gray-400">Ventas
+                        (Efectivo)</p>
+                    <div class="mt-0.5 font-instrument text-base font-bold text-success-600 dark:text-success-400">{{
+                        report.financials.sales.cash | currency }}</div>
                 </div>
-                <p class="text-xs text-gray-400 mt-2">
-                    No afecta efectivo
-                </p>
-            </div>
-
-            <!-- Entradas Extra -->
-            <div class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Entradas / Fondo</p>
-                <div class="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">
-                    {{ (report.financials.movements.in + report.financials.initialAmount) | currency }}
+                <div
+                    class="bg-[#FFFDF7] dark:bg-[#232126] p-3 rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] shadow-theme-sm flex flex-col justify-center">
+                    <p class="font-instrument text-[11px] font-medium text-[#6B6560] dark:text-gray-400">Ventas
+                        (Tarj/Transf)</p>
+                    <div class="mt-0.5 font-instrument text-base font-bold text-[#9A6F0A] dark:text-[#E8C97A]">{{
+                        (report.financials.sales.card + report.financials.sales.transfer) | currency }}</div>
                 </div>
-                <p class="text-xs text-gray-400 mt-2">
-                    Incluye fondo inicial
-                </p>
-            </div>
-
-            <!-- Salidas / Gastos -->
-            <div class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Salidas / Gastos</p>
-                <div class="text-2xl font-bold text-red-600 dark:text-red-400 mt-1">
-                    {{ report.financials.movements.out | currency }}
+                <div
+                    class="bg-[#FFFDF7] dark:bg-[#232126] p-3 rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] shadow-theme-sm flex flex-col justify-center">
+                    <p class="font-instrument text-[11px] font-medium text-[#6B6560] dark:text-gray-400">Entradas /
+                        Fondo</p>
+                    <div class="mt-0.5 font-instrument text-base font-bold text-[#C69214] dark:text-[#FAC600]">{{
+                        (report.financials.movements.in + report.financials.initialAmount) | currency }}</div>
                 </div>
-            </div>
-
-            <!-- Total Esperado -->
-            <div
-                class="bg-gradient-to-br from-gray-900 to-gray-800 text-white p-5 rounded-xl shadow-lg border border-gray-700">
-                <p class="text-sm font-medium text-gray-300">Total en Caja (Teórico)</p>
-                <div class="text-3xl font-bold text-yellow-400 mt-1">
-                    {{ report.financials.expectedCashInDrawer | currency }}
+                <div
+                    class="bg-[#FFFDF7] dark:bg-[#232126] p-3 rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] shadow-theme-sm flex flex-col justify-center">
+                    <p class="font-instrument text-[11px] font-medium text-[#6B6560] dark:text-gray-400">Salidas /
+                        Gastos</p>
+                    <div class="mt-0.5 font-instrument text-base font-bold text-error-600 dark:text-error-400">{{
+                        report.financials.movements.out | currency }}</div>
                 </div>
-                <p class="text-xs text-gray-400 mt-2">Debe coincidir con tu conteo físico</p>
+                <div
+                    class="bg-[#FFFDF7] dark:bg-[#232126] p-3 rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] shadow-theme-sm flex flex-col justify-center bg-gradient-to-br dark:from-[#232126] dark:to-[#2A271C] from-[#FFFDF7] to-[#FBF0C9]">
+                    <p class="font-instrument text-[11px] font-bold text-[#6B6560] dark:text-gray-400">Total en
+                        Caja (Sistema)</p>
+                    <div class="mt-0.5 font-instrument text-title-sm font-extrabold text-[#C69214] dark:text-[#FAC600]">
+                        {{
+                        report.financials.expectedCashInDrawer | currency }}</div>
+                </div>
             </div>
         </div>
 
-        <!-- Lists Section (Details) -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- 3-Column Content Layout (Sales | Movements | Checkout) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
-            <!-- Movements List (2/3 width) -->
-            <div
-                class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-                <div class="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                    <h3 class="font-bold text-gray-800 dark:text-white">Movimientos de Caja</h3>
-                    <div class="flex gap-2">
-                        <button (click)="openMovementModal('OUT')"
-                            class="px-3 py-1.5 text-xs font-semibold rounded-md bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 transition-colors">
-                            - Registrar Gasto (Out)
-                        </button>
-                        <button (click)="openMovementModal('IN')"
-                            class="px-3 py-1.5 text-xs font-semibold rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 transition-colors">
-                            + Ingreso Extra (In)
-                        </button>
+            <!-- Col 1: Ventas y Abonos -->
+            <div class="col-span-1 flex flex-col gap-6">
+                <div
+                    class="overflow-hidden rounded-2xl border border-[#E8D9A0] shadow-theme-sm dark:border-[#4A474D] bg-white dark:bg-[#232126]">
+                    <div class="flex items-center justify-between border-b border-[#E8D9A0] p-4 dark:border-[#4A474D]">
+                        <h3
+                            class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white flex items-center gap-2">
+                            <i class="fas fa-shopping-cart text-[#C69214]"></i> Ventas y Abonos
+                        </h3>
+                        <span
+                            class="inline-flex items-center gap-1.5 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 text-theme-xs font-medium text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]">
+                            {{ report.financials.sales.details?.length || 0 }}
+                        </span>
                     </div>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
-                            <tr>
-                                <th class="px-4 py-3">Hora</th>
-                                <th class="px-4 py-3">Descripción</th>
-                                <th class="px-4 py-3">Tipo</th>
-                                <th class="px-4 py-3 text-right">Monto</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                            <!-- Empty State -->
-                            <tr *ngIf="report.financials.movements.details.length === 0">
-                                <td colspan="4" class="px-4 py-8 text-center text-gray-500">
-                                    No hay movimientos registrados en este turno.
-                                </td>
-                            </tr>
-
-                            <!-- Rows -->
-                            <tr *ngFor="let mov of report.financials.movements.details"
-                                class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                <td class="px-4 py-3 text-gray-500">{{ mov.date | date:'shortTime' }}</td>
-                                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ mov.description }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    <span class="px-2 py-1 rounded text-xs font-bold"
-                                        [ngClass]="mov.type === 'IN' ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'">
-                                        {{ mov.type === 'IN' ? 'ENTRADA' : 'SALIDA' }}
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3 text-right font-bold"
-                                    [ngClass]="mov.type === 'IN' ? 'text-blue-600' : 'text-red-600'">
-                                    {{ mov.type === 'IN' ? '+' : '-' }}{{ mov.amount | currency }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="overflow-x-auto max-h-[500px] custom-scrollbar">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-[#FBF0C9] dark:bg-[#232126] sticky top-0 z-10 shadow-sm">
+                                <tr>
+                                    <th
+                                        class="px-4 py-3 text-left font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                                        Folio</th>
+                                    <th
+                                        class="px-4 py-3 text-left font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                                        Método</th>
+                                    <th
+                                        class="px-4 py-3 text-right font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                                        Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#E8D9A0] bg-white dark:divide-[#3D3420] dark:bg-[#232126]">
+                                <tr
+                                    *ngIf="!report.financials.sales.details || report.financials.sales.details.length === 0">
+                                    <td colspan="3"
+                                        class="px-4 py-10 text-center font-display text-[#46424A] dark:text-gray-400">
+                                        No hay ventas.
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let payment of report.financials.sales.details"
+                                    class="transition-colors hover:bg-[#FBF0C9]/40 dark:hover:bg-[#252017]">
+                                    <td
+                                        class="px-4 py-3 font-instrument text-theme-sm font-medium text-[#C69214] hover:underline cursor-pointer">
+                                        {{ payment.folio }}</td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center gap-1.5">
+                                            <i class="fas text-xs" [ngClass]="{
+                                                'fa-money-bill-wave text-success-500': payment.paymentMethod === 'cash',
+                                                'fa-credit-card text-[#9A6F0A]': payment.paymentMethod === 'card',
+                                                'fa-exchange-alt text-[#C69214]': payment.paymentMethod === 'transfer'
+                                            }"></i>
+                                            <span class="capitalize text-theme-xs" [ngClass]="{
+                                                'text-success-600 dark:text-success-400': payment.paymentMethod === 'cash',
+                                                'text-[#9A6F0A] dark:text-[#E8C97A]': payment.paymentMethod === 'card',
+                                                'text-[#C69214] dark:text-[#FAC600]': payment.paymentMethod === 'transfer'
+                                            }">{{ payment.paymentMethod === 'cash' ? 'Efect.' : payment.paymentMethod
+                                                === 'card' ? 'Tarj.' : 'Transf.' }}</span>
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="px-4 py-3 text-right font-instrument text-theme-sm font-medium text-[#191817] dark:text-white">
+                                        {{ payment.paymentAmount | currency }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <!-- Summary / Actions (1/3 width) -->
-            <div class="space-y-6">
-                <!-- Balance Breakdown -->
+            <!-- Col 2: Movimientos -->
+            <div class="col-span-1 flex flex-col gap-6">
                 <div
-                    class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                    <h3 class="font-bold text-gray-800 dark:text-white mb-4">Resumen Desglosado</h3>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                    class="overflow-hidden rounded-2xl border border-[#E8D9A0] shadow-theme-sm dark:border-[#4A474D] bg-white dark:bg-[#232126]">
+                    <div class="flex flex-col gap-3 border-b border-[#E8D9A0] p-4 dark:border-[#4A474D]">
+                        <h3
+                            class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white flex items-center gap-2">
+                            <i class="fas fa-exchange-alt text-[#C69214]"></i> Movimientos
+                        </h3>
+                        <div class="flex gap-2">
+                            <button (click)="openMovementModal('OUT')"
+                                class="flex-1 flex justify-center items-center gap-1 rounded-xl border border-error-500 bg-transparent px-3 py-1.5 font-instrument text-theme-xs font-medium text-error-600 transition-all hover:bg-error-50 dark:hover:bg-error-500/10">
+                                - Gasto
+                            </button>
+                            <button (click)="openMovementModal('IN')"
+                                class="flex-1 flex justify-center items-center gap-1 rounded-xl border border-[#C69214] bg-transparent px-3 py-1.5 font-instrument text-theme-xs font-medium text-[#C69214] transition-all hover:bg-[#FBF0C9] dark:hover:bg-[#3D3420]">
+                                + Ingreso
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto max-h-[430px] custom-scrollbar">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-[#FBF0C9] dark:bg-[#232126] sticky top-0 z-10 shadow-sm">
+                                <tr>
+                                    <th
+                                        class="px-4 py-3 text-left font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                                        Descr.</th>
+                                    <th
+                                        class="px-4 py-3 text-right font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                                        Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#E8D9A0] bg-white dark:divide-[#3D3420] dark:bg-[#232126]">
+                                <tr *ngIf="report.financials.movements.details.length === 0">
+                                    <td colspan="2"
+                                        class="px-4 py-10 text-center font-display text-[#46424A] dark:text-gray-400">
+                                        No hay movimientos.
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let mov of report.financials.movements.details"
+                                    class="transition-colors hover:bg-[#FBF0C9]/40 dark:hover:bg-[#252017]">
+                                    <td
+                                        class="px-4 py-3 font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                                                [ngClass]="mov.type === 'IN' ? 'bg-success-500' : 'bg-error-500'"></div>
+                                            <span class="truncate block max-w-[150px]" title="{{ mov.description }}">{{
+                                                mov.description }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 text-right font-instrument text-theme-sm font-semibold"
+                                        [ngClass]="mov.type === 'IN' ? 'text-success-600 dark:text-success-400' : 'text-error-600 dark:text-error-400'">
+                                        {{ mov.type === 'IN' ? '+' : '-' }}{{ mov.amount | currency }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Col 3: Checkout -->
+            <div class="col-span-1 flex flex-col gap-6">
+
+                <!-- Breakdown -->
+                <div
+                    class="bg-[#FFFDF7] dark:bg-[#232126] p-5 rounded-2xl border border-[#E8D9A0] dark:border-[#4A474D] shadow-theme-sm">
+                    <h3 class="mb-4 font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white">Resumen
+                        Desglosado</h3>
+                    <div class="space-y-3 text-sm">
+                        <div
+                            class="flex justify-between font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">
                             <span>Fondo Inicial:</span>
                             <span>{{ report.financials.initialAmount | currency }}</span>
                         </div>
-                        <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                        <div
+                            class="flex justify-between font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">
                             <span>Ventas (Efectivo):</span>
                             <span>+{{ report.financials.sales.cash | currency }}</span>
                         </div>
-                        <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                        <div
+                            class="flex justify-between font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">
                             <span>Entradas Extra:</span>
                             <span>+{{ report.financials.movements.in | currency }}</span>
                         </div>
                         <div
-                            class="flex justify-between text-gray-600 dark:text-gray-300 border-b border-dashed border-gray-300 pb-2">
+                            class="flex justify-between border-b border-dashed border-[#E8D9A0] pb-3 font-instrument text-theme-sm text-[#46424A] dark:border-[#4A474D] dark:text-gray-300">
                             <span>Gastos/Salidas:</span>
-                            <span class="text-red-500">-{{ report.financials.movements.out | currency }}</span>
+                            <span class="text-error-500">-{{ report.financials.movements.out | currency }}</span>
                         </div>
-                        <div class="flex justify-between font-bold text-gray-900 dark:text-white pt-1 text-base">
+                        <div
+                            class="flex justify-between pt-2 font-instrument text-title-sm font-semibold text-[#191817] dark:text-white">
                             <span>Total Efectivo:</span>
-                            <span>{{ report.financials.expectedCashInDrawer | currency }}</span>
+                            <span class="text-[#C69214] dark:text-[#FAC600]">{{ report.financials.expectedCashInDrawer |
+                                currency }}</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Close Button -->
                 <button (click)="showCloseModal = true"
-                    class="w-full bg-gray-900 dark:bg-black hover:bg-gray-800 text-white font-bold py-4 rounded-xl shadow-lg border border-gray-800 flex items-center justify-center gap-2 transform active:scale-95 transition-all">
-                    <span>🔒 Cerrar Caja y Finalizar Turno</span>
+                    class="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-4 font-instrument text-base font-semibold text-[#191817] shadow-theme-md transition-all hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-lg active:scale-[0.98]">
+                    Terminar Turno
                 </button>
             </div>
+
         </div>
 
-
-    </div>
-
-    <!-- Movement Modal -->
-    <div *ngIf="showMovementModal"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in">
-        <div
-            class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-gray-100 dark:border-gray-700">
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">
-                {{ movementType === 'IN' ? 'Registrar Entrada' : 'Registrar Salida/Gasto' }}
-            </h3>
-            <p class="text-sm text-gray-500 mb-4">Ingresa los detalles del movimiento.</p>
-
-            <form [formGroup]="movementForm" (ngSubmit)="submitMovement()" class="space-y-4">
-
-                <div>
-                    <label class="text-xs font-bold text-gray-500 uppercase">Método de Pago</label>
-                    <select formControlName="method"
-                        class="w-full mt-1 p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-yellow-500 dark:text-white outline-none">
-                        <option value="cash">💵 Efectivo (Afecta Caja)</option>
-                        <option value="transfer">🏦 Transferencia / Depósito</option>
-                        <option value="card">💳 Tarjeta</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="text-xs font-bold text-gray-500 uppercase">Monto</label>
-                    <input type="number" formControlName="amount"
-                        class="w-full mt-1 p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-yellow-500 dark:text-white outline-none">
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-gray-500 uppercase">Descripción / Motivo</label>
-                    <textarea formControlName="description" rows="2"
-                        class="w-full mt-1 p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-yellow-500 dark:text-white outline-none"></textarea>
-                </div>
-
-                <div class="flex gap-2 pt-2">
-                    <button type="button" (click)="showMovementModal = false"
-                        class="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium">Cancelar</button>
-                    <button type="submit" [disabled]="movementForm.invalid"
-                        class="flex-1 px-4 py-2 rounded-lg bg-yellow-500 text-white font-bold hover:bg-yellow-600">Guardar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Close Shift Modal -->
-    <div *ngIf="showCloseModal"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-        <div
-            class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8 border border-gray-100 dark:border-gray-700">
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Cierre de Caja</h3>
+        <!-- Movement Modal -->
+        <div *ngIf="showMovementModal"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-[#191817]/60 backdrop-blur-sm p-4 animate-fade-in">
             <div
-                class="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-100 dark:border-yellow-800 mb-6">
-                <p class="text-sm text-yellow-800 dark:text-yellow-200">
-                    El sistema calculó <strong>{{ report?.financials?.expectedCashInDrawer | currency }}</strong> en
-                    efectivo. Cuenta los billetes y monedas físicos e ingresa el total real.
-                </p>
+                class="w-full max-w-sm rounded-2xl border border-[#E8D9A0] bg-[#FFFDF7] p-6 shadow-theme-lg dark:border-[#4A474D] dark:bg-[#232126]">
+                <h3 class="mb-1 font-instrument text-title-sm font-semibold text-[#191817] dark:text-white">
+                    {{ movementType === 'IN' ? 'Registrar Entrada' : 'Registrar Salida/Gasto' }}
+                </h3>
+                <p class="mb-4 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-500">Ingresa los detalles del
+                    movimiento.</p>
+
+                <form [formGroup]="movementForm" (ngSubmit)="submitMovement()" class="space-y-4">
+
+                    <div>
+                        <label
+                            class="font-instrument text-theme-xs font-medium text-[#46424A] dark:text-gray-300 uppercase">Método
+                            de Pago</label>
+                        <select formControlName="method"
+                            class="mt-1 w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#232126] dark:text-white dark:focus:border-[#FAC600]">
+                            <option value="cash">💵 Efectivo (Afecta Caja)</option>
+                            <option value="transfer">🏦 Transferencia / Depósito</option>
+                            <option value="card">💳 Tarjeta</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label
+                            class="font-instrument text-theme-xs font-medium text-[#46424A] dark:text-gray-300 uppercase">Monto</label>
+                        <input type="number" formControlName="amount"
+                            class="mt-1 w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#232126] dark:text-white dark:focus:border-[#FAC600]">
+                    </div>
+                    <div>
+                        <label
+                            class="font-instrument text-theme-xs font-medium text-[#46424A] dark:text-gray-300 uppercase">Descripción
+                            / Motivo</label>
+                        <textarea formControlName="description" rows="2"
+                            class="mt-1 w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#232126] dark:text-white dark:focus:border-[#FAC600]"></textarea>
+                    </div>
+
+                    <div class="flex gap-2 pt-2">
+                        <button type="button" (click)="showMovementModal = false"
+                            class="flex-1 rounded-xl border border-[#E8D9A0] bg-white px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] transition-all hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:bg-[#232126] dark:text-white dark:hover:bg-[#3a383d]">Cancelar</button>
+                        <button type="submit" [disabled]="movementForm.invalid"
+                            class="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] transition-all hover:from-[#9A6F0A] hover:to-[#C69214] border border-transparent disabled:opacity-50">Guardar</button>
+                    </div>
+                </form>
             </div>
-
-            <form [formGroup]="closeShiftForm" (ngSubmit)="closeShift()" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Monto Declarado
-                        (Físico)</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-2.5 text-gray-400 font-bold">$</span>
-                        <input type="number" formControlName="totalDeclared"
-                            class="w-full pl-8 pr-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-xl font-bold text-gray-900 dark:text-white focus:border-yellow-500 focus:ring-0 outline-none transition-colors">
-                    </div>
-
-                    <!-- Real-time Validation Feedback -->
-                    <div class="mt-2 text-right">
-                        <span *ngIf="calculatedDifference === 0" class="text-green-600 text-sm font-bold">✅ Cuadra
-                            perfecto</span>
-                        <span *ngIf="calculatedDifference < 0" class="text-red-500 text-sm font-bold">❌ Faltante: {{
-                            calculatedDifference | currency }}</span>
-                        <span *ngIf="calculatedDifference > 0" class="text-blue-500 text-sm font-bold">⚠️ Sobrante: {{
-                            calculatedDifference | currency }}</span>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Notas del
-                        Cierre</label>
-                    <textarea formControlName="notes" placeholder="Alguna observación..."
-                        class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-yellow-500 outline-none text-sm"></textarea>
-                </div>
-
-                <div class="flex gap-3 pt-4">
-                    <button type="button" (click)="showCloseModal = false"
-                        class="flex-1 px-4 py-3 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 font-bold">Cancelar</button>
-                    <button type="submit" [disabled]="closeShiftForm.invalid"
-                        class="flex-1 px-4 py-3 rounded-xl bg-gray-900 text-white font-bold hover:bg-black shadow-lg">Confirmar
-                        Cierre</button>
-                </div>
-            </form>
         </div>
-    </div>
 
-</div>
+        <!-- Close Shift Modal -->
+        <div *ngIf="showCloseModal"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-[#191817]/60 backdrop-blur-sm p-4 animate-fade-in">
+            <div
+                class="w-full max-w-md rounded-2xl border border-[#E8D9A0] bg-[#FFFDF7] p-8 shadow-theme-lg dark:border-[#4A474D] dark:bg-[#232126]">
+                <h3 class="mb-2 font-instrument text-title-sm font-semibold text-[#191817] dark:text-white">Cierre de
+                    Caja
+                </h3>
+                <div
+                    class="mb-6 rounded-xl border border-[#E8D9A0] bg-[#FBF0C9] p-4 dark:border-[#4A474D] dark:bg-[#3D3420]">
+                    <p class="font-instrument text-theme-sm font-medium text-[#9A6F0A] dark:text-[#E8C97A]">
+                        El sistema calculó <strong>{{ report?.financials?.expectedCashInDrawer | currency }}</strong> en
+                        efectivo. Cuenta los billetes y monedas físicos e ingresa el total real.
+                    </p>
+                </div>
+
+                <form [formGroup]="closeShiftForm" (ngSubmit)="closeShift()" class="space-y-4">
+                    <div>
+                        <label
+                            class="block mb-1 font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Monto
+                            Declarado
+                            (Físico)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-gray-400 font-bold">$</span>
+                            <input type="number" formControlName="totalDeclared"
+                                class="w-full pl-8 pr-4 py-3 rounded-xl border-2 border-[#E8D9A0] bg-white text-xl font-bold text-[#191817] outline-none transition-all focus:border-[#C69214] dark:border-[#4A474D] dark:bg-[#232126] dark:text-white dark:focus:border-[#FAC600]">
+                        </div>
+
+                        <!-- Real-time Validation Feedback -->
+                        <div class="mt-2 text-right font-instrument">
+                            <span *ngIf="calculatedDifference === 0" class="text-success-600 text-sm font-bold">✅ Cuadra
+                                perfecto</span>
+                            <span *ngIf="calculatedDifference < 0" class="text-error-500 text-sm font-bold">❌ Faltante:
+                                {{
+                                calculatedDifference | currency }}</span>
+                            <span *ngIf="calculatedDifference > 0" class="text-warning-500 text-sm font-bold">⚠️
+                                Sobrante:
+                                {{
+                                calculatedDifference | currency }}</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label
+                            class="block mb-1 font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Notas
+                            del
+                            Cierre</label>
+                        <textarea formControlName="notes" placeholder="Alguna observación..."
+                            class="w-full rounded-xl border border-[#E8D9A0] bg-white p-3 font-instrument text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#232126] dark:text-white dark:focus:border-[#FAC600]"></textarea>
+                    </div>
+
+                    <div class="flex gap-3 pt-4">
+                        <button type="button" (click)="showCloseModal = false"
+                            class="flex-1 rounded-xl border border-[#E8D9A0] bg-white px-5 py-3 font-instrument text-base font-semibold text-[#191817] transition-all hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:bg-[#232126] dark:text-white dark:hover:bg-[#3a383d]">Cancelar</button>
+                        <button type="submit" [disabled]="closeShiftForm.invalid"
+                            class="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-3 font-instrument text-base font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md active:scale-[0.98]">Confirmar
+                            Cierre</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>

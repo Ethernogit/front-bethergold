@@ -1,21 +1,36 @@
 <div
-    class="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+    class="fixed inset-0 z-[60] flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
     <!-- Overlay -->
-    <div class="fixed inset-0 bg-black/50 transition-opacity backdrop-blur-sm" (click)="onCancel()"></div>
+    <div class="fixed inset-0 bg-[#191817]/60 transition-opacity backdrop-blur-sm" (click)="onCancel()"></div>
 
     <!-- Modal Panel -->
-    <div class="relative w-full max-w-lg mx-auto my-6 z-50 px-4">
+    <div class="relative w-full max-w-lg mx-auto my-6 z-[60] px-4">
         <div
-            class="relative flex flex-col w-full bg-white dark:bg-gray-800 rounded-lg shadow-xl outline-none focus:outline-none overflow-hidden h-[600px] max-h-[80vh]">
+            class="relative flex flex-col w-full bg-[#FFFDF7] dark:bg-[#232126] border border-[#E8D9A0] dark:border-[#4A474D] rounded-2xl shadow-2xl outline-none focus:outline-none overflow-hidden h-[600px] max-h-[80vh]">
 
             <!-- Header -->
             <div
-                class="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+                class="flex items-center justify-between p-5 border-b border-[#E8D9A0] dark:border-[#4A474D] bg-white dark:bg-[#3a383d]">
+                <h3 class="font-instrument text-xl font-bold text-[#191817] dark:text-white flex items-center gap-2">
+                    <svg *ngIf="view === 'search'" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="text-[#C69214]">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <svg *ngIf="view === 'create'" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="text-[#C69214]">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <line x1="19" y1="8" x2="19" y2="14"></line>
+                        <line x1="22" y1="11" x2="16" y2="11"></line>
+                    </svg>
                     {{ view === 'search' ? 'Seleccionar Cliente' : 'Nuevo Cliente' }}
                 </h3>
-                <button (click)="onCancel()" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                <button (click)="onCancel()"
+                    class="p-2 rounded-xl text-[#6B6560] hover:bg-[#FBF0C9]/50 hover:text-[#C69214] dark:text-gray-400 dark:hover:bg-[#4A474D]/50 dark:hover:text-[#FAC600] transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M6 18L18 6M6 6l12 12" />
@@ -24,68 +39,101 @@
             </div>
 
             <!-- Content -->
-            <div class="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900/50">
+            <div class="flex-1 overflow-y-auto p-5 bg-[#FFFDF7] dark:bg-[#232126]">
 
                 <!-- SEARCH VIEW -->
                 <div *ngIf="view === 'search'" class="h-full flex flex-col">
                     <!-- Search Input -->
-                    <div class="relative mb-4">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
-                                fill="currentColor">
+                    <div class="relative mb-5">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#9A6F0A] dark:text-[#E8C97A]"
+                                viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd"
                                     d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
                         <input [formControl]="searchControl" type="text"
-                            class="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder-gray-400"
+                            class="w-full pl-11 pr-4 py-3 bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl text-[#191817] dark:text-white focus:ring-2 focus:ring-[#C69214] focus:border-transparent placeholder-[#6B6560] dark:placeholder-gray-400 font-instrument text-theme-sm shadow-sm transition-all"
                             placeholder="Buscar por nombre, teléfono o email..." autofocus>
                     </div>
 
                     <!-- Results List -->
-                    <div class="flex-1 overflow-y-auto space-y-2">
+                    <div class="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
                         <ng-container *ngIf="searchResults$ | async as clients">
                             <!-- Loading / Empty States -->
-                            <div *ngIf="isLoadingSearch" class="text-center py-8 text-gray-400">
-                                <span class="inline-block animate-spin mr-2">⟳</span> Buscando...
+                            <div *ngIf="isLoadingSearch"
+                                class="flex flex-col items-center justify-center py-12 text-[#9A6F0A] dark:text-[#E8C97A]">
+                                <div
+                                    class="h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent mb-3">
+                                </div>
+                                <span class="font-instrument text-theme-sm font-medium">Buscando...</span>
                             </div>
 
                             <div *ngIf="!isLoadingSearch && clients.length === 0 && (searchControl.value || '').length > 1"
-                                class="text-center py-8">
-                                <p class="text-gray-500 dark:text-gray-400 mb-2">No se encontraron clientes.</p>
+                                class="text-center py-12 rounded-xl bg-[#F5F0EC] dark:bg-[#3a383d] border border-dashed border-[#E8D9A0] dark:border-[#4A474D]">
+                                <div class="flex justify-center mb-3">
+                                    <div
+                                        class="size-12 rounded-full bg-[#FBF0C9] dark:bg-[#4A474D] flex items-center justify-center text-[#9A6F0A] dark:text-[#E8C97A]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <p class="font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400 mb-4">No se
+                                    encontraron clientes coincidiendo con la búsqueda.</p>
                                 <button (click)="toggleView()"
-                                    class="text-amber-600 hover:text-amber-700 font-bold text-sm">
-                                    + Crear nuevo cliente
+                                    class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-4 py-2 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:bg-gradient-to-br hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98]">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    Crear nuevo cliente
                                 </button>
                             </div>
 
                             <!-- List -->
                             <div *ngFor="let client of clients" (click)="onSelect(client)"
-                                class="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-100 dark:border-gray-700 cursor-pointer hover:border-amber-400 dark:hover:border-amber-600 transition-colors flex justify-between items-center group">
-                                <div>
-                                    <h4 class="font-bold text-gray-900 dark:text-white">{{ client.name }}</h4>
-                                    <div class="flex gap-3 text-xs text-gray-500">
-                                        <span *ngIf="client.phone" class="flex items-center gap-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
-                                                fill="currentColor">
-                                                <path
-                                                    d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                                            </svg>
-                                            {{ client.phone }}
-                                        </span>
-                                        <span *ngIf="client.email" class="flex items-center gap-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
-                                                fill="currentColor">
-                                                <path
-                                                    d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                                            </svg>
-                                            {{ client.email }}
-                                        </span>
+                                class="bg-white dark:bg-[#3a383d] p-4 rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] cursor-pointer hover:border-[#C69214] dark:hover:border-[#FAC600] hover:shadow-md transition-all flex justify-between items-center group">
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="size-10 rounded-full bg-[#FBF0C9]/50 dark:bg-[#4A474D] flex items-center justify-center font-instrument font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">
+                                        {{ client.name.charAt(0) }}
+                                    </div>
+                                    <div>
+                                        <h4
+                                            class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white mb-1">
+                                            {{ client.name }}</h4>
+                                        <div
+                                            class="flex flex-wrap gap-x-4 gap-y-1 font-instrument text-xs text-[#6B6560] dark:text-gray-400">
+                                            <span *ngIf="client.phone" class="flex items-center gap-1.5">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                    viewBox="0 0 20 20" fill="currentColor">
+                                                    <path
+                                                        d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                                                </svg>
+                                                {{ client.phone }}
+                                            </span>
+                                            <span *ngIf="client.email" class="flex items-center gap-1.5">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                    viewBox="0 0 20 20" fill="currentColor">
+                                                    <path
+                                                        d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                                </svg>
+                                                {{ client.email }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="opacity-0 group-hover:opacity-100 text-amber-500">
+                                <div
+                                    class="opacity-0 group-hover:opacity-100 text-[#C69214] dark:text-[#FAC600] transition-opacity">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                         fill="currentColor">
                                         <path fill-rule="evenodd"
@@ -102,25 +150,38 @@
                 <div *ngIf="view === 'create'" class="h-full flex flex-col">
                     <form [formGroup]="createForm" class="space-y-4 flex-1">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nombre
-                                Completo *</label>
-                            <input type="text" formControlName="name"
-                                class="w-full p-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-amber-500 focus:border-amber-500">
-                            <p *ngIf="createForm.get('name')?.touched && createForm.get('name')?.invalid"
-                                class="text-xs text-red-500 mt-1">Requerido.</p>
-                        </div>
-
-                        <div>
                             <label
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Teléfono</label>
-                            <input type="tel" formControlName="phone"
-                                class="w-full p-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-amber-500 focus:border-amber-500">
+                                class="block font-instrument text-theme-sm font-semibold text-[#191817] dark:text-gray-300 mb-1.5">Nombre
+                                Completo <span class="text-error-500">*</span></label>
+                            <input type="text" formControlName="name"
+                                class="w-full p-3 bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl text-[#191817] dark:text-white focus:ring-2 focus:ring-[#C69214] focus:border-transparent font-instrument text-theme-sm transition-shadow">
+                            <p *ngIf="createForm.get('name')?.touched && createForm.get('name')?.invalid"
+                                class="font-instrument text-xs text-error-500 dark:text-error-400 mt-1.5 flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                                Este campo es requerido.
+                            </p>
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
-                            <input type="email" formControlName="email"
-                                class="w-full p-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-amber-500 focus:border-amber-500">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="block font-instrument text-theme-sm font-semibold text-[#191817] dark:text-gray-300 mb-1.5">Teléfono</label>
+                                <input type="tel" formControlName="phone"
+                                    class="w-full p-3 bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl text-[#191817] dark:text-white focus:ring-2 focus:ring-[#C69214] focus:border-transparent font-instrument text-theme-sm transition-shadow">
+                            </div>
+
+                            <div>
+                                <label
+                                    class="block font-instrument text-theme-sm font-semibold text-[#191817] dark:text-gray-300 mb-1.5">Email</label>
+                                <input type="email" formControlName="email"
+                                    class="w-full p-3 bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl text-[#191817] dark:text-white focus:ring-2 focus:ring-[#C69214] focus:border-transparent font-instrument text-theme-sm transition-shadow">
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -129,24 +190,45 @@
 
             <!-- Footer -->
             <div
-                class="bg-gray-50 dark:bg-gray-900 p-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                class="bg-[#FBF0C9]/30 dark:bg-[#232126] p-5 border-t border-[#E8D9A0] dark:border-[#4A474D] flex flex-col-reverse sm:flex-row justify-between items-center gap-4">
+
                 <button (click)="toggleView()"
-                    class="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400">
-                    {{ view === 'search' ? '¿No existe? Crear nuevo' : '← Volver al buscador' }}
+                    class="font-instrument text-theme-sm font-bold text-[#9A6F0A] hover:text-[#C69214] dark:text-[#E8C97A] dark:hover:text-[#FAC600] transition-colors flex items-center gap-2 w-full sm:w-auto justify-center">
+                    <svg *ngIf="view === 'create'" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <svg *ngIf="view === 'search'" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M12 5v14"></path>
+                        <path d="M5 12h14"></path>
+                    </svg>
+                    {{ view === 'search' ? 'Crear Nuevo Cliente' : 'Volver a Buscar' }}
                 </button>
 
-                <div class="flex gap-3">
+                <div class="flex gap-3 w-full sm:w-auto">
                     <button *ngIf="view === 'create'" (click)="onCancel()"
-                        class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                        class="flex-1 sm:flex-none px-5 py-2.5 font-instrument text-theme-sm font-semibold text-[#46424A] dark:text-gray-300 bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl hover:bg-[#F5F0EC] dark:hover:bg-white/5 transition-colors">
                         Cancelar
                     </button>
                     <button *ngIf="view === 'create'" (click)="onSubmitCreate()"
                         [disabled]="createForm.invalid || isCreating"
-                        class="px-4 py-2 text-sm font-medium text-white bg-amber-500 rounded-lg hover:bg-amber-600 disabled:opacity-50">
+                        class="flex-1 sm:flex-none flex justify-center items-center gap-2 px-5 py-2.5 font-instrument text-theme-sm font-bold text-[#191817] bg-gradient-to-br from-[#C69214] to-[#FAC600] rounded-xl hover:from-[#9A6F0A] hover:to-[#C69214] disabled:opacity-50 disabled:cursor-not-allowed shadow-theme-sm transition-all">
+                        <svg *ngIf="isCreating" class="animate-spin -ml-1 mr-2 h-4 w-4 text-[#191817]"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
                         {{ isCreating ? 'Guardando...' : 'Guardar y Seleccionar' }}
                     </button>
                     <button *ngIf="view === 'search'" (click)="onCancel()"
-                        class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                        class="flex-1 sm:flex-none px-5 py-2.5 font-instrument text-theme-sm font-semibold text-[#46424A] dark:text-gray-300 bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl hover:bg-[#F5F0EC] dark:hover:bg-white/5 transition-colors">
                         Cerrar
                     </button>
                 </div>

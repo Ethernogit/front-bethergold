@@ -4,13 +4,13 @@
     <div class="fixed inset-0 bg-[#191817]/60 backdrop-blur-sm" (click)="closeModal()"></div>
 
     <!-- Modal Content -->
-    <div class="relative w-full max-w-md mx-auto my-6 z-50 px-4">
+    <div class="relative w-full max-w-md mx-auto my-6 z-[999999] px-4">
         <div
-            class="relative flex flex-col w-full rounded-2xl border border-[#E8D9A0] bg-[#FFFDF7] shadow-xl outline-none dark:border-[#3D3420] dark:bg-[#1A1714]">
+            class="relative flex flex-col w-full rounded-2xl border border-[#E8D9A0] bg-[#FFF8E7] shadow-xl outline-none dark:border-[#4A474D] dark:bg-[#232126]">
 
             <!-- Header -->
-            <div class="flex items-center justify-between border-b border-[#E8D9A0] p-5 dark:border-[#3D3420]">
-                <h3 class="font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white">
+            <div class="flex items-center justify-between border-b border-[#E8D9A0] p-5 dark:border-[#4A474D]">
+                <h3 class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white">
                     {{ typeId ? 'Editar Tipo' : 'Nuevo Tipo' }}
                 </h3>
                 <button
@@ -31,11 +31,11 @@
                     <!-- Name -->
                     <div class="mb-5">
                         <label
-                            class="mb-2 block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Nombre</label>
+                            class="mb-2 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Nombre</label>
                         <input type="text" formControlName="name" placeholder="Ej: Ajuste de Inventario"
-                            class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]">
+                            class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-white/50 dark:focus:border-[#FAC600]">
                         <span *ngIf="form.get('name')?.touched && form.get('name')?.invalid"
-                            class="mt-1 block font-display text-theme-xs text-error-500">
+                            class="mt-1 block font-instrument text-theme-xs text-error-500">
                             El nombre es requerido (min 3 caracteres)
                         </span>
                     </div>
@@ -43,27 +43,27 @@
                     <!-- Description -->
                     <div class="mb-5">
                         <label
-                            class="mb-2 block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Descripción</label>
+                            class="mb-2 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Descripción</label>
                         <textarea formControlName="description" rows="3" placeholder="Breve descripción..."
-                            class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]"></textarea>
+                            class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-white/50 dark:focus:border-[#FAC600]"></textarea>
                     </div>
 
                     <!-- Nature -->
                     <div class="mb-6">
                         <label
-                            class="mb-3 block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Naturaleza
+                            class="mb-3 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Naturaleza
                             del Movimiento</label>
                         <div class="flex gap-6">
                             <label class="flex cursor-pointer select-none items-center gap-3">
                                 <div class="relative">
                                     <input type="radio" formControlName="nature" value="in" class="sr-only">
                                     <div class="flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all"
-                                        [ngClass]="form.get('nature')?.value === 'in' ? 'border-[#C69214] bg-[#C69214]' : 'border-[#E8D9A0] dark:border-[#3D3420]'">
+                                        [ngClass]="form.get('nature')?.value === 'in' ? 'border-[#C69214] bg-[#C69214]' : 'border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126]'">
                                         <span class="h-2 w-2 rounded-full bg-white"
                                             *ngIf="form.get('nature')?.value === 'in'"></span>
                                     </div>
                                 </div>
-                                <span class="font-display text-theme-sm text-[#46424A] dark:text-gray-300">Entrada
+                                <span class="font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">Entrada
                                     (Aumenta stock)</span>
                             </label>
 
@@ -71,12 +71,12 @@
                                 <div class="relative">
                                     <input type="radio" formControlName="nature" value="out" class="sr-only">
                                     <div class="flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all"
-                                        [ngClass]="form.get('nature')?.value === 'out' ? 'border-[#C69214] bg-[#C69214]' : 'border-[#E8D9A0] dark:border-[#3D3420]'">
+                                        [ngClass]="form.get('nature')?.value === 'out' ? 'border-[#C69214] bg-[#C69214]' : 'border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126]'">
                                         <span class="h-2 w-2 rounded-full bg-white"
                                             *ngIf="form.get('nature')?.value === 'out'"></span>
                                     </div>
                                 </div>
-                                <span class="font-display text-theme-sm text-[#46424A] dark:text-gray-300">Salida
+                                <span class="font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">Salida
                                     (Disminuye stock)</span>
                             </label>
                         </div>
@@ -84,14 +84,14 @@
 
                     <!-- Buttons -->
                     <div
-                        class="flex items-center justify-end gap-3 border-t border-[#E8D9A0] pt-5 dark:border-[#3D3420]">
+                        class="flex items-center justify-end gap-3 border-t border-[#E8D9A0] pt-5 dark:border-[#4A474D]">
                         <button
-                            class="flex items-center gap-2 rounded-xl px-5 py-2.5 font-outfit text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5"
+                            class="flex items-center gap-2 rounded-xl px-5 py-2.5 font-instrument text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 border border-[#E8D9A0] dark:border-[#4A474D] bg-white dark:bg-[#3a383d] shadow-theme-sm"
                             type="button" (click)="closeModal()">
                             Cancelar
                         </button>
                         <button [disabled]="form.invalid || isSaving"
-                            class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                            class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] dark:text-white shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
                             type="submit">
                             {{ isSaving ? 'Guardando...' : 'Guardar' }}
                         </button>

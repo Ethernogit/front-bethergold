@@ -37,6 +37,7 @@ export class NoteDetailsComponent implements OnInit {
     // Modal State
     showPaymentModal = signal(false);
     showClientModal = signal(false);
+    clientRequiredWarning = signal(false);
 
     // Tab State
     currentTab: 'general' | 'items' | 'payments' = 'items';
@@ -129,13 +130,15 @@ export class NoteDetailsComponent implements OnInit {
                 phone: backendNote.clientId.phone || 'Sin teléfono',
                 email: backendNote.clientId.email || 'Sin email',
                 location: 'Desconocida',
-                avatar: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(backendNote.clientId.name) // Fallback avatar
+                avatar: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(backendNote.clientId.name),
+                isUnknown: false
             };
         } else {
             this.client = {
-                name: 'Cliente Desconocido',
+                name: 'Público en General',
                 id: backendNote.clientId as string,
-                avatar: 'https://ui-avatars.com/api/?name=Unknown'
+                avatar: 'https://ui-avatars.com/api/?name=Unknown',
+                isUnknown: true
             };
         }
 
@@ -206,6 +209,13 @@ export class NoteDetailsComponent implements OnInit {
     }
 
     openPaymentModal() {
+        if (this.client?.isUnknown || !this.client?.id) {
+            this.toastService.warning('Debe asignar un cliente a la nota antes de registrar un pago.');
+            this.clientRequiredWarning.set(true);
+            setTimeout(() => this.clientRequiredWarning.set(false), 2000);
+            return;
+        }
+
         const sucursalId = this.rawNote?.sucursalId;
 
         // If sucursalId is an object (populated), we need the ID string. 

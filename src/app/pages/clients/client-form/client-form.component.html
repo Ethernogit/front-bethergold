@@ -1,8 +1,9 @@
 <div>
     <app-page-breadcrumb [pageTitle]="isEditMode() ? 'Editar Cliente' : 'Nuevo Cliente'"></app-page-breadcrumb>
 
-    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
-        <h3 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90">
+    <div
+        class="rounded-2xl border border-[#E8D9A0] bg-[#FFF8E7] p-5 shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] lg:p-6">
+        <h3 class="font-instrument text-title-sm font-semibold text-[#191817] dark:text-white mb-5">
             {{ isEditMode() ? 'Editar Cliente' : 'Registro de Cliente' }}
         </h3>
 
@@ -12,7 +13,7 @@
                 <!-- Basic Info Section -->
                 <div>
                     <h4
-                        class="mb-4 text-sm font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100 pb-1 dark:border-gray-700">
+                        class="mb-4 font-instrument text-theme-sm font-medium text-[#6B6560] uppercase tracking-wider border-b border-[#E8D9A0] pb-1 dark:border-[#4A474D] dark:text-gray-400">
                         Información Básica</h4>
                     <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
                         <!-- Name -->
@@ -31,7 +32,7 @@
                             <app-label label="Tipo de Cliente" for="type" [required]="true"></app-label>
                             <div class="relative">
                                 <select formControlName="type" id="type"
-                                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500">
+                                    class="w-full rounded-xl border border-[#E8D9A0] bg-white px-5 py-3 font-instrument text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:focus:border-[#FAC600]">
                                     <option value="individual">Persona Física</option>
                                     <option value="business">Empresa / Moral</option>
                                 </select>
@@ -58,7 +59,7 @@
                             <app-label label="Estado" for="status" [required]="true"></app-label>
                             <div class="relative">
                                 <select formControlName="status" id="status"
-                                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500">
+                                    class="w-full rounded-xl border border-[#E8D9A0] bg-white px-5 py-3 font-instrument text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:focus:border-[#FAC600]">
                                     <option value="active">Activo</option>
                                     <option value="inactive">Inactivo</option>
                                     <option value="blocked">Bloqueado</option>
@@ -79,7 +80,7 @@
                 <!-- Contact Info Section -->
                 <div>
                     <h4
-                        class="mb-4 text-sm font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100 pb-1 dark:border-gray-700">
+                        class="mb-4 font-instrument text-theme-sm font-medium text-[#6B6560] uppercase tracking-wider border-b border-[#E8D9A0] pb-1 dark:border-[#4A474D] dark:text-gray-400">
                         Contacto</h4>
                     <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
                         <!-- Email -->
@@ -104,7 +105,7 @@
                 <!-- Address Section -->
                 <div formGroupName="address">
                     <h4
-                        class="mb-4 text-sm font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100 pb-1 dark:border-gray-700">
+                        class="mb-4 font-instrument text-theme-sm font-medium text-[#6B6560] uppercase tracking-wider border-b border-[#E8D9A0] pb-1 dark:border-[#4A474D] dark:text-gray-400">
                         Dirección</h4>
                     <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
                         <!-- Street -->
@@ -147,7 +148,7 @@
                 <!-- Financial Section -->
                 <div>
                     <h4
-                        class="mb-4 text-sm font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100 pb-1 dark:border-gray-700">
+                        class="mb-4 font-instrument text-theme-sm font-medium text-[#6B6560] uppercase tracking-wider border-b border-[#E8D9A0] pb-1 dark:border-[#4A474D] dark:text-gray-400">
                         Financiero y Notas</h4>
                     <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
                         <!-- Credit Limit -->
@@ -162,9 +163,10 @@
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" formControlName="isWholesale" class="sr-only peer">
                                 <div
-                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-brand-600">
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#C69214]/20 dark:peer-focus:ring-[#FAC600]/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#C69214]">
                                 </div>
-                                <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Cliente
+                                <span
+                                    class="ml-3 font-instrument text-theme-sm font-medium text-[#191817] dark:text-gray-300">Cliente
                                     Mayorista</span>
                             </label>
                         </div>
@@ -174,7 +176,7 @@
                             <app-label label="Notas Internas" for="notes"></app-label>
                             <textarea formControlName="notes" id="notes" rows="3"
                                 placeholder="Notas adicionales sobre el cliente..."
-                                class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"></textarea>
+                                class="w-full rounded-xl border border-[#E8D9A0] bg-white px-5 py-3 font-instrument text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-gray-400 dark:focus:border-[#FAC600]"></textarea>
                         </div>
                     </div>
                 </div>
@@ -188,14 +190,14 @@
             </div>
 
             <!-- Actions -->
-            <div class="mt-8 flex items-center justify-end gap-3 border-t border-gray-100 pt-6 dark:border-gray-700">
+            <div class="mt-8 flex items-center justify-end gap-3 border-t border-[#E8D9A0] pt-6 dark:border-[#4A474D]">
                 <button type="button" routerLink="/clients"
-                    class="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]">
+                    class="flex items-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:hover:bg-white/5">
                     Cancelar
                 </button>
                 <button type="submit" [disabled]="loading()"
-                    class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50 flex items-center gap-2">
-                    <svg *ngIf="loading()" class="animate-spin -ml-1 h-4 w-4 text-white"
+                    class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">
+                    <svg *ngIf="loading()" class="animate-spin -ml-1 h-4 w-4 text-[#191817]"
                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
                         </circle>

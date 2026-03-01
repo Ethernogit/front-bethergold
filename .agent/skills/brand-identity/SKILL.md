@@ -46,10 +46,10 @@ description: >
 |-------------------------------|------------|-----------------------------------------|
 | `--color-bg-light`            | `#FFFDF7`  | Fondo principal en modo claro           |
 | `--color-bg-surface-light`    | `#FFF8E7`  | Cards y superficies en modo claro       |
-| `--color-bg-dark`             | `#1A1714`  | Fondo principal en modo oscuro          |
-| `--color-bg-surface-dark`     | `#252017`  | Cards y superficies en modo oscuro      |
+| `--color-bg-dark`             | `#3a383d`  | Fondo principal en modo oscuro          |
+| `--color-bg-surface-dark`     | `#232126`  | Cards y superficies en modo oscuro      |
 | `--color-border-light`        | `#E8D9A0`  | Bordes en modo claro (cálido)           |
-| `--color-border-dark`         | `#3D3420`  | Bordes en modo oscuro (cálido)          |
+| `--color-border-dark`         | `#4A474D`  | Bordes en modo oscuro (carbón)          |
 
 ### 2.4 Estados del Sistema
 
@@ -69,13 +69,17 @@ para que combinen con la paleta cálida:
 
 ### 3.1 Fuentes Oficiales
 
-El proyecto ya usa **Outfit** e **Inter** vía Google Fonts (declaradas en `styles.css`).
+El proyecto usa la familia **Instrument Sans** para toda la interfaz gráfica según la Guía de Identidad.
 
-| Rol             | Fuente    | Pesos          | Uso                                            |
-|-----------------|-----------|----------------|------------------------------------------------|
-| **Display**     | `Outfit`  | 300, 400, 500, 600, 700 | Títulos, headings, nombre de marca   |
-| **Body / UI**   | `Inter`   | 400, 500, 600  | Cuerpo de texto, etiquetas, inputs, tablas     |
-| **Mono**        | `monospace` (sistema) | 400 | Códigos, precios con formato exacto  |
+| Rol                               | Fuente            | Pesos                       | Uso                                            |
+|-----------------------------------|-------------------|-----------------------------|------------------------------------------------|
+| **Títulos y Headings**            | `Instrument Sans` | 700 (Bold)                  | Títulos principales, nombre de marca           |
+| **Subtítulos y Headers Secundar** | `Instrument Sans` | 600 (SemiBold)              | Subtítulos de sección, headers de cards        |
+| **Destacados en cuerpo**          | `Instrument Sans` | 500 (Medium)                | Etiquetas, inputs, valores importantes         |
+| **Cuerpo / Textos Generales**     | `Instrument Sans` | 400 (Regular)               | Cuerpo de texto general, descripciones, tablas |
+| **Mono**                          | `monospace`       | 400                         | Códigos, precios con formato exacto            |
+
+*Nota: Se pueden usar las variantes en Italic para resaltar acciones y títulos especiales.*
 
 ### 3.2 Escala Tipográfica (tokens existentes en styles.css)
 
@@ -96,27 +100,27 @@ text-theme-xs    /* 12px / 18px — captions, metadata */
 
 ```html
 <!-- Encabezado de módulo/página -->
-<h1 class="font-outfit text-title-md font-semibold text-brand-black dark:text-white">
+<h1 class="font-instrument text-title-md font-semibold text-brand-black dark:text-white">
   Nombre del módulo
 </h1>
 
 <!-- Subtítulo de sección dentro de módulo -->
-<h2 class="font-outfit text-title-sm font-medium text-brand-charcoal dark:text-gray-300">
+<h2 class="font-instrument text-title-sm font-medium text-brand-charcoal dark:text-gray-300">
   Sección
 </h2>
 
 <!-- Encabezado de card -->
-<h3 class="font-outfit text-theme-xl font-semibold text-brand-black dark:text-white">
+<h3 class="font-instrument text-theme-xl font-semibold text-brand-black dark:text-white">
   Card title
 </h3>
 
 <!-- Cuerpo de texto -->
-<p class="font-display text-base font-normal text-brand-charcoal dark:text-gray-400">
+<p class="font-instrument text-base font-normal text-brand-charcoal dark:text-gray-400">
   Descripción...
 </p>
 
 <!-- Label / Metadata -->
-<span class="font-display text-theme-sm font-medium text-brand-warm-gray dark:text-gray-500">
+<span class="font-instrument text-theme-sm font-medium text-brand-warm-gray dark:text-gray-500">
   Label
 </span>
 ```
@@ -129,7 +133,7 @@ text-theme-xs    /* 12px / 18px — captions, metadata */
 
 Todos los logos están en:
 ```
-front-bethergold/src/assets/identidad/Identidad/
+front-bethergold/src/assets/Entregables/Identidad/
   ├── Imágenes SVG/           ← Preferir SVG siempre
   └── Imágenes PNG/           ← Usar cuando SVG no sea posible
 ```
@@ -154,21 +158,21 @@ El logo nunca debe aparecer deformado, rotado ni con filtros CSS `hue-rotate`.
 ```html
 <!-- Sidebar (modo claro) -->
 <img
-  src="assets/identidad/Identidad/Imágenes SVG/BG_Isomagotipo Principal.svg"
+  src="assets/Entregables/Identidad/Imágenes  SVG/BG_Isomagotipo Principal.svg"
   alt="Bether Gold"
   class="h-10 w-auto"
 />
 
 <!-- Sidebar (modo oscuro) -->
 <img
-  src="assets/identidad/Identidad/Imágenes SVG/BG_Negativo Principal.svg"
+  src="assets/Entregables/Identidad/Imágenes  SVG/BG_Negativo Principal.svg"
   alt="Bether Gold"
   class="h-10 w-auto"
 />
 
 <!-- Isotipo pequeño (ícono de módulo) -->
 <img
-  src="assets/identidad/Identidad/Imágenes SVG/BG_Isotipo.svg"
+  src="assets/Entregables/Identidad/Imágenes  SVG/BG_Isotipo.svg"
   alt="BG"
   class="size-8"
 />
@@ -178,13 +182,17 @@ El logo nunca debe aparecer deformado, rotado ni con filtros CSS `hue-rotate`.
 
 ## 5. Patrones Gráficos y Decorativos
 
-Los patrones están en:
+Los elementos gráficos y patrones están en:
 ```
-front-bethergold/src/assets/identidad/Elementos graficos/
-  ├── Patrones Bether Gold_1920x 1080.jpg
-  ├── Patrones Bether Gold_1920x 1080 2.jpg
-  └── ... (6 variantes)
+front-bethergold/src/assets/Entregables/Elementos graficos/
+  ├── E1.png a E9.png
+  └── Patrones Bether Gold... .jpg
 ```
+
+**Reglas de Uso (según Guía de Marca):**
+- Con la intención de reforzar la presencia de la marca, los elementos gráficos se ejecutan con variaciones del **isotipo**.
+- Aplicar tratamiento de **degradados diluidos**.
+- Jugar con las opacidades al fondo, a manera de patrones aleatorios (entre **20% al 40%**), o incluso más bajos en fondos principales.
 
 Usar como:
 - Fondos de sección hero/landing (`background-image`)
@@ -194,7 +202,7 @@ Usar como:
 ```css
 /* Ejemplo de uso como fondo sutil */
 .hero-section {
-  background-image: url('/assets/identidad/Elementos graficos/Patrones Bether Gold_1920x 1080.jpg');
+  background-image: url('/assets/Entregables/Elementos graficos/Patrones Bether Gold_1920x 1080.jpg');
   background-size: cover;
   background-position: center;
   opacity: 0.08; /* Siempre aplicar sobre overlay semi-transparente */
@@ -209,10 +217,10 @@ Usar como:
 
 ```html
 <div class="rounded-2xl border border-[#E8D9A0] bg-white p-6 shadow-theme-sm
-            dark:border-[#3D3420] dark:bg-[#252017]">
+            dark:border-[#4A474D] dark:bg-[#232126]">
   <!-- Header de card -->
   <div class="mb-4 flex items-center justify-between">
-    <h3 class="font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white">
+    <h3 class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-[#E8C97A]">
       Título
     </h3>
     <span class="rounded-full bg-[#FBF0C9] px-3 py-1 text-theme-xs font-medium
@@ -232,7 +240,7 @@ Usar como:
 ```html
 <!-- Botón primario — usar para acciones principales de módulo -->
 <button class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600]
-               px-5 py-2.5 font-outfit text-sm font-semibold text-[#191817]
+               px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] dark:text-white
                shadow-theme-sm transition-all
                hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md
                active:scale-[0.98]
@@ -241,19 +249,27 @@ Usar como:
   Acción Principal
 </button>
 
-<!-- Botón secundario (outline gold) -->
-<button class="flex items-center gap-2 rounded-xl border border-[#C69214] bg-transparent
-               px-5 py-2.5 font-outfit text-sm font-semibold text-[#C69214]
+<!-- Botón secundario (blanco / dark surface) -->
+<button class="flex items-center gap-2 rounded-xl border border-[#E8D9A0] bg-white
+               px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm
                transition-all hover:bg-[#FBF0C9]
-               dark:hover:bg-[#3D3420]">
+               dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:hover:bg-white/5">
   Acción Secundaria
 </button>
 
-<!-- Botón ghost / terciario -->
-<button class="flex items-center gap-2 rounded-xl px-5 py-2.5 font-outfit text-sm
+<!-- Botón terciario (outline gold) -->
+<button class="flex items-center gap-2 rounded-xl border border-[#C69214] bg-transparent
+               px-5 py-2.5 font-instrument text-sm font-semibold text-[#C69214]
+               transition-all hover:bg-[#FBF0C9]
+               dark:hover:bg-[#3D3420]">
+  Acción Terciaria
+</button>
+
+<!-- Botón ghost / texto -->
+<button class="flex items-center gap-2 rounded-xl px-5 py-2.5 font-instrument text-sm
                font-medium text-[#46424A] transition-all hover:bg-gray-100
                dark:text-gray-400 dark:hover:bg-white/5">
-  Acción Terciaria
+  Acción Texto
 </button>
 ```
 
@@ -261,17 +277,17 @@ Usar como:
 
 ```html
 <div class="flex flex-col gap-1.5">
-  <label class="font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+  <label class="font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
     Etiqueta del campo
   </label>
   <input
     type="text"
     placeholder="Placeholder..."
     class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5
-           font-display text-base text-[#191817] placeholder-[#6B6560]
+           font-instrument text-base text-[#191817] placeholder-[#6B6560]
            outline-none transition-all
            focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20
-           dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white
+           dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white
            dark:placeholder-gray-600 dark:focus:border-[#FAC600]"
   />
   <!-- Mensaje de error -->
@@ -282,19 +298,19 @@ Usar como:
 ### 6.4 Tabla de Datos
 
 ```html
-<div class="overflow-hidden rounded-2xl border border-[#E8D9A0] dark:border-[#3D3420]">
+<div class="overflow-hidden rounded-2xl border border-[#E8D9A0] dark:border-[#4A474D]">
   <table class="w-full">
-    <thead class="bg-[#FBF0C9] dark:bg-[#252017]">
+    <thead class="bg-[#FBF0C9] dark:bg-[#232126]">
       <tr>
-        <th class="px-4 py-3 text-left font-outfit text-theme-xs font-semibold
+        <th class="px-4 py-3 text-left font-instrument text-theme-xs font-semibold
                    uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
           Columna
         </th>
       </tr>
     </thead>
-    <tbody class="divide-y divide-[#E8D9A0] bg-white dark:divide-[#3D3420] dark:bg-[#1A1714]">
+    <tbody class="divide-y divide-[#E8D9A0] bg-white dark:divide-[#3D3420] dark:bg-[#3a383d]">
       <tr class="transition-colors hover:bg-[#FBF0C9]/40 dark:hover:bg-[#252017]">
-        <td class="px-4 py-3 font-display text-theme-sm text-[#46424A] dark:text-gray-300">
+        <td class="px-4 py-3 font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">
           Valor
         </td>
       </tr>
@@ -336,16 +352,16 @@ Usar como:
 ```html
 <div class="mb-6 flex items-center justify-between">
   <div>
-    <h1 class="font-outfit text-title-sm font-semibold text-[#191817] dark:text-white">
+    <h1 class="font-instrument text-title-sm font-semibold text-[#191817] dark:text-white">
       Nombre del Módulo
     </h1>
-    <p class="mt-1 font-display text-theme-sm text-[#6B6560] dark:text-gray-500">
+    <p class="mt-1 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-500">
       Descripción breve del módulo o breadcrumb
     </p>
   </div>
   <!-- Acción principal del módulo -->
   <button class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600]
-                 px-5 py-2.5 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm
+                 px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm
                  transition-all hover:shadow-theme-md active:scale-[0.98]">
     + Nuevo elemento
   </button>
@@ -379,9 +395,9 @@ Cuando se actualice el `@theme` de `styles.css`, incluir estas variables:
   --color-border-brand-light:     #E8D9A0;
 
   /* Dark mode backgrounds */
-  --color-bg-brand-dark:          #1A1714;
-  --color-bg-brand-surface-dark:  #252017;
-  --color-border-brand-dark:      #3D3420;
+  --color-bg-brand-dark:          #232126;
+  --color-bg-brand-surface-dark:  #3a383d;
+  --color-border-brand-dark:      #4A474D;
 }
 ```
 
@@ -396,8 +412,8 @@ Cuando se actualice el `@theme` de `styles.css`, incluir estas variables:
 ### ✅ Hacer
 
 - Usar el gradiente dorado `from-[#C69214] to-[#FAC600]` en botones primarios
-- Mantener fondos cálidos (`#FFFDF7` claro, `#1A1714` oscuro) — nunca fondos fríos puros
-- Usar `font-outfit` para títulos y `font-display` (Inter) para texto funcional
+- Mantener fondos cálidos (`#FFFDF7` claro, `#3a383d` oscuro) — nunca fondos fríos puros
+- Usar `font-instrument` para títulos y texto funcional
 - Aplicar `rounded-xl` (12px) o `rounded-2xl` (16px) en cards y botones — nunca ángulos rectos
 - Incluir soporte dark mode en CADA componente creado
 - Usar el isotipo SVG para indicadores, loaders o vacíos de estado
@@ -420,7 +436,7 @@ Antes de considerar un componente/módulo terminado, verificar:
 - [ ] ¿Usa la paleta dorada para acción primaria?
 - [ ] ¿Tiene soporte dark mode completo?
 - [ ] ¿Los bordes y fondos son cálidos (no fríos / azulados)?
-- [ ] ¿La tipografía usa Outfit para títulos e Inter para cuerpo?
+- [ ] ¿La tipografía usa Instrument Sans para títulos y cuerpo de texto?
 - [ ] ¿Los bordes-radius son `xl` o `2xl`?
 - [ ] ¿El logo / isotipo aparece en la versión correcta según el fondo?
 - [ ] ¿Los estados (éxito, error, pendiente) usan los tokens de color correctos?

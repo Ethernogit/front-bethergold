@@ -1,12 +1,12 @@
-<div class="min-h-screen bg-[#FFFDF7] dark:bg-[#120F0B] relative flex">
+<div class="min-h-screen bg-[#FFFDF7] dark:bg-[#3a383d] relative flex">
     <main class="w-full h-screen overflow-hidden flex flex-col">
         <!-- Header -->
-        <header class="bg-white dark:bg-[#1A1714] border-b border-[#E8D9A0] dark:border-[#3D3420] flex-shrink-0 z-20">
+        <header class="bg-white dark:bg-[#232126] border-b border-[#E8D9A0] dark:border-[#4A474D] flex-shrink-0 z-20">
             <div class="px-6 py-4">
                 <!-- Top Row: Back link & Refresh -->
                 <div class="flex items-center justify-between mb-4">
                     <a routerLink="/sales/history"
-                        class="flex items-center gap-2 font-display text-theme-sm text-[#6B6560] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors cursor-pointer group">
+                        class="flex items-center gap-2 font-instrument text-theme-sm text-[#6B6560] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors cursor-pointer group">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="group-hover:-translate-x-1 transition-transform">
@@ -28,7 +28,7 @@
                 <!-- Main Title Row -->
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div class="flex items-center gap-4">
-                        <div class="size-12 rounded-xl bg-[#FBF0C9] dark:bg-[#3D3420] flex items-center justify-center">
+                        <div class="size-12 rounded-xl bg-[#FBF0C9] dark:bg-[#4A474D] flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                 stroke-linejoin="round" class="text-[#C69214]">
@@ -41,41 +41,41 @@
                         </div>
                         <div>
                             <div
-                                class="font-outfit text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] mb-0.5">
+                                class="font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] mb-0.5">
                                 Orden de Venta</div>
-                            <h1 class="font-outfit text-2xl font-bold text-[#191817] dark:text-white leading-none">
+                            <h1 class="font-instrument text-2xl font-bold text-[#191817] dark:text-white leading-none">
                                 {{note?.id || 'Cargando...'}}</h1>
                         </div>
                     </div>
 
                     <!-- Middle Info -->
                     <div
-                        class="hidden xl:flex items-center gap-8 border-l border-[#E8D9A0] dark:border-[#3D3420] pl-8 ml-4 mr-auto">
+                        class="hidden xl:flex items-center gap-8 border-l border-[#E8D9A0] dark:border-[#4A474D] pl-8 ml-4 mr-auto">
                         <div>
                             <div
-                                class="font-outfit text-[10px] font-bold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] mb-0.5">
+                                class="font-instrument text-[10px] font-bold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] mb-0.5">
                                 Fecha</div>
-                            <div class="font-outfit text-theme-sm font-bold text-[#191817] dark:text-white">
+                            <div class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white">
                                 {{note?.dateCreated}}</div>
                         </div>
                         <div>
                             <div
-                                class="font-outfit text-[10px] font-bold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] mb-0.5">
+                                class="font-instrument text-[10px] font-bold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] mb-0.5">
                                 Sucursal</div>
-                            <div class="font-outfit text-theme-sm font-bold text-[#191817] dark:text-white">
+                            <div class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white">
                                 {{note?.location}}</div>
                         </div>
                         <div>
                             <div
-                                class="font-outfit text-[10px] font-bold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] mb-0.5">
+                                class="font-instrument text-[10px] font-bold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] mb-0.5">
                                 Vendedor</div>
                             <div class="flex items-center gap-2">
                                 <div
-                                    class="size-5 rounded-full bg-[#FBF0C9] dark:bg-[#3D3420] flex items-center justify-center font-outfit text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A]">
+                                    class="size-5 rounded-full bg-[#FBF0C9] dark:bg-[#4A474D] flex items-center justify-center font-instrument text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A]">
                                     {{note?.agent?.charAt(0)}}
                                 </div>
                                 <span
-                                    class="font-outfit text-theme-sm font-bold text-[#191817] dark:text-white">{{note?.agent}}</span>
+                                    class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white">{{note?.agent}}</span>
                             </div>
                         </div>
                     </div>
@@ -83,7 +83,7 @@
                     <!-- Actions & Status -->
                     <div class="flex items-center gap-3 flex-shrink-0">
                         <button (click)="printNote()"
-                            class="flex items-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-4 py-2 font-outfit text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-gray-300 dark:hover:bg-white/5">
+                            class="flex items-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-4 py-2 font-instrument text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-300 dark:hover:bg-white/5 shadow-theme-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round">
@@ -96,7 +96,7 @@
                         </button>
 
                         <button *ngIf="financials?.balance > 0" (click)="openPaymentModal()"
-                            class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-4 py-2 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98]">
+                            class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-4 py-2 font-instrument text-sm font-semibold text-[#191817] dark:text-white shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98]">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round">
@@ -108,11 +108,11 @@
 
                         <span *ngIf="note" [ngClass]="{
                             'bg-success-50 text-success-700 border-success-200 dark:bg-success-500/15 dark:text-success-400 dark:border-success-500/30': note.status === 'Pagado' || note.status === 'Entregado',
-                            'bg-[#FBF0C9] text-[#9A6F0A] border-[#E8D9A0] dark:bg-[#3D3420] dark:text-[#E8C97A] dark:border-[#3D3420]': note.status === 'Pago Pendiente',
+                            'bg-[#FBF0C9] text-[#9A6F0A] border-[#E8D9A0] dark:bg-[#4A474D] dark:text-[#E8C97A] dark:border-[#4A474D]': note.status === 'Pago Pendiente',
                             'bg-[#F5F0EC] text-[#46424A] border-[#E8D9A0] dark:bg-white/5 dark:text-gray-400': note.status === 'Borrador',
                             'bg-error-50 text-error-700 border-error-200 dark:bg-error-500/15 dark:text-error-400': note.status === 'Anulada'
                         }"
-                            class="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 font-outfit text-sm font-bold">
+                            class="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 font-instrument text-sm font-bold">
                             <svg *ngIf="note.status === 'Pagado' || note.status === 'Entregado'"
                                 xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
@@ -133,41 +133,46 @@
 
             <!-- Summary Bar -->
             <div
-                class="px-6 py-2.5 bg-[#FBF0C9]/40 dark:bg-[#252017]/60 border-t border-[#E8D9A0] dark:border-[#3D3420] flex overflow-x-auto gap-4 md:gap-8 hide-scrollbar">
-                <div class="flex items-center gap-3 pr-4 border-r border-[#E8D9A0] dark:border-[#3D3420] last:border-0">
-                    <div class="font-outfit text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">
+                class="px-6 py-2.5 bg-[#FBF0C9]/40 dark:bg-[#232126]/60 border-t border-[#E8D9A0] dark:border-[#4A474D] flex overflow-x-auto gap-4 md:gap-8 hide-scrollbar">
+                <div class="flex items-center gap-3 pr-4 border-r border-[#E8D9A0] dark:border-[#4A474D] last:border-0">
+                    <div class="font-instrument text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">
                         Total</div>
-                    <span class="font-outfit text-base font-bold text-[#191817] dark:text-white">${{financials?.total |
+                    <span
+                        class="font-instrument text-base font-bold text-[#191817] dark:text-white">${{financials?.total
+                        |
                         number:'1.2-2'}}</span>
                 </div>
                 <div *ngIf="financials?.paid > 0"
-                    class="flex items-center gap-3 pr-4 border-r border-[#E8D9A0] dark:border-[#3D3420] last:border-0">
-                    <div class="font-outfit text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">A
+                    class="flex items-center gap-3 pr-4 border-r border-[#E8D9A0] dark:border-[#4A474D] last:border-0">
+                    <div class="font-instrument text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">
+                        A
                         cuenta</div>
                     <span
-                        class="font-outfit text-sm font-bold text-success-600 dark:text-success-400">${{financials?.paid
+                        class="font-instrument text-sm font-bold text-success-600 dark:text-success-400">${{financials?.paid
                         | number:'1.2-2'}}</span>
                 </div>
                 <div *ngIf="financials?.balance > 0"
-                    class="flex items-center gap-3 pr-4 border-r border-[#E8D9A0] dark:border-[#3D3420] last:border-0">
-                    <div class="font-outfit text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">
+                    class="flex items-center gap-3 pr-4 border-r border-[#E8D9A0] dark:border-[#4A474D] last:border-0">
+                    <div class="font-instrument text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">
                         Restante</div>
                     <span
-                        class="font-outfit text-sm font-bold text-error-500 dark:text-error-400">${{financials?.balance
+                        class="font-instrument text-sm font-bold text-error-500 dark:text-error-400">${{financials?.balance
                         | number:'1.2-2'}}</span>
                 </div>
-                <div class="flex items-center gap-3 last:border-0 pl-4 border-l border-[#E8D9A0] dark:border-[#3D3420]">
+                <div class="flex items-center gap-3 last:border-0 pl-4 border-l border-[#E8D9A0] dark:border-[#4A474D]">
                     <span
-                        class="font-outfit text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">Cliente:</span>
-                    <div class="flex items-center gap-4 font-display text-theme-sm text-[#191817] dark:text-white">
+                        class="font-instrument text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">Cliente:</span>
+
+                    <div *ngIf="!client?.isUnknown"
+                        class="flex items-center gap-4 font-instrument text-theme-sm text-[#191817] dark:text-white">
                         <span
-                            class="font-bold border-r border-[#E8D9A0] dark:border-[#3D3420] pr-3 mr-1">{{client?.name}}</span>
-                        <span class="flex items-center gap-1" *ngIf="client?.phone">
+                            class="font-bold border-r border-[#E8D9A0] dark:border-[#4A474D] pr-3 mr-1">{{client?.name}}</span>
+                        <span class="flex items-center gap-1" *ngIf="client?.phone && client?.phone !== 'Sin teléfono'">
                             <span class="font-medium text-[#6B6560] dark:text-gray-400">Tel:</span>
                             <span>{{client?.phone}}</span>
                         </span>
                         <button (click)="showClientModal.set(true)"
-                            class="ml-2 p-1.5 text-[#6B6560] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors rounded-lg hover:bg-[#FBF0C9] dark:hover:bg-[#3D3420]"
+                            class="ml-2 p-1.5 text-[#6B6560] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors rounded-lg hover:bg-[#FBF0C9] dark:hover:bg-[#4A474D]"
                             title="Cambiar Cliente">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -176,22 +181,38 @@
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
                         </button>
-                        <span class="flex items-center gap-1" *ngIf="client?.email">
+                        <span class="flex items-center gap-1" *ngIf="client?.email && client?.email !== 'Sin email'">
                             <span class="font-medium text-[#6B6560] dark:text-gray-400">Email:</span>
                             <span class="truncate max-w-[200px]">{{client?.email}}</span>
                         </span>
+                    </div>
+
+                    <div *ngIf="client?.isUnknown">
+                        <button (click)="showClientModal.set(true)"
+                            [ngClass]="{'animate-pulse bg-error-50 dark:bg-error-500/15 text-error-600 dark:text-error-400 border border-error-200 dark:border-error-500/30 scale-105 shadow-md': clientRequiredWarning(), 'bg-white dark:bg-[#3a383d] text-[#6B6560] dark:text-gray-300 border border-[#E8D9A0] dark:border-[#4A474D] hover:text-[#C69214] dark:hover:text-[#FAC600] hover:border-[#C69214] dark:hover:border-[#FAC600] hover:bg-[#FBF0C9]/40 dark:hover:bg-[#4A474D]/40': !clientRequiredWarning()}"
+                            class="flex items-center gap-2 px-3 py-1.5 rounded-lg font-instrument text-theme-sm font-semibold transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <line x1="19" y1="8" x2="19" y2="14"></line>
+                                <line x1="22" y1="11" x2="16" y2="11"></line>
+                            </svg>
+                            <span>Agregar un cliente</span>
+                        </button>
                     </div>
                 </div>
             </div>
 
             <!-- Tab Navigation -->
             <div
-                class="px-6 flex gap-1 overflow-x-auto hide-scrollbar items-center border-t border-[#E8D9A0] dark:border-[#3D3420]">
+                class="px-6 flex gap-1 overflow-x-auto hide-scrollbar items-center border-t border-[#E8D9A0] dark:border-[#4A474D]">
                 <button (click)="setTab('general')"
                     [ngClass]="currentTab === 'general'
-                        ? 'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]'
+                        ? 'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]'
                         : 'text-[#6B6560] dark:text-gray-400 hover:text-[#191817] dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'"
-                    class="px-4 py-3 rounded-t-lg font-outfit text-theme-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap">
+                    class="px-4 py-3 rounded-t-lg font-instrument text-theme-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -202,9 +223,9 @@
                 </button>
                 <button (click)="setTab('items')"
                     [ngClass]="currentTab === 'items'
-                        ? 'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]'
+                        ? 'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]'
                         : 'text-[#6B6560] dark:text-gray-400 hover:text-[#191817] dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'"
-                    class="px-4 py-3 rounded-t-lg font-outfit text-theme-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap">
+                    class="px-4 py-3 rounded-t-lg font-instrument text-theme-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
@@ -213,17 +234,17 @@
                     </svg>
                     Productos
                     <span [ngClass]="currentTab === 'items'
-                            ? 'bg-[#9A6F0A] text-white dark:bg-[#E8C97A] dark:text-[#1A1714]'
-                            : 'bg-[#E8D9A0] text-[#46424A] dark:bg-[#3D3420] dark:text-gray-300'"
-                        class="px-1.5 py-0.5 rounded font-outfit text-theme-xs font-bold transition-colors">
+                            ? 'bg-[#9A6F0A] text-white dark:bg-[#E8C97A] dark:text-[#3a383d]'
+                            : 'bg-[#E8D9A0] text-[#46424A] dark:bg-[#4A474D] dark:text-gray-300'"
+                        class="px-1.5 py-0.5 rounded font-instrument text-theme-xs font-bold transition-colors">
                         {{(items.reserved.length + items.workshop.length + items.custom.length)}}
                     </span>
                 </button>
                 <button (click)="setTab('payments')"
                     [ngClass]="currentTab === 'payments'
-                        ? 'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]'
+                        ? 'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]'
                         : 'text-[#6B6560] dark:text-gray-400 hover:text-[#191817] dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'"
-                    class="px-4 py-3 rounded-t-lg font-outfit text-theme-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap">
+                    class="px-4 py-3 rounded-t-lg font-instrument text-theme-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
@@ -235,7 +256,7 @@
         </header>
 
         <!-- Loading State -->
-        <div *ngIf="isLoading" class="flex-1 flex items-center justify-center bg-[#FFFDF7] dark:bg-[#120F0B]">
+        <div *ngIf="isLoading" class="flex-1 flex items-center justify-center bg-[#FFFDF7] dark:bg-[#3a383d]">
             <div
                 class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent">
             </div>
@@ -243,9 +264,9 @@
 
         <!-- Error State -->
         <div *ngIf="error && !isLoading"
-            class="flex-1 flex items-center justify-center bg-[#FFFDF7] dark:bg-[#120F0B] p-4 text-center">
+            class="flex-1 flex items-center justify-center bg-[#FFFDF7] dark:bg-[#3a383d] p-4 text-center">
             <div
-                class="max-w-md rounded-2xl border border-[#E8D9A0] bg-white p-8 shadow-lg dark:border-[#3D3420] dark:bg-[#1A1714]">
+                class="max-w-md rounded-2xl border border-[#E8D9A0] bg-white p-8 shadow-lg dark:border-[#4A474D] dark:bg-[#232126]">
                 <div
                     class="mb-4 flex size-16 items-center justify-center rounded-full bg-error-50 dark:bg-error-500/15 mx-auto">
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
@@ -256,18 +277,19 @@
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
                     </svg>
                 </div>
-                <h3 class="font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white mb-2">Error al cargar
+                <h3 class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white mb-2">Error al
+                    cargar
                 </h3>
-                <p class="font-display text-theme-sm text-[#6B6560] dark:text-gray-400 mb-6">{{error}}</p>
+                <p class="font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400 mb-6">{{error}}</p>
                 <button (click)="loadNote(note?.id || '')"
-                    class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] mx-auto">
+                    class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] dark:text-white shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] mx-auto">
                     Reintentar
                 </button>
             </div>
         </div>
 
         <!-- Content Area -->
-        <div *ngIf="!isLoading && !error" class="flex-1 overflow-y-auto bg-[#FFFDF7] dark:bg-[#120F0B] p-4 lg:p-8">
+        <div *ngIf="!isLoading && !error" class="flex-1 overflow-y-auto bg-[#FFFDF7] dark:bg-[#3a383d] p-4 lg:p-8">
             <div class="max-w-[1200px] mx-auto">
 
                 <!-- TAB 1: General Info -->
@@ -275,33 +297,34 @@
                     <div class="lg:col-span-2 space-y-6">
                         <!-- Payment Summary -->
                         <div
-                            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#3D3420] dark:bg-[#1A1714] overflow-hidden relative">
+                            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] overflow-hidden relative">
                             <div class="h-1.5 w-full bg-gradient-to-r from-[#C69214] to-[#FAC600] absolute top-0"></div>
                             <div class="p-6">
-                                <h3 class="font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white mb-6">
+                                <h3
+                                    class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white mb-6">
                                     Resumen Financiero</h3>
                                 <div class="space-y-4">
-                                    <div class="flex justify-between font-display text-theme-sm">
+                                    <div class="flex justify-between font-instrument text-theme-sm">
                                         <span class="text-[#6B6560] dark:text-gray-400">Subtotal</span>
                                         <span class="font-medium text-[#191817] dark:text-white">${{financials?.subtotal
                                             | number:'1.2-2'}}</span>
                                     </div>
-                                    <div class="flex justify-between font-display text-theme-sm">
+                                    <div class="flex justify-between font-instrument text-theme-sm">
                                         <span class="text-[#6B6560] dark:text-gray-400">Impuestos</span>
                                         <span class="font-medium text-[#191817] dark:text-white">${{financials?.tax |
                                             number:'1.2-2'}}</span>
                                     </div>
-                                    <div class="border-t border-[#E8D9A0] dark:border-[#3D3420] my-2"></div>
+                                    <div class="border-t border-[#E8D9A0] dark:border-[#4A474D] my-2"></div>
                                     <div class="flex justify-between items-end">
                                         <span
-                                            class="font-outfit text-theme-xl font-bold text-[#191817] dark:text-white">Total</span>
+                                            class="font-instrument text-theme-xl font-bold text-[#191817] dark:text-white">Total</span>
                                         <span
-                                            class="font-outfit text-2xl font-bold text-[#191817] dark:text-white">${{financials?.total
+                                            class="font-instrument text-2xl font-bold text-[#191817] dark:text-white">${{financials?.total
                                             | number:'1.2-2'}}</span>
                                     </div>
                                     <div
-                                        class="rounded-xl bg-[#FBF0C9]/40 border border-[#E8D9A0] dark:border-[#3D3420] dark:bg-[#252017]/60 p-4 mt-4 space-y-3">
-                                        <div class="flex justify-between items-center font-display text-theme-sm">
+                                        class="rounded-xl bg-[#FBF0C9]/40 border border-[#E8D9A0] dark:border-[#4A474D] dark:bg-[#232126]/60 p-4 mt-4 space-y-3">
+                                        <div class="flex justify-between items-center font-instrument text-theme-sm">
                                             <span
                                                 class="text-success-600 dark:text-success-400 font-medium flex items-center gap-1">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
@@ -317,16 +340,16 @@
                                         </div>
                                         <div class="flex justify-between items-center">
                                             <span
-                                                class="font-outfit text-theme-sm font-bold uppercase tracking-wide text-[#C69214] dark:text-[#FAC600]">Saldo
+                                                class="font-instrument text-theme-sm font-bold uppercase tracking-wide text-[#C69214] dark:text-[#FAC600]">Saldo
                                                 Pendiente</span>
                                             <span
-                                                class="font-outfit font-extrabold text-lg text-[#C69214] dark:text-[#FAC600]">${{financials?.balance
+                                                class="font-instrument font-extrabold text-lg text-[#C69214] dark:text-[#FAC600]">${{financials?.balance
                                                 | number:'1.2-2'}}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <button (click)="setTab('payments')"
-                                    class="w-full mt-6 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] py-3 font-outfit text-sm font-bold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98]">
+                                    class="w-full mt-6 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] py-3 font-instrument text-sm font-bold text-[#191817] dark:text-white shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98]">
                                     Ir a Pagos
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                         fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
@@ -342,9 +365,9 @@
                     <!-- Right Column: Notes -->
                     <div class="space-y-6">
                         <div
-                            class="rounded-2xl border border-[#E8D9A0] bg-[#FBF0C9]/30 dark:border-[#3D3420] dark:bg-[#3D3420]/20 p-6 h-full">
+                            class="rounded-2xl border border-[#E8D9A0] bg-[#FBF0C9]/30 dark:border-[#4A474D] dark:bg-[#232126] p-6 h-full shadow-theme-sm">
                             <h3
-                                class="font-outfit text-theme-sm font-bold text-[#9A6F0A] dark:text-[#E8C97A] mb-4 flex items-center gap-2">
+                                class="font-instrument text-theme-sm font-bold text-[#9A6F0A] dark:text-[#E8C97A] mb-4 flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
@@ -354,7 +377,7 @@
                                 Notas Privadas
                             </h3>
                             <p
-                                class="font-display text-theme-sm text-[#46424A] dark:text-gray-300 italic whitespace-pre-wrap leading-relaxed">
+                                class="font-instrument text-theme-sm text-[#46424A] dark:text-gray-300 italic whitespace-pre-wrap leading-relaxed">
                                 "{{note?.privateNotes || 'No hay notas privadas registradas.'}}"
                             </p>
                         </div>
@@ -365,204 +388,210 @@
                 <div *ngIf="currentTab === 'items'" class="space-y-8 animate-fadeIn">
                     <!-- Products (Apartados) -->
                     <section *ngIf="items.reserved.length > 0">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3
-                                class="font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="text-[#C69214]">
-                                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                                    <path d="M16 10a4 4 0 0 1-8 0"></path>
-                                </svg>
-                                Apartados
-                            </h3>
-                            <span
-                                class="inline-flex items-center gap-1 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 font-outfit text-theme-xs font-medium text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]">{{items.reserved.length}}
-                                Ítems</span>
-                        </div>
                         <div
-                            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#3D3420] dark:bg-[#1A1714] overflow-hidden">
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left">
-                                    <thead class="bg-[#FBF0C9] dark:bg-[#252017]">
-                                        <tr
-                                            class="font-outfit text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
-                                            <th class="px-6 py-4">Codebar</th>
-                                            <th class="px-6 py-4">Producto</th>
-                                            <th class="px-6 py-4">Estado</th>
-                                            <th class="px-6 py-4 text-right">Precio</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#3D3420]">
-                                        <tr *ngFor="let item of items.reserved"
-                                            class="hover:bg-[#FBF0C9]/30 dark:hover:bg-[#252017] transition-colors">
-                                            <td
-                                                class="px-6 py-4 font-display text-theme-sm font-medium text-[#191817] dark:text-white">
-                                                {{item.ref}}</td>
-                                            <td class="px-6 py-4">
-                                                <div
-                                                    class="font-outfit text-theme-sm font-bold text-[#191817] dark:text-white">
-                                                    {{item.name}}</div>
-                                                <div
-                                                    class="font-display text-theme-xs text-[#6B6560] dark:text-gray-400">
-                                                    {{item.description}}</div>
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <span
-                                                    class="inline-flex items-center gap-1.5 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 font-outfit text-theme-xs font-bold text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]">{{item.status}}</span>
-                                            </td>
-                                            <td
-                                                class="px-6 py-4 text-right font-outfit text-theme-sm font-bold text-[#191817] dark:text-white">
-                                                ${{item.price | number:'1.2-2'}}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3
+                                    class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="text-[#C69214]">
+                                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                                    </svg>
+                                    Apartados
+                                </h3>
+                                <span
+                                    class="inline-flex items-center gap-1 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 font-instrument text-theme-xs font-medium text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]">{{items.reserved.length}}
+                                    Ítems</span>
+                            </div>
+                            <div class="rounded-xl overflow-hidden border border-[#E8D9A0] dark:border-[#4A474D]">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left">
+                                        <thead class="bg-[#FBF0C9] dark:bg-[#3a383d]">
+                                            <tr
+                                                class="font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                                                <th class="px-6 py-4">Codebar</th>
+                                                <th class="px-6 py-4">Producto</th>
+                                                <th class="px-6 py-4">Estado</th>
+                                                <th class="px-6 py-4 text-right">Precio</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#4A474D]">
+                                            <tr *ngFor="let item of items.reserved"
+                                                class="hover:bg-[#FBF0C9]/30 dark:hover:bg-white/5 transition-colors">
+                                                <td
+                                                    class="px-6 py-4 font-instrument text-theme-sm font-medium text-[#191817] dark:text-white">
+                                                    {{item.ref}}</td>
+                                                <td class="px-6 py-4">
+                                                    <div
+                                                        class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white">
+                                                        {{item.name}}</div>
+                                                    <div
+                                                        class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">
+                                                        {{item.description}}</div>
+                                                </td>
+                                                <td class="px-6 py-4">
+                                                    <span
+                                                        class="inline-flex items-center gap-1.5 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]">{{item.status}}</span>
+                                                </td>
+                                                <td
+                                                    class="px-6 py-4 text-right font-instrument text-theme-sm font-bold text-[#191817] dark:text-white">
+                                                    ${{item.price | number:'1.2-2'}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </section>
 
                     <!-- Workshop -->
                     <section *ngIf="items.workshop.length > 0">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3
-                                class="font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="text-[#46424A] dark:text-gray-300">
-                                    <path
-                                        d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-                                </svg>
-                                Servicios de Taller
-                            </h3>
-                            <span
-                                class="inline-flex items-center gap-1 rounded-full bg-[#F5F0EC] px-2.5 py-0.5 font-outfit text-theme-xs font-medium text-[#46424A] dark:bg-white/5 dark:text-gray-400">{{items.workshop.length}}
-                                Servicios</span>
-                        </div>
                         <div
-                            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#3D3420] dark:bg-[#1A1714] overflow-hidden">
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left">
-                                    <thead class="bg-[#FBF0C9] dark:bg-[#252017]">
-                                        <tr
-                                            class="font-outfit text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
-                                            <th class="px-6 py-4">Servicio</th>
-                                            <th class="px-6 py-4">Job ID</th>
-                                            <th class="px-6 py-4">Entrega Est.</th>
-                                            <th class="px-6 py-4">Estado</th>
-                                            <th class="px-6 py-4 text-right">Costo</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#3D3420]">
-                                        <tr *ngFor="let item of items.workshop"
-                                            class="hover:bg-[#FBF0C9]/30 dark:hover:bg-[#252017] transition-colors">
-                                            <td class="px-6 py-4">
-                                                <div class="flex items-center gap-3">
-                                                    <div
-                                                        class="size-10 rounded-full bg-[#F5F0EC] dark:bg-white/5 flex items-center justify-center text-[#46424A] dark:text-gray-400">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                            stroke-width="2" stroke-linecap="round"
-                                                            stroke-linejoin="round">
-                                                            <path
-                                                                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-                                                        </svg>
+                            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3
+                                    class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="text-[#46424A] dark:text-gray-300">
+                                        <path
+                                            d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                                    </svg>
+                                    Servicios de Taller
+                                </h3>
+                                <span
+                                    class="inline-flex items-center gap-1 rounded-full bg-[#F5F0EC] px-2.5 py-0.5 font-instrument text-theme-xs font-medium text-[#46424A] dark:bg-white/5 dark:text-gray-400">{{items.workshop.length}}
+                                    Servicios</span>
+                            </div>
+                            <div class="rounded-xl overflow-hidden border border-[#E8D9A0] dark:border-[#4A474D]">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left">
+                                        <thead class="bg-[#FBF0C9] dark:bg-[#3a383d]">
+                                            <tr
+                                                class="font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                                                <th class="px-6 py-4">Servicio</th>
+                                                <th class="px-6 py-4">Job ID</th>
+                                                <th class="px-6 py-4">Entrega Est.</th>
+                                                <th class="px-6 py-4">Estado</th>
+                                                <th class="px-6 py-4 text-right">Costo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#4A474D]">
+                                            <tr *ngFor="let item of items.workshop"
+                                                class="hover:bg-[#FBF0C9]/30 dark:hover:bg-white/5 transition-colors">
+                                                <td class="px-6 py-4">
+                                                    <div class="flex items-center gap-3">
+                                                        <div
+                                                            class="size-10 rounded-full bg-[#F5F0EC] dark:bg-[#3a383d] flex items-center justify-center text-[#46424A] dark:text-gray-400">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                height="16" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path
+                                                                    d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                                                            </svg>
+                                                        </div>
+                                                        <span
+                                                            class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white">{{item.title}}</span>
                                                     </div>
+                                                </td>
+                                                <td
+                                                    class="px-6 py-4 font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+                                                    {{item.jobId}}</td>
+                                                <td
+                                                    class="px-6 py-4 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400">
+                                                    {{item.estReady}}</td>
+                                                <td class="px-6 py-4">
                                                     <span
-                                                        class="font-outfit text-theme-sm font-bold text-[#191817] dark:text-white">{{item.title}}</span>
-                                                </div>
-                                            </td>
-                                            <td
-                                                class="px-6 py-4 font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
-                                                {{item.jobId}}</td>
-                                            <td
-                                                class="px-6 py-4 font-display text-theme-sm text-[#6B6560] dark:text-gray-400">
-                                                {{item.estReady}}</td>
-                                            <td class="px-6 py-4">
-                                                <span
-                                                    class="inline-flex items-center gap-1.5 rounded-full bg-[#F5F0EC] px-2.5 py-0.5 font-outfit text-theme-xs font-bold text-[#46424A] dark:bg-white/5 dark:text-gray-400">{{item.status}}</span>
-                                            </td>
-                                            <td
-                                                class="px-6 py-4 text-right font-outfit font-bold text-[#191817] dark:text-white">
-                                                ${{item.price | number:'1.2-2'}}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                                        class="inline-flex items-center gap-1.5 rounded-full bg-[#F5F0EC] px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-[#46424A] dark:bg-white/5 dark:text-gray-400">{{item.status}}</span>
+                                                </td>
+                                                <td
+                                                    class="px-6 py-4 text-right font-instrument font-bold text-[#191817] dark:text-white">
+                                                    ${{item.price | number:'1.2-2'}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </section>
 
                     <!-- Custom / Hechuras -->
                     <section *ngIf="items.custom.length > 0">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3
-                                class="font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="text-[#C69214]">
-                                    <polygon
-                                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
-                                    </polygon>
-                                </svg>
-                                Hechuras / Personalizados
-                            </h3>
-                            <span
-                                class="inline-flex items-center gap-1 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 font-outfit text-theme-xs font-medium text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]">{{items.custom.length}}
-                                Trabajos</span>
-                        </div>
                         <div
-                            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#3D3420] dark:bg-[#1A1714] overflow-hidden">
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left">
-                                    <thead class="bg-[#FBF0C9] dark:bg-[#252017]">
-                                        <tr
-                                            class="font-outfit text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
-                                            <th class="px-6 py-4">Código</th>
-                                            <th class="px-6 py-4">Descripción</th>
-                                            <th class="px-6 py-4">Fecha Entrega</th>
-                                            <th class="px-6 py-4 text-right">Precio Est.</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#3D3420]">
-                                        <tr *ngFor="let item of items.custom"
-                                            class="hover:bg-[#FBF0C9]/30 dark:hover:bg-[#252017] transition-colors">
-                                            <td
-                                                class="px-6 py-4 font-display text-theme-xs font-medium text-[#191817] dark:text-white">
-                                                {{item.jobId}}</td>
-                                            <td class="px-6 py-4">
-                                                <div class="flex items-center gap-3">
-                                                    <div
-                                                        class="size-10 rounded-full bg-[#FBF0C9] dark:bg-[#3D3420] flex items-center justify-center text-[#C69214] shrink-0">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                            stroke-width="2" stroke-linecap="round"
-                                                            stroke-linejoin="round">
-                                                            <polygon
-                                                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
-                                                            </polygon>
-                                                        </svg>
-                                                    </div>
-                                                    <div>
+                            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3
+                                    class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="text-[#C69214]">
+                                        <polygon
+                                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                        </polygon>
+                                    </svg>
+                                    Hechuras / Personalizados
+                                </h3>
+                                <span
+                                    class="inline-flex items-center gap-1 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 font-instrument text-theme-xs font-medium text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]">{{items.custom.length}}
+                                    Trabajos</span>
+                            </div>
+                            <div class="rounded-xl overflow-hidden border border-[#E8D9A0] dark:border-[#4A474D]">
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left">
+                                        <thead class="bg-[#FBF0C9] dark:bg-[#3a383d]">
+                                            <tr
+                                                class="font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                                                <th class="px-6 py-4">Código</th>
+                                                <th class="px-6 py-4">Descripción</th>
+                                                <th class="px-6 py-4">Fecha Entrega</th>
+                                                <th class="px-6 py-4 text-right">Precio Est.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#4A474D]">
+                                            <tr *ngFor="let item of items.custom"
+                                                class="hover:bg-[#FBF0C9]/30 dark:hover:bg-white/5 transition-colors">
+                                                <td
+                                                    class="px-6 py-4 font-instrument text-theme-xs font-medium text-[#191817] dark:text-white">
+                                                    {{item.jobId}}</td>
+                                                <td class="px-6 py-4">
+                                                    <div class="flex items-center gap-3">
                                                         <div
-                                                            class="font-outfit text-theme-sm font-bold text-[#191817] dark:text-white">
-                                                            {{item.title}}</div>
-                                                        <div
-                                                            class="font-display text-theme-xs text-[#6B6560] dark:text-gray-400">
-                                                            {{item.description}}</div>
-                                                        <span *ngIf="item.isHechura"
-                                                            class="mt-1 inline-block rounded-full bg-[#FBF0C9] px-2 py-0.5 font-outfit text-[10px] font-bold uppercase text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]">Hechura</span>
+                                                            class="size-10 rounded-full bg-[#FBF0C9] dark:bg-[#4A474D] flex items-center justify-center text-[#C69214] shrink-0">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                height="16" viewBox="0 0 24 24" fill="none"
+                                                                stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polygon
+                                                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                                                </polygon>
+                                                            </svg>
+                                                        </div>
+                                                        <div>
+                                                            <div
+                                                                class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white">
+                                                                {{item.title}}</div>
+                                                            <div
+                                                                class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">
+                                                                {{item.description}}</div>
+                                                            <span *ngIf="item.isHechura"
+                                                                class="mt-1 inline-block rounded-full bg-[#FBF0C9] px-2 py-0.5 font-instrument text-[10px] font-bold uppercase text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]">Hechura</span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td
-                                                class="px-6 py-4 font-display text-theme-sm text-[#6B6560] dark:text-gray-400">
-                                                {{item.estReady}}</td>
-                                            <td
-                                                class="px-6 py-4 text-right font-outfit font-bold text-[#191817] dark:text-white">
-                                                ${{item.price | number:'1.2-2'}}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                                </td>
+                                                <td
+                                                    class="px-6 py-4 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400">
+                                                    {{item.estReady}}</td>
+                                                <td
+                                                    class="px-6 py-4 text-right font-instrument font-bold text-[#191817] dark:text-white">
+                                                    ${{item.price | number:'1.2-2'}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -571,12 +600,12 @@
                 <!-- TAB 3: Payments -->
                 <div *ngIf="currentTab === 'payments'" class="space-y-6 animate-fadeIn">
                     <div
-                        class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#3D3420] dark:bg-[#1A1714] p-6">
+                        class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] p-6">
                         <div class="flex justify-between items-center mb-6">
-                            <h3 class="font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white">
+                            <h3 class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white">
                                 Transacciones & Pagos</h3>
                             <button (click)="openPaymentModal()"
-                                class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-4 py-2 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98]">
+                                class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-4 py-2 font-instrument text-sm font-semibold text-[#191817] dark:text-white shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98]">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
@@ -590,7 +619,7 @@
                         <div *ngIf="financials.transactions.length === 0" class="py-12 text-center">
                             <div class="flex flex-col items-center gap-3">
                                 <div
-                                    class="flex size-16 items-center justify-center rounded-full bg-[#FBF0C9] dark:bg-[#3D3420]">
+                                    class="flex size-16 items-center justify-center rounded-full bg-[#FBF0C9] dark:bg-[#4A474D]">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
                                         fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                         stroke-linejoin="round" class="text-[#C69214]">
@@ -598,32 +627,32 @@
                                         <polyline points="14 2 14 8 20 8"></polyline>
                                     </svg>
                                 </div>
-                                <p class="font-display text-theme-sm text-[#6B6560] dark:text-gray-400">No hay
+                                <p class="font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400">No hay
                                     transacciones registradas.</p>
                             </div>
                         </div>
 
                         <div *ngIf="financials.transactions.length > 0"
-                            class="rounded-xl overflow-hidden border border-[#E8D9A0] dark:border-[#3D3420]">
+                            class="rounded-xl overflow-hidden border border-[#E8D9A0] dark:border-[#4A474D]">
                             <table class="w-full text-left">
-                                <thead class="bg-[#FBF0C9] dark:bg-[#252017]">
+                                <thead class="bg-[#FBF0C9] dark:bg-[#3a383d]">
                                     <tr
-                                        class="font-outfit text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                                        class="font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
                                         <th class="px-6 py-4">Fecha</th>
                                         <th class="px-6 py-4">Tipo</th>
                                         <th class="px-6 py-4">Método</th>
                                         <th class="px-6 py-4 text-right">Monto</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#3D3420]">
+                                <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#4A474D]">
                                     <tr *ngFor="let txn of financials.transactions"
-                                        class="hover:bg-[#FBF0C9]/30 dark:hover:bg-[#252017] transition-colors">
+                                        class="hover:bg-[#FBF0C9]/30 dark:hover:bg-white/5 transition-colors">
                                         <td
-                                            class="px-6 py-4 font-display text-theme-sm font-medium text-[#191817] dark:text-white">
+                                            class="px-6 py-4 font-instrument text-theme-sm font-medium text-[#191817] dark:text-white">
                                             {{txn.date}}</td>
                                         <td class="px-6 py-4">
                                             <span
-                                                class="flex items-center gap-1 text-success-600 dark:text-success-400 font-bold font-outfit text-theme-sm">
+                                                class="flex items-center gap-1 text-success-600 dark:text-success-400 font-bold font-instrument text-theme-sm">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -634,10 +663,10 @@
                                             </span>
                                         </td>
                                         <td
-                                            class="px-6 py-4 font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+                                            class="px-6 py-4 font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
                                             {{txn.type}}</td>
                                         <td
-                                            class="px-6 py-4 text-right font-outfit font-bold text-success-600 dark:text-success-400">
+                                            class="px-6 py-4 text-right font-instrument font-bold text-success-600 dark:text-success-400">
                                             +${{txn.amount | number:'1.2-2'}}</td>
                                     </tr>
                                 </tbody>
@@ -660,7 +689,7 @@
     <div *ngIf="showClientModal()"
         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#191817]/60 backdrop-blur-sm">
         <div
-            class="bg-white dark:bg-[#1A1714] rounded-2xl border border-[#E8D9A0] dark:border-[#3D3420] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+            class="bg-white dark:bg-[#232126] rounded-2xl border border-[#E8D9A0] dark:border-[#4A474D] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
             <app-client-selection-modal (select)="onClientSelected($event)" (close)="showClientModal.set(false)">
             </app-client-selection-modal>
         </div>

@@ -2,36 +2,34 @@
 <div class="mx-auto max-w-screen-2xl h-[calc(100vh-50px)] flex flex-col overflow-hidden">
   <div class="flex flex-col gap-4 h-full">
     <div
-      class="rounded-sm border border-stroke bg-white shadow-default dark:border-gray-800 dark:bg-gray-900 flex flex-col h-full">
+      class="rounded-2xl border border-[#E8D9A0] bg-[#FFF8E7] shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] flex flex-col h-full">
       <!-- Header -->
-      <div class="border-b border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0">
+      <div
+        class="border-b border-[#E8D9A0] bg-white px-4 py-3 dark:border-[#4A474D] dark:bg-[#3a383d] sm:px-6 shrink-0 rounded-t-2xl">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <h3 class="font-medium text-black dark:text-white">
+          <h3 class="font-instrument text-title-sm font-semibold text-[#191817] dark:text-white">
             Lista de Clientes
           </h3>
           <div class="flex items-center gap-3">
             <!-- Search -->
             <div class="relative">
               <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
-                <input type="text" formControlName="searchTerm" placeholder="Buscar clientes..."
-                  class="w-full bg-transparent pl-9 pr-4 font-medium focus:outline-none xl:w-125 hover:border-brand-500 focus:border-brand-500 transition-colors border-b border-gray-300 dark:border-gray-700 py-1" />
-                <span class="absolute left-0 top-1/2 -translate-y-1/2">
-                  <svg class="fill-body hover:fill-primary dark:fill-bodydark dark:hover:fill-primary" width="20"
-                    height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd"
-                      d="M9.16666 3.33332C5.945 3.33332 3.33332 5.945 3.33332 9.16666C3.33332 12.3883 5.945 15 9.16666 15C12.3883 15 15 12.3883 15 9.16666C15 5.945 12.3883 3.33332 9.16666 3.33332ZM1.66666 9.16666C1.66666 5.02452 5.02452 1.66666 9.16666 1.66666C13.3088 1.66666 16.6667 5.02452 16.6667 9.16666C16.6667 13.3088 13.3088 16.6667 9.16666 16.6667C5.02452 16.6667 1.66666 13.3088 1.66666 9.16666Z"
-                      fill="" />
-                    <path fill-rule="evenodd" clip-rule="evenodd"
-                      d="M13.2857 13.2857C13.6112 12.9603 14.1388 12.9603 14.4642 13.2857L18.0892 16.9107C18.4147 17.2362 18.4147 17.7638 18.0892 18.0892C17.7638 18.4147 17.2362 18.4147 16.9107 18.0892L13.2857 14.4642C12.9603 14.1388 12.9603 13.6112 13.2857 13.2857Z"
-                      fill="" />
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#9A6F0A] dark:text-[#E8C97A]"
+                    viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                      clip-rule="evenodd" />
                   </svg>
-                </span>
+                </div>
+                <input type="text" formControlName="searchTerm" placeholder="Buscar clientes..."
+                  class="w-full rounded-xl border border-[#E8D9A0] bg-white pl-10 pr-4 py-2 font-instrument text-theme-sm text-[#191817] placeholder-[#6B6560] focus:border-[#C69214] focus:outline-none focus:ring-2 focus:ring-[#C69214]/20 xl:w-125 transition-all dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-gray-400 dark:focus:border-[#FAC600]" />
               </form>
             </div>
 
             <a routerLink="/clients/new"
-              class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200">
-              <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
+              class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:shadow-theme-md active:scale-[0.98]">
+              <svg class="fill-current" width="16" height="16" viewBox="0 0 20 20" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
                 <path d="M10 4.5V15.5M4.5 10H15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
               </svg>
@@ -44,7 +42,7 @@
       <!-- Loading State -->
       @if (loading()) {
       <div class="flex justify-center py-10">
-        <div class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent">
+        <div class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent">
         </div>
       </div>
       }
@@ -56,47 +54,56 @@
         <div class="relative">
           <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
             <thead
-              class="sticky top-0 z-10 bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-800 dark:text-gray-400 shadow-sm">
+              class="sticky top-0 z-10 bg-[#FBF0C9] font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:bg-[#232126] dark:text-[#E8C97A] shadow-sm">
               <tr>
-                <th class="px-6 py-4 font-medium">Nombre / Razón Social</th>
-                <th class="px-6 py-4 font-medium">Contacto</th>
-                <th class="px-6 py-4 font-medium">RFC</th>
-                <th class="px-6 py-4 font-medium">Tipo</th>
-                <th class="px-6 py-4 font-medium">Estado</th>
-                <th class="px-6 py-4 font-medium">Acciones</th>
+                <th class="px-6 py-3">Nombre / Razón Social</th>
+                <th class="px-6 py-3">Contacto</th>
+                <th class="px-6 py-3">RFC</th>
+                <th class="px-6 py-3">Tipo</th>
+                <th class="px-6 py-3">Estado</th>
+                <th class="px-6 py-3">Acciones</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody class="divide-y divide-[#E8D9A0] bg-white dark:divide-[#3D3420] dark:bg-[#3a383d]">
               @for (client of clients(); track client._id) {
-              <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+              <tr class="transition-colors hover:bg-[#FBF0C9]/40 dark:hover:bg-[#252017]">
                 <td class="px-6 py-4">
-                  <p class="font-medium text-black dark:text-white">{{ client.name }}</p>
+                  <p class="font-instrument text-theme-sm font-medium text-[#191817] dark:text-white">{{ client.name }}
+                  </p>
                 </td>
                 <td class="px-6 py-4">
-                  <div class="flex flex-col">
-                    <span class="text-black dark:text-white">{{ client.email }}</span>
-                    <span class="text-xs text-gray-500">{{ client.phone }}</span>
+                  <div class="flex flex-col font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">
+                    <span class="text-[#191817] dark:text-white font-medium">{{ client.email }}</span>
+                    <span class="text-theme-xs text-[#6B6560] dark:text-gray-400">{{ client.phone }}</span>
                   </div>
                 </td>
                 <td class="px-6 py-4">
-                  <p class="text-sm text-gray-600 dark:text-gray-400">{{ client.taxId || 'N/A' }}</p>
+                  <p class="font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">{{ client.taxId || 'N/A' }}
+                  </p>
                 </td>
                 <td class="px-6 py-4">
-                  <p class="text-sm text-gray-600 dark:text-gray-400 capitalize">
+                  <p class="font-instrument text-theme-sm text-[#46424A] dark:text-gray-300 capitalize">
                     {{ client.type === 'individual' ? 'Física' : 'Moral' }}
                   </p>
                   @if (client.isWholesale) {
                   <span
-                    class="inline-flex rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 mt-1">
+                    class="inline-flex rounded-full bg-[#FBF0C9] px-2.5 py-0.5 font-instrument text-theme-xs font-medium text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A] mt-1 items-center gap-1.5">
+                    <span class="size-1.5 rounded-full bg-[#C69214]"></span>
                     Mayorista
                   </span>
                   }
                 </td>
                 <td class="px-6 py-4">
-                  <span class="inline-flex rounded-full px-3 py-1 text-xs font-medium" [ngClass]="{
-                      'bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-400': client.status === 'active',
-                      'bg-red-100 text-red-800 dark:bg-red-800/30 dark:text-red-400': client.status === 'inactive' || client.status === 'blocked'
+                  <span
+                    class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-instrument text-theme-xs font-medium"
+                    [ngClass]="{
+                      'bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-400': client.status === 'active',
+                      'bg-error-50 text-error-700 dark:bg-error-500/15 dark:text-error-400': client.status === 'inactive' || client.status === 'blocked'
                     }">
+                    <span class="size-1.5 rounded-full" [ngClass]="{
+                      'bg-success-500': client.status === 'active',
+                      'bg-error-500': client.status === 'inactive' || client.status === 'blocked'
+                    }"></span>
                     {{ client.status === 'active' ? 'Activo' : (client.status === 'blocked' ? 'Bloqueado' : 'Inactivo')
                     }}
                   </span>
@@ -104,12 +111,12 @@
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-2">
                     <button [routerLink]="['/clients', client._id, 'edit']"
-                      class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-blue-400 transition-colors"
+                      class="rounded-lg p-2 text-[#6B6560] hover:bg-[#FBF0C9] hover:text-[#C69214] dark:text-gray-400 dark:hover:bg-[#3D3420] dark:hover:text-[#FAC600] transition-colors"
                       title="Editar">
                       <i class="fas fa-edit"></i>
                     </button>
                     <button (click)="deleteClient(client._id)"
-                      class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-red-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-red-400 transition-colors"
+                      class="rounded-lg p-2 text-[#6B6560] hover:bg-error-50 hover:text-error-500 dark:text-gray-400 dark:hover:bg-error-500/10 dark:hover:text-error-400 transition-colors"
                       title="Eliminar">
                       <i class="fas fa-trash"></i>
                     </button>
@@ -121,14 +128,17 @@
           </table>
         </div>
         } @else {
-        <div class="flex flex-col items-center justify-center py-12 text-center">
-          <div class="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-800">
-            <i class="fas fa-users text-3xl text-gray-400"></i>
+        <div class="flex flex-col items-center justify-center py-16 text-center">
+          <div class="mb-4 rounded-full bg-[#FBF0C9] p-5 dark:bg-[#3D3420]">
+            <i class="fas fa-users text-4xl text-[#C69214] dark:text-[#E8C97A]"></i>
           </div>
-          <h5 class="mb-2 text-lg font-medium text-gray-900 dark:text-white">No hay clientes registrados</h5>
+          <h5 class="mb-2 font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white">No hay clientes
+            registrados</h5>
+          <p class="mb-6 font-instrument text-theme-sm text-[#46424A] dark:text-gray-400">Comienza agregando tu primer
+            cliente al sistema.</p>
           <a routerLink="/clients/new"
-            class="flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all">
-            <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
+            class="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:shadow-theme-md active:scale-[0.98]">
+            <svg class="fill-current" width="16" height="16" viewBox="0 0 20 20" fill="none"
               xmlns="http://www.w3.org/2000/svg">
               <path d="M10 4.5V15.5M4.5 10H15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
             </svg>
@@ -141,37 +151,37 @@
 
       <!-- Pagination Controls -->
       <div
-        class="border-t border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0 bg-white dark:bg-gray-900 rounded-b-sm">
+        class="border-t border-[#E8D9A0] bg-white px-4 py-3 dark:border-[#4A474D] dark:bg-[#3a383d] sm:px-6 shrink-0 rounded-b-2xl">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div class="flex items-center gap-2">
-            <p class="text-sm font-medium text-black dark:text-white">Items por página:</p>
+            <p class="font-instrument text-theme-sm font-medium text-[#191817] dark:text-white">Items por página:</p>
             <select [ngModel]="itemsPerPage()" (ngModelChange)="onLimitChange($event)"
-              class="rounded border border-stroke bg-transparent px-2 py-1 outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white transition focus:border-brand-500 active:border-brand-500">
-              <option [value]="10" class="dark:bg-gray-700 dark:text-white">10</option>
-              <option [value]="25" class="dark:bg-gray-700 dark:text-white">25</option>
-              <option [value]="50" class="dark:bg-gray-700 dark:text-white">50</option>
-              <option [value]="100" class="dark:bg-gray-700 dark:text-white">100</option>
+              class="rounded-xl border border-[#E8D9A0] bg-transparent px-3 py-1.5 font-instrument text-theme-sm outline-none dark:border-[#4A474D] dark:text-white transition focus:border-[#C69214] focus:ring-1 focus:ring-[#C69214]">
+              <option [value]="10" class="dark:bg-[#3a383d] dark:text-white">10</option>
+              <option [value]="25" class="dark:bg-[#3a383d] dark:text-white">25</option>
+              <option [value]="50" class="dark:bg-[#3a383d] dark:text-white">50</option>
+              <option [value]="100" class="dark:bg-[#3a383d] dark:text-white">100</option>
             </select>
           </div>
 
           <div class="flex items-center gap-4">
-            <p class="text-sm font-medium text-black dark:text-white">
+            <p class="font-instrument text-theme-sm font-medium text-[#191817] dark:text-white">
               Página {{ currentPage() }} de {{ Math.ceil(totalItems() / itemsPerPage()) || 1 }}
             </p>
             <div class="flex items-center gap-2">
               <button (click)="onPageChange(currentPage() - 1)" [disabled]="currentPage() === 1"
-                class="flex items-center justify-center rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition">
-                <svg class="fill-current text-black dark:text-white" width="20" height="20" viewBox="0 0 20 20"
-                  fill="none" xmlns="http://www.w3.org/2000/svg">
+                class="flex items-center justify-center rounded-xl p-2 text-[#46424A] hover:bg-[#FBF0C9] dark:text-gray-300 dark:hover:bg-[#3D3420] disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
                   <path fill-rule="evenodd" clip-rule="evenodd"
                     d="M12.7071 5.29289C13.0976 5.68342 13.0976 6.31658 12.7071 6.70711L9.41421 10L12.7071 13.2929C13.0976 13.6834 13.0976 14.3166 12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L7.29289 10.7071C6.90237 10.3166 6.90237 9.68342 7.29289 9.29289L11.2929 5.29289C11.6834 4.90237 12.3166 4.90237 12.7071 5.29289Z" />
                 </svg>
               </button>
               <button (click)="onPageChange(currentPage() + 1)"
                 [disabled]="currentPage() >= Math.ceil(totalItems() / itemsPerPage())"
-                class="flex items-center justify-center rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition">
-                <svg class="fill-current text-black dark:text-white" width="20" height="20" viewBox="0 0 20 20"
-                  fill="none" xmlns="http://www.w3.org/2000/svg">
+                class="flex items-center justify-center rounded-xl p-2 text-[#46424A] hover:bg-[#FBF0C9] dark:text-gray-300 dark:hover:bg-[#3D3420] disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
                   <path fill-rule="evenodd" clip-rule="evenodd"
                     d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" />
                 </svg>

@@ -5,13 +5,13 @@
 
         <!-- 1. Barcode -->
         <div id="product-barcode">
-            <label class="block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Código de
+            <label class="block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Código de
                 barras*</label>
             <div class="flex gap-2">
                 <input type="text" formControlName="barcode"
-                    class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]">
+                    class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]">
                 <button type="button" (click)="testPrint()" [disabled]="!productForm.get('barcode')?.value"
-                    class="mt-1.5 flex items-center justify-center rounded-xl bg-gray-100 px-4 py-2.5 text-[#46424A] transition-all hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#252017] dark:text-gray-300 dark:hover:bg-white/5"
+                    class="mt-1.5 flex items-center justify-center rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:bg-[#FBF0C9] disabled:cursor-not-allowed disabled:opacity-50 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-300 dark:hover:bg-white/5"
                     title="Imprimir prueba">
                     <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -28,7 +28,7 @@
         <div id="product-provider">
             <div class="flex items-center justify-between">
                 <label
-                    class="block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Proveedor*</label>
+                    class="block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Proveedor*</label>
                 <a [routerLink]="['/providers']" target="_blank"
                     class="text-[#46424A] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors"
                     title="Administrar Proveedores">
@@ -41,7 +41,7 @@
                 </a>
             </div>
             <select formControlName="providerId"
-                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:focus:border-[#FAC600]">
+                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:focus:border-[#FAC600]">
                 <option value="">Seleccione</option>
                 <option *ngFor="let provider of providers" [value]="provider._id">{{ provider.name }}</option>
             </select>
@@ -53,7 +53,7 @@
         <div id="product-category">
             <div class="flex items-center justify-between">
                 <label
-                    class="block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Categoría*</label>
+                    class="block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Categoría*</label>
                 <a [routerLink]="['/categories']" target="_blank"
                     class="text-[#46424A] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors"
                     title="Administrar Categorías">
@@ -66,7 +66,7 @@
                 </a>
             </div>
             <select formControlName="category"
-                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:focus:border-[#FAC600]">
+                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:focus:border-[#FAC600]">
                 <option value="">Seleccione</option>
                 <option *ngFor="let cat of categories" [value]="cat._id">{{ cat.name }}</option>
             </select>
@@ -78,7 +78,7 @@
         <div id="product-subcategory">
             <div class="flex items-center justify-between">
                 <label
-                    class="block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Subcategoría*</label>
+                    class="block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Subcategoría*</label>
                 <a [routerLink]="['/subcategories']" target="_blank"
                     class="text-[#46424A] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors"
                     title="Administrar Subcategorías">
@@ -91,7 +91,7 @@
                 </a>
             </div>
             <select formControlName="subcategory"
-                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:focus:border-[#FAC600]">
+                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:focus:border-[#FAC600]">
                 <option value="">Seleccione</option>
                 <option *ngFor="let sub of subcategories" [value]="sub._id">{{ sub.name }}</option>
             </select>
@@ -101,7 +101,7 @@
         <div id="product-material">
             <div class="flex items-center justify-between">
                 <label
-                    class="block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Material*</label>
+                    class="block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Material*</label>
                 <a [routerLink]="['/products/material-types']" target="_blank"
                     class="text-[#46424A] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors"
                     title="Administrar Materiales">
@@ -114,7 +114,7 @@
                 </a>
             </div>
             <select formControlName="karatage"
-                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:focus:border-[#FAC600]">
+                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:focus:border-[#FAC600]">
                 <option value="">Seleccione</option>
                 <option *ngFor="let m of materialTypes" [value]="m._id">{{ m.name }}{{ m.karat ? ' - ' + m.karat : '' }}
                 </option>
@@ -125,7 +125,7 @@
         <div id="product-gold-type">
             <div class="flex items-center justify-between">
                 <label
-                    class="block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Variante</label>
+                    class="block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Variante</label>
                 <a [routerLink]="['/products/gold-types']" target="_blank"
                     class="text-[#46424A] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors"
                     title="Administrar Variantes">
@@ -138,7 +138,7 @@
                 </a>
             </div>
             <select formControlName="goldType"
-                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:focus:border-[#FAC600]">
+                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:focus:border-[#FAC600]">
                 <option value="">Seleccione</option>
                 <option *ngFor="let type of filteredGoldTypes" [value]="type.name">{{ type.name }}</option>
             </select>
@@ -146,37 +146,38 @@
 
         <!-- 7. Weight -->
         <div id="product-weight">
-            <label class="block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Peso*</label>
+            <label
+                class="block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Peso*</label>
             <input type="number" formControlName="weight" placeholder="0.00"
-                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]">
+                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]">
             <div *ngIf="productForm.get('weight')?.touched && productForm.get('weight')?.invalid"
                 class="mt-1 text-theme-xs text-error-500">Requerido</div>
         </div>
 
         <!-- 8. Diamond Points -->
         <div *ngIf="productFormConfig?.enableDiamondPoints !== false" id="product-diamond-points">
-            <label class="block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Puntos
+            <label class="block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Puntos
                 diamante*</label>
             <input type="number" formControlName="diamondPoints" placeholder="0"
-                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]">
+                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]">
         </div>
 
         <!-- 9. Purchase Price (Cost) -->
         <div id="product-cost">
-            <label class="block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Precio
+            <label class="block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Precio
                 compra*</label>
             <input type="number" formControlName="cost" placeholder="0.00"
-                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]">
+                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]">
             <div *ngIf="productForm.get('cost')?.touched && productForm.get('cost')?.invalid"
                 class="mt-1 text-theme-xs text-error-500">Requerido</div>
         </div>
 
         <!-- 10. Sale Price -->
         <div id="product-price">
-            <label class="block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Precio
+            <label class="block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Precio
                 venta*</label>
             <input type="number" formControlName="price" placeholder="0.00"
-                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]">
+                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]">
             <div *ngIf="productForm.get('price')?.touched && productForm.get('price')?.invalid"
                 class="mt-1 text-theme-xs text-error-500">Requerido</div>
         </div>
@@ -185,9 +186,9 @@
         <div class="flex items-center h-full pt-6" id="product-unique">
             <div class="flex items-center gap-2">
                 <input id="isUnique" type="checkbox" formControlName="isUnique"
-                    class="h-5 w-5 rounded border-[#E8D9A0] bg-white text-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 focus:ring-offset-0 dark:border-[#3D3420] dark:bg-[#1A1714] dark:checked:bg-[#FAC600] transition-all cursor-pointer">
+                    class="h-5 w-5 rounded border-[#E8D9A0] bg-white text-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 focus:ring-offset-0 dark:border-[#4A474D] dark:bg-[#3a383d] dark:checked:bg-[#FAC600] transition-all cursor-pointer">
                 <label for="isUnique"
-                    class="cursor-pointer font-display text-theme-sm font-medium text-[#191817] dark:text-gray-300 select-none">
+                    class="cursor-pointer font-instrument text-theme-sm font-medium text-[#191817] dark:text-gray-300 select-none">
                     Pieza Única
                 </label>
             </div>
@@ -195,10 +196,10 @@
 
         <!-- 12. Stock (Conditional) -->
         <div *ngIf="!productForm.get('isUnique')?.value" id="product-stock">
-            <label class="block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Stock
+            <label class="block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Stock
                 Inicial*</label>
             <input type="number" formControlName="stock" placeholder="1"
-                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]">
+                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]">
             <div *ngIf="productForm.get('stock')?.touched && productForm.get('stock')?.invalid"
                 class="mt-1 text-theme-xs text-error-500">Requerido</div>
         </div>
@@ -206,19 +207,19 @@
         <!-- 13. Description -->
         <div class="md:col-span-2 lg:col-span-4" id="product-description">
             <label
-                class="block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Descripción*</label>
+                class="block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Descripción*</label>
             <textarea formControlName="description" rows="3"
                 placeholder="Escribe aquí los detalles o características especiales..."
-                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600] resize-none"></textarea>
+                class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600] resize-none"></textarea>
         </div>
 
     </div>
 
     <!-- Buttons -->
-    <div class="flex items-center justify-between pt-6 mt-6 border-t border-[#E8D9A0] dark:border-[#3D3420]">
+    <div class="flex items-center justify-between pt-6 mt-6 border-t border-[#E8D9A0] dark:border-[#4A474D]">
         <!-- Note: the logic flow of close is expected to be on the right or swapped, leaving it untouched but styled. -->
         <button type="submit" id="product-submit" [disabled]="productForm.invalid || isSubmitting"
-            class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-6 py-2.5 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">
+            class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-6 py-2.5 font-outfit text-sm font-semibold text-[#191817] dark:text-white shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">
             <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
@@ -227,7 +228,7 @@
         </button>
 
         <button type="button" (click)="onCancel()"
-            class="flex items-center gap-2 rounded-xl px-6 py-2.5 font-outfit text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5">
+            class="flex items-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-6 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:hover:bg-white/5">
             <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>

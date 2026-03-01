@@ -15,7 +15,7 @@ import { Permission } from '../../../interfaces/auth.interfaces';
     <div class="mx-auto max-w-screen-2xl h-[calc(100vh-50px)] flex flex-col overflow-hidden">
       <div class="flex flex-col gap-4 h-full">
         <div
-          class="rounded-sm border border-stroke bg-white shadow-default dark:border-gray-800 dark:bg-gray-900 flex flex-col h-full">
+          class="rounded-sm border border-stroke bg-white shadow-default dark:border-gray-800 dark:bg-[#3a383d] flex flex-col h-full">
           <!-- Header -->
           <div class="border-b border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -159,7 +159,7 @@ import { Permission } from '../../../interfaces/auth.interfaces';
 
           <!-- Pagination Controls -->
           <div
-            class="border-t border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0 bg-white dark:bg-gray-900 rounded-b-sm">
+            class="border-t border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0 bg-white dark:bg-[#3a383d] rounded-b-sm">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div class="flex items-center gap-2">
                 <p class="text-sm font-medium text-black dark:text-white">Items por página:</p>
@@ -350,7 +350,7 @@ export class PermissionsListComponent implements OnChanges {
       'provider': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
       'admin': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
     };
-    return classes[module] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+    return classes[module] || 'bg-gray-100 text-gray-800 dark:bg-[#3a383d] dark:text-gray-300';
   }
 
   getActionBadgeClass(action: string): string {
@@ -363,6 +363,6 @@ export class PermissionsListComponent implements OnChanges {
       'export': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
       'import': 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300'
     };
-    return classes[action] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+    return classes[action] || 'bg-gray-100 text-gray-800 dark:bg-[#3a383d] dark:text-gray-300';
   }
 }

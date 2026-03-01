@@ -1,7 +1,7 @@
 <div>
     <app-page-breadcrumb [pageTitle]="pageTitle"></app-page-breadcrumb>
 
-    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-[#4A474D] dark:bg-white/[0.03] lg:p-6">
         <h3 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90">
             {{ isEditMode ? 'Editar Usuario' : 'Registro de Usuario' }}
         </h3>
@@ -58,7 +58,7 @@
                     <app-label label="Rol" for="roleId" [required]="true"></app-label>
                     <div class="relative">
                         <select formControlName="roleId" id="roleId"
-                            class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500">
+                            class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-[#C69214] focus:ring-[#C69214]/50 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-gray-400 dark:focus:border-[#C69214] dark:focus:ring-[#C69214]/50">
                             <option value="" disabled>Seleccione un rol</option>
                             <option *ngFor="let role of roles" [value]="role._id">
                                 {{ role.name }} {{ role.sucursalId ? '(Local)' : '(Global)' }}
@@ -92,11 +92,11 @@
             <!-- Actions -->
             <div class="mt-6 flex items-center justify-end gap-3">
                 <button type="button" routerLink="/users"
-                    class="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]">
+                    class="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-[#4A474D] dark:text-gray-400 dark:hover:bg-white/[0.03]">
                     Cancelar
                 </button>
                 <button type="submit" [disabled]="isLoading"
-                    class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50">
+                    class="rounded-lg bg-gradient-to-br from-[#C69214] to-[#FAC600] text-[#191817] dark:text-white px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50">
                     {{ isLoading ? (isEditMode ? 'Actualizando...' : 'Creando...') : (isEditMode ? 'Actualizar Usuario'
                     : 'Crear Usuario') }}
                 </button>

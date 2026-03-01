@@ -3,174 +3,190 @@
     <app-filter-sidebar [isOpen]="showFilters()" [filters]="filterConfig()" (close)="closeFilters()"
         (apply)="onFilterApply($event)"></app-filter-sidebar>
 
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <div>
-            <h1 class="font-outfit text-title-sm font-semibold text-[#191817] dark:text-white">Historial de Ventas</h1>
-            <p class="font-display text-theme-sm text-[#6B6560] dark:text-gray-400 mt-1">Administra tus ventas, procesa
-                pagos y anula notas.</p>
-        </div>
-        <div class="flex items-center gap-3">
-            <button (click)="openFilters()"
-                class="flex items-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-outfit text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-gray-300 dark:hover:bg-white/5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-                </svg>
-                Filtros
-                <span *ngIf="(activeFilters() | json) !== '{}'" class="ml-1 size-2 rounded-full bg-[#C69214]"></span>
-            </button>
-            <button [routerLink]="['/sales/new']"
-                class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md active:scale-[0.98]">
-                <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 4.5V15.5M4.5 10H15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                </svg>
-                Nueva Venta
-            </button>
-        </div>
-    </div>
+    <!-- Main Content -->
+    <div class="flex flex-col gap-4 h-full">
+        <!-- Main Card -->
+        <div
+            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] flex flex-col h-full">
 
-    <!-- Table Container -->
-    <div
-        class="flex-1 overflow-auto rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#3D3420] dark:bg-[#252017] flex flex-col">
-        <div class="flex-1 overflow-auto">
-            <table class="min-w-full divide-y divide-[#E8D9A0] dark:divide-[#3D3420]">
-                <thead class="bg-[#FBF0C9] dark:bg-[#252017] sticky top-0 z-10">
-                    <tr
-                        class="text-left font-outfit text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
-                        <th scope="col" class="px-6 py-3">Folio</th>
-                        <th scope="col" class="px-6 py-3">Cliente</th>
-                        <th scope="col" class="px-6 py-3">Fecha</th>
-                        <th scope="col" class="px-6 py-3 text-center">Estado</th>
-                        <th scope="col" class="px-6 py-3 text-right">Total</th>
-                        <th scope="col" class="px-6 py-3 text-right">Por Pagar</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-[#E8D9A0] bg-white dark:divide-[#3D3420] dark:bg-[#1A1714]">
-                    @if (loading()) {
-                    <tr>
-                        <td colspan="7" class="px-6 py-12 text-center">
-                            <div class="flex justify-center">
-                                <div
-                                    class="h-10 w-10 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent">
+            <!-- Consolidated Header -->
+            <div class="border-b border-[#E8D9A0] px-4 py-3 dark:border-[#4A474D] sm:px-6 shrink-0">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h1 class="font-instrument text-title-sm font-semibold text-[#191817] dark:text-[#E8C97A]">
+                            Historial de Ventas
+                        </h1>
+                        <p class="mt-1 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-500">
+                            Administra tus ventas, procesa pagos y anula notas.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button (click)="openFilters()"
+                            class="relative inline-flex items-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-300 dark:hover:bg-white/5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                            </svg>
+                            Filtros
+                            <span *ngIf="(activeFilters() | json) !== '{}'"
+                                class="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-[#C69214] ring-2 ring-white dark:ring-[#232126]"></span>
+                        </button>
+                        <button [routerLink]="['/sales/new']"
+                            class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] dark:text-white shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md active:scale-[0.98]">
+                            <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 4.5V15.5M4.5 10H15.5" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" />
+                            </svg>
+                            Nueva Venta
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="flex-1 overflow-auto z-0 p-0">
+                <table class="min-w-full divide-y divide-[#E8D9A0] dark:divide-[#4A474D]">
+                    <thead class="bg-[#FBF0C9] dark:bg-[#232126] sticky top-0 z-10">
+                        <tr
+                            class="text-left font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                            <th scope="col" class="px-6 py-3">Folio</th>
+                            <th scope="col" class="px-6 py-3">Cliente</th>
+                            <th scope="col" class="px-6 py-3">Fecha</th>
+                            <th scope="col" class="px-6 py-3 text-center">Estado</th>
+                            <th scope="col" class="px-6 py-3 text-right">Total</th>
+                            <th scope="col" class="px-6 py-3 text-right">Por Pagar</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#E8D9A0] bg-white dark:divide-[#4A474D] dark:bg-[#232126]">
+                        @if (loading()) {
+                        <tr>
+                            <td colspan="7" class="px-6 py-12 text-center">
+                                <div class="flex justify-center">
+                                    <div
+                                        class="h-10 w-10 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent">
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
-                    } @else if (notes().length === 0) {
-                    <tr>
-                        <td colspan="6" class="px-6 py-16 text-center">
-                            <div class="flex flex-col items-center justify-center gap-3">
-                                <div
-                                    class="flex size-16 items-center justify-center rounded-full bg-[#FBF0C9] dark:bg-[#3D3420]">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                        stroke-linejoin="round" class="text-[#C69214]">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                        <polyline points="14 2 14 8 20 8"></polyline>
-                                    </svg>
+                            </td>
+                        </tr>
+                        } @else if (notes().length === 0) {
+                        <tr>
+                            <td colspan="6" class="px-6 py-16 text-center">
+                                <div class="flex flex-col items-center justify-center gap-3">
+                                    <div
+                                        class="flex size-16 items-center justify-center rounded-full bg-[#FBF0C9] dark:bg-[#4A474D]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round" class="text-[#C69214]">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                            <polyline points="14 2 14 8 20 8"></polyline>
+                                        </svg>
+                                    </div>
+                                    <p class="font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400">No hay
+                                        ventas
+                                        registradas</p>
                                 </div>
-                                <p class="font-display text-theme-sm text-[#6B6560] dark:text-gray-400">No hay ventas
-                                    registradas</p>
-                            </div>
-                        </td>
-                    </tr>
-                    } @else {
-                    <tr *ngFor="let note of notes()"
-                        class="cursor-pointer transition-colors hover:bg-[#FBF0C9]/40 dark:hover:bg-[#252017]"
-                        (click)="viewNoteDetail(note)">
-                        <td
-                            class="px-6 py-4 whitespace-nowrap font-outfit text-theme-sm font-semibold text-[#191817] dark:text-white">
-                            {{ note.folio }}
-                        </td>
-                        <td
-                            class="px-6 py-4 whitespace-nowrap font-display text-theme-sm text-[#46424A] dark:text-gray-300">
-                            {{ $any(note.clientId)?.name || ($any(note.clientId)?._id ? '' : note.clientId) || 'Público
-                            General' }}
-                        </td>
-                        <td
-                            class="px-6 py-4 whitespace-nowrap font-display text-theme-sm text-[#46424A] dark:text-gray-300">
-                            {{ note.createdAt | date:'mediumDate' }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <span
-                                class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-outfit text-theme-xs font-medium"
-                                [ngClass]="{
+                            </td>
+                        </tr>
+                        } @else {
+                        <tr *ngFor="let note of notes()"
+                            class="cursor-pointer transition-colors hover:bg-[#FBF0C9]/40 dark:hover:bg-[#232126]"
+                            (click)="viewNoteDetail(note)">
+                            <td
+                                class="px-6 py-4 whitespace-nowrap font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white">
+                                {{ note.folio }}
+                            </td>
+                            <td
+                                class="px-6 py-4 whitespace-nowrap font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">
+                                {{ $any(note.clientId)?.name || ($any(note.clientId)?._id ? '' : note.clientId) ||
+                                'Público
+                                General' }}
+                            </td>
+                            <td
+                                class="px-6 py-4 whitespace-nowrap font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">
+                                {{ note.createdAt | date:'mediumDate' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <span
+                                    class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-instrument text-theme-xs font-medium"
+                                    [ngClass]="{
                                 'bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-400': note.status === 'PAGADA' || note.status === 'ENTREGADA',
-                                'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]': note.status === 'PENDIENTE_PAGO',
+                                'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]': note.status === 'PENDIENTE_PAGO',
                                 'bg-[#F5F0EC] text-[#46424A] dark:bg-white/5 dark:text-gray-400': note.status === 'BORRADOR',
                                 'bg-error-50 text-error-700 dark:bg-error-500/15 dark:text-error-400': note.status === 'ANULADA'
                             }">
-                                <span class="size-1.5 rounded-full" [ngClass]="{
+                                    <span class="size-1.5 rounded-full" [ngClass]="{
                                     'bg-success-500': note.status === 'PAGADA' || note.status === 'ENTREGADA',
                                     'bg-[#C69214]': note.status === 'PENDIENTE_PAGO',
                                     'bg-[#6B6560]': note.status === 'BORRADOR',
                                     'bg-error-500': note.status === 'ANULADA'
                                 }"></span>
-                                {{ note.status }}
-                            </span>
-                        </td>
-                        <td
-                            class="px-6 py-4 whitespace-nowrap text-right font-outfit text-theme-sm font-semibold text-[#191817] dark:text-white">
-                            {{ note.financials.total | currency }}
-                        </td>
-                        <td
-                            class="px-6 py-4 whitespace-nowrap text-right font-outfit text-theme-sm font-semibold text-error-600 dark:text-error-400">
-                            {{ note.financials.balanceDue | currency }}
-                        </td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Pagination -->
-        <div
-            class="border-t border-[#E8D9A0] dark:border-[#3D3420] px-6 py-4 flex items-center justify-between bg-white dark:bg-[#252017] rounded-b-2xl shrink-0">
-            <div class="flex items-center gap-2">
-                <span class="font-display text-theme-sm text-[#46424A] dark:text-gray-400">Mostrar</span>
-                <select [ngModel]="itemsPerPage()" (ngModelChange)="onLimitChange($event)"
-                    class="rounded-xl border border-[#E8D9A0] bg-white px-3 py-1.5 font-display text-theme-sm text-[#191817] outline-none dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20">
-                    <option [value]="10" class="dark:bg-[#1A1714]">10</option>
-                    <option [value]="20" class="dark:bg-[#1A1714]">20</option>
-                    <option [value]="50" class="dark:bg-[#1A1714]">50</option>
-                </select>
+                                    {{ note.status }}
+                                </span>
+                            </td>
+                            <td
+                                class="px-6 py-4 whitespace-nowrap text-right font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white">
+                                {{ note.financials.total | currency }}
+                            </td>
+                            <td
+                                class="px-6 py-4 whitespace-nowrap text-right font-instrument text-theme-sm font-semibold text-error-600 dark:text-error-400">
+                                {{ note.financials.balanceDue | currency }}
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
-            <div class="flex items-center gap-4">
-                <p class="font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
-                    Página {{ currentPage() }} de {{ totalPages() }}
-                    <span class="font-semibold text-[#C69214] dark:text-[#FAC600]">({{ totalItems() }} items)</span>
-                </p>
+
+            <!-- Pagination -->
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t border-[#E8D9A0] px-4 py-3 dark:border-[#4A474D] sm:px-6 shrink-0 bg-white dark:bg-[#232126] rounded-b-2xl">
                 <div class="flex items-center gap-2">
-                    <button (click)="onPageChange(currentPage() - 1)" [disabled]="currentPage() === 1"
-                        class="flex items-center justify-center rounded-xl p-2 text-[#46424A] hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
-                        <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M12.7071 5.29289C13.0976 5.68342 13.0976 6.31658 12.7071 6.70711L9.41421 10L12.7071 13.2929C13.0976 13.6834 13.0976 14.3166 12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L7.29289 10.7071C6.90237 10.3166 6.90237 9.68342 7.29289 9.29289L11.2929 5.29289C11.6834 4.90237 12.3166 4.90237 12.7071 5.29289Z" />
-                        </svg>
-                    </button>
-                    <button (click)="onPageChange(currentPage() + 1)" [disabled]="currentPage() >= totalPages()"
-                        class="flex items-center justify-center rounded-xl p-2 text-[#46424A] hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
-                        <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" />
-                        </svg>
-                    </button>
+                    <span class="font-instrument text-theme-sm text-[#46424A] dark:text-gray-400">Mostrar</span>
+                    <select [ngModel]="itemsPerPage()" (ngModelChange)="onLimitChange($event)"
+                        class="rounded-xl border border-[#E8D9A0] bg-white px-3 py-1.5 font-instrument text-theme-sm text-[#191817] outline-none dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20">
+                        <option [value]="10" class="dark:bg-[#232126]">10</option>
+                        <option [value]="20" class="dark:bg-[#232126]">20</option>
+                        <option [value]="50" class="dark:bg-[#232126]">50</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-4">
+                    <p class="font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+                        Página {{ currentPage() }} de {{ totalPages() }}
+                        <span class="font-semibold text-[#191817] dark:text-white">({{ totalItems() }} items)</span>
+                    </p>
+                    <div class="flex items-center gap-2">
+                        <button (click)="onPageChange(currentPage() - 1)" [disabled]="currentPage() === 1"
+                            class="flex items-center justify-center rounded-xl p-2 text-[#46424A] hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                            <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M12.7071 5.29289C13.0976 5.68342 13.0976 6.31658 12.7071 6.70711L9.41421 10L12.7071 13.2929C13.0976 13.6834 13.0976 14.3166 12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L7.29289 10.7071C6.90237 10.3166 6.90237 9.68342 7.29289 9.29289L11.2929 5.29289C11.6834 4.90237 12.3166 4.90237 12.7071 5.29289Z" />
+                            </svg>
+                        </button>
+                        <button (click)="onPageChange(currentPage() + 1)" [disabled]="currentPage() >= totalPages()"
+                            class="flex items-center justify-center rounded-xl p-2 text-[#46424A] hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                            <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Payment Modal -->
-    <div *ngIf="isPaymentModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div *ngIf="isPaymentModalOpen" class="fixed inset-0 z-[999999] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-[#191817]/60 backdrop-blur-sm" (click)="closePaymentModal()"></div>
         <div
-            class="relative w-full max-w-md rounded-2xl border border-[#E8D9A0] bg-[#FFFDF7] shadow-xl dark:border-[#3D3420] dark:bg-[#1A1714]">
-            <div class="border-b border-[#E8D9A0] px-6 py-4 dark:border-[#3D3420] flex justify-between items-center">
-                <h3 class="font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white">Registrar Abono</h3>
+            class="relative w-full max-w-md rounded-2xl border border-[#E8D9A0] bg-[#FFF8E7] shadow-xl dark:border-[#4A474D] dark:bg-[#232126]">
+            <div class="border-b border-[#E8D9A0] px-6 py-4 dark:border-[#4A474D] flex justify-between items-center">
+                <h3 class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white">Registrar Abono
+                </h3>
                 <button (click)="closePaymentModal()"
                     class="text-[#6B6560] hover:text-[#191817] dark:text-gray-400 dark:hover:text-white transition-colors p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -182,12 +198,12 @@
             </div>
             <div class="px-6 py-5 space-y-4">
                 <div
-                    class="rounded-xl bg-[#FBF0C9]/50 border border-[#E8D9A0] p-4 dark:border-[#3D3420] dark:bg-[#252017]/50">
-                    <div class="flex justify-between font-display text-theme-sm mb-1">
+                    class="rounded-xl bg-[#FBF0C9]/50 border border-[#E8D9A0] p-4 dark:border-[#4A474D] dark:bg-[#3a383d]">
+                    <div class="flex justify-between font-instrument text-theme-sm mb-1">
                         <span class="text-[#6B6560] dark:text-gray-400">Folio</span>
                         <span class="font-semibold text-[#191817] dark:text-white">{{selectedNote?.folio}}</span>
                     </div>
-                    <div class="flex justify-between font-display text-theme-sm">
+                    <div class="flex justify-between font-instrument text-theme-sm">
                         <span class="text-[#6B6560] dark:text-gray-400">Saldo Pendiente</span>
                         <span
                             class="font-bold text-error-600 dark:text-error-400">{{selectedNote?.financials?.balanceDue
@@ -196,37 +212,37 @@
                 </div>
                 <div>
                     <label
-                        class="mb-2 block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Monto</label>
+                        class="mb-2 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Monto</label>
                     <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 font-display text-[#6B6560]">$</span>
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 font-instrument text-[#6B6560]">$</span>
                         <input type="number" [(ngModel)]="paymentAmount"
-                            class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 pl-8 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:focus:border-[#FAC600]"
+                            class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 pl-8 font-instrument text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-white/50 dark:focus:border-[#FAC600]"
                             placeholder="0.00">
                     </div>
                 </div>
                 <div>
                     <label
-                        class="mb-2 block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Método
+                        class="mb-2 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Método
                         de Pago</label>
                     <div class="grid grid-cols-2 gap-2">
                         <button *ngFor="let method of validPaymentMethods" (click)="paymentMethod = method"
-                            class="rounded-xl border px-3 py-2 font-display text-theme-sm font-medium transition-all capitalize"
+                            class="rounded-xl border px-3 py-2 font-instrument text-theme-sm font-medium transition-all capitalize"
                             [ngClass]="paymentMethod === method
-                                ? 'border-[#C69214] bg-[#FBF0C9] text-[#9A6F0A] dark:border-[#C69214] dark:bg-[#3D3420] dark:text-[#FAC600]'
-                                : 'border-[#E8D9A0] bg-white text-[#46424A] hover:bg-gray-50 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-gray-300 dark:hover:bg-white/5'">
+                                ? 'border-[#C69214] bg-[#FBF0C9] text-[#9A6F0A] dark:border-[#C69214] dark:bg-[#4A474D] dark:text-[#FAC600]'
+                                : 'border-[#E8D9A0] bg-white text-[#46424A] hover:bg-gray-50 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-300 dark:hover:bg-white/5'">
                             {{ method === 'cash' ? 'Efectivo' : method === 'card' ? 'Tarjeta' : method === 'transfer' ?
                             'Transferencia' : 'Depósito' }}
                         </button>
                     </div>
                 </div>
             </div>
-            <div class="border-t border-[#E8D9A0] dark:border-[#3D3420] px-6 py-4 flex justify-end gap-3">
+            <div class="border-t border-[#E8D9A0] dark:border-[#4A474D] px-6 py-4 flex justify-end gap-3">
                 <button (click)="closePaymentModal()"
-                    class="flex items-center gap-2 rounded-xl px-5 py-2.5 font-outfit text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5">
+                    class="flex items-center gap-2 rounded-xl px-5 py-2.5 font-instrument text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 border border-[#E8D9A0] dark:border-[#4A474D] bg-white dark:bg-[#3a383d] shadow-theme-sm">
                     Cancelar
                 </button>
                 <button (click)="submitPayment()"
-                    class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98]">
+                    class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] dark:text-white shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98]">
                     Confirmar Abono
                 </button>
             </div>

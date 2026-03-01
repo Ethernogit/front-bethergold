@@ -273,7 +273,7 @@ export class RoleFormComponent {
       'reports': 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300',
       'admin': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
     };
-    return classes[module] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+    return classes[module] || 'bg-gray-100 text-gray-800 dark:bg-[#3a383d] dark:text-gray-300';
   }
 
   getActionBadgeClass(action: string): string {
@@ -286,7 +286,7 @@ export class RoleFormComponent {
       'export': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
       'import': 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300'
     };
-    return classes[action] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+    return classes[action] || 'bg-gray-100 text-gray-800 dark:bg-[#3a383d] dark:text-gray-300';
   }
 
   onSubmit() {

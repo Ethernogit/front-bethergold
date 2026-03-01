@@ -1,5 +1,5 @@
 <aside
-  class="fixed flex flex-col top-0 px-5 left-0 bg-[#FFFDF7] dark:bg-[#1A1714] dark:border-[#3D3420] text-gray-900 h-screen transition-all duration-300 ease-in-out z-[100001] border-r border-[#E8D9A0]"
+  class="fixed flex flex-col top-0 px-5 left-0 bg-[#FFFDF7] dark:bg-[#232126] dark:border-[#4A474D] text-gray-900 h-screen transition-all duration-300 ease-in-out z-[100001] border-r border-[#E8D9A0]"
   [ngClass]="{
     'w-[290px]':
       (isExpanded$ | async) || (isMobileOpen$ | async),
@@ -40,7 +40,7 @@
       <!-- Sidebar Toggle Button (Visible when expanded) -->
       @if ((isExpanded$ | async) || (isMobileOpen$ | async)) {
       <button (click)="$event.stopPropagation(); sidebarService.toggleExpanded()"
-        class="p-1.5 rounded-lg text-[#6B6560] hover:bg-[#FFF8E7] dark:text-gray-400 dark:hover:bg-[#252017] lg:block hidden transition-colors">
+        class="p-1.5 rounded-lg text-[#6B6560] hover:bg-[#FFF8E7] dark:text-gray-400 dark:hover:bg-[#232126] lg:block hidden transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           class="w-5 h-5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
@@ -355,7 +355,7 @@
   </div>
 
   <!-- Bottom Section: User & Theme -->
-  <div class="mt-auto pb-4 pt-4 border-t border-[#E8D9A0] dark:border-[#3D3420] flex flex-col gap-3" [ngClass]="{
+  <div class="mt-auto pb-4 pt-4 border-t border-[#E8D9A0] dark:border-[#4A474D] flex flex-col gap-3" [ngClass]="{
         'items-center': !((isExpanded$ | async) || (isMobileOpen$ | async))
       }">
 
@@ -372,10 +372,10 @@
 <!-- Floating Submenu Template -->
 @if (hoveredItem && !((isExpanded$ | async) || (isMobileOpen$ | async))) {
 <div
-  class="fixed left-[90px] z-[100002] bg-[#FFFDF7] dark:bg-[#252017] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl shadow-theme-lg py-2 w-56 transform transition-all duration-200"
+  class="fixed left-[90px] z-[100002] bg-[#FFFDF7] dark:bg-[#232126] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl shadow-theme-lg py-2 w-56 transform transition-all duration-200"
   [style.top.px]="hoveredTop" (mouseenter)="onSubmenuEnter()" (mouseleave)="onSubmenuLeave()">
 
-  <div class="px-4 py-2 border-b border-[#E8D9A0] dark:border-[#3D3420] mb-2">
+  <div class="px-4 py-2 border-b border-[#E8D9A0] dark:border-[#4A474D] mb-2">
     <h3 class="font-outfit font-semibold text-theme-sm text-[#191817] dark:text-white">{{ hoveredItem.name }}</h3>
   </div>
 
@@ -384,13 +384,13 @@
     @if (hasPermission(subItem)) {
     <li>
       <a [routerLink]="subItem.path"
-        class="flex items-center gap-2 px-3 py-2 font-display text-theme-sm text-[#46424A] dark:text-gray-300 rounded-lg hover:bg-[#FFF8E7] dark:hover:bg-[#1A1714] hover:text-[#C69214] dark:hover:text-[#FAC600] transition-colors"
-        [ngClass]="{'bg-[#FBF0C9] dark:bg-[#3D3420] text-[#9A6F0A] dark:text-[#E8C97A]': isActive(subItem.path)}"
+        class="flex items-center gap-2 px-3 py-2 font-display text-theme-sm text-[#46424A] dark:text-gray-300 rounded-lg hover:bg-[#FFF8E7] dark:hover:bg-[#3a383d] hover:text-[#C69214] dark:hover:text-[#FAC600] transition-colors"
+        [ngClass]="{'bg-[#FBF0C9] dark:bg-[#4A474D] text-[#9A6F0A] dark:text-[#E8C97A]': isActive(subItem.path)}"
         (click)="hoveredItem = null; onNavigationClick()">
         {{ subItem.name }}
         @if (subItem.new) {
         <span
-          class="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-[#FBF0C9] text-[#9A6F0A] font-medium dark:bg-[#3D3420] dark:text-[#E8C97A]">NEW</span>
+          class="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-[#FBF0C9] text-[#9A6F0A] font-medium dark:bg-[#4A474D] dark:text-[#E8C97A]">NEW</span>
         }
       </a>
     </li>

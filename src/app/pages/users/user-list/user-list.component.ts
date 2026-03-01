@@ -13,15 +13,15 @@ import { UserService } from '../../../shared/services/user.service';
 <div class="mx-auto max-w-screen-2xl h-[calc(100vh-50px)] flex flex-col overflow-hidden">
     <div class="flex flex-col gap-4 h-full">
         <div
-            class="rounded-sm border border-stroke bg-white shadow-default dark:border-gray-800 dark:bg-gray-900 flex flex-col h-full">
+            class="rounded-sm border border-[#E8D9A0] bg-white shadow-default dark:border-[#4A474D] dark:bg-[#232126] flex flex-col h-full">
             <!-- Header -->
-            <div class="border-b border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0">
+            <div class="border-b border-[#E8D9A0] px-4 py-3 dark:border-[#4A474D] sm:px-6 shrink-0">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <h3 class="font-medium text-black dark:text-white">
                         Lista de Usuarios
                     </h3>
                     <a routerLink="/users/create"
-                        class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all duration-200">
+                        class="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-br from-[#C69214] to-[#FAC600] text-[#191817] dark:text-white px-5 py-2.5 text-center font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-[#C69214]/50 transition-all duration-200">
                         <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path d="M10 4.5V15.5M4.5 10H15.5" stroke="currentColor" stroke-width="2"
@@ -48,7 +48,7 @@ import { UserService } from '../../../shared/services/user.service';
                 <div class="relative">
                     <table class="w-full text-left text-sm text-gray-500 dark:text-gray-400">
                         <thead
-                            class="sticky top-0 z-10 bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-800 dark:text-gray-400 shadow-sm">
+                            class="sticky top-0 z-10 bg-gray-50 text-xs uppercase text-gray-700 dark:bg-[#232126] dark:text-gray-400 shadow-sm">
                             <tr>
                                 <th class="px-6 py-4 font-medium">Nombre</th>
                                 <th class="px-6 py-4 font-medium">Sucursales</th>
@@ -69,13 +69,13 @@ import { UserService } from '../../../shared/services/user.service';
                                     <div class="flex flex-col gap-1 items-start">
                                         @for (branch of user.branches.slice(0, 2); track branch._id) {
                                         <span
-                                            class="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
+                                            class="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-[#3a383d] dark:text-gray-300 border border-gray-200 dark:border-[#4A474D]">
                                             {{ branch.name }}
                                         </span>
                                         }
                                         @if (user.branches.length > 2) {
                                         <span
-                                            class="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300 cursor-help border border-gray-200 dark:border-gray-600"
+                                            class="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 dark:bg-[#3a383d] dark:text-gray-300 cursor-help border border-gray-200 dark:border-[#4A474D]"
                                             [title]="getRemainingBranches(user.branches)">
                                             +{{ user.branches.length - 2 }}
                                         </span>
@@ -121,12 +121,12 @@ import { UserService } from '../../../shared/services/user.service';
                 </div>
                 } @else {
                 <div class="flex flex-col items-center justify-center py-12 text-center">
-                    <div class="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-800">
+                    <div class="mb-4 rounded-full bg-gray-100 p-4 dark:bg-[#232126]">
                         <i class="fas fa-users text-3xl text-gray-400"></i>
                     </div>
                     <h5 class="mb-2 text-lg font-medium text-gray-900 dark:text-white">No hay usuarios registrados</h5>
                     <a routerLink="/users/create"
-                        class="flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all">
+                        class="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-br from-[#C69214] to-[#FAC600] text-[#191817] dark:text-white px-4 py-2 text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-[#C69214]/50 transition-all">
                         <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path d="M10 4.5V15.5M4.5 10H15.5" stroke="currentColor" stroke-width="2"
@@ -141,16 +141,16 @@ import { UserService } from '../../../shared/services/user.service';
 
             <!-- Pagination Controls -->
             <div
-                class="border-t border-stroke px-4 py-3 dark:border-gray-800 sm:px-6 shrink-0 bg-white dark:bg-gray-900 rounded-b-sm">
+                class="border-t border-[#E8D9A0] px-4 py-3 dark:border-[#4A474D] sm:px-6 shrink-0 bg-white dark:bg-[#232126] rounded-b-sm">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div class="flex items-center gap-2">
                         <p class="text-sm font-medium text-black dark:text-white">Items por página:</p>
                         <select [ngModel]="itemsPerPage()" (ngModelChange)="onLimitChange($event)"
-                            class="rounded border border-stroke bg-transparent px-2 py-1 outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white transition focus:border-brand-500 active:border-brand-500">
-                            <option [value]="10" class="dark:bg-gray-700 dark:text-white">10</option>
-                            <option [value]="25" class="dark:bg-gray-700 dark:text-white">25</option>
-                            <option [value]="50" class="dark:bg-gray-700 dark:text-white">50</option>
-                            <option [value]="100" class="dark:bg-gray-700 dark:text-white">100</option>
+                            class="rounded border border-[#E8D9A0] bg-transparent px-2 py-1 outline-none dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white transition focus:border-[#C69214] active:border-brand-500">
+                            <option [value]="10" class="dark:bg-[#3a383d] dark:text-white">10</option>
+                            <option [value]="25" class="dark:bg-[#3a383d] dark:text-white">25</option>
+                            <option [value]="50" class="dark:bg-[#3a383d] dark:text-white">50</option>
+                            <option [value]="100" class="dark:bg-[#3a383d] dark:text-white">100</option>
                         </select>
                     </div>
 
@@ -187,7 +187,7 @@ import { UserService } from '../../../shared/services/user.service';
 @if (showPasswordModal) {
 <div
     class="fixed left-0 top-0 z-999999 flex h-full min-h-screen w-full items-center justify-center bg-black/90 px-4 py-5">
-    <div class="w-full max-w-142.5 rounded-lg bg-white px-8 py-12 text-center dark:bg-gray-900 md:px-17.5 md:py-15">
+    <div class="w-full max-w-142.5 rounded-lg bg-white px-8 py-12 text-center dark:bg-[#232126] md:px-17.5 md:py-15">
         <h3 class="pb-2 text-xl font-bold text-black dark:text-white sm:text-2xl">
             Cambiar Contraseña
         </h3>
@@ -198,7 +198,7 @@ import { UserService } from '../../../shared/services/user.service';
                     Nueva Contraseña <span class="text-meta-1">*</span>
                 </label>
                 <input type="password" formControlName="password" placeholder="Mínimo 8 caracteres"
-                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-brand-500 dark:focus:ring-brand-500"
+                    class="w-full rounded-lg border border-gray-300 bg-gray-50 px-5 py-3 font-medium outline-none transition focus:border-[#C69214] focus:ring-[#C69214]/50 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-gray-400 dark:focus:border-[#C69214] dark:focus:ring-[#C69214]/50"
                     [class.border-red-500]="passwordForm.get('password')?.touched && passwordForm.get('password')?.invalid" />
                 @if (passwordForm.get('password')?.touched && passwordForm.get('password')?.invalid) {
                 <p class="mt-1 text-left text-xs text-red-500">La contraseña debe tener al menos 8 caracteres</p>
@@ -207,11 +207,11 @@ import { UserService } from '../../../shared/services/user.service';
 
             <div class="flex gap-4.5">
                 <button type="button" (click)="closePasswordModal()"
-                    class="flex-1 rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-all">
+                    class="flex-1 rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:border-[#4A474D] dark:bg-[#232126] dark:text-gray-300 dark:hover:bg-gray-700 transition-all">
                     Cancelar
                 </button>
                 <button type="submit" [disabled]="passwordLoading"
-                    class="flex-1 rounded-lg bg-brand-500 px-6 py-3 font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 transition-all">
+                    class="flex-1 rounded-lg bg-gradient-to-br from-[#C69214] to-[#FAC600] text-[#191817] dark:text-white px-6 py-3 font-medium text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-[#C69214]/50 transition-all">
                     {{ passwordLoading ? 'Guardando...' : 'Guardar' }}
                 </button>
             </div>

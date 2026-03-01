@@ -47,6 +47,7 @@ export interface ShiftReport {
             transfer: number;
             other: number;
             total: number;
+            details?: any[];
         };
         movements: {
             in: number;

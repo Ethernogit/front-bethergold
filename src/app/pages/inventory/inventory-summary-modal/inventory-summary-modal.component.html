@@ -2,15 +2,15 @@
     class="fixed inset-0 z-[200000] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm transition-opacity"
     (click)="close.emit()">
 
-    <div class="w-full max-w-lg rounded-xl bg-white p-6 shadow-2xl dark:bg-gray-900 dark:border dark:border-gray-700 transform transition-all"
+    <div class="w-full max-w-lg rounded-2xl border border-[#E8D9A0] bg-[#FFF8E7] p-6 shadow-theme-xl dark:border-[#4A474D] dark:bg-[#232126] transform transition-all"
         (click)="$event.stopPropagation()">
 
-        <div class="flex items-center justify-between border-b border-stroke pb-4 dark:border-gray-700">
-            <h3 class="text-xl font-bold text-black dark:text-white">
+        <div class="flex items-center justify-between border-b border-[#E8D9A0] pb-4 dark:border-[#4A474D]">
+            <h3 class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-[#E8C97A]">
                 Resumen de Inventario
             </h3>
             <button (click)="close.emit()"
-                class="rounded-full p-1 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                class="rounded-full p-1 text-[#6B6560] transition-colors hover:bg-gray-100 hover:text-[#191817] dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -23,44 +23,51 @@
             @if(loading()) {
             <div class="flex justify-center py-8">
                 <div
-                    class="h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent">
+                    class="h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent">
                 </div>
             </div>
             } @else if(stats()) {
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <!-- Total -->
                 <div
-                    class="rounded-lg border border-stroke bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-800 text-center shadow-sm">
-                    <span class="block text-sm font-medium text-gray-500 dark:text-gray-300">Total Ítems</span>
-                    <span class="mt-2 block text-3xl font-bold text-black dark:text-white">{{ stats().total }}</span>
+                    class="rounded-xl border border-[#E8D9A0] bg-white p-4 dark:border-[#4A474D] dark:bg-[#3a383d] text-center shadow-theme-sm">
+                    <span
+                        class="block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Total
+                        Ítems</span>
+                    <span class="mt-2 block font-instrument text-3xl font-bold text-[#191817] dark:text-white">{{
+                        stats().total }}</span>
                 </div>
 
                 <!-- Reviewed -->
                 <div
-                    class="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-900/30 text-center shadow-sm">
-                    <span class="block text-sm font-medium text-green-700 dark:text-green-300">Revisados</span>
-                    <span class="mt-2 block text-3xl font-bold text-green-700 dark:text-green-400">{{ stats().reviewed
+                    class="rounded-xl border border-[#12b76a]/30 bg-[#12b76a]/5 p-4 dark:border-[#12b76a]/20 dark:bg-[#12b76a]/10 text-center shadow-theme-sm">
+                    <span
+                        class="block font-instrument text-theme-sm font-medium text-[#12b76a] dark:text-[#12b76a]">Revisados</span>
+                    <span class="mt-2 block font-instrument text-3xl font-bold text-[#12b76a] dark:text-[#12b76a]">{{
+                        stats().reviewed
                         }}</span>
                 </div>
 
                 <!-- Missing -->
                 <div
-                    class="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/30 text-center shadow-sm">
-                    <span class="block text-sm font-medium text-red-700 dark:text-red-300">Faltantes</span>
-                    <span class="mt-2 block text-3xl font-bold text-red-700 dark:text-red-400">{{ stats().missing
+                    class="rounded-xl border border-error-500/30 bg-error-500/5 p-4 dark:border-error-500/20 dark:bg-error-500/10 text-center shadow-theme-sm">
+                    <span
+                        class="block font-instrument text-theme-sm font-medium text-error-700 dark:text-error-400">Faltantes</span>
+                    <span class="mt-2 block font-instrument text-3xl font-bold text-error-700 dark:text-error-400">{{
+                        stats().missing
                         }}</span>
                 </div>
             </div>
 
             <div class="mt-6">
-                <div class="mb-2 flex items-center justify-between text-sm">
-                    <span class="font-medium text-gray-700 dark:text-gray-300">Progreso revisión</span>
-                    <span class="font-bold text-black dark:text-white">
+                <div class="mb-2 flex items-center justify-between font-instrument text-theme-sm">
+                    <span class="font-medium text-[#46424A] dark:text-gray-300">Progreso revisión</span>
+                    <span class="font-bold text-[#191817] dark:text-white">
                         {{ (stats().reviewed / stats().total * 100) | number:'1.0-1' }}%
                     </span>
                 </div>
-                <div class="h-3 w-full overflow-hidden rounded-full bg-stroke dark:bg-gray-700">
-                    <div class="h-full bg-green-500 transition-all duration-500"
+                <div class="h-3 w-full overflow-hidden rounded-full bg-[#E8D9A0] dark:bg-[#4A474D]">
+                    <div class="h-full bg-[#12b76a] transition-all duration-500"
                         [style.width.%]="(stats().reviewed / stats().total * 100) || 0">
                     </div>
                 </div>
@@ -74,7 +81,7 @@
 
         <div class="mt-8 flex justify-end">
             <button (click)="close.emit()"
-                class="rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90 transition">
+                class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-6 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md active:scale-[0.98]">
                 Cerrar
             </button>
         </div>

@@ -1,158 +1,166 @@
-<div class="flex flex-col h-[calc(100vh)] bg-[#FFFDF7] dark:bg-[#120F0B] overflow-hidden">
-    <div class="flex flex-1 overflow-hidden">
+<div class="flex flex-col h-screen max-h-screen bg-[#FFFDF7] dark:bg-[#3a383d] overflow-hidden">
+    <div class="flex flex-1 overflow-hidden min-h-0">
         <!-- Main Content (Left): Client, Items -->
         <main class="flex-1 overflow-y-auto p-4">
 
-            <div class="flex items-center justify-between mb-4">
-                <h1 class="font-outfit text-xl font-bold text-[#191817] dark:text-white">Nueva Venta</h1>
+            <form [formGroup]="noteForm" class="flex flex-col gap-6">
+                <!-- Top Section Card -->
                 <div
-                    class="flex items-center gap-4 font-display text-theme-xs font-medium text-[#46424A] dark:text-gray-400 bg-white dark:bg-[#1A1714] px-3 py-1.5 rounded-xl border border-[#E8D9A0] dark:border-[#3D3420] shadow-theme-sm">
-                    <div class="flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <span>{{ currentDate | date:'dd/MM/yyyy' }}</span>
-                    </div>
-                    <div class="h-4 w-px bg-[#E8D9A0] dark:bg-[#3D3420]"></div>
-                    <div class="flex items-center gap-1">
-                        <span class="opacity-75">Folio:</span>
-                        <span class="font-outfit font-bold text-[#C69214] dark:text-[#FAC600] text-sm">{{ nextFolio
-                            }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <form [formGroup]="noteForm">
-                <!-- Header Row: Search & Client -->
-                <div class="flex flex-col md:flex-row gap-4 mb-6">
-                    <!-- Search (Left) -->
-                    <div class="flex-1 relative z-20">
-                        <label
-                            class="block font-outfit text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Buscar
-                            Producto / Código de Barras</label>
-                        <div class="relative">
-                            <div
-                                class="flex items-center bg-white dark:bg-[#1A1714] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl p-1 transition-colors hover:border-[#C69214] dark:hover:border-[#FAC600] h-14">
-                                <div class="p-2 text-[#6B6560] dark:text-gray-400">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z" />
-                                    </svg>
-                                </div>
-                                <input [formControl]="searchControl" type="text"
-                                    placeholder="Escanear o escribir código..."
-                                    class="w-full h-full bg-transparent border-none font-display text-[#191817] dark:text-white text-lg font-medium focus:ring-0 focus:outline-none placeholder-[#6B6560] dark:placeholder-gray-500 pr-10">
-                                <div class="p-2">
-                                    <button
-                                        class="bg-[#FBF0C9] dark:bg-[#3D3420] p-2 rounded-lg hover:bg-[#E8D9A0] dark:hover:bg-[#4A3F25] text-[#9A6F0A] dark:text-[#E8C97A] transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                                        </svg>
-                                    </button>
-                                </div>
-                                <span *ngIf="isSearching"
-                                    class="absolute right-12 top-1/2 -translate-y-1/2 text-[#C69214] animate-spin">⟳</span>
+                    class="bg-white dark:bg-[#232126] border border-[#E8D9A0] dark:border-[#4A474D] rounded-2xl shadow-theme-sm p-4 sm:p-6">
+                    <div class="flex items-center justify-between mb-4 sm:mb-6">
+                        <h1 class="font-instrument text-2xl font-bold text-[#191817] dark:text-white">Nueva Venta</h1>
+                        <div
+                            class="flex items-center gap-4 font-instrument text-theme-xs font-medium text-[#46424A] dark:text-gray-400 bg-[#FBF0C9]/40 dark:bg-[#3a383d] px-3 py-1.5 rounded-xl border border-[#E8D9A0] dark:border-[#4A474D]">
+                            <div class="flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span>{{ currentDate | date:'dd/MM/yyyy' }}</span>
                             </div>
-
-                            <!-- Results Dropdown -->
-                            <div *ngIf="searchResults.length > 0"
-                                class="absolute w-full mt-1 bg-white dark:bg-[#1A1714] rounded-xl shadow-xl border border-[#E8D9A0] dark:border-[#3D3420] max-h-60 overflow-y-auto z-50">
-                                <ul>
-                                    <li *ngFor="let product of searchResults" (click)="selectProduct(product)"
-                                        class="px-4 py-3 hover:bg-[#FBF0C9]/50 dark:hover:bg-[#252017] cursor-pointer border-b border-[#E8D9A0] dark:border-[#3D3420] last:border-0 flex justify-between items-center group transition-colors">
-                                        <div>
-                                            <p
-                                                class="font-outfit font-medium text-[#191817] dark:text-white group-hover:text-[#C69214] dark:group-hover:text-[#FAC600]">
-                                                {{ product.name || product.description }}</p>
-                                            <p class="font-display text-theme-xs text-[#6B6560] dark:text-gray-400">SKU:
-                                                {{ product.sku }} | Stock: {{ product.stock }}</p>
-                                        </div>
-                                        <div class="text-right">
-                                            <span
-                                                class="block font-outfit text-theme-sm font-bold text-[#191817] dark:text-white">{{
-                                                product.price | currency }}</span>
-                                            <span
-                                                class="font-outfit text-theme-xs text-[#9A6F0A] dark:text-[#E8C97A] bg-[#FBF0C9] dark:bg-[#3D3420] px-1.5 rounded">{{
-                                                getCategoryName(product) }}</span>
-                                        </div>
-                                    </li>
-                                </ul>
+                            <div class="h-4 w-px bg-[#E8D9A0] dark:bg-[#4A474D]"></div>
+                            <div class="flex items-center gap-1">
+                                <span class="opacity-75">Folio:</span>
+                                <span class="font-instrument font-bold text-[#C69214] dark:text-[#FAC600] text-sm">{{
+                                    nextFolio
+                                    }}</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Client Selector (Right) -->
-                    <div class="flex-1">
-                        <label
-                            class="block font-outfit text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Cliente</label>
-                        <div class="relative group cursor-pointer" (click)="openClientModal()">
-                            <div
-                                class="flex items-center bg-white dark:bg-[#1A1714] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl p-1 transition-colors hover:border-[#C69214] dark:hover:border-[#FAC600] h-14">
+                    <!-- Header Row: Search & Client -->
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <!-- Search (Left) -->
+                        <div class="flex-1 relative z-20">
+                            <label
+                                class="block font-instrument text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Buscar
+                                Producto / Código de Barras</label>
+                            <div class="relative">
                                 <div
-                                    class="p-2 text-[#6B6560] group-hover:text-[#C69214] dark:text-gray-400 dark:group-hover:text-[#FAC600] transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                        class="w-5 h-5">
-                                        <path fill-rule="evenodd"
-                                            d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
-                                            clip-rule="evenodd" />
-                                    </svg>
+                                    class="flex items-center bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl p-1 transition-colors hover:border-[#C69214] dark:hover:border-[#FAC600] h-14">
+                                    <div class="p-2 text-[#6B6560] dark:text-gray-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="1.5" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5Z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M6.75 6.75h.75v.75h-.75v-.75ZM6.75 16.5h.75v.75h-.75v-.75ZM16.5 6.75h.75v.75h-.75v-.75ZM13.5 13.5h.75v.75h-.75v-.75ZM13.5 19.5h.75v.75h-.75v-.75ZM19.5 13.5h.75v.75h-.75v-.75ZM19.5 19.5h.75v.75h-.75v-.75ZM16.5 16.5h.75v.75h-.75v-.75Z" />
+                                        </svg>
+                                    </div>
+                                    <input [formControl]="searchControl" type="text"
+                                        placeholder="Escanear o escribir código..."
+                                        class="w-full h-full bg-transparent border-none font-instrument text-[#191817] dark:text-white text-lg font-medium focus:ring-0 focus:outline-none placeholder-[#6B6560] dark:placeholder-white/50 pr-10">
+                                    <div class="p-2">
+                                        <button
+                                            class="bg-[#FBF0C9] dark:bg-[#4A474D] p-2 rounded-lg hover:bg-[#E8D9A0] dark:hover:bg-[#4A3F25] text-[#9A6F0A] dark:text-[#E8C97A] transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <span *ngIf="isSearching"
+                                        class="absolute right-12 top-1/2 -translate-y-1/2 text-[#C69214] animate-spin">⟳</span>
                                 </div>
-                                <div class="flex-1 px-2">
-                                    <h4 *ngIf="selectedClient"
-                                        class="font-outfit text-theme-sm font-bold text-[#191817] dark:text-white leading-tight">
-                                        {{ selectedClient.name }}</h4>
-                                    <p *ngIf="selectedClient"
-                                        class="font-display text-[10px] text-[#6B6560] dark:text-gray-400">{{
-                                        selectedClient.phone || selectedClient.email || 'Cliente Registrado' }}</p>
-                                    <span *ngIf="!selectedClient"
-                                        class="font-display text-theme-sm text-[#6B6560] dark:text-gray-500">Seleccionar
-                                        Cliente...</span>
+
+                                <!-- Results Dropdown -->
+                                <div *ngIf="searchResults.length > 0"
+                                    class="absolute w-full mt-1 bg-white dark:bg-[#232126] rounded-xl shadow-xl border border-[#E8D9A0] dark:border-[#4A474D] max-h-60 overflow-y-auto z-50">
+                                    <ul>
+                                        <li *ngFor="let product of searchResults" (click)="selectProduct(product)"
+                                            class="px-4 py-3 hover:bg-[#FBF0C9]/50 dark:hover:bg-[#3a383d] cursor-pointer border-b border-[#E8D9A0] dark:border-[#4A474D] last:border-0 flex justify-between items-center group transition-colors">
+                                            <div>
+                                                <p
+                                                    class="font-instrument font-medium text-[#191817] dark:text-white group-hover:text-[#C69214] dark:group-hover:text-[#FAC600]">
+                                                    {{ product.name || product.description }}</p>
+                                                <p
+                                                    class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">
+                                                    SKU:
+                                                    {{ product.sku }} | Stock: {{ product.stock }}</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <span
+                                                    class="block font-instrument text-theme-sm font-bold text-[#191817] dark:text-white">{{
+                                                    product.price | currency }}</span>
+                                                <span
+                                                    class="font-instrument text-theme-xs text-[#9A6F0A] dark:text-[#E8C97A] bg-[#FBF0C9] dark:bg-[#4A474D] px-1.5 rounded">{{
+                                                    getCategoryName(product) }}</span>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
-                                <span
-                                    class="font-outfit text-theme-xs font-bold text-[#C69214] dark:text-[#FAC600] px-3 whitespace-nowrap">{{
-                                    selectedClient ? 'Cambiar' : 'Buscar' }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Client Selector (Right) -->
+                        <div class="flex-1">
+                            <label
+                                class="block font-instrument text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Cliente</label>
+                            <div class="relative group cursor-pointer" (click)="openClientModal()">
+                                <div
+                                    class="flex items-center bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl p-1 transition-colors hover:border-[#C69214] dark:hover:border-[#FAC600] h-14">
+                                    <div
+                                        class="p-2 text-[#6B6560] group-hover:text-[#C69214] dark:text-gray-400 dark:group-hover:text-[#FAC600] transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                            class="w-5 h-5">
+                                            <path fill-rule="evenodd"
+                                                d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1 px-2">
+                                        <h4 *ngIf="selectedClient"
+                                            class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white leading-tight">
+                                            {{ selectedClient.name }}</h4>
+                                        <p *ngIf="selectedClient"
+                                            class="font-instrument text-[10px] text-[#6B6560] dark:text-gray-400">{{
+                                            selectedClient.phone || selectedClient.email || 'Cliente Registrado' }}</p>
+                                        <span *ngIf="!selectedClient"
+                                            class="font-instrument text-theme-sm text-[#6B6560] dark:text-gray-500">Seleccionar
+                                            Cliente...</span>
+                                    </div>
+                                    <span
+                                        class="font-instrument text-theme-xs font-bold text-[#C69214] dark:text-[#FAC600] px-3 whitespace-nowrap">{{
+                                        selectedClient ? 'Cambiar' : 'Buscar' }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Items List -->
-                <div class="flex flex-col gap-3 min-h-[400px]" formArrayName="items">
+                <div class="flex flex-col gap-3 min-h-[400px] rounded-2xl border border-[#E8D9A0] bg-[#FBF0C9]/20 shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] p-4 sm:p-6"
+                    formArrayName="items">
 
                     <div *ngIf="items.length === 0"
-                        class="flex flex-col items-center justify-center h-64 text-[#6B6560] dark:text-gray-500 border-2 border-dashed border-[#E8D9A0] dark:border-[#3D3420] rounded-2xl m-4">
+                        class="flex flex-col items-center justify-center h-64 text-[#6B6560] dark:text-gray-500 border-2 border-dashed border-[#E8D9A0] dark:border-[#4A474D] rounded-xl">
                         <span class="text-4xl mb-3 opacity-50">🛍️</span>
-                        <p class="font-display font-medium">Escanee productos para agregar a la venta</p>
+                        <p class="font-instrument font-medium">Escanee productos para agregar a la venta</p>
                     </div>
 
                     <div *ngFor="let item of items.controls; let i=index" [formGroupName]="i">
 
                         <!-- PRODUCT CARD (jewelry) -->
                         <div *ngIf="item.get('type')?.value === 'jewelry'"
-                            class="bg-white dark:bg-[#1A1714] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl overflow-hidden shadow-theme-sm flex flex-col sm:flex-row relative group transition-all hover:border-[#C69214] dark:hover:border-[#FAC600]">
+                            class="bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl overflow-hidden shadow-theme-sm flex flex-col sm:flex-row relative group transition-all hover:border-[#C69214] dark:hover:border-[#FAC600]">
                             <div *ngIf="item.get('deliveryStatus')?.value === 'pending'"
                                 class="absolute top-0 right-0 bg-[#C69214] text-[#191817] text-[10px] font-bold px-2 py-0.5 rounded-bl z-10">
                                 APARTADO</div>
                             <div
-                                class="absolute top-0 left-0 bg-[#FBF0C9] dark:bg-[#3D3420] text-[#9A6F0A] dark:text-[#E8C97A] text-[10px] font-bold px-2 py-0.5 rounded-br">
+                                class="absolute top-0 left-0 bg-[#FBF0C9] dark:bg-[#4A474D] text-[#9A6F0A] dark:text-[#E8C97A] text-[10px] font-bold px-2 py-0.5 rounded-br">
                                 PRODUCTO</div>
                             <div class="flex-1 p-4 pt-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                 <div class="flex-1">
                                     <h3
-                                        class="font-outfit text-[#191817] dark:text-white font-bold text-lg leading-tight mb-1">
+                                        class="font-instrument text-[#191817] dark:text-white font-bold text-lg leading-tight mb-1">
                                         {{ item.get('name')?.value || 'Producto sin nombre' }}</h3>
-                                    <div class="font-display text-[#6B6560] dark:text-gray-400 text-theme-sm flex flex-wrap gap-x-4 gap-y-1"
+                                    <div class="font-instrument text-[#6B6560] dark:text-gray-400 text-theme-sm flex flex-wrap gap-x-4 gap-y-1"
                                         formGroupName="specifications">
                                         <span class="flex items-center gap-1"><span class="opacity-70">CB:</span> {{
                                             item.get('specifications.notes')?.value || 'N/A' }}</span>
-                                        <div class="hidden sm:block w-px h-4 bg-[#E8D9A0] dark:bg-[#3D3420]"></div>
+                                        <div class="hidden sm:block w-px h-4 bg-[#E8D9A0] dark:bg-[#4A474D]"></div>
                                         <span class="flex items-center gap-1"><span class="opacity-70">K:</span> {{
                                             item.get('specifications.karatage')?.value || '-' }}</span>
                                         <span class="flex items-center gap-1"><span class="opacity-70">Peso:</span> {{
@@ -160,29 +168,30 @@
                                     </div>
                                     <div *ngIf="!item.get('isUnique')?.value" class="mt-2 flex items-center gap-2">
                                         <label
-                                            class="font-outfit text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">Cant:</label>
+                                            class="font-instrument text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">Cant:</label>
                                         <input type="number" formControlName="quantity" min="1"
                                             [max]="item.get('maxStock')?.value"
-                                            class="w-20 px-2 py-1 font-display text-theme-sm border border-[#E8D9A0] dark:border-[#3D3420] rounded-lg bg-white dark:bg-[#1A1714] text-[#191817] dark:text-white focus:ring-[#C69214]/20 focus:border-[#C69214]">
-                                        <span class="font-display text-theme-xs text-[#6B6560] dark:text-gray-400">Max:
+                                            class="w-20 px-2 py-1 font-instrument text-theme-sm border border-[#E8D9A0] dark:border-[#4A474D] rounded-lg bg-white dark:bg-[#232126] text-[#191817] dark:text-white focus:ring-[#C69214]/20 focus:border-[#C69214]">
+                                        <span
+                                            class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">Max:
                                             {{ item.get('maxStock')?.value }}</span>
                                     </div>
                                     <div *ngIf="item.get('quantity')?.errors?.['max']"
-                                        class="font-display text-theme-xs text-error-500 mt-1">Excede stock</div>
+                                        class="font-instrument text-theme-xs text-error-500 mt-1">Excede stock</div>
                                 </div>
                                 <div class="flex flex-col items-end min-w-[120px]">
                                     <label
-                                        class="font-outfit text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-0.5">Precio
+                                        class="font-instrument text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-0.5">Precio
                                         Unit.</label>
                                     <input type="number" formControlName="unitPrice" min="0" step="0.01"
-                                        class="w-24 text-right px-2 py-1 font-display text-theme-sm border border-[#E8D9A0] dark:border-[#3D3420] rounded-lg bg-white dark:bg-[#1A1714] text-[#191817] dark:text-white font-bold focus:ring-[#C69214]/20 focus:border-[#C69214] mb-1">
+                                        class="w-24 text-right px-2 py-1 font-instrument text-theme-sm border border-[#E8D9A0] dark:border-[#4A474D] rounded-lg bg-white dark:bg-[#232126] text-[#191817] dark:text-white font-bold focus:ring-[#C69214]/20 focus:border-[#C69214] mb-1">
                                     <span
-                                        class="font-outfit font-extrabold text-xl text-[#C69214] dark:text-[#FAC600]">{{
+                                        class="font-instrument font-extrabold text-xl text-[#C69214] dark:text-[#FAC600]">{{
                                         item.get('subtotal')?.value | currency }}</span>
                                 </div>
                             </div>
                             <div
-                                class="bg-[#FBF0C9]/30 dark:bg-[#252017]/50 border-t border-[#E8D9A0] dark:border-[#3D3420] px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
+                                class="bg-[#FBF0C9]/30 dark:bg-[#232126]/50 border-t border-[#E8D9A0] dark:border-[#4A474D] px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
                                 <div class="flex gap-2 w-full sm:w-auto">
                                     <button type="button" (click)="toggleDeliveryStatus(i)"
                                         [class.bg-[#C69214]]="item.get('deliveryStatus')?.value === 'pending'"
@@ -205,16 +214,16 @@
 
                         <!-- SERVICE / TALLER CARD -->
                         <div *ngIf="item.get('type')?.value === 'service'"
-                            class="bg-white dark:bg-[#1A1714] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl overflow-hidden shadow-theme-sm flex flex-col sm:flex-row relative group mt-1 transition-all hover:border-[#46424A] dark:hover:border-gray-500">
+                            class="bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl overflow-hidden shadow-theme-sm flex flex-col sm:flex-row relative group mt-1 transition-all hover:border-[#46424A] dark:hover:border-gray-500">
                             <div
                                 class="absolute top-0 left-0 bg-[#F5F0EC] dark:bg-white/5 text-[#46424A] dark:text-gray-400 text-[10px] font-bold px-2 py-0.5 rounded-br">
                                 TALLER</div>
                             <div class="flex-1 p-4 pt-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                 <div class="flex-1">
                                     <h3
-                                        class="font-outfit text-[#191817] dark:text-white font-medium text-lg tracking-wide leading-tight mb-1">
+                                        class="font-instrument text-[#191817] dark:text-white font-medium text-lg tracking-wide leading-tight mb-1">
                                         {{ item.get('name')?.value || 'Reparación' }}</h3>
-                                    <div class="font-display text-[#46424A] dark:text-gray-300 text-theme-xs flex items-center gap-1 bg-[#F5F0EC] dark:bg-white/5 px-2 py-1 rounded-lg w-fit"
+                                    <div class="font-instrument text-[#46424A] dark:text-gray-300 text-theme-xs flex items-center gap-1 bg-[#F5F0EC] dark:bg-white/5 px-2 py-1 rounded-lg w-fit"
                                         *ngIf="item.get('specifications.notes')?.value">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
@@ -226,13 +235,13 @@
                                 </div>
                                 <div class="flex flex-col items-end min-w-[120px]">
                                     <span
-                                        class="font-outfit text-[#6B6560] dark:text-gray-400 text-theme-xs font-semibold uppercase">Importe</span>
-                                    <span class="font-outfit text-[#191817] dark:text-white font-bold text-xl">{{
+                                        class="font-instrument text-[#6B6560] dark:text-gray-400 text-theme-xs font-semibold uppercase">Importe</span>
+                                    <span class="font-instrument text-[#191817] dark:text-white font-bold text-xl">{{
                                         item.get('subtotal')?.value | currency }}</span>
                                 </div>
                             </div>
                             <div
-                                class="bg-[#F5F0EC]/50 dark:bg-white/[0.02] border-t border-[#E8D9A0] dark:border-[#3D3420] px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
+                                class="bg-[#F5F0EC]/50 dark:bg-white/[0.02] border-t border-[#E8D9A0] dark:border-[#4A474D] px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
                                 <button type="button" (click)="removeItem(i)"
                                     class="text-[#6B6560] hover:text-error-500 dark:text-gray-400 transition-colors p-1"
                                     title="Eliminar">
@@ -247,29 +256,29 @@
 
                         <!-- CUSTOM / HECHURA CARD -->
                         <div *ngIf="item.get('type')?.value === 'custom'"
-                            class="bg-white dark:bg-[#1A1714] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl overflow-hidden shadow-theme-sm flex flex-col sm:flex-row relative group mt-1 transition-all hover:border-[#C69214] dark:hover:border-[#FAC600]/50">
+                            class="bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl overflow-hidden shadow-theme-sm flex flex-col sm:flex-row relative group mt-1 transition-all hover:border-[#C69214] dark:hover:border-[#FAC600]/50">
                             <div *ngIf="item.get('deliveryStatus')?.value === 'pending'"
                                 class="absolute top-0 right-0 bg-[#C69214] text-[#191817] text-[10px] font-bold px-2 py-0.5 rounded-bl z-10">
                                 APARTADO</div>
                             <div
-                                class="absolute top-0 left-0 bg-[#FBF0C9] dark:bg-[#3D3420] text-[#9A6F0A] dark:text-[#E8C97A] text-[10px] font-bold px-2 py-0.5 rounded-br">
+                                class="absolute top-0 left-0 bg-[#FBF0C9] dark:bg-[#4A474D] text-[#9A6F0A] dark:text-[#E8C97A] text-[10px] font-bold px-2 py-0.5 rounded-br">
                                 INGRESO</div>
                             <div class="flex-1 p-4 pt-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                 <div class="flex-1">
                                     <h3
-                                        class="font-outfit text-[#191817] dark:text-white font-medium text-lg tracking-wide leading-tight mb-1">
+                                        class="font-instrument text-[#191817] dark:text-white font-medium text-lg tracking-wide leading-tight mb-1">
                                         {{ item.get('name')?.value || 'Movimiento' }}</h3>
-                                    <p class="font-display text-[#6B6560] dark:text-gray-400 text-theme-xs italic"
+                                    <p class="font-instrument text-[#6B6560] dark:text-gray-400 text-theme-xs italic"
                                         *ngIf="item.get('specifications.notes')?.value">{{
                                         item.get('specifications.notes')?.value }}</p>
                                 </div>
                                 <div class="flex flex-col items-end min-w-[120px]">
-                                    <span class="font-outfit text-[#191817] dark:text-white font-bold text-xl">{{
+                                    <span class="font-instrument text-[#191817] dark:text-white font-bold text-xl">{{
                                         item.get('subtotal')?.value | currency }}</span>
                                 </div>
                             </div>
                             <div
-                                class="bg-[#FBF0C9]/30 dark:bg-[#252017]/50 border-t border-[#E8D9A0] dark:border-[#3D3420] px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
+                                class="bg-[#FBF0C9]/30 dark:bg-[#232126]/50 border-t border-[#E8D9A0] dark:border-[#4A474D] px-4 py-2 flex items-center justify-end gap-2 sm:gap-3 sm:border-t-0 sm:border-l sm:w-auto sm:bg-transparent sm:dark:bg-transparent sm:flex-col sm:justify-center sm:py-0 sm:pr-4">
                                 <div class="flex gap-2 w-full sm:w-auto">
                                     <button type="button" (click)="toggleDeliveryStatus(i)"
                                         [class.bg-[#C69214]]="item.get('deliveryStatus')?.value === 'pending'"
@@ -297,45 +306,45 @@
 
         <!-- Sidebar (Right): Totals & Payment -->
         <aside
-            class="w-96 bg-white dark:bg-[#1A1714] border-l border-[#E8D9A0] dark:border-[#3D3420] flex flex-col shadow-2xl z-10 text-[#191817] dark:text-white">
-            <div class="p-4 flex-1 flex flex-col h-full">
+            class="w-96 bg-white dark:bg-[#232126] border-l border-[#E8D9A0] dark:border-[#4A474D] flex flex-col shadow-2xl z-10 text-[#191817] dark:text-white overflow-hidden">
+            <div class="p-4 flex-1 flex flex-col h-full overflow-y-auto hide-scrollbar">
 
                 <!-- Action Grid -->
                 <div class="grid grid-cols-3 gap-2 mb-4 shrink-0">
                     <button type="button" (click)="openManualEntryModal()" title="Ingreso"
-                        class="h-16 bg-white dark:bg-[#252017] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl hover:bg-[#FBF0C9]/50 dark:hover:bg-[#3D3420] flex flex-col items-center justify-center gap-0.5 group transition-all">
+                        class="h-16 bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl hover:bg-[#FBF0C9]/50 dark:hover:bg-[#4A474D] flex flex-col items-center justify-center gap-0.5 group transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
-                            <path class="fill-[#FBF0C9] dark:fill-[#3D3420] stroke-[#C69214]" stroke-linecap="round"
+                            <path class="fill-[#FBF0C9] dark:fill-[#4A474D] stroke-[#C69214]" stroke-linecap="round"
                                 stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
                         <span
-                            class="font-outfit text-[9px] font-bold text-[#46424A] dark:text-gray-300 uppercase tracking-tight">Ingreso</span>
+                            class="font-instrument text-[9px] font-bold text-[#46424A] dark:text-gray-300 uppercase tracking-tight">Ingreso</span>
                     </button>
                     <button type="button" (click)="addItem('service')" title="Taller"
-                        class="h-16 bg-white dark:bg-[#252017] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl hover:bg-[#FBF0C9]/50 dark:hover:bg-[#3D3420] flex flex-col items-center justify-center gap-0.5 group transition-all">
+                        class="h-16 bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl hover:bg-[#FBF0C9]/50 dark:hover:bg-[#4A474D] flex flex-col items-center justify-center gap-0.5 group transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
                             <path class="fill-[#F5F0EC] dark:fill-white/5 stroke-[#46424A] dark:stroke-gray-400"
                                 stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                 d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
                         </svg>
                         <span
-                            class="font-outfit text-[9px] font-bold text-[#46424A] dark:text-gray-300 uppercase tracking-tight">Taller</span>
+                            class="font-instrument text-[9px] font-bold text-[#46424A] dark:text-gray-300 uppercase tracking-tight">Taller</span>
                     </button>
                     <button type="button" (click)="addItem('custom')" title="Hechura"
-                        class="h-16 bg-white dark:bg-[#252017] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl hover:bg-[#FBF0C9]/50 dark:hover:bg-[#3D3420] flex flex-col items-center justify-center gap-0.5 group transition-all">
+                        class="h-16 bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl hover:bg-[#FBF0C9]/50 dark:hover:bg-[#4A474D] flex flex-col items-center justify-center gap-0.5 group transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6">
-                            <path class="fill-[#FBF0C9] dark:fill-[#3D3420] stroke-[#C69214]" stroke-linecap="round"
+                            <path class="fill-[#FBF0C9] dark:fill-[#4A474D] stroke-[#C69214]" stroke-linecap="round"
                                 stroke-linejoin="round" stroke-width="1.5"
                                 d="M12 2L2 7l10 15 10-15-10-5zM2 7h20M12 22V7" />
                             <path class="fill-[#E8D9A0] dark:fill-[#4A3F25] stroke-none" d="M7 7L12 22L17 7H7Z" />
                         </svg>
                         <span
-                            class="font-outfit text-[9px] font-bold text-[#46424A] dark:text-gray-300 uppercase tracking-tight text-center leading-none">Hechura<br>Express</span>
+                            class="font-instrument text-[9px] font-bold text-[#46424A] dark:text-gray-300 uppercase tracking-tight text-center leading-none">Hechura<br>Express</span>
                     </button>
                 </div>
 
                 <!-- Financial Summary -->
-                <div class="space-y-1 mb-4 font-display text-theme-xs shrink-0">
+                <div class="space-y-1 mb-4 font-instrument text-theme-xs shrink-0">
                     <div class="flex justify-between text-[#6B6560] dark:text-gray-400">
                         <span>Subtotal</span>
                         <span class="text-[#191817] dark:text-white">{{ noteForm.get('subtotal')?.value | currency
@@ -352,28 +361,29 @@
                 </div>
 
                 <div *ngIf="minRequiredPayment > 0 && minRequiredPayment < noteForm.get('total')?.value"
-                    class="mb-2 px-1 font-display text-theme-xs text-right font-medium text-[#C69214] dark:text-[#FAC600]">
+                    class="mb-2 px-1 font-instrument text-theme-xs text-right font-medium text-[#C69214] dark:text-[#FAC600]">
                     Pago mín. requerido (contado): {{ minRequiredPayment | currency }}
                 </div>
 
                 <!-- Big Total -->
                 <div
-                    class="mb-4 bg-[#FBF0C9]/40 dark:bg-[#252017] p-3 rounded-xl flex justify-between items-center border border-[#E8D9A0] dark:border-[#3D3420] shrink-0">
+                    class="mb-4 bg-[#FBF0C9]/40 dark:bg-[#3a383d] p-3 rounded-xl flex justify-between items-center border border-[#E8D9A0] dark:border-[#4A474D] shrink-0">
                     <h3
-                        class="font-outfit text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase tracking-widest">
+                        class="font-instrument text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase tracking-widest">
                         Total a Pagar</h3>
-                    <div class="font-outfit text-2xl font-extrabold text-[#C69214] dark:text-[#FAC600] tracking-tight">
+                    <div
+                        class="font-instrument text-2xl font-extrabold text-[#C69214] dark:text-[#FAC600] tracking-tight">
                         {{ noteForm.get('total')?.value | currency }}</div>
                 </div>
 
                 <!-- Payment Methods -->
                 <div
-                    class="bg-[#FBF0C9]/40 dark:bg-[#252017] p-1 rounded-xl flex mb-4 shrink-0 gap-1 border border-[#E8D9A0] dark:border-[#3D3420]">
+                    class="bg-[#FBF0C9]/40 dark:bg-[#3a383d] p-1 rounded-xl flex mb-4 shrink-0 gap-1 border border-[#E8D9A0] dark:border-[#4A474D]">
                     <button type="button" (click)="setPaymentMethod('cash')" [class.bg-white]="paymentMethod === 'cash'"
-                        [class.dark:bg-[#1A1714]]="paymentMethod === 'cash'"
+                        [class.dark:bg-[#232126]]="paymentMethod === 'cash'"
                         [class.text-[#C69214]]="paymentMethod === 'cash'" [class.shadow-sm]="paymentMethod === 'cash'"
                         [class.text-[#6B6560]]="paymentMethod !== 'cash'"
-                        class="flex-1 py-2 rounded-lg transition-all font-outfit text-theme-xs font-bold flex items-center justify-center gap-2 uppercase">
+                        class="flex-1 py-2 rounded-lg transition-all font-instrument text-theme-xs font-bold flex items-center justify-center gap-2 uppercase">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
                             <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
                             <path fill-rule="evenodd"
@@ -383,10 +393,10 @@
                         Efectivo
                     </button>
                     <button type="button" (click)="setPaymentMethod('card')" [class.bg-white]="paymentMethod === 'card'"
-                        [class.dark:bg-[#1A1714]]="paymentMethod === 'card'"
+                        [class.dark:bg-[#232126]]="paymentMethod === 'card'"
                         [class.text-[#C69214]]="paymentMethod === 'card'" [class.shadow-sm]="paymentMethod === 'card'"
                         [class.text-[#6B6560]]="paymentMethod !== 'card'"
-                        class="flex-1 py-2 rounded-lg transition-all font-outfit text-theme-xs font-bold flex items-center justify-center gap-2 uppercase">
+                        class="flex-1 py-2 rounded-lg transition-all font-instrument text-theme-xs font-bold flex items-center justify-center gap-2 uppercase">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
                             <path fill-rule="evenodd"
                                 d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z"
@@ -401,18 +411,19 @@
                     <div class="grid grid-cols-2 gap-3" *ngIf="paymentMethod === 'cash'">
                         <div>
                             <label
-                                class="block font-outfit text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Recibido</label>
+                                class="block font-instrument text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Recibido</label>
                             <div class="relative">
-                                <span class="absolute left-3 top-2.5 font-display text-[#6B6560] text-theme-sm">$</span>
+                                <span
+                                    class="absolute left-3 top-2.5 font-instrument text-[#6B6560] text-theme-sm">$</span>
                                 <input type="number" formControlName="receivedAmount" (input)="calculateChange()"
-                                    class="w-full pl-6 py-2 bg-white dark:bg-[#252017] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl font-display text-[#191817] dark:text-white text-lg font-bold focus:ring-2 focus:ring-[#C69214]/20 focus:border-[#C69214] shadow-sm">
+                                    class="w-full pl-6 py-2 bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl font-instrument text-[#191817] dark:text-white text-lg font-bold focus:ring-2 focus:ring-[#C69214]/20 focus:border-[#C69214] shadow-sm">
                             </div>
                         </div>
                         <div>
                             <label
-                                class="block font-outfit text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Cambio</label>
+                                class="block font-instrument text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Cambio</label>
                             <div
-                                class="w-full py-2 px-3 bg-success-50 dark:bg-success-500/10 border border-success-200 dark:border-success-800/30 rounded-xl font-outfit text-success-700 dark:text-success-400 text-lg font-bold text-right shadow-sm">
+                                class="w-full py-2 px-3 bg-success-50 dark:bg-success-500/10 border border-success-200 dark:border-success-800/30 rounded-xl font-instrument text-success-700 dark:text-success-400 text-lg font-bold text-right shadow-sm">
                                 {{ noteForm.get('changeAmount')?.value | currency }}
                             </div>
                         </div>
@@ -421,11 +432,12 @@
                     <!-- Card reference -->
                     <div *ngIf="paymentMethod === 'card'">
                         <label
-                            class="block font-outfit text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Referencia
+                            class="block font-instrument text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Referencia
                             / Voucher</label>
                         <input type="text" formControlName="reference" placeholder="#1234..."
-                            class="w-full py-2 px-3 bg-white dark:bg-[#252017] border border-[#E8D9A0] dark:border-[#3D3420] rounded-xl font-display text-[#191817] dark:text-white focus:ring-2 focus:ring-[#C69214]/20 focus:border-[#C69214] shadow-sm">
-                        <p class="font-display text-[10px] text-[#6B6560] dark:text-gray-400 mt-1">* Se cobrará el monto
+                            class="w-full py-2 px-3 bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl font-instrument text-[#191817] dark:text-white dark:placeholder-white/50 focus:ring-2 focus:ring-[#C69214]/20 focus:border-[#C69214] shadow-sm">
+                        <p class="font-instrument text-[10px] text-[#6B6560] dark:text-gray-400 mt-1">* Se cobrará el
+                            monto
                             exacto: {{ noteForm.get('total')?.value | currency }}</p>
                     </div>
 
@@ -438,15 +450,12 @@
                 <div class="pt-4">
                     <button type="button" (click)="onSubmit()" [disabled]="isLoading || isPaymentInsufficient"
                         [ngClass]="{
-                            'bg-gradient-to-br from-[#C69214] to-[#FAC600] text-[#191817] hover:from-[#9A6F0A] hover:to-[#C69214]': !isPartialPayment && !isPaymentInsufficient,
-                            'bg-[#46424A] text-white hover:bg-[#191817]': isPartialPayment && !isPaymentInsufficient,
+                            'bg-gradient-to-br from-[#C69214] to-[#FAC600] text-white hover:from-[#9A6F0A] hover:to-[#C69214]': !isPartialPayment && !isPaymentInsufficient,
+                            'bg-[#4A474D] text-white hover:bg-[#3a383d]': isPartialPayment && !isPaymentInsufficient,
                             'bg-[#6B6560] text-white cursor-not-allowed opacity-50': isPaymentInsufficient
                         }"
-                        class="w-full py-3.5 font-outfit font-extrabold text-base rounded-xl shadow-theme-md transition-all active:scale-95 flex items-center justify-center gap-2 disabled:transform-none disabled:shadow-none">
+                        class="w-full py-4 font-instrument font-extrabold text-lg tracking-wide rounded-xl shadow-theme-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:transform-none disabled:shadow-none uppercase">
                         <span *ngIf="isLoading" class="animate-spin">↻</span>
-                        <span class="rounded-full border-2 w-5 h-5 flex items-center justify-center text-[10px]"
-                            [class.border-[#191817]]="!isPartialPayment && !isPaymentInsufficient"
-                            [class.border-white]="isPartialPayment || isPaymentInsufficient">✓</span>
                         {{ confirmButtonText }}
                     </button>
                 </div>

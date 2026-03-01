@@ -1,16 +1,16 @@
-<div class="fixed inset-0 z-[9999] flex justify-end bg-[#191817]/60 backdrop-blur-sm transition-opacity duration-300"
+<div class="fixed inset-0 z-[999999] flex justify-end bg-[#191817]/60 backdrop-blur-sm transition-opacity duration-300"
     [class.opacity-0]="!isOpen()" [class.pointer-events-none]="!isOpen()" [class.opacity-100]="isOpen()">
 
     <!-- Backdrop (Close on click) -->
     <div class="absolute inset-0" (click)="onClose()"></div>
 
     <!-- Sidebar -->
-    <div class="relative flex h-full w-full max-w-sm flex-col border-l border-[#E8D9A0] bg-[#FFFDF7] shadow-2xl transition-transform duration-300 dark:border-[#3D3420] dark:bg-[#1A1714]"
+    <div class="relative flex h-full w-full max-w-sm flex-col border-l border-[#E8D9A0] bg-[#FFF8E7] shadow-2xl transition-transform duration-300 dark:border-[#4A474D] dark:bg-[#232126]"
         [class.translate-x-full]="!isOpen()" [class.translate-x-0]="isOpen()">
 
         <!-- Header -->
-        <div class="flex items-center justify-between border-b border-[#E8D9A0] px-6 py-5 dark:border-[#3D3420]">
-            <h3 class="font-outfit text-title-sm font-semibold text-[#191817] dark:text-white">
+        <div class="flex items-center justify-between border-b border-[#E8D9A0] px-6 py-5 dark:border-[#4A474D]">
+            <h3 class="font-instrument text-title-sm font-semibold text-[#191817] dark:text-[#E8C97A]">
                 {{ title() }}
             </h3>
             <button (click)="onClose()"
@@ -24,18 +24,18 @@
         </div>
 
         <!-- Body (Form) -->
-        <div class="flex-1 overflow-y-auto p-6">
+        <div class="flex-1 overflow-y-auto p-6 bg-[#FFFDF7] dark:bg-[#3a383d]">
             <form [formGroup]="filterForm" class="flex flex-col gap-5">
                 @for (filter of filters(); track filter.key) {
                 <div class="flex flex-col gap-2">
-                    <label class="font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+                    <label class="font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
                         {{ filter.label }}
                     </label>
 
                     @switch (filter.type) {
                     @case ('select') {
                     <select [formControlName]="filter.key"
-                        class="mt-1 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:focus:border-[#FAC600]">
+                        class="mt-1 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#232126] dark:text-white dark:focus:border-[#FAC600]">
                         <option value="">{{ filter.placeholder || 'Todos' }}</option>
                         @for (opt of filter.options; track opt.value) {
                         <option [value]="opt.value">{{ opt.label }}</option>
@@ -44,15 +44,15 @@
                     }
                     @case ('text') {
                     <input type="text" [formControlName]="filter.key" [placeholder]="filter.placeholder || ''"
-                        class="mt-1 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]" />
+                        class="mt-1 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#232126] dark:text-white dark:placeholder-white/50 dark:focus:border-[#FAC600]" />
                     }
                     @case ('number') {
                     <input type="number" [formControlName]="filter.key" [placeholder]="filter.placeholder || ''"
-                        class="mt-1 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]" />
+                        class="mt-1 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#232126] dark:text-white dark:placeholder-white/50 dark:focus:border-[#FAC600]" />
                     }
                     @case ('date') {
                     <input type="date" [formControlName]="filter.key"
-                        class="mt-1 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:focus:border-[#FAC600]" />
+                        class="mt-1 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#232126] dark:text-white dark:focus:border-[#FAC600]" />
                     }
                     }
                 </div>
@@ -61,14 +61,14 @@
         </div>
 
         <!-- Footer -->
-        <div class="border-t border-[#E8D9A0] bg-[#FFF8E7] p-6 dark:border-[#3D3420] dark:bg-[#252017]">
+        <div class="border-t border-[#E8D9A0] bg-[#FFF8E7] p-6 dark:border-[#4A474D] dark:bg-[#232126]">
             <div class="flex flex-col gap-3 sm:flex-row sm:gap-4">
                 <button type="button" (click)="onClear()"
-                    class="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-6 py-2.5 font-outfit text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-gray-300 dark:hover:bg-white/5">
+                    class="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-6 py-2.5 font-instrument text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-300 dark:hover:bg-white/5">
                     Limpiar
                 </button>
                 <button type="button" (click)="onApply()"
-                    class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-6 py-2.5 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md active:scale-[0.98]">
+                    class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-6 py-2.5 font-instrument text-sm font-semibold text-[#191817] dark:text-white shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md active:scale-[0.98]">
                     Aplicar Filtros
                 </button>
             </div>

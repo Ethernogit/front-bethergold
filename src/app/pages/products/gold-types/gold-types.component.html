@@ -1,18 +1,20 @@
 <div class="mx-auto max-w-screen-2xl h-[calc(100vh-50px)] flex flex-col overflow-hidden">
     <div class="flex flex-col gap-4 h-full">
         <div
-            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#3D3420] dark:bg-[#252017] flex flex-col h-full">
+            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] flex flex-col h-full">
             <!-- Header -->
-            <div class="border-b border-[#E8D9A0] px-4 py-3 dark:border-[#3D3420] sm:px-6 shrink-0">
+            <div class="border-b border-[#E8D9A0] px-4 py-3 dark:border-[#4A474D] sm:px-6 shrink-0">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <h1 class="font-outfit text-title-sm font-semibold text-[#191817] dark:text-white">Variantes
+                        <h1 class="font-instrument text-title-sm font-semibold text-[#191817] dark:text-[#E8C97A]">
+                            Variantes
                         </h1>
-                        <p class="mt-1 font-display text-theme-sm text-[#6B6560] dark:text-gray-500">Amarillo, Blanco,
+                        <p class="mt-1 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-500">Amarillo,
+                            Blanco,
                             Rosa y más características de tus productos</p>
                     </div>
                     <button type="button" (click)="openCreateModal()"
-                        class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md active:scale-[0.98]">
+                        class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] dark:text-white shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md active:scale-[0.98]">
                         <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path d="M10 4.5V15.5M4.5 10H15.5" stroke="currentColor" stroke-width="2"
@@ -38,22 +40,22 @@
                 @if (goldTypes().length > 0) {
                 <div class="relative">
                     <table class="w-full table-auto">
-                        <thead class="sticky top-0 z-10 bg-[#FBF0C9] dark:bg-[#252017] shadow-sm">
+                        <thead class="sticky top-0 z-10 bg-[#FBF0C9] dark:bg-[#232126] shadow-sm">
                             <tr
-                                class="text-left font-outfit text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                                class="text-left font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
                                 <th class="px-4 py-3">Nombre</th>
                                 <th class="px-4 py-3">Material Base</th>
                                 <th class="px-4 py-3">Estado</th>
                                 <th class="px-4 py-3 text-center">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-[#E8D9A0] bg-white dark:divide-[#3D3420] dark:bg-[#1A1714]">
+                        <tbody class="divide-y divide-[#E8D9A0] bg-white dark:divide-[#4A474D] dark:bg-[#3a383d]">
                             @for (type of goldTypes(); track type.id) {
-                            <tr class="transition-colors hover:bg-[#FBF0C9]/40 dark:hover:bg-[#252017]">
+                            <tr class="transition-colors hover:bg-[#FBF0C9]/40 dark:hover:bg-[#232126]">
                                 <td
-                                    class="px-4 py-3 font-display text-theme-sm font-medium text-[#191817] dark:text-white">
+                                    class="px-4 py-3 font-instrument text-theme-sm font-medium text-[#191817] dark:text-white">
                                     {{ type.name }}</td>
-                                <td class="px-4 py-3 font-display text-theme-sm text-[#46424A] dark:text-gray-300">{{
+                                <td class="px-4 py-3 font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">{{
                                     getMaterialName(type) }}</td>
                                 <td class="px-4 py-3">
                                     <span
@@ -70,7 +72,7 @@
                                 <td class="px-4 py-3 text-center">
                                     <div class="flex items-center justify-center gap-2">
                                         <button type="button" (click)="openEditModal(type)"
-                                            class="text-[#46424A] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors p-1.5 rounded-lg hover:bg-[#FBF0C9] dark:hover:bg-[#3D3420]"
+                                            class="text-[#46424A] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors p-1.5 rounded-lg hover:bg-[#FBF0C9] dark:hover:bg-[#4A474D]"
                                             title="Editar">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -103,7 +105,7 @@
                 } @else {
                 <div class="flex flex-col items-center justify-center py-16 text-center">
                     <div
-                        class="mb-4 flex size-16 items-center justify-center rounded-full bg-[#FBF0C9] dark:bg-[#3D3420]">
+                        class="mb-4 flex size-16 items-center justify-center rounded-full bg-[#FBF0C9] dark:bg-[#4A474D]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
                             class="text-[#C69214]">
@@ -114,12 +116,13 @@
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                         </svg>
                     </div>
-                    <h5 class="mb-2 font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white">No hay
+                    <h5 class="mb-2 font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white">No hay
                         variantes</h5>
-                    <p class="mb-6 font-display text-theme-sm text-[#6B6560] dark:text-gray-400">Comienza agregando las
+                    <p class="mb-6 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400">Comienza agregando
+                        las
                         variantes (Amarillo, Blanco, Rosa, etc.).</p>
                     <button type="button" (click)="openCreateModal()"
-                        class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98]">
+                        class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] dark:text-white shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98]">
                         <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path d="M10 4.5V15.5M4.5 10H15.5" stroke="currentColor" stroke-width="2"
@@ -138,12 +141,12 @@
 <!-- Modal -->
 @if (showModal()) {
 <div
-    class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-[#191817]/60 p-4 backdrop-blur-sm">
+    class="fixed inset-0 z-[999999] flex items-center justify-center overflow-y-auto overflow-x-hidden bg-[#191817]/60 p-4 backdrop-blur-sm">
     <div
-        class="relative w-full max-w-md rounded-2xl border border-[#E8D9A0] bg-[#FFFDF7] shadow-xl dark:border-[#3D3420] dark:bg-[#1A1714]">
+        class="relative w-full max-w-md rounded-2xl border border-[#E8D9A0] bg-[#FFF8E7] shadow-xl dark:border-[#4A474D] dark:bg-[#232126]">
         <!-- Header -->
-        <div class="flex items-center justify-between border-b border-[#E8D9A0] p-5 dark:border-[#3D3420]">
-            <h3 class="font-outfit text-theme-xl font-semibold text-[#191817] dark:text-white">{{ editingType() ?
+        <div class="flex items-center justify-between border-b border-[#E8D9A0] p-5 dark:border-[#4A474D]">
+            <h3 class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white">{{ editingType() ?
                 'Editar Variante' : 'Nueva Variante' }}</h3>
             <button type="button" (click)="closeModal()"
                 class="text-[#6B6560] hover:text-[#191817] dark:text-gray-400 dark:hover:text-white transition-colors p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5">
@@ -160,40 +163,40 @@
                 <div class="flex flex-col gap-4">
                     <div>
                         <label
-                            class="mb-2 block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Nombre
+                            class="mb-2 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Nombre
                             *</label>
                         <input type="text" formControlName="name" placeholder="Ej. Amarillo, Blanco, Rosa"
-                            class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600]"
+                            class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-white/50 dark:focus:border-[#FAC600]"
                             [class.border-error-500]="isFieldInvalid('name')">
                         @if (isFieldInvalid('name')) { <p class="mt-1 text-theme-xs text-error-500">{{
                             getFieldError('name') }}</p> }
                     </div>
                     <div>
                         <label
-                            class="mb-2 block font-display text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Material
+                            class="mb-2 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Material
                             Base (Opcional)</label>
                         <select formControlName="materialType"
-                            class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-display text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#3D3420] dark:bg-[#1A1714] dark:text-white dark:focus:border-[#FAC600]">
+                            class="w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:focus:border-[#FAC600]">
                             <option value="" [selected]="!goldForm.get('materialType')?.value">Global (Aplica a todos)
                             </option>
                             @for (material of materialTypes(); track material.id || material._id) {
                             <option [value]="material.id || material._id">{{ material.name }}</option>
                             }
                         </select>
-                        <p class="mt-1 font-display text-theme-xs text-[#6B6560] dark:text-gray-500">Si dejas esto en
+                        <p class="mt-1 font-instrument text-theme-xs text-[#6B6560] dark:text-gray-500">Si dejas esto en
                             "Global", esta variante aparecerá en todos los productos.</p>
                     </div>
                 </div>
             </form>
         </div>
         <!-- Footer -->
-        <div class="flex items-center justify-end gap-3 border-t border-[#E8D9A0] p-5 dark:border-[#3D3420]">
+        <div class="flex items-center justify-end gap-3 border-t border-[#E8D9A0] p-5 dark:border-[#4A474D]">
             <button type="button" (click)="closeModal()"
-                class="flex items-center gap-2 rounded-xl px-5 py-2.5 font-outfit text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5">
+                class="flex items-center gap-2 rounded-xl px-5 py-2.5 font-instrument text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 border border-[#E8D9A0] dark:border-[#4A474D] bg-white dark:bg-[#3a383d] shadow-theme-sm">
                 Cancelar
             </button>
             <button type="button" [disabled]="loading()" (click)="saveType()"
-                class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">
+                class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] dark:text-white shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">
                 @if (loading()) {
                 <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

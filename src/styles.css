@@ -184,9 +184,9 @@
   --color-bg-brand-surface-light: #FFF8E7;
   --color-border-brand-light: #E8D9A0;
 
-  --color-bg-brand-dark: #1A1714;
-  --color-bg-brand-surface-dark: #252017;
-  --color-border-brand-dark: #3D3420;
+  --color-bg-brand-dark: #3a383d;
+  --color-bg-brand-surface-dark: #232126;
+  --color-border-brand-dark: #4A474D;
 }
 
 /*
@@ -213,7 +213,7 @@
   }
 
   body {
-    @apply relative font-normal font-outfit z-1 bg-gray-50;
+    @apply relative font-normal font-outfit z-1 bg-gray-50 dark:bg-[#3a383d];
   }
 }
 
@@ -442,7 +442,7 @@
 
 .stocks-slider-outer .swiper-button-next.swiper-button-disabled,
 .stocks-slider-outer .swiper-button-prev.swiper-button-disabled {
-  @apply bg-white opacity-50 dark:bg-gray-900;
+  @apply bg-white opacity-50 dark:bg-[#3a383d];
 }
 
 .stocks-slider-outer .swiper-button-next svg,
@@ -690,7 +690,7 @@ span.flatpickr-weekday,
 }
 
 .fc-header-toolbar.fc-toolbar .fc-toolbar-chunk:last-child {
-  @apply rounded-lg bg-gray-100 p-0.5 dark:bg-gray-900;
+  @apply rounded-lg bg-gray-100 p-0.5 dark:bg-[#3a383d];
 }
 
 .fc-header-toolbar.fc-toolbar .fc-toolbar-chunk:last-child .fc-button {
@@ -702,7 +702,7 @@ span.flatpickr-weekday,
 }
 
 .fc-theme-standard th {
-  @apply !border-x-0 border-t !border-gray-200 bg-gray-50 !text-left dark:!border-gray-800 dark:bg-gray-900;
+  @apply !border-x-0 border-t !border-gray-200 bg-gray-50 !text-left dark:!border-gray-800 dark:bg-[#3a383d];
 }
 
 .fc-theme-standard td,

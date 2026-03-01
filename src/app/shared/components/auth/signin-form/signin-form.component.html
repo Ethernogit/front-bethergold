@@ -7,8 +7,8 @@
 
     <!-- Modal -->
     <div class="inline-block w-full max-w-md my-8 overflow-hidden text-left align-middle transition-all transform
-             bg-[#FFFDF7] dark:bg-[#252017]
-             border border-[#E8D9A0] dark:border-[#3D3420]
+             bg-[#FFFDF7] dark:bg-[#232126]
+             border border-[#E8D9A0] dark:border-[#4A474D]
              shadow-2xl rounded-2xl relative z-[9999]">
       <app-organization-selector [organizations]="availableOrganizations" [isLoading]="isOrgSelectionLoading"
         (organizationSelected)="onOrganizationSelected($event)" (cancelled)="onOrganizationSelectionCancelled()">
@@ -18,11 +18,11 @@
 </div>
 }
 
-<div class="min-h-screen w-full flex overflow-hidden bg-[#FFFDF7] dark:bg-[#1A1714]">
+<div class="min-h-screen w-full flex overflow-hidden bg-[#FFFDF7] dark:bg-[#3a383d]">
 
   <!-- ─── Left Side: Form ─────────────────────────────────────────────── -->
   <div class="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 lg:p-14 relative z-10
-              bg-[#FFFDF7] dark:bg-[#1A1714]">
+              bg-[#FFFDF7] dark:bg-[#3a383d]">
 
     <div class="w-full max-w-md space-y-8">
 
@@ -35,7 +35,7 @@
 
       <!-- Header -->
       <div class="text-center lg:text-left">
-        <h1 class="font-outfit text-2xl lg:text-title-sm font-bold tracking-tight text-[#191817] dark:text-white mb-2">
+        <h1 class="font-outfit text-2xl lg:text-title-sm font-bold tracking-tight text-[#191817] dark:text-[#E8C97A] mb-2">
           Bienvenido de <span class="text-[#C69214]">vuelta</span>
         </h1>
         <p class="font-display text-theme-sm text-[#6B6560] dark:text-gray-400">
@@ -107,7 +107,7 @@
         <!-- Submit Button -->
         <button type="submit" [disabled]="isLoading" (click)="onSignIn()" class="w-full relative overflow-hidden flex items-center justify-center gap-2 rounded-xl
                  bg-gradient-to-br from-[#C69214] to-[#FAC600]
-                 px-5 py-3 font-outfit text-sm font-semibold text-[#191817]
+                 px-5 py-3 font-outfit text-sm font-semibold text-[#191817] dark:text-white
                  shadow-theme-sm transition-all
                  hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md
                  active:scale-[0.98]
