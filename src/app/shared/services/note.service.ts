@@ -98,4 +98,8 @@ export class NoteService {
     updateClient(noteId: string, clientId: string): Observable<{ success: boolean; data: Note; message?: string }> {
         return this.http.put<{ success: boolean; data: Note; message?: string }>(`${this.apiUrl}/${noteId}/client`, { clientId });
     }
+
+    updateItemDeliveryStatus(noteId: string, itemId: string): Observable<{ success: boolean; data: Note; message?: string }> {
+        return this.http.put<{ success: boolean; data: Note; message?: string }>(`${this.apiUrl}/${noteId}/items/${itemId}/deliver`, {});
+    }
 }

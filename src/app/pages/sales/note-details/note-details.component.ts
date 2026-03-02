@@ -548,4 +548,26 @@ export class NoteDetailsComponent implements OnInit {
             }
         });
     }
+
+    markAsDelivered(itemId: string) {
+        if (!this.rawNote?._id) return;
+
+        this.isLoading = true;
+        this.noteService.updateItemDeliveryStatus(this.rawNote._id, itemId).subscribe({
+            next: (response) => {
+                if (response.success) {
+                    this.toastService.success('Artículo marcado como entregado');
+                    this.mapNoteData(response.data);
+                } else {
+                    this.toastService.error(response.message || 'Error al actualizar el estado de entrega');
+                }
+                this.isLoading = false;
+            },
+            error: (err) => {
+                console.error(err);
+                this.toastService.error('Error al actualizar el estado de entrega');
+                this.isLoading = false;
+            }
+        });
+    }
 }
