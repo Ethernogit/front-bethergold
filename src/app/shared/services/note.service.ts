@@ -31,7 +31,7 @@ export interface NoteItem {
 
 export interface NotePayment {
     amount: number;
-    method: 'cash' | 'card' | 'transfer' | 'deposit' | 'credit' | 'other';
+    method: 'cash' | 'card' | 'transfer' | 'deposit' | 'points' | 'credit' | 'other';
     reference?: string;
     date?: Date;
 }
@@ -41,6 +41,7 @@ export interface Note {
     folio?: string;
     organizationId?: string;
     sucursalId: string;
+    type?: string;
     clientId: string | { _id: string; name: string; email?: string; phone?: string };
     sellerId?: string | { profile: { firstName: string; lastName: string } };
     items: NoteItem[];
@@ -53,7 +54,7 @@ export interface Note {
         balanceDue: number;
     };
     payments: NotePayment[];
-    status?: 'BORRADOR' | 'PENDIENTE_PAGO' | 'PAGADA' | 'ENTREGADA' | 'ANULADA';
+    status?: 'BORRADOR' | 'PENDIENTE_PAGO' | 'PAGADA' | 'ENTREGADA' | 'ANULADA' | 'CONSIGNACION';
     notes?: string;
     createdAt?: Date;
     updatedAt?: Date;
@@ -101,5 +102,9 @@ export class NoteService {
 
     updateItemDeliveryStatus(noteId: string, itemId: string): Observable<{ success: boolean; data: Note; message?: string }> {
         return this.http.put<{ success: boolean; data: Note; message?: string }>(`${this.apiUrl}/${noteId}/items/${itemId}/deliver`, {});
+    }
+
+    settleConsignment(noteId: string, payload: any): Observable<{ success: boolean; data: any; message?: string }> {
+        return this.http.post<{ success: boolean; data: any; message?: string }>(`${this.apiUrl}/${noteId}/consignments/settle`, payload);
     }
 }

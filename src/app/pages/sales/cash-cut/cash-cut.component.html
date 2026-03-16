@@ -196,14 +196,16 @@
                                             <i class="fas text-xs" [ngClass]="{
                                                 'fa-money-bill-wave text-success-500': payment.paymentMethod === 'cash',
                                                 'fa-credit-card text-[#9A6F0A]': payment.paymentMethod === 'card',
-                                                'fa-exchange-alt text-[#C69214]': payment.paymentMethod === 'transfer'
+                                                'fa-exchange-alt text-[#C69214]': payment.paymentMethod === 'transfer',
+                                                'fa-coins text-[#9A6F0A] dark:text-[#E8C97A]': payment.paymentMethod === 'points'
                                             }"></i>
                                             <span class="capitalize text-theme-xs" [ngClass]="{
                                                 'text-success-600 dark:text-success-400': payment.paymentMethod === 'cash',
-                                                'text-[#9A6F0A] dark:text-[#E8C97A]': payment.paymentMethod === 'card',
+                                                'text-[#9A6F0A] dark:text-[#E8C97A]': payment.paymentMethod === 'card' || payment.paymentMethod === 'points',
                                                 'text-[#C69214] dark:text-[#FAC600]': payment.paymentMethod === 'transfer'
                                             }">{{ payment.paymentMethod === 'cash' ? 'Efect.' : payment.paymentMethod
-                                                === 'card' ? 'Tarj.' : 'Transf.' }}</span>
+                                                === 'card' ? 'Tarj.' : payment.paymentMethod === 'transfer' ? 'Transf.'
+                                                : 'Puntos' }}</span>
                                         </div>
                                     </td>
                                     <td
@@ -296,6 +298,11 @@
                             <span>Ventas (Efectivo):</span>
                             <span>+{{ report.financials.sales.cash | currency }}</span>
                         </div>
+                        <div *ngIf="report.financials.sales.points > 0"
+                            class="flex justify-between font-instrument text-theme-sm text-[#46424A] dark:text-gray-300 opacity-80">
+                            <span>Pagado c/ Puntos:</span>
+                            <span>{{ report.financials.sales.points | currency }} pts</span>
+                        </div>
                         <div
                             class="flex justify-between font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">
                             <span>Entradas Extra:</span>
@@ -384,7 +391,7 @@
                 <div
                     class="mb-6 rounded-xl border border-[#E8D9A0] bg-[#FBF0C9] p-4 dark:border-[#4A474D] dark:bg-[#3D3420]">
                     <p class="font-instrument text-theme-sm font-medium text-[#9A6F0A] dark:text-[#E8C97A]">
-                        El sistema calculó <strong>{{ report?.financials?.expectedCashInDrawer | currency }}</strong> en
+                        El sistema calculó <strong>{{ report.financials.expectedCashInDrawer | currency }}</strong> en
                         efectivo. Cuenta los billetes y monedas físicos e ingresa el total real.
                     </p>
                 </div>

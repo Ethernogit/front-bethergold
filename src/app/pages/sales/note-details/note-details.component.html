@@ -420,13 +420,14 @@
                                         </thead>
                                         <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#4A474D]">
                                             <tr *ngFor="let item of items.reserved"
-                                                class="hover:bg-[#FBF0C9]/30 dark:hover:bg-white/5 transition-colors">
-                                                <td
-                                                    class="px-6 py-4 font-instrument text-theme-sm font-medium text-[#191817] dark:text-white">
+                                                class="hover:bg-[#FBF0C9]/30 dark:hover:bg-white/5 transition-colors"
+                                                [ngClass]="{'opacity-50 grayscale': item.returned}">
+                                                <td class="px-6 py-4 font-instrument text-theme-sm font-medium text-[#191817] dark:text-white"
+                                                    [ngClass]="{'line-through': item.returned}">
                                                     {{item.ref}}</td>
                                                 <td class="px-6 py-4">
-                                                    <div
-                                                        class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white">
+                                                    <div class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white"
+                                                        [ngClass]="{'line-through': item.returned}">
                                                         {{item.name}}</div>
                                                     <div
                                                         class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">
@@ -434,7 +435,8 @@
                                                 </td>
                                                 <td class="px-6 py-4 flex flex-col md:flex-row items-center gap-2">
                                                     <span
-                                                        class="inline-flex items-center gap-1.5 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]">{{item.status}}</span>
+                                                        class="inline-flex items-center gap-1.5 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]">{{item.returned
+                                                        ? 'Devuelto' : item.status}}</span>
                                                     <button
                                                         *ngIf="note?.status === 'Pagado' && item.itemStatus === 'pending'"
                                                         (click)="markAsDelivered(item.id)"
@@ -494,7 +496,8 @@
                                         </thead>
                                         <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#4A474D]">
                                             <tr *ngFor="let item of items.workshop"
-                                                class="hover:bg-[#FBF0C9]/30 dark:hover:bg-white/5 transition-colors">
+                                                class="hover:bg-[#FBF0C9]/30 dark:hover:bg-white/5 transition-colors"
+                                                [ngClass]="{'opacity-50 grayscale': item.returned}">
                                                 <td class="px-6 py-4">
                                                     <div class="flex items-center gap-3">
                                                         <div
@@ -508,18 +511,20 @@
                                                             </svg>
                                                         </div>
                                                         <span
-                                                            class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white">{{item.title}}</span>
+                                                            class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white"
+                                                            [ngClass]="{'line-through': item.returned}">{{item.title}}</span>
                                                     </div>
                                                 </td>
-                                                <td
-                                                    class="px-6 py-4 font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+                                                <td class="px-6 py-4 font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300"
+                                                    [ngClass]="{'line-through': item.returned}">
                                                     {{item.jobId}}</td>
                                                 <td
                                                     class="px-6 py-4 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400">
                                                     {{item.estReady}}</td>
                                                 <td class="px-6 py-4 flex flex-col md:flex-row items-center gap-2">
                                                     <span
-                                                        class="inline-flex items-center gap-1.5 rounded-full bg-[#F5F0EC] px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-[#46424A] dark:bg-white/5 dark:text-gray-400">{{item.status}}</span>
+                                                        class="inline-flex items-center gap-1.5 rounded-full bg-[#F5F0EC] px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-[#46424A] dark:bg-white/5 dark:text-gray-400">{{item.returned
+                                                        ? 'Devuelto' : item.status}}</span>
                                                     <button
                                                         *ngIf="note?.status === 'Pagado' && item.itemStatus === 'pending'"
                                                         (click)="markAsDelivered(item.id)"
@@ -580,9 +585,10 @@
                                         </thead>
                                         <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#4A474D]">
                                             <tr *ngFor="let item of items.custom"
-                                                class="hover:bg-[#FBF0C9]/30 dark:hover:bg-white/5 transition-colors">
-                                                <td
-                                                    class="px-6 py-4 font-instrument text-theme-xs font-medium text-[#191817] dark:text-white">
+                                                class="hover:bg-[#FBF0C9]/30 dark:hover:bg-white/5 transition-colors"
+                                                [ngClass]="{'opacity-50 grayscale': item.returned}">
+                                                <td class="px-6 py-4 font-instrument text-theme-xs font-medium text-[#191817] dark:text-white"
+                                                    [ngClass]="{'line-through': item.returned}">
                                                     {{item.jobId}}</td>
                                                 <td class="px-6 py-4">
                                                     <div class="flex items-center gap-3">
@@ -598,8 +604,8 @@
                                                             </svg>
                                                         </div>
                                                         <div>
-                                                            <div
-                                                                class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white">
+                                                            <div class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white"
+                                                                [ngClass]="{'line-through': item.returned}">
                                                                 {{item.title}}</div>
                                                             <div
                                                                 class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">
@@ -614,7 +620,8 @@
                                                     {{item.estReady}}</td>
                                                 <td class="px-6 py-4 flex flex-col md:flex-row items-center gap-2">
                                                     <span
-                                                        class="inline-flex items-center gap-1.5 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]">{{item.status}}</span>
+                                                        class="inline-flex items-center gap-1.5 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]">{{item.returned
+                                                        ? 'Devuelto' : item.status}}</span>
                                                     <button
                                                         *ngIf="note?.status === 'Pagado' && item.itemStatus === 'pending'"
                                                         (click)="markAsDelivered(item.id)"
@@ -708,7 +715,14 @@
                                         </td>
                                         <td
                                             class="px-6 py-4 font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
-                                            {{txn.type}}</td>
+                                            {{ 
+                                                txn.type === 'cash' ? 'Efectivo' : 
+                                                txn.type === 'card' ? 'Tarjeta' : 
+                                                txn.type === 'points' ? 'Puntos' : 
+                                                txn.type === 'transfer' ? 'Transferencia' : 
+                                                txn.type === 'deposit' ? 'Depósito' : 'Otro'
+                                            }}
+                                        </td>
                                         <td
                                             class="px-6 py-4 text-right font-instrument font-bold text-success-600 dark:text-success-400">
                                             +${{txn.amount | number:'1.2-2'}}</td>
@@ -725,8 +739,8 @@
     </main>
 
     <!-- Global Payment Modal -->
-    <app-global-payment [isOpen]="showPaymentModal()" [note]="rawNote" (close)="showPaymentModal.set(false)"
-        (paymentSuccess)="onPaymentSuccess($event)">
+    <app-global-payment [isOpen]="showPaymentModal()" [note]="rawNote" [clientPoints]="client?.points || 0"
+        (close)="showPaymentModal.set(false)" (paymentSuccess)="onPaymentSuccess($event)">
     </app-global-payment>
 
     <!-- Client Selection Modal -->

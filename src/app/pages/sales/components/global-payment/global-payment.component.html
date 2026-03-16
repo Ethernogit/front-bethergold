@@ -111,6 +111,16 @@
                                 <span class="text-xs font-medium">Tarjeta</span>
                             </label>
 
+                            <label *ngIf="clientPoints() > 0"
+                                class="cursor-pointer border border-gray-200 dark:border-[#2a364a] bg-white dark:bg-[#111722] rounded-lg px-3 py-2 flex flex-col items-center gap-1 hover:border-primary dark:hover:border-primary transition-all text-center group text-gray-700 dark:text-gray-300"
+                                [ngClass]="{'border-primary bg-primary/5 dark:bg-primary/20 text-primary ring-1 ring-primary': paymentForm.get('method')?.value === 'points'}">
+                                <input type="radio" formControlName="method" value="points" class="sr-only">
+                                <span class="text-xl group-hover:scale-110 transition-transform">🪙</span>
+                                <span
+                                    class="text-[9px] font-bold uppercase tracking-tight text-success-600 dark:text-success-400">Puntos:
+                                    {{ clientPoints() | currency }}</span>
+                            </label>
+
                             <label
                                 class="cursor-pointer border border-gray-200 dark:border-[#2a364a] bg-white dark:bg-[#111722] rounded-lg px-3 py-2 flex flex-col items-center gap-1 hover:border-primary dark:hover:border-primary transition-all text-center group text-gray-700 dark:text-gray-300"
                                 [ngClass]="{'border-primary bg-primary/5 dark:bg-primary/20 text-primary ring-1 ring-primary': paymentForm.get('method')?.value === 'transfer'}">

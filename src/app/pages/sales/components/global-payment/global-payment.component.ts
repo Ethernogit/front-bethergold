@@ -17,6 +17,7 @@ export class GlobalPaymentComponent {
     // Inputs
     isOpen = input.required<boolean>();
     note = input<Note | null>(null);
+    clientPoints = input<number>(0);
 
     // Outputs
     @Output() close = new EventEmitter<void>();
@@ -56,8 +57,14 @@ export class GlobalPaymentComponent {
         // Validate amount against balance if we want to be strict, but usually backend handles or we allow overpayment as credit?
         // For now, let's assume we can't pay more than balance? Or maybe we can. 
         // Let's stick to simple form validation.
-
         const formValue = this.paymentForm.value;
+
+        // Custom validation for points
+        if (formValue.method === 'points' && formValue.amount > this.clientPoints()) {
+            this.toastService.warning(`Puntos insuficientes. Máximo disponible: $${this.clientPoints().toFixed(2)}`);
+            return;
+        }
+
         const paymentData: NotePayment = {
             amount: formValue.amount,
             method: formValue.method,

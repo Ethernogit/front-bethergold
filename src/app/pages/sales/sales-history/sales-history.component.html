@@ -95,7 +95,16 @@
                             (click)="viewNoteDetail(note)">
                             <td
                                 class="px-6 py-4 whitespace-nowrap font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white">
-                                {{ note.folio }}
+                                <div class="flex flex-col gap-1">
+                                    <span>{{ note.folio }}</span>
+                                    <span class="inline-flex w-fit items-center rounded-md px-1.5 py-0.5 text-[10px] font-medium"
+                                        [ngClass]="{
+                                            'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-800': note.type === 'consignment' || note.status === 'CONSIGNACION',
+                                            'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400 border border-blue-100 dark:border-blue-800': note.type === 'sale' && note.status !== 'CONSIGNACION'
+                                        }">
+                                        {{ (note.type === 'consignment' || note.status === 'CONSIGNACION') ? 'MAYOREO' : 'MENUDEO' }}
+                                    </span>
+                                </div>
                             </td>
                             <td
                                 class="px-6 py-4 whitespace-nowrap font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">
@@ -112,17 +121,17 @@
                                     class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-instrument text-theme-xs font-medium"
                                     [ngClass]="{
                                 'bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-400': note.status === 'PAGADA' || note.status === 'ENTREGADA',
-                                'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]': note.status === 'PENDIENTE_PAGO',
+                                'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]': note.status === 'PENDIENTE_PAGO' || note.status === 'CONSIGNACION',
                                 'bg-[#F5F0EC] text-[#46424A] dark:bg-white/5 dark:text-gray-400': note.status === 'BORRADOR',
                                 'bg-error-50 text-error-700 dark:bg-error-500/15 dark:text-error-400': note.status === 'ANULADA'
                             }">
                                     <span class="size-1.5 rounded-full" [ngClass]="{
                                     'bg-success-500': note.status === 'PAGADA' || note.status === 'ENTREGADA',
-                                    'bg-[#C69214]': note.status === 'PENDIENTE_PAGO',
+                                    'bg-[#C69214]': note.status === 'PENDIENTE_PAGO' || note.status === 'CONSIGNACION',
                                     'bg-[#6B6560]': note.status === 'BORRADOR',
                                     'bg-error-500': note.status === 'ANULADA'
                                 }"></span>
-                                    {{ note.status }}
+                                    {{ note.status === 'CONSIGNACION' ? 'MAYOREO' : note.status }}
                                 </span>
                             </td>
                             <td

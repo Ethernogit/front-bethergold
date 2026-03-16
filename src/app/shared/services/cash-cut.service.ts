@@ -45,6 +45,7 @@ export interface ShiftReport {
             cash: number;
             card: number;
             transfer: number;
+            points: number;
             other: number;
             total: number;
             details?: any[];

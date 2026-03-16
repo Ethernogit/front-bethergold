@@ -8,6 +8,7 @@ import { LoginService } from '../../../shared/services/auth/login.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { SucursalService } from '../../../shared/services/sucursal.service';
 import { CashCutService } from '../../../shared/services/cash-cut.service'; // Import CashCutService
+import { PricingRuleService, PricingRule } from '../../../shared/services/pricing-rule.service'; // Pricing Engine
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, switchMap, catchError, filter } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -38,6 +39,9 @@ export class NewNoteComponent implements OnInit {
     searchResults: Product[] = [];
     isSearching = false;
 
+    // Pricing Rules Engine
+    activeRules: PricingRule[] = [];
+
     // UX State
     showPaymentModal = false;
     showManualEntryModal = false;
@@ -47,7 +51,8 @@ export class NewNoteComponent implements OnInit {
     selectedClient: any = null;
     currentDate = new Date();
     nextFolio = '---';
-    paymentMethod: 'cash' | 'card' = 'cash';
+    paymentMethod: 'cash' | 'card' | 'points' = 'cash';
+    saleType: 'sale' | 'consignment' = 'sale'; // NEW: Toggle between normal and consignment
 
     constructor(
         private fb: FormBuilder,
@@ -58,6 +63,7 @@ export class NewNoteComponent implements OnInit {
         private toastService: ToastService,
         private sucursalService: SucursalService,
         private cashCutService: CashCutService, // Inject Service
+        private pricingRuleService: PricingRuleService, // Pricing Engine
         private router: Router
     ) {
         this.noteForm = this.fb.group({
@@ -71,6 +77,7 @@ export class NewNoteComponent implements OnInit {
             cashAmount: [0],
             cardAmount: [0],
             transferAmount: [0],
+            pointsAmount: [0],
             reference: ['']
         });
     }
@@ -81,6 +88,16 @@ export class NewNoteComponent implements OnInit {
         this.setupSearch();
         this.loadNextFolio();
         this.loadDefaultClient();
+        this.loadPricingRules();
+    }
+
+    loadPricingRules() {
+        this.pricingRuleService.getPricingRules({ active: true }).subscribe({
+            next: (res: any) => {
+                this.activeRules = res.data || [];
+            },
+            error: (err) => console.error('Error loading pricing rules', err)
+        });
     }
 
     checkOpenShift() {
@@ -142,9 +159,17 @@ export class NewNoteComponent implements OnInit {
         });
     }
 
-    setPaymentMethod(method: 'cash' | 'card') {
+    setPaymentMethod(method: 'cash' | 'card' | 'points') {
         this.paymentMethod = method;
         this.calculateTotals(); // Re-calculate to reset fields
+    }
+
+    toggleSaleType() {
+        this.saleType = this.saleType === 'sale' ? 'consignment' : 'sale';
+        if (this.saleType === 'consignment' && !this.isWholesaleClient) {
+            this.toastService.warning('Recuerde que las ventas de mayoreo son solo para clientes de Mayoreo.');
+        }
+        this.recalculateAllPrices();
     }
 
     openClientModal() {
@@ -156,7 +181,12 @@ export class NewNoteComponent implements OnInit {
         if (client) {
             this.selectedClient = client;
             this.noteForm.patchValue({ clientId: client._id });
+            this.recalculateAllPrices(); // Re-calculate prices if client type changed
         }
+    }
+
+    get isWholesaleClient(): boolean {
+        return this.selectedClient?.type === 'MAYOREO' || this.selectedClient?.type === 'MAYORISTA';
     }
 
     setupSearch() {
@@ -207,6 +237,82 @@ export class NewNoteComponent implements OnInit {
         return product.category.name || 'N/A';
     }
 
+    // --- Pricing Engine Core ---
+
+    calculatePriceForProduct(product: Product): { price: number, ruleApplied?: boolean, ruleName?: string, originalPrice?: number } {
+        // Base case: Not wholesale or no rules active
+        if (!this.isWholesaleClient || this.activeRules.length === 0) {
+            return { price: product.price || 0, originalPrice: product.price };
+        }
+
+        const categoryId = typeof product.category === 'string' ? product.category : product.category?._id;
+        const subcategoryId = typeof product.subcategory === 'string' ? product.subcategory : product.subcategory?._id;
+        const material = product.jewelryDetails?.goldType || '';
+        const weight = product.specifications?.weight || 0;
+
+        // Find applicable rule. Priority logic: Specific Subcategory > Category > Material
+        // For simplicity, we just find the first matching rule, assuming backend sorts by priority or we just take the first.
+        const rule = this.activeRules.find(r => {
+            if (r.criteriaType === 'CATEGORY' && categoryId) {
+                return (r.criteriaValue === categoryId);
+            }
+            if (r.criteriaType === 'MATERIAL' && material) {
+                return (r.criteriaValue.toLowerCase() === material.toLowerCase());
+            }
+            return false;
+        });
+
+        if (rule) {
+            let finalPrice = product.price || 0;
+
+            if (rule.ruleType === 'PRICE_PER_GRAM' && weight > 0) {
+                finalPrice = rule.ruleValue * weight;
+            } else if (rule.ruleType === 'FIXED_PRICE') {
+                finalPrice = rule.ruleValue;
+            } else if (rule.ruleType === 'DISCOUNT_PERCENTAGE') {
+                finalPrice = finalPrice * (1 - (rule.ruleValue / 100));
+            }
+
+            return {
+                price: parseFloat(finalPrice.toFixed(2)),
+                ruleApplied: true,
+                ruleName: rule.name,
+                originalPrice: product.price
+            };
+        }
+
+        return { price: product.price || 0, originalPrice: product.price };
+    }
+
+    recalculateAllPrices() {
+        const items = this.items.controls;
+        let showToast = false;
+
+        items.forEach((itemCtrl: any) => {
+            const rawProduct = itemCtrl.get('rawProduct')?.value;
+            if (rawProduct && itemCtrl.get('type')?.value === 'jewelry') {
+                const { price, ruleApplied, originalPrice } = this.calculatePriceForProduct(rawProduct);
+
+                // Only override if the user hasn't manually overridden it heavily, or if they just switched client types.
+                // For safety, we always override to the rule price and let the user re-override if needed.
+                itemCtrl.patchValue({
+                    unitPrice: price,
+                    originalPrice: originalPrice,
+                    ruleApplied: ruleApplied
+                });
+
+                if (ruleApplied) showToast = true;
+            }
+        });
+
+        if (showToast) {
+            this.toastService.success('Precios de Mayoreo Aplicados');
+        }
+
+        this.calculateTotals();
+    }
+
+
     // --- Item Management ---
 
     selectProduct(product: Product) {
@@ -216,23 +322,29 @@ export class NewNoteComponent implements OnInit {
         const isUnique = product.isUnique !== false; // Default to true if undefined
         const maxStock = isUnique ? 1 : (product.stock || 0);
 
+        // Pass to Pricing Engine
+        const { price, ruleApplied, ruleName, originalPrice } = this.calculatePriceForProduct(product);
+
         const itemGroup = this.fb.group({
             itemId: [product._id],
             itemModel: ['Product'],
             type: [type],
             name: [product.name || product.description || 'Producto sin nombre', Validators.required],
-            deliveryStatus: ['immediate'], // Default: Se lo lleva
+            deliveryStatus: [this.saleType === 'consignment' ? 'pending' : 'immediate'], // Consignments are pending by default (they owe it)
             // If unique, lock to 1. If bulk, allow 1 to maxStock
             quantity: [1, [Validators.required, Validators.min(0.01), ...(isUnique ? [Validators.max(1)] : [Validators.max(maxStock)])]],
-            unitPrice: [product.price || 0, [Validators.required, Validators.min(0)]],
+            unitPrice: [price, [Validators.required, Validators.min(0)]],
+            originalPrice: [originalPrice],
+            ruleApplied: [ruleApplied],
             discount: [0, [Validators.min(0)]],
-            subtotal: [product.price || 0],
+            subtotal: [price],
             isUnique: [isUnique], // For UI condition
             maxStock: [maxStock], // For UI validation msg
+            rawProduct: [product], // Store to recalculate later
             specifications: this.fb.group({
                 material: [product.jewelryDetails?.goldType || ''],
                 size: [''],
-                weight: [product.specifications?.weight || ''],
+                weight: [product.specifications?.weight || 0],
                 karatage: [product.jewelryDetails?.karatage || ''],
                 notes: [product.barcode || product.sku || '']
             })
@@ -245,7 +357,12 @@ export class NewNoteComponent implements OnInit {
         this.searchControl.setValue('', { emitEvent: false });
         this.searchResults = [];
         this.calculateTotals();
-        this.toastService.success('Producto agregado');
+
+        if (ruleApplied) {
+            this.toastService.success(`Producto agregado (Regla Aplicada: ${ruleName})`);
+        } else {
+            this.toastService.success('Producto agregado');
+        }
     }
 
     openManualEntryModal() {
@@ -383,7 +500,7 @@ export class NewNoteComponent implements OnInit {
             itemModel: ['Single'],
             type: [type],
             name: ['', Validators.required],
-            deliveryStatus: ['immediate'],
+            deliveryStatus: [this.saleType === 'consignment' ? 'pending' : 'immediate'],
             quantity: [1, [Validators.required, Validators.min(0.01)]],
             unitPrice: [0, [Validators.required, Validators.min(0)]],
             discount: [0, [Validators.min(0)]],
@@ -440,6 +557,9 @@ export class NewNoteComponent implements OnInit {
     }
 
     get minRequiredPayment(): number {
+        // Consignments require 0 payment upfront
+        if (this.saleType === 'consignment') return 0;
+
         // Sum of all items marked as 'immediate' (must be fully paid)
         // Items marked as 'pending' (apartado) can be partially paid.
         const items = this.items.getRawValue();
@@ -476,7 +596,21 @@ export class NewNoteComponent implements OnInit {
                 receivedAmount: total,
                 changeAmount: 0,
                 cashAmount: 0,
-                cardAmount: total
+                cardAmount: total,
+                pointsAmount: 0
+            }, { emitEvent: false });
+            return;
+        }
+
+        if (this.paymentMethod === 'points') {
+            const availablePoints = this.selectedClient?.points || 0;
+            const pointsToUse = availablePoints >= total ? total : availablePoints;
+            this.noteForm.patchValue({
+                receivedAmount: pointsToUse,
+                changeAmount: 0,
+                cashAmount: 0,
+                cardAmount: 0,
+                pointsAmount: pointsToUse
             }, { emitEvent: false });
             return;
         }
@@ -488,13 +622,16 @@ export class NewNoteComponent implements OnInit {
         this.noteForm.patchValue({
             changeAmount: change > 0 ? change : 0,
             cashAmount: received >= total ? total : received, // If partial, take all received. If over, cap at total
-            cardAmount: 0
+            cardAmount: 0,
+            pointsAmount: 0
         }, { emitEvent: false });
     }
 
     // --- Submission ---
 
     get confirmButtonText(): string {
+        if (this.saleType === 'consignment') return 'DAR A MAYOREO';
+
         const total = this.noteForm.get('total')?.value || 0;
         let paid = 0;
         if (this.paymentMethod === 'cash') {
@@ -503,8 +640,10 @@ export class NewNoteComponent implements OnInit {
             paid = received - change; // Actual paid amount logic
             // Or simpler: Math.min(received, total) if logic holds
             paid = (received >= total) ? total : received;
-        } else {
+        } else if (this.paymentMethod === 'card') {
             paid = this.noteForm.get('cardAmount')?.value || 0;
+        } else if (this.paymentMethod === 'points') {
+            paid = this.noteForm.get('pointsAmount')?.value || 0;
         }
 
         return (total - paid) > 0.01 ? 'GENERAR APARTADO' : 'CONFIRMAR VENTA';
@@ -515,8 +654,10 @@ export class NewNoteComponent implements OnInit {
     }
 
     get isPaymentInsufficient(): boolean {
+        if (this.saleType === 'consignment') return false; // Consignments can have 0 payment
+
         const formVal = this.noteForm.getRawValue();
-        const totalPaying = (this.paymentMethod === 'cash' ? formVal.cashAmount : formVal.cardAmount) || 0;
+        const totalPaying = (this.paymentMethod === 'cash' ? formVal.cashAmount : (this.paymentMethod === 'card' ? formVal.cardAmount : formVal.pointsAmount)) || 0;
         return totalPaying < (this.minRequiredPayment - 0.01);
     }
 
@@ -528,16 +669,15 @@ export class NewNoteComponent implements OnInit {
 
         const formVal = this.noteForm.getRawValue();
 
-        // Validate Min Payment Logic
-        // Calculate total being paid now
-        const totalPaying = (this.paymentMethod === 'cash' ? formVal.cashAmount : formVal.cardAmount) || 0;
+        // Validate Min Payment Logic (Skip for Consignment)
+        if (this.saleType === 'sale') {
+            const totalPaying = (this.paymentMethod === 'cash' ? formVal.cashAmount : (this.paymentMethod === 'card' ? formVal.cardAmount : formVal.pointsAmount)) || 0;
+            const minReq = this.minRequiredPayment;
 
-        // Min Required = Sum of Immediate Items
-        const minReq = this.minRequiredPayment;
-
-        if (totalPaying < minReq - 0.01) { // 0.01 tolerance
-            this.toastService.warning(`El pago ($${totalPaying}) no cubre los productos que se lleva de contado ($${minReq}). Aumente el pago o marque productos como apartado.`);
-            return;
+            if (totalPaying < minReq - 0.01) { // 0.01 tolerance
+                this.toastService.warning(`El pago ($${totalPaying}) no cubre los productos que se lleva de contado ($${minReq}). Aumente el pago o marque productos como apartado.`);
+                return;
+            }
         }
 
         this.isLoading = true;
@@ -553,10 +693,13 @@ export class NewNoteComponent implements OnInit {
         // Prepare Payments Array
         const payments: any[] = [];
         // Only push one payment based on selected method (for now, simpler UX)
+        // Consignments shouldn't have initial payment ideally, but if they do, we record it.
         if (this.paymentMethod === 'cash' && formVal.cashAmount > 0) {
             payments.push({ amount: formVal.cashAmount, method: 'cash' });
         } else if (this.paymentMethod === 'card' && formVal.cardAmount > 0) {
             payments.push({ amount: formVal.cardAmount, method: 'card', reference: formVal.reference });
+        } else if (this.paymentMethod === 'points' && formVal.pointsAmount > 0) {
+            payments.push({ amount: formVal.pointsAmount, method: 'points' });
         }
 
 
@@ -569,6 +712,7 @@ export class NewNoteComponent implements OnInit {
         const noteData: Note = {
             sucursalId: currentSucursal._id || '',
             clientId: formVal.clientId,
+            type: this.saleType, // Assign Type
             items: formVal.items.map((item: any) => ({
                 itemId: item.itemId,
                 itemModel: item.itemModel,
@@ -599,7 +743,10 @@ export class NewNoteComponent implements OnInit {
 
         this.noteService.createNote(noteData).subscribe({
             next: (res) => {
-                const action = (balanceDue > 0.01) ? 'Apartado generado' : 'Venta completada';
+                let action = '';
+                if (this.saleType === 'consignment') action = 'Nota de Mayoreo creada';
+                else action = (balanceDue > 0.01) ? 'Apartado generado' : 'Venta completada';
+
                 this.toastService.success(`${action} exitosamente (Folio: ${res.data.folio})`);
                 this.router.navigate(['/sales/history']);
             },

@@ -1,0 +1,408 @@
+<div class="px-4 py-4 w-full min-h-[calc(100vh-50px)] pb-20">
+    <app-page-breadcrumb pageTitle="Corte de Mayoreo"></app-page-breadcrumb>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-20">
+        <div class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent">
+        </div>
+    </div>
+
+    <div *ngIf="!isLoading && note" class="flex flex-col xl:flex-row gap-6">
+
+        <!-- Left Column: Items to Process -->
+        <div class="flex-1 flex flex-col gap-6">
+
+            <!-- Note Header Info -->
+            <div
+                class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2
+                            class="font-instrument text-xl font-bold text-[#191817] dark:text-[#E8C97A] flex items-center gap-2">
+                            Corte de Mayoreo: {{ note.folio }}
+                        </h2>
+                        <p class="font-instrument text-[#6B6560] dark:text-gray-400 text-sm mt-1">
+                            Cliente: <span class="font-bold text-[#191817] dark:text-white">{{
+                                $any(note.clientId)?.name ||
+                                'Cargando...' }}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <div class="flex gap-6 border-b border-[#E8D9A0] dark:border-[#4A474D] mb-6">
+                <button type="button" (click)="activeTab = 'products'"
+                    [class]="activeTab === 'products' ? 'border-b-2 border-[#C69214] text-[#C69214] dark:border-[#FAC600] dark:text-[#FAC600] font-bold pb-2 outline-none' : 'text-[#6B6560] dark:text-gray-400 font-medium pb-2 transition-colors hover:text-[#C69214] dark:hover:text-[#FAC600] outline-none'">
+                    <i class="fas fa-boxes mr-2"></i> Artículos
+                </button>
+                <button type="button" (click)="activeTab = 'payments'"
+                    [class]="activeTab === 'payments' ? 'border-b-2 border-[#C69214] text-[#C69214] dark:border-[#FAC600] dark:text-[#FAC600] font-bold pb-2 outline-none' : 'text-[#6B6560] dark:text-gray-400 font-medium pb-2 transition-colors hover:text-[#C69214] dark:hover:text-[#FAC600] outline-none'">
+                    <i class="fas fa-list-ul mr-2"></i> Historial de Abonos
+                </button>
+            </div>
+
+            <!-- TAB: PRODUCTS -->
+            <div *ngIf="activeTab === 'products'"
+                class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] p-5 flex flex-col h-full">
+                <h3
+                    class="font-instrument font-bold text-[#191817] dark:text-white mb-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                    <span class="flex items-center gap-2"><i class="fas fa-boxes text-[#C69214]"></i> Artículos de
+                        Consignación</span>
+
+                    <div class="flex gap-2 text-xs font-bold font-instrument">
+                        <span
+                            class="bg-[#FBF0C9]/50 text-[#6B6560] border border-[#E8D9A0] px-2.5 py-1 rounded dark:bg-[#3D3420] dark:border-[#C69214]/30 dark:text-gray-400">
+                            Total: {{ note.items.length }}
+                        </span>
+                        <span
+                            class="bg-success-50 text-success-700 border border-success-200 px-2.5 py-1 rounded dark:bg-success-500/10 dark:text-success-400 dark:border-success-500/30">
+                            A Cobrar: {{ soldItems.length }}
+                        </span>
+                        <span
+                            class="bg-[#FBF0C9] text-[#9A6F0A] border border-[#E8D9A0] px-2.5 py-1 rounded dark:bg-[#4A474D] dark:text-[#E8C97A] dark:border-[#4A474D]">
+                            Devueltos: {{ returnedItems.length }}
+                        </span>
+                    </div>
+                </h3>
+
+                <div class="flex-1 overflow-y-auto pr-2 space-y-3">
+                    <div *ngIf="note.items.length === 0"
+                        class="text-center py-8 text-[#6B6560]/50 dark:text-gray-400/50 font-instrument">
+                        No hay artículos en esta nota.
+                    </div>
+                    <div *ngFor="let item of note.items"
+                        [ngClass]="isItemReturned(item) ? 'bg-[#FBF0C9]/20 border-[#E8D9A0]/50 dark:bg-[#232126] dark:border-[#4A474D]/50 opacity-75' : 'bg-white border-[#E8D9A0] dark:bg-[#3D3420]/30 dark:border-[#C69214]/30 shadow-sm'"
+                        class="border rounded-xl p-3 flex justify-between items-center transition-all">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <p [ngClass]="isItemReturned(item) ? 'line-through text-[#6B6560] dark:text-gray-400 opacity-50' : 'text-[#191817] dark:text-white'"
+                                    class="font-instrument font-bold text-sm">
+                                    {{ getProductName(item) }}
+                                </p>
+                                <span *ngIf="isItemReturned(item)"
+                                    class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]">
+                                    Devuelto
+                                </span>
+                                <span *ngIf="!isItemReturned(item)"
+                                    class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-success-50 text-success-700 dark:bg-success-500/10 dark:text-success-400 border border-success-200 dark:border-success-500/30">
+                                    A Cobrar
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <p class="font-instrument text-xs text-[#6B6560] dark:text-gray-400">
+                                    <i class="fas fa-barcode mr-1 opacity-50"></i> {{ ($any(item.itemId)?.barcode) ||
+                                    (item.specifications?.notes) || 'N/A' }}
+                                </p>
+                                <p [ngClass]="isItemReturned(item) ? 'opacity-50' : 'text-[#C69214] dark:text-[#FAC600] font-medium'"
+                                    class="font-instrument text-xs">
+                                    {{ item.financials.subtotal | currency }}
+                                </p>
+                            </div>
+                        </div>
+                        <button type="button" (click)="toggleReturnStatus(item)"
+                            [ngClass]="isItemReturned(item) ? 'text-[#191817] bg-[#E8D9A0] hover:bg-[#C69214] hover:text-white dark:bg-[#4A474D] dark:text-white dark:hover:bg-[#E8C97A] dark:hover:text-[#191817]' : 'text-error-600 bg-error-50 hover:bg-error-100 hover:text-error-700 border border-error-200 dark:bg-error-500/10 dark:text-error-400 dark:border-error-500/30 dark:hover:bg-error-500/20'"
+                            class="text-xs font-bold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 ml-3 flex-shrink-0">
+                            <i [class]="isItemReturned(item) ? 'fas fa-undo' : 'fas fa-reply'"></i>
+                            {{ isItemReturned(item) ? 'Deshacer' : 'Devolver' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: PAYMENTS -->
+            <div *ngIf="activeTab === 'payments'"
+                class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] p-0 flex flex-col h-full overflow-hidden">
+                <div
+                    class="p-5 border-b border-[#E8D9A0] dark:border-[#4A474D] bg-[#FFFDF7] dark:bg-[#232126] flex justify-between items-center">
+                    <h3 class="font-instrument font-bold text-[#191817] dark:text-white flex items-center gap-2">
+                        <i class="fas fa-hand-holding-usd text-[#C69214]"></i> Abonos a la Nota
+                    </h3>
+                    <div
+                        class="font-instrument text-xs font-bold px-3 py-1 bg-[#FBF0C9]/50 border border-[#E8D9A0] rounded-lg text-[#6B6560] dark:bg-[#3D3420] dark:text-gray-400 dark:border-[#C69214]/30">
+                        Total Pagado: <span class="text-[#C69214] dark:text-[#FAC600] font-extrabold ml-1">{{
+                            note.financials.balancePaid | currency }}</span>
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-y-auto">
+                    <div *ngIf="!note.payments || note.payments.length === 0"
+                        class="text-center py-10 text-[#6B6560]/50 dark:text-gray-400/50 font-instrument flex flex-col items-center">
+                        <i class="fas fa-file-invoice-dollar text-4xl mb-3 text-[#E8D9A0] dark:text-[#4A474D]"></i>
+                        Aún no se han registrado abonos en esta nota de mayoreo.
+                    </div>
+
+                    <div *ngIf="note.payments && note.payments.length > 0"
+                        class="divide-y divide-[#E8D9A0]/50 dark:divide-[#4A474D]/50">
+                        <div *ngFor="let payment of note.payments"
+                            class="p-4 bg-white hover:bg-[#FBF0C9]/10 dark:bg-[#191817]/50 dark:hover:bg-[#3D3420]/30 transition-colors flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="h-10 w-10 rounded-full bg-success-50 border border-success-200 dark:bg-success-500/10 dark:border-success-500/30 flex items-center justify-center text-success-600 dark:text-success-400 shadow-sm">
+                                    <i
+                                        [ngClass]="{
+                                            'fas fa-money-bill-wave': $any(payment).method === 'cash',
+                                            'fas fa-credit-card': $any(payment).method === 'card',
+                                            'fas fa-coins': $any(payment).method === 'points',
+                                            'fas fa-university': $any(payment).method === 'transfer' || $any(payment).method === 'deposit',
+                                            'fas fa-exchange-alt': $any(payment).method === 'other'
+                                        }"></i>
+                                </div>
+                                <div class="font-instrument">
+                                    <p class="font-bold text-[#191817] dark:text-white text-sm">
+                                        {{ 
+                                            $any(payment).method === 'cash' ? 'Pago en Efectivo' : 
+                                            $any(payment).method === 'card' ? 'Pago con Tarjeta' : 
+                                            $any(payment).method === 'points' ? 'Pago con Puntos' : 
+                                            $any(payment).method === 'transfer' ? 'Transferencia' : 
+                                            $any(payment).method === 'deposit' ? 'Depósito' : 'Otro Pago'
+                                        }}
+                                    </p>
+                                    <p class="text-xs text-[#6B6560] dark:text-gray-400 mt-0.5">
+                                        {{ payment.date | date:'dd MMM yyyy, h:mm a' }} <span *ngIf="payment.reference"
+                                            class="ml-1 text-[#C69214] dark:text-[#E8C97A] font-bold"> • Ref: {{
+                                            payment.reference }}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="font-instrument text-right">
+                                <p class="font-extrabold text-[#191817] dark:text-white text-base">
+                                    +{{ payment.amount | currency }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Checkout/Payment -->
+        <div class="w-full xl:w-1/3 shrink-0 flex flex-col gap-6">
+            <div
+                class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] p-6 sticky top-[80px]">
+
+                <h3
+                    class="font-instrument text-lg font-bold text-[#191817] dark:text-white mb-6 border-b border-[#E8D9A0] dark:border-[#4A474D] pb-3">
+                    Resumen de liquidación</h3>
+
+                <!-- Total Box -->
+                <div
+                    class="bg-[#FBF0C9]/40 dark:bg-[#232126] p-4 rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] mb-6 space-y-3 relative overflow-hidden">
+                    <div class="h-1 w-full bg-gradient-to-r from-[#C69214] to-[#FAC600] absolute top-0 left-0"></div>
+
+                    <div class="flex justify-between items-center mt-1">
+                        <span
+                            class="font-instrument text-Theme-sm font-semibold text-[#6B6560] dark:text-gray-400">Total
+                            Vendido</span>
+                        <span class="font-instrument text-lg font-bold text-[#191817] dark:text-white">{{ totalDue |
+                            currency }}</span>
+                    </div>
+
+                    <div *ngIf="note.financials.balancePaid > 0" class="flex justify-between items-center">
+                        <span
+                            class="font-instrument text-[13px] font-semibold text-success-600 dark:text-success-400 flex items-center gap-1">
+                            <i class="fas fa-hand-holding-usd text-xs"></i> Abonos Previos
+                        </span>
+                        <span class="font-instrument text-lg font-bold text-success-600 dark:text-success-400">
+                            -{{ note.financials.balancePaid | currency }}
+                        </span>
+                    </div>
+
+                    <div class="border-t border-dashed border-[#E8D9A0] dark:border-[#4A474D] pt-2"></div>
+
+                    <div class="flex justify-between items-center">
+                        <h4 *ngIf="calculateRemainingBalance() > 0 || calculateRemainingBalance() === 0"
+                            class="font-instrument text-sm font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase tracking-widest">
+                            Saldo Restante</h4>
+                        <h4 *ngIf="calculateRemainingBalance() < 0"
+                            class="font-instrument text-sm font-bold text-success-600 dark:text-success-400 uppercase tracking-widest">
+                            Puntos a Generar</h4>
+                        <div *ngIf="calculateRemainingBalance() > 0 || calculateRemainingBalance() === 0"
+                            class="font-instrument text-3xl font-extrabold text-[#C69214] dark:text-[#FAC600] tracking-tight">
+                            {{ calculateRemainingBalance() | currency }}
+                        </div>
+                        <div *ngIf="calculateRemainingBalance() < 0"
+                            class="font-instrument text-4xl font-extrabold text-success-600 dark:text-success-400 tracking-tight flex items-center gap-2">
+                            +{{ (calculateRemainingBalance() * -1) }} pts
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="currentColor" stroke="none" class="opacity-80">
+                                <path
+                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Form (Only if there is a balance due) -->
+                <div *ngIf="calculateRemainingBalance() > 0">
+                    <h4 class="font-instrument text-xs font-bold text-[#6B6560] dark:text-gray-400 uppercase mb-3 px-1">
+                        Método de Pago</h4>
+
+                    <div
+                        class="bg-[#FBF0C9]/40 dark:bg-[#3D3420] p-1 rounded-xl flex gap-1 border border-[#E8D9A0] dark:border-[#4A474D] mb-5">
+                        <button type="button" (click)="setPaymentMethod('cash')"
+                            [ngClass]="paymentMethod === 'cash' ? 'bg-white dark:bg-[#232126] text-[#C69214] shadow-theme-sm' : 'text-[#6B6560] dark:text-[#E8D9A0]/60'"
+                            class="flex-1 py-2 rounded-lg transition-all font-instrument text-xs font-bold flex items-center justify-center gap-2 uppercase">
+                            <i class="fas fa-money-bill-wave"></i> Efectivo
+                        </button>
+                        <button type="button" (click)="setPaymentMethod('card')"
+                            [ngClass]="paymentMethod === 'card' ? 'bg-white dark:bg-[#232126] text-[#C69214] shadow-theme-sm' : 'text-[#6B6560] dark:text-[#E8D9A0]/60'"
+                            class="flex-1 py-2 rounded-lg transition-all font-instrument text-xs font-bold flex items-center justify-center gap-2 uppercase">
+                            <i class="fas fa-credit-card"></i> Tarjeta
+                        </button>
+                        <button *ngIf="clientPoints > 0" type="button" (click)="setPaymentMethod('points')"
+                            [ngClass]="paymentMethod === 'points' ? 'bg-white dark:bg-[#232126] text-[#C69214] shadow-theme-sm' : 'text-[#6B6560] dark:text-[#E8D9A0]/60'"
+                            class="flex-1 py-2 rounded-lg transition-all font-instrument text-xs font-bold flex items-center justify-center gap-2 uppercase">
+                            <i class="fas fa-coins"></i> Puntos
+                        </button>
+                    </div>
+
+                    <form [formGroup]="paymentForm" class="space-y-4 mb-6">
+                        <div *ngIf="paymentMethod === 'cash'" class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label
+                                    class="block font-instrument text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Recibido</label>
+                                <div class="relative">
+                                    <span
+                                        class="absolute left-3 top-2.5 font-instrument text-[#6B6560] dark:text-[#E8D9A0]/60 text-sm">$</span>
+                                    <input type="number" formControlName="receivedAmount" (input)="calculateChange()"
+                                        class="w-full pl-6 py-2 bg-[#FFFDF7] dark:bg-[#191817] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl font-instrument text-[#191817] dark:text-white text-lg font-bold focus:ring-2 focus:ring-[#C69214]/20 focus:border-[#C69214] shadow-theme-sm">
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    class="block font-instrument text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Cambio
+                                    / Restante</label>
+                                <div [ngClass]="{'bg-error-50 dark:bg-error-500/10 border border-error-200 dark:border-error-800/30 text-error-700 dark:text-error-400': changeAmount < 0, 'bg-success-50 dark:bg-success-500/10 border border-success-200 dark:border-success-800/30 text-success-700 dark:text-success-400': changeAmount >= 0}"
+                                    class="w-full py-1.5 px-3 rounded-xl font-instrument text-lg font-bold text-right shadow-sm truncate">
+                                    {{ (changeAmount < 0 ? (changeAmount * -1) : changeAmount) | currency }} <span
+                                        *ngIf="changeAmount < 0"
+                                        class="text-[9px] block mt-[-4px] uppercase font-bold opacity-80 tracking-wide">
+                                        Deuda Restante</span>
+                                        <span *ngIf="changeAmount >= 0"
+                                            class="text-[9px] block mt-[-4px] uppercase font-bold opacity-80 tracking-wide">Cambio</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="paymentMethod === 'card'" class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label
+                                    class="block font-instrument text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Monto
+                                    a Cobrar</label>
+                                <div class="relative">
+                                    <span
+                                        class="absolute left-3 top-2.5 font-instrument text-[#6B6560] dark:text-[#E8D9A0]/60 text-sm">$</span>
+                                    <input type="number" formControlName="cardAmount" (input)="calculateChange()"
+                                        class="w-full pl-6 py-2 bg-[#FFFDF7] dark:bg-[#191817] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl font-instrument text-[#191817] dark:text-white text-lg font-bold focus:ring-2 focus:ring-[#C69214]/20 focus:border-[#C69214] shadow-theme-sm">
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    class="block font-instrument text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Referencia
+                                    / Voucher</label>
+                                <input type="text" formControlName="reference" placeholder="#1234..."
+                                    class="w-full py-2 px-3 bg-[#FFFDF7] dark:bg-[#191817] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl font-instrument text-[#191817] dark:text-white placeholder:text-[#6B6560]/50 dark:placeholder:text-[#E8D9A0]/30 focus:ring-2 focus:ring-[#C69214]/20 focus:border-[#C69214] shadow-theme-sm h-[44px]">
+                            </div>
+                        </div>
+                        <div *ngIf="paymentMethod === 'card' && changeAmount < 0" class="mt-2 flex justify-end">
+                            <span
+                                class="text-xs font-bold text-error-600 dark:text-error-400 font-instrument uppercase bg-error-50 dark:bg-error-500/10 border border-error-200 dark:border-error-800/30 px-3 py-1 rounded-lg">Deuda
+                                Restante: {{ (changeAmount * -1) | currency }}</span>
+                        </div>
+
+                        <!-- Points logic -->
+                        <div *ngIf="paymentMethod === 'points'">
+                            <div
+                                class="bg-success-50 dark:bg-success-500/10 border border-success-200 dark:border-success-800/30 rounded-xl p-3 flex items-center justify-between shadow-theme-sm">
+                                <div>
+                                    <p
+                                        class="font-instrument text-[10px] font-bold text-success-700 dark:text-success-400 uppercase mb-0.5">
+                                        Puntos Disponibles</p>
+                                    <p class="font-instrument text-lg font-bold text-success-700 dark:text-success-400">
+                                        {{
+                                        clientPoints | currency }}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p
+                                        class="font-instrument text-[10px] font-bold text-[#6B6560] dark:text-gray-400 uppercase mb-0.5">
+                                        Puntos a Utilizar</p>
+                                    <p class="font-instrument text-lg font-bold text-[#191817] dark:text-white">{{
+                                        paymentForm.get('pointsAmount')?.value | currency }}</p>
+                                </div>
+                            </div>
+                            <div *ngIf="changeAmount < 0" class="mt-2 flex justify-end">
+                                <span
+                                    class="text-xs font-bold text-error-600 dark:text-error-400 font-instrument uppercase bg-error-50 dark:bg-error-500/10 border border-error-200 dark:border-error-800/30 px-3 py-1 rounded-lg">Deuda
+                                    Restante: {{ (changeAmount * -1) | currency }}</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Action Button -->
+                <button type="button" (click)="onSubmit()" [disabled]="isSubmitting"
+                    class="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-4 font-instrument text-base font-bold text-[#191817] shadow-theme-md transition-all hover:shadow-theme-lg hover:from-[#9A6F0A] hover:to-[#C69214] hover:text-white active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i *ngIf="!isSubmitting" class="fas fa-check-circle"></i>
+                    <svg *ngIf="isSubmitting" class="animate-spin -ml-1 h-5 w-5 text-current"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    Procesar Pago
+                </button>
+            </div>
+        </div>
+
+        <!-- Points Generation Warning Modal -->
+        <div *ngIf="showPointsWarning()"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+            <div
+                class="w-full max-w-md rounded-2xl border border-[#E8D9A0] bg-white p-6 shadow-2xl dark:border-[#4A474D] dark:bg-[#191817] animate-fadeIn">
+                <div
+                    class="mb-5 flex size-14 items-center justify-center rounded-full bg-success-50 dark:bg-success-500/15 mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="text-success-600 dark:text-success-400">
+                        <path
+                            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="mb-2 text-center font-instrument text-xl font-bold text-[#191817] dark:text-white">Generación
+                    de
+                    Puntos</h3>
+                <p class="mb-6 text-center font-instrument text-sm text-[#6B6560] dark:text-gray-400">
+                    El cliente tiene un saldo a favor de <strong class="text-[#C69214] dark:text-[#FAC600]">{{
+                        (pointsToGenerate
+                        > 0 ? pointsToGenerate : (calculateRemainingBalance() * -1)) | currency }}</strong>.
+                    <br><br>
+                    Este monto no será cobrado, sino que se añadirá automáticamente como <strong>Puntos
+                        Sucursal</strong> al
+                    perfil de <span class="font-bold">{{ getClientName() }}</span> para uso futuro.
+                </p>
+
+                <div class="flex gap-3">
+                    <button (click)="showPointsWarning.set(false)" type="button"
+                        class="flex-1 rounded-xl border border-[#E8D9A0] bg-white px-4 py-3 font-instrument text-sm font-bold text-[#6B6560] transition-colors hover:bg-gray-50 dark:border-[#4A474D] dark:bg-[#232126] dark:text-gray-300 dark:hover:bg-[#3a383d]">
+                        Cancelar
+                    </button>
+                    <button (click)="confirmPointsAndSubmit()" type="button"
+                        class="flex-1 rounded-xl bg-gradient-to-br from-[#10b981] to-[#059669] px-4 py-3 font-instrument text-sm font-bold text-white shadow-md transition-all hover:shadow-lg active:scale-95 flex justify-center items-center gap-2">
+                        <svg *ngIf="isSubmitting" class="animate-spin h-4 w-4 text-white"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        Confirmar y Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>

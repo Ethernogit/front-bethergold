@@ -1,0 +1,234 @@
+<div class="mx-auto max-w-screen-2xl min-h-[calc(100vh-50px)] pb-10">
+    <!-- Header -->
+    <div class="flex items-center justify-between xl:mb-6 mb-4 xl:mt-0 mt-4">
+        <app-page-breadcrumb pageTitle="Reglas de Precios y Mayoreo"></app-page-breadcrumb>
+        <button (click)="openCreateForm()" *ngIf="!showForm"
+            class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#191817] to-[#3a383d] dark:from-white dark:to-gray-200 px-4 py-2 font-instrument text-sm font-bold text-white dark:text-[#191817] shadow-theme-sm transition-all hover:shadow-theme-md active:scale-[0.98]">
+            <i class="fas fa-plus"></i>
+            <span class="hidden sm:inline">Nueva Regla</span>
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-20">
+        <div class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent">
+        </div>
+    </div>
+
+    <div *ngIf="!isLoading" class="flex flex-col xl:flex-row gap-6">
+
+        <!-- Left List (Rules) -->
+        <div class="flex-1 flex flex-col gap-4" [ngClass]="{'xl:w-1/2': showForm, 'hidden xl:flex': showForm}">
+            <!-- Empty State -->
+            <div *ngIf="rules.length === 0"
+                class="rounded-2xl border border-dashed border-[#E8D9A0] bg-[#FFF8E7]/50 dark:border-[#4A474D] dark:bg-[#232126]/50 p-10 flex flex-col items-center justify-center text-center">
+                <div
+                    class="h-16 w-16 rounded-full bg-[#FBF0C9] dark:bg-[#3a383d] flex items-center justify-center text-[#C69214] mb-4 text-2xl">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <h3 class="font-instrument text-lg font-bold text-[#191817] dark:text-white mb-2">No hay reglas
+                    configuradas</h3>
+                <p class="font-instrument text-[#6B6560] dark:text-gray-400 text-sm max-w-sm mb-6">
+                    Añade reglas de precio para automatizar descuentos a clientes mayoristas según categoría o material.
+                </p>
+                <button (click)="openCreateForm()"
+                    class="text-[#C69214] font-instrument font-bold text-sm hover:underline">
+                    Crear mi primera regla
+                </button>
+            </div>
+
+            <!-- Rules Grid/List -->
+            <div *ngIf="rules.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                [ngClass]="{'lg:grid-cols-2 md:grid-cols-1': showForm}">
+                <div *ngFor="let rule of rules"
+                    class="bg-white dark:bg-[#232126] border border-[#E8D9A0] dark:border-[#4A474D] rounded-2xl p-5 shadow-theme-sm transition-shadow hover:shadow-theme-md flex flex-col h-full relative"
+                    [class.ring-2]="editingRuleId === rule._id" [class.ring-[#C69214]]="editingRuleId === rule._id">
+
+                    <!-- Header Actions -->
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex gap-2 items-center">
+                            <h3 class="font-instrument font-bold text-[#191817] dark:text-white line-clamp-1"
+                                title="{{rule.name}}">{{ rule.name }}</h3>
+                            <button (click)="toggleRuleStatus(rule)"
+                                [title]="rule.active ? 'Desactivar regla' : 'Activar regla'"
+                                class="text-[10px] px-2 py-0.5 rounded font-bold transition-colors cursor-pointer"
+                                [ngClass]="rule.active ? 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400' : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'">
+                                {{ rule.active ? 'Activa' : 'Inactiva' }}
+                            </button>
+                        </div>
+                        <div class="flex gap-2 text-[#6B6560] dark:text-gray-400">
+                            <button (click)="openEditForm(rule)" class="hover:text-[#C69214] transition-colors"><i
+                                    class="fas fa-edit"></i></button>
+                            <button (click)="deleteRule(rule)" class="hover:text-error-500 transition-colors"><i
+                                    class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <p class="font-instrument text-xs text-[#6B6560] dark:text-gray-400 mb-4 flex-grow line-clamp-2">
+                        {{ rule.description || 'Sin descripción.' }}
+                    </p>
+
+                    <!-- Tags / Metadata -->
+                    <div class="space-y-2 font-instrument text-xs">
+                        <div class="flex justify-between py-1 border-b border-[#E8D9A0]/50 dark:border-[#4A474D]/50">
+                            <span class="text-[#6B6560] dark:text-gray-500">Condición:</span>
+                            <span class="font-bold text-[#191817] dark:text-gray-300">
+                                {{ rule.criteriaType === 'CATEGORY' ? 'Categoría' : rule.criteriaType === 'MATERIAL' ?
+                                'Material' : 'Subcategoría' }}
+                                <i class="fas fa-arrow-right mx-1 text-[8px] text-[#C69214]"></i>
+                                {{ rule.criteriaValue }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between py-1 border-b border-[#E8D9A0]/50 dark:border-[#4A474D]/50">
+                            <span class="text-[#6B6560] dark:text-gray-500">Aplica a:</span>
+                            <span class="font-bold text-[#191817] dark:text-gray-300">{{ rule.clientType === 'wholesale'
+                                ? 'Mayoreo' : 'Todos' }}</span>
+                        </div>
+                        <div class="flex justify-between py-1 border-[#E8D9A0]/50 dark:border-[#4A474D]/50">
+                            <span class="text-[#6B6560] dark:text-gray-500">Beneficio:</span>
+                            <span
+                                class="font-bold text-success-600 dark:text-success-400 bg-success-50 dark:bg-success-900/10 px-1 rounded">
+                                <ng-container *ngIf="rule.ruleType === 'DISCOUNT_PERCENTAGE'">-{{ rule.ruleValue }}%
+                                    dcto</ng-container>
+                                <ng-container *ngIf="rule.ruleType === 'PRICE_PER_GRAM'">${{ rule.ruleValue
+                                    }}/g</ng-container>
+                                <ng-container *ngIf="rule.ruleType === 'FIXED_PRICE'">${{ rule.ruleValue }}
+                                    Fijo</ng-container>
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Form Panel -->
+        <div *ngIf="showForm" class="w-full xl:w-[450px] shrink-0">
+            <div
+                class="bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-2xl shadow-theme-md sticky top-[80px] overflow-hidden">
+                <!-- Form Header -->
+                <div
+                    class="flex justify-between items-center p-5 border-b border-[#E8D9A0] dark:border-[#4A474D] bg-[#FBF0C9]/30 dark:bg-[#232126]/50">
+                    <h3
+                        class="font-instrument text-lg font-bold text-[#191817] dark:text-white flex items-center gap-2">
+                        <i class="fas"
+                            [ngClass]="editingRuleId ? 'fa-edit text-[#C69214]' : 'fa-plus-circle text-[#9A6F0A]'"></i>
+                        {{ editingRuleId ? 'Editar Regla' : 'Nueva Regla' }}
+                    </h3>
+                    <button (click)="closeForm()"
+                        class="text-[#6B6560] hover:text-[#191817] dark:text-gray-400 dark:hover:text-white transition-colors">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Form Content -->
+                <form [formGroup]="ruleForm" (ngSubmit)="onSubmit()"
+                    class="p-5 overflow-y-auto max-h-[calc(100vh-200px)]">
+
+                    <div class="space-y-4">
+                        <!-- Rule Name -->
+                        <div>
+                            <label
+                                class="block font-instrument text-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Nombre
+                                de Regla</label>
+                            <input type="text" formControlName="name" placeholder="Ej. Oro 10k Mayoreo"
+                                class="w-full rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] bg-white dark:bg-[#232126] px-4 py-2 font-instrument text-sm text-[#191817] dark:text-white focus:border-[#C69214] focus:ring-1 focus:ring-[#C69214] outline-none">
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label
+                                class="block font-instrument text-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Descripción
+                                (Opcional)</label>
+                            <textarea formControlName="description" rows="2" placeholder="Describe cuándo aplica"
+                                class="w-full rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] bg-white dark:bg-[#232126] px-4 py-2 font-instrument text-sm text-[#191817] dark:text-white focus:border-[#C69214] focus:ring-1 focus:ring-[#C69214] outline-none resize-none"></textarea>
+                        </div>
+
+                        <!-- Row 1: Client Type & Condition -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label
+                                    class="block font-instrument text-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Tipo
+                                    de Cliente</label>
+                                <select formControlName="clientType"
+                                    class="w-full rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] bg-white dark:bg-[#232126] px-3 py-2 font-instrument text-sm text-[#191817] dark:text-white focus:border-[#C69214] focus:ring-1 focus:ring-[#C69214] outline-none">
+                                    <option value="wholesale">Mayoreo</option>
+                                    <option value="public" disabled>Público Gral (Proximamente)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="block font-instrument text-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Condición
+                                    por</label>
+                                <select formControlName="criteriaType"
+                                    class="w-full rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] bg-white dark:bg-[#232126] px-3 py-2 font-instrument text-sm text-[#191817] dark:text-white focus:border-[#C69214] focus:ring-1 focus:ring-[#C69214] outline-none">
+                                    <option value="CATEGORY">Categoría</option>
+                                    <option value="MATERIAL">Material</option>
+                                    <option value="SUBCATEGORY">Subcategoría (Tags)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Condition Value -->
+                        <div>
+                            <label
+                                class="block font-instrument text-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Valor
+                                Condición (Exacto)</label>
+                            <input type="text" formControlName="criteriaValue" placeholder="Ej. Anillos, Oro, etc."
+                                class="w-full rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] bg-white dark:bg-[#232126] px-4 py-2 font-instrument text-sm text-[#191817] dark:text-white focus:border-[#C69214] focus:ring-1 focus:ring-[#C69214] outline-none">
+                        </div>
+
+                        <!-- Row 2: Benefit Type & Value -->
+                        <div
+                            class="grid grid-cols-2 gap-3 bg-[#FBF0C9]/10 dark:bg-transparent border border-[#FBF0C9] dark:border-[#4A474D]/30 p-3 rounded-xl">
+                            <div>
+                                <label
+                                    class="block font-instrument text-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Beneficio</label>
+                                <select formControlName="ruleType"
+                                    class="w-full rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] bg-white dark:bg-[#232126] px-3 py-2 font-instrument text-sm text-[#191817] dark:text-white focus:border-[#C69214] focus:ring-1 focus:ring-[#C69214] outline-none">
+                                    <option value="DISCOUNT_PERCENTAGE">% de Descuento</option>
+                                    <option value="PRICE_PER_GRAM">Precio por Gramo</option>
+                                    <option value="FIXED_PRICE">Precio Fijo</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="block font-instrument text-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Cantidad
+                                    / Valor</label>
+                                <input type="number" formControlName="ruleValue" placeholder="0" min="0" step="0.01"
+                                    class="w-full rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] bg-white dark:bg-[#232126] px-4 py-2 font-instrument text-sm text-[#191817] dark:text-white focus:border-[#C69214] focus:ring-1 focus:ring-[#C69214] outline-none">
+                            </div>
+                        </div>
+
+                        <!-- Priority -->
+                        <div>
+                            <label
+                                class="block font-instrument text-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">Prioridad
+                                (Mayor = + Importante)</label>
+                            <input type="number" formControlName="priority" placeholder="10" min="0"
+                                class="w-full rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] bg-white dark:bg-[#232126] px-4 py-2 font-instrument text-sm text-[#191817] dark:text-white focus:border-[#C69214] focus:ring-1 focus:ring-[#C69214] outline-none">
+                            <p class="text-[10px] text-[#6B6560] dark:text-gray-500 mt-1">Si hay conflicto entre reglas
+                                (Ej. Oro y Anillos), se aplica la de mayor prioridad.</p>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mt-8 flex gap-3">
+                        <button type="button" (click)="closeForm()"
+                            class="flex-1 rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] bg-white dark:bg-[#232126] py-3 font-instrument text-sm font-bold text-[#191817] dark:text-white hover:bg-gray-50 dark:hover:bg-[#3a383d] transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit" [disabled]="isSubmitting || ruleForm.invalid"
+                            class="flex-1 rounded-xl bg-[#C69214] hover:bg-[#9A6F0A] py-3 font-instrument text-sm font-bold text-white shadow-theme-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span *ngIf="!isSubmitting">Guardar</span>
+                            <i *ngIf="isSubmitting" class="fas fa-spinner fa-spin"></i>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>

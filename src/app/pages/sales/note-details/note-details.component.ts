@@ -131,14 +131,16 @@ export class NoteDetailsComponent implements OnInit {
                 email: backendNote.clientId.email || 'Sin email',
                 location: 'Desconocida',
                 avatar: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(backendNote.clientId.name),
-                isUnknown: false
+                isUnknown: false,
+                points: (backendNote.clientId as any).points || 0
             };
         } else {
             this.client = {
                 name: 'Público en General',
                 id: backendNote.clientId as string,
                 avatar: 'https://ui-avatars.com/api/?name=Unknown',
-                isUnknown: true
+                isUnknown: true,
+                points: 0
             };
         }
 
@@ -169,7 +171,8 @@ export class NoteDetailsComponent implements OnInit {
                     estReady: item.specifications?.['deliveryDate'] || item.specifications?.duration || 'Por definir',
                     // Safe status fallback
                     itemStatus: item.deliveryStatus || 'Pending',
-                    isHechura: !!(item.specifications && item.specifications['karatage']) // Heuristic for Hechura
+                    isHechura: !!(item.specifications && item.specifications['karatage']), // Heuristic for Hechura
+                    returned: (item as any).returned || false
                 };
 
                 const model = (item.itemModel || '').toLowerCase();

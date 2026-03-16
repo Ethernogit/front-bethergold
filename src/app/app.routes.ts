@@ -270,6 +270,16 @@ export const routes: Routes = [
         title: 'Nuevo Cliente | Bethergold'
       },
       {
+        path: 'clients/:id',
+        loadComponent: () => import('./pages/clients/client-details/client-details.component').then(m => m.ClientDetailsComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'clients',
+          action: 'read'
+        },
+        title: 'Perfil de Cliente | Bethergold'
+      },
+      {
         path: 'clients/:id/edit',
         loadComponent: () => import('./pages/clients/client-form/client-form.component').then(m => m.ClientFormComponent),
         canActivate: [AuthGuard, PermissionGuard],
@@ -318,6 +328,16 @@ export const routes: Routes = [
           action: 'update'
         },
         title: 'Configuración de Tickets | Bethergold'
+      },
+      {
+        path: 'settings/pricing-rules',
+        loadComponent: () => import('./pages/settings/pricing-rules/pricing-rules.component').then(m => m.PricingRulesComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'organization',
+          action: 'update'
+        },
+        title: 'Reglas de Precios (Mayoreo) | Bethergold'
       },
       {
         path: 'sucursal/barcode',
@@ -402,6 +422,16 @@ export const routes: Routes = [
           action: 'read'
         },
         title: 'Historial de Ventas | Bethergold'
+      },
+      {
+        path: 'sales/consignment-settlement/:id',
+        loadComponent: () => import('./pages/sales/consignment-settlement/consignment-settlement.component').then(m => m.ConsignmentSettlementComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'sales',
+          action: 'create'
+        },
+        title: 'Corte de Mayoreo | Bethergold'
       },
       {
         path: 'sales/note/:folio',

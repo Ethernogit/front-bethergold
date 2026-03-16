@@ -33,8 +33,8 @@ export class SalesHistoryComponent implements OnInit {
   isPaymentModalOpen = false;
   selectedNote: Note | null = null;
   paymentAmount: number = 0;
-  paymentMethod: 'cash' | 'card' | 'transfer' | 'deposit' | 'credit' | 'other' = 'cash';
-  validPaymentMethods: ('cash' | 'card' | 'transfer' | 'deposit')[] = ['cash', 'card', 'transfer', 'deposit'];
+  paymentMethod: 'cash' | 'card' | 'transfer' | 'deposit' | 'points' | 'credit' | 'other' = 'cash';
+  validPaymentMethods: ('cash' | 'card' | 'transfer' | 'deposit' | 'points')[] = ['cash', 'card', 'transfer', 'deposit', 'points'];
 
   constructor(
     private noteService: NoteService,
@@ -48,8 +48,17 @@ export class SalesHistoryComponent implements OnInit {
   }
 
   viewNoteDetail(note: Note) {
-    if (note.folio) {
-      this.router.navigate(['/sales/note', note.folio]);
+    const isWholesale = note.status === 'CONSIGNACION' || note.type === 'consignment';
+    const isClosed = note.status === 'PAGADA' || note.status === 'ENTREGADA';
+
+    if (isWholesale && !isClosed) {
+      if (note._id) {
+        this.router.navigate(['/sales/consignment-settlement', note._id]);
+      }
+    } else {
+      if (note.folio) {
+        this.router.navigate(['/sales/note', note.folio]);
+      }
     }
   }
 
@@ -70,7 +79,8 @@ export class SalesHistoryComponent implements OnInit {
           { value: 'PAGADA', label: 'Pagada' },
           { value: 'ENTREGADA', label: 'Entregada' },
           { value: 'ANULADA', label: 'Anulada' },
-          { value: 'BORRADOR', label: 'Borrador' }
+          { value: 'BORRADOR', label: 'Borrador' },
+          { value: 'CONSIGNACION', label: 'Mayoreo (A vistas)' }
         ],
         placeholder: 'Todos'
       },

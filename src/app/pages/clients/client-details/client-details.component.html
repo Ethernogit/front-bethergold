@@ -1,0 +1,205 @@
+<div *ngIf="client" class="mx-auto max-w-screen-2xl h-[calc(100vh-50px)] flex flex-col overflow-hidden">
+    <!-- Top bar / Breadcrumb -->
+    <div class="flex items-center justify-between mb-4 shrink-0">
+        <app-page-breadcrumb [pageTitle]="'Perfil: ' + client.name"></app-page-breadcrumb>
+        <a [routerLink]="['/clients', client._id, 'edit']"
+            class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-4 py-2 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:shadow-theme-md">
+            <i class="fas fa-edit"></i>
+            Editar Cliente
+        </a>
+    </div>
+
+    <div class="flex flex-col gap-4 h-full overflow-hidden">
+        <!-- Info Header Card -->
+        <div
+            class="rounded-2xl border border-[#E8D9A0] bg-[#FFF8E7] shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] p-6 shrink-0 flex justify-between items-start">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <h2 class="font-instrument text-2xl font-bold text-[#191817] dark:text-white">{{ client.name }}</h2>
+                    <span *ngIf="client.isWholesale"
+                        class="text-[#C69214] font-bold border border-[#C69214] rounded px-2 py-0.5 text-xs uppercase tracking-wider bg-[#FBF0C9]/50 dark:bg-[#C69214]/10">MAYOREO</span>
+                    <span
+                        class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-instrument text-theme-xs font-medium"
+                        [ngClass]="{
+                          'bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-400': client.status === 'active',
+                          'bg-error-50 text-error-700 dark:bg-error-500/15 dark:text-error-400': client.status !== 'active'
+                        }">
+                        <span class="size-1.5 rounded-full" [ngClass]="{
+                          'bg-success-500': client.status === 'active',
+                          'bg-error-500': client.status !== 'active'
+                        }"></span>
+                        {{ client.status === 'active' ? 'Activo' : 'Inactivo' }}
+                    </span>
+                </div>
+                <p class="font-instrument text-[#6B6560] dark:text-gray-400 text-sm flex gap-4">
+                    <span *ngIf="client.email"><i class="fas fa-envelope mr-1"></i> {{ client.email }}</span>
+                    <span *ngIf="client.phone"><i class="fas fa-phone mr-1"></i> {{ client.phone }}</span>
+                    <span *ngIf="client.taxId"><i class="fas fa-id-card mr-1"></i> RFC: {{ client.taxId }}</span>
+                </p>
+            </div>
+            <div class="text-right flex items-center gap-6">
+                <!-- Points -->
+                <div class="text-right border-r border-[#E8D9A0]/50 dark:border-[#4A474D]/50 pr-6">
+                    <p
+                        class="font-instrument font-bold text-success-600 dark:text-success-400 uppercase text-xs mb-1 flex items-center justify-end gap-1">
+                        Puntos Sucursal
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                            fill="currentColor" stroke="none">
+                            <path
+                                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                            </path>
+                        </svg>
+                    </p>
+                    <p class="font-instrument text-2xl font-extrabold text-success-600 dark:text-success-400">
+                        {{ (client.points || 0) | number }}
+                    </p>
+                </div>
+                <!-- Credit Limit -->
+                <div class="text-right">
+                    <p class="font-instrument font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase text-xs mb-1">
+                        Límite de
+                        Crédito</p>
+                    <p class="font-instrument text-xl font-bold text-[#191817] dark:text-white">{{ (client.creditLimit
+                        || 0)
+                        | currency }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs and Content Area -->
+        <div
+            class="flex-1 flex flex-col min-h-0 bg-white dark:bg-[#232126] rounded-2xl border border-[#E8D9A0] dark:border-[#4A474D] shadow-theme-sm overflow-hidden">
+
+            <!-- Tabs Header -->
+            <div
+                class="flex border-b border-[#E8D9A0] dark:border-[#4A474D] bg-[#FBF0C9]/20 dark:bg-[#3a383d] shrink-0">
+                <button (click)="setTab('info')" [class.border-b-2]="activeTab === 'info'"
+                    [class.border-[#C69214]]="activeTab === 'info'" [class.text-[#C69214]]="activeTab === 'info'"
+                    [class.text-[#6B6560]]="activeTab !== 'info'"
+                    class="px-6 py-4 font-instrument text-sm font-bold uppercase tracking-wider transition-colors hover:bg-[#FBF0C9]/40 dark:hover:bg-white/5 dark:text-gray-400">
+                    Información
+                </button>
+                <button (click)="setTab('consignments')" [class.border-b-2]="activeTab === 'consignments'"
+                    [class.border-[#C69214]]="activeTab === 'consignments'"
+                    [class.text-[#C69214]]="activeTab === 'consignments'"
+                    [class.text-[#6B6560]]="activeTab !== 'consignments'"
+                    class="px-6 py-4 font-instrument text-sm font-bold uppercase tracking-wider transition-colors hover:bg-[#FBF0C9]/40 dark:hover:bg-white/5 dark:text-gray-400 flex items-center gap-2">
+                    Estado de Cuenta / A Vistas (Mayoreo)
+                    <span *ngIf="consignments.length > 0"
+                        class="bg-[#C69214] text-white text-[10px] px-1.5 py-0.5 rounded-full">{{ consignments.length
+                        }}</span>
+                </button>
+            </div>
+
+            <!-- Tab Content: Info -->
+            <div *ngIf="activeTab === 'info'" class="flex-1 overflow-y-auto p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3
+                            class="font-instrument text-[#9A6F0A] dark:text-[#E8C97A] font-bold uppercase text-xs mb-3 border-b border-[#E8D9A0] dark:border-[#4A474D] pb-1">
+                            Dirección</h3>
+                        <p class="font-instrument text-[#191817] dark:text-white text-sm"
+                            *ngIf="client.address?.street">
+                            {{ client.address.street }}<br>
+                            {{ client.address.city }}, {{ client.address.state }}<br>
+                            {{ client.address.country }} CP {{ client.address.zipCode }}
+                        </p>
+                        <p *ngIf="!client.address?.street"
+                            class="font-instrument text-[#6B6560] dark:text-gray-500 italic text-sm">No hay dirección
+                            registrada.</p>
+                    </div>
+                    <div>
+                        <h3
+                            class="font-instrument text-[#9A6F0A] dark:text-[#E8C97A] font-bold uppercase text-xs mb-3 border-b border-[#E8D9A0] dark:border-[#4A474D] pb-1">
+                            Notas Internas</h3>
+                        <p class="font-instrument text-[#191817] dark:text-white text-sm whitespace-pre-line">{{
+                            client.notes || 'Sin notas adicionales.' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Consignments -->
+            <div *ngIf="activeTab === 'consignments'"
+                class="flex-1 flex flex-col min-h-0 bg-[#FBF0C9]/10 dark:bg-transparent relative">
+
+                <!-- Consignments List -->
+                <div class="flex-1 overflow-y-auto p-6">
+                    <div *ngIf="isLoadingConsignments" class="flex justify-center items-center py-10">
+                        <div
+                            class="h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent">
+                        </div>
+                    </div>
+
+                    <div *ngIf="!isLoadingConsignments && consignments.length === 0"
+                        class="flex flex-col items-center justify-center py-10 text-[#6B6560] dark:text-gray-500">
+                        <i class="fas fa-box-open text-4xl mb-3 opacity-50"></i>
+                        <p class="font-instrument font-medium">El cliente no tiene notas de mayoreo (a vistas) activas.
+                        </p>
+                    </div>
+
+                    <div *ngIf="!isLoadingConsignments && consignments.length > 0" class="flex flex-col gap-4">
+                        <!-- Loop Active Consignments -->
+                        <div *ngFor="let note of consignments"
+                            class="bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                            <div
+                                class="flex justify-between items-center mb-4 border-b border-[#E8D9A0]/50 dark:border-[#4A474D]/50 pb-3">
+                                <div>
+                                    <h4
+                                        class="font-instrument font-bold text-lg text-[#191817] dark:text-white flex items-center gap-2">
+                                        Folio: {{ note.folio }}
+                                        <span
+                                            class="bg-[#C69214]/10 text-[#C69214] border border-[#C69214]/30 text-[10px] uppercase font-bold px-2 py-0.5 rounded">Mayoreo</span>
+                                        <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded" [ngClass]="{
+                                                'bg-success-50 text-success-700 border border-success-200 dark:bg-success-500/10 dark:text-success-400 dark:border-success-500/30': note.status === 'PAGADA' || note.status === 'ENTREGADA',
+                                                'bg-warning-50 text-warning-700 border border-warning-200 dark:bg-warning-500/10 dark:text-warning-400 dark:border-warning-500/30': note.status === 'PENDIENTE_PAGO' || note.status === 'CONSIGNACION',
+                                                'bg-error-50 text-error-700 border border-error-200 dark:bg-error-500/10 dark:text-error-400 dark:border-error-500/30': note.status === 'ANULADA'
+                                            }">
+                                            {{ note.status === 'CONSIGNACION' ? 'A Vistas' : (note.status ||
+                                            '').replace('_', ' ') }}
+                                        </span>
+                                    </h4>
+                                    <p class="font-instrument text-xs text-[#6B6560] dark:text-gray-400 mt-1">
+                                        Creada: {{ note.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                                    </p>
+                                </div>
+                                <div class="text-right">
+                                    <p *ngIf="note.financials.balanceDue > 0"
+                                        class="font-instrument text-[10px] font-bold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">
+                                        Total pendiente</p>
+                                    <p *ngIf="note.financials.balanceDue === 0"
+                                        class="font-instrument text-[10px] font-bold uppercase text-success-600 dark:text-success-400">
+                                        Total pagado</p>
+                                    <p class="font-instrument text-xl font-bold text-[#191817] dark:text-white">{{
+                                        (note.financials.balanceDue > 0 ? note.financials.balanceDue :
+                                        note.financials.total) | currency }}</p>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between items-center mt-4">
+                                <p class="font-instrument text-sm text-[#46424A] dark:text-gray-300">
+                                    <i class="fas fa-box mr-1"></i> {{ note.items.length || 0 }} Productos
+                                </p>
+                                <!-- ACTION BUTTON -->
+                                <button *ngIf="note.status === 'CONSIGNACION' || note.status === 'PENDIENTE_PAGO'"
+                                    (click)="goToSettlement(note._id)"
+                                    class="bg-gradient-to-br from-[#C69214] to-[#FAC600] text-[#191817] shadow-theme-sm hover:shadow-theme-md transition-all active:scale-[0.98] font-instrument font-bold text-sm px-4 py-2 rounded-xl flex items-center gap-2 cursor-pointer inline-flex">
+                                    {{ note.status === 'CONSIGNACION' ? 'Hacer Corte' : 'Abonar / Hacer Corte' }} <i
+                                        class="fas fa-arrow-right text-xs"></i>
+                                </button>
+                                <a *ngIf="note.status === 'PAGADA' || note.status === 'ENTREGADA'"
+                                    [routerLink]="['/sales/note', note.folio]"
+                                    class="bg-white text-[#191817] border border-[#E8D9A0] dark:bg-[#3a383d] dark:text-white dark:border-[#4A474D] hover:bg-[#FBF0C9] dark:hover:bg-[#4A474D] transition-colors font-instrument font-bold text-sm px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm cursor-pointer inline-flex">
+                                    Ver Detalles <i class="fas fa-arrow-right text-xs"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!client" class="flex justify-center items-center h-[calc(100vh-100px)]">
+    <div class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent"></div>
+</div>
