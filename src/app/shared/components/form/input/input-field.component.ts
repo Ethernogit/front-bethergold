@@ -82,19 +82,13 @@ export class InputFieldComponent implements ControlValueAccessor {
   onInput(event: Event) {
     const input = event.target as HTMLInputElement;
     const value = this.type === 'number' ? +input.value : input.value;
-    console.log(`=== INPUT DEBUG [${this.name}] ===`);
-    console.log('Input value:', value);
-    console.log('Component value before:', this.value);
     this.value = value;
-    console.log('Component value after:', this.value);
     this.valueChange.emit(value);
     this.onChange(value);
   }
 
   // ControlValueAccessor implementation
   writeValue(value: any): void {
-    console.log(`=== WRITE VALUE [${this.name}] ===`);
-    console.log('New value from ngModel:', value);
     this.value = value || '';
   }
 

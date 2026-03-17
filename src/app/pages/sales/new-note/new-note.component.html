@@ -237,6 +237,7 @@
                                         class="font-instrument text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-0.5">Precio
                                         Unit.</label>
                                     <input type="number" formControlName="unitPrice" min="0" step="0.01"
+                                        (input)="markAsManuallyEdited(i)"
                                         class="w-24 text-right px-2 py-1 font-instrument text-theme-sm border border-[#E8D9A0] dark:border-[#4A474D] rounded-lg bg-white dark:bg-[#232126] text-[#191817] dark:text-white font-bold focus:ring-[#C69214]/20 focus:border-[#C69214] mb-1">
                                     <span
                                         class="font-instrument font-extrabold text-xl text-[#C69214] dark:text-[#FAC600]">{{

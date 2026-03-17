@@ -25,6 +25,7 @@ export class NoteDetailsComponent implements OnInit {
 
     isLoading = true;
     error: string | null = null;
+    isSendingEmail = false;
 
     // UI Data Structures initialized to null or empty to avoid template errors before load
     note: any = null;
@@ -107,7 +108,6 @@ export class NoteDetailsComponent implements OnInit {
     }
 
     mapNoteData(backendNote: Note) {
-        console.log('Mapping Note Data:', backendNote);
         this.rawNote = backendNote;
         // Map backend data to UI structure
         this.note = {
@@ -115,7 +115,7 @@ export class NoteDetailsComponent implements OnInit {
             status: this.normalizeStatus(backendNote.status || ''),
             dateCreated: backendNote.createdAt ? new Date(backendNote.createdAt).toLocaleDateString() : '',
             time: backendNote.createdAt ? new Date(backendNote.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
-            agent: typeof backendNote.sellerId === 'object' ? `${backendNote.sellerId.profile.firstName} ${backendNote.sellerId.profile.lastName}` : 'Agente Desconocido',
+            agent: (typeof backendNote.sellerId === 'object' && backendNote.sellerId !== null && backendNote.sellerId.profile) ? `${backendNote.sellerId.profile.firstName || ''} ${backendNote.sellerId.profile.lastName || ''}`.trim() : 'Agente Desconocido',
             location: 'Sucursal Principal', // transform sucursalId if needed, or hardcode for now
             privateNotes: backendNote.notes || ''
         };
@@ -254,8 +254,8 @@ export class NoteDetailsComponent implements OnInit {
 
         // 1. Category / Subcategory
         if (product) {
-            const catName = typeof product.category === 'object' ? product.category.name : product.category;
-            const subName = typeof product.subcategory === 'object' ? product.subcategory.name : product.subcategory;
+            const catName = typeof product.category === 'object' && product.category !== null ? product.category.name : product.category;
+            const subName = typeof product.subcategory === 'object' && product.subcategory !== null ? product.subcategory.name : product.subcategory;
 
             if (catName && subName) parts.push(`${catName} - ${subName}`);
             else if (catName) parts.push(catName);
@@ -570,6 +570,30 @@ export class NoteDetailsComponent implements OnInit {
                 console.error(err);
                 this.toastService.error('Error al actualizar el estado de entrega');
                 this.isLoading = false;
+            }
+        });
+    }
+
+    sendEmail() {
+        if (!this.rawNote?._id || !this.client?.email || this.client.email === 'Sin email') {
+            this.toastService.warning('El cliente no tiene un correo electrónico válido registrado.');
+            return;
+        }
+
+        this.isSendingEmail = true;
+        
+        // Use generic HttpClient for now (or a service method if existed)
+        // Since we didn't add the method to NoteService yet, I'll add a helper here
+        // But let's assume NoteService can handle this for now. I'll add the method to NoteService next.
+        this.noteService.sendEmailReceipt(this.rawNote._id, this.client.email).subscribe({
+            next: (res) => {
+                this.toastService.success('El ticket ha sido enviado por correo exitosamente.');
+                this.isSendingEmail = false;
+            },
+            error: (err) => {
+                console.error(err);
+                this.toastService.error('Hubo un error al enviar el correo. Por favor intente más tarde.');
+                this.isSendingEmail = false;
             }
         });
     }

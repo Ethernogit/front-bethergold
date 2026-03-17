@@ -26,7 +26,9 @@ export class SucursalFolioConfigComponent implements OnInit {
             folioEnabled: [true],
             folioPrefix: ['', [Validators.maxLength(10)]],
             folioPadding: [6, [Validators.min(1), Validators.max(12)]],
-            folioNextNumber: [null, [Validators.min(1)]]
+            folioNextNumber: [null, [Validators.min(1)]],
+            emailSenderName: ['', [Validators.maxLength(100)]],
+            emailSenderPrefix: ['', [Validators.maxLength(40), Validators.pattern('^[a-z0-9-]+$')]]
         });
     }
 
@@ -50,13 +52,21 @@ export class SucursalFolioConfigComponent implements OnInit {
         this.isLoading = true;
         this.sucursalService.getSucursalById(this.currentSucursalId).subscribe({
             next: (response) => {
-                const configFolio = response.data.config?.folio;
+                const config = response.data.config as any;
+                const configFolio = config?.folio;
+                const emailConfig = config?.emailConfig;
 
                 if (configFolio) {
                     this.configForm.patchValue({
                         folioEnabled: configFolio.enabled ?? true,
                         folioPrefix: configFolio.prefix || '',
                         folioPadding: configFolio.padding || 6
+                    });
+                }
+                if (emailConfig) {
+                    this.configForm.patchValue({
+                        emailSenderName: emailConfig.senderName || '',
+                        emailSenderPrefix: emailConfig.senderPrefix || ''
                     });
                 }
                 this.isLoading = false;
@@ -83,13 +93,20 @@ export class SucursalFolioConfigComponent implements OnInit {
             nextNumber: formValue.folioNextNumber
         };
 
+        const emailConfig = {
+            enabled: true,
+            senderName: formValue.emailSenderName,
+            senderPrefix: formValue.emailSenderPrefix
+        };
+
         this.sucursalService.getSucursalById(this.currentSucursalId).subscribe(res => {
             const data = res.data;
             const currentConfig = data.config || {};
 
             const newConfig = {
                 ...currentConfig,
-                folio: folioConfig
+                folio: folioConfig,
+                emailConfig: emailConfig
             };
 
             this.sucursalService.updateSucursal(this.currentSucursalId!, { config: newConfig }).subscribe({

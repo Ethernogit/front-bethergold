@@ -290,7 +290,7 @@ export class NewNoteComponent implements OnInit {
 
         items.forEach((itemCtrl: any) => {
             const rawProduct = itemCtrl.get('rawProduct')?.value;
-            if (rawProduct && itemCtrl.get('type')?.value === 'jewelry') {
+            if (rawProduct && itemCtrl.get('type')?.value === 'jewelry' && !itemCtrl.get('manuallyEdited')?.value) {
                 const { price, ruleApplied, originalPrice } = this.calculatePriceForProduct(rawProduct);
 
                 // Only override if the user hasn't manually overridden it heavily, or if they just switched client types.
@@ -336,6 +336,7 @@ export class NewNoteComponent implements OnInit {
             unitPrice: [price, [Validators.required, Validators.min(0)]],
             originalPrice: [originalPrice],
             ruleApplied: [ruleApplied],
+            manuallyEdited: [false],
             discount: [0, [Validators.min(0)]],
             subtotal: [price],
             isUnique: [isUnique], // For UI condition
@@ -391,6 +392,7 @@ export class NewNoteComponent implements OnInit {
             deliveryStatus: ['immediate'],
             quantity: [1, [Validators.required, Validators.min(0.01)]],
             unitPrice: [amount, [Validators.required, Validators.min(0)]],
+            manuallyEdited: [false],
             discount: [0, [Validators.min(0)]],
             subtotal: [amount],
             specifications: this.fb.group({
@@ -428,6 +430,7 @@ export class NewNoteComponent implements OnInit {
             deliveryStatus: [isExpress ? 'immediate' : 'pending'], // Express is immediate
             quantity: [1, [Validators.required, Validators.min(0.01)]],
             unitPrice: [price, [Validators.required, Validators.min(0)]],
+            manuallyEdited: [false],
             discount: [0, [Validators.min(0)]],
             subtotal: [price],
             specifications: this.fb.group({
@@ -467,6 +470,7 @@ export class NewNoteComponent implements OnInit {
             // But wait, Repair logic might be different. Let's leave it as immediate for now.
             quantity: [1, [Validators.required, Validators.min(0.01)]],
             unitPrice: [amount, [Validators.required, Validators.min(0)]],
+            manuallyEdited: [false],
             discount: [0],
             subtotal: [amount],
             specifications: this.fb.group({
@@ -503,6 +507,7 @@ export class NewNoteComponent implements OnInit {
             deliveryStatus: [this.saleType === 'consignment' ? 'pending' : 'immediate'],
             quantity: [1, [Validators.required, Validators.min(0.01)]],
             unitPrice: [0, [Validators.required, Validators.min(0)]],
+            manuallyEdited: [false],
             discount: [0, [Validators.min(0)]],
             subtotal: [0],
             specifications: this.fb.group({
@@ -517,6 +522,11 @@ export class NewNoteComponent implements OnInit {
         this.subscribeToItemChanges(itemGroup);
         this.items.push(itemGroup);
         this.calculateTotals();
+    }
+
+    markAsManuallyEdited(index: number) {
+        const item = this.items.at(index);
+        item.patchValue({ manuallyEdited: true }, { emitEvent: false });
     }
 
     subscribeToItemChanges(group: FormGroup) {

@@ -57,6 +57,37 @@
                 </div>
             </div>
 
+            <!-- Email Config -->
+            <div class="mt-8 pt-8 border-t border-gray-200 dark:border-[#4A474D]">
+                <div class="mb-6">
+                    <h2 class="text-lg font-medium text-gray-900 dark:text-white">Configuración de Correos</h2>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Personaliza el remitente para los correos enviados desde esta sucursal.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Nombre del Remitente</label>
+                        <input type="text" formControlName="emailSenderName" placeholder="Ej: Bether Gold Galerías"
+                            class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-[#232126] dark:text-gray-300 dark:border-[#4A474D] focus:border-[#C69214] dark:focus:border-[#C69214] focus:outline-none focus:ring-1 focus:ring-[#C69214]/50">
+                        <p class="mt-1 text-xs text-gray-500">Nombre que verá el cliente. Ej: Bether Gold Galerías</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Prefijo del Correo</label>
+                        <div class="flex rounded-lg shadow-sm">
+                            <input type="text" formControlName="emailSenderPrefix" placeholder="galerias"
+                                class="flex-1 min-w-0 block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-l-lg dark:bg-[#232126] dark:text-gray-300 dark:border-[#4A474D] focus:border-[#C69214] dark:focus:border-[#C69214] focus:outline-none focus:ring-1 focus:ring-[#C69214]/50">
+                            <span class="inline-flex items-center px-4 rounded-r-lg border border-l-0 border-gray-300 dark:border-[#4A474D] bg-gray-50 dark:bg-[#1A181C] text-gray-500 dark:text-gray-400 text-sm">
+                                &#64;bethergold.com
+                            </span>
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">Sin espacios ni acentos. Ej: galerias -> galerias&#64;bethergold.com</p>
+                    </div>
+                </div>
+            </div>
+
         </form>
     </div>
 </div>

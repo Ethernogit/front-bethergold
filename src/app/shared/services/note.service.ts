@@ -107,4 +107,8 @@ export class NoteService {
     settleConsignment(noteId: string, payload: any): Observable<{ success: boolean; data: any; message?: string }> {
         return this.http.post<{ success: boolean; data: any; message?: string }>(`${this.apiUrl}/${noteId}/consignments/settle`, payload);
     }
+
+    sendEmailReceipt(noteId: string, email: string): Observable<{ success: boolean; message?: string }> {
+        return this.http.post<{ success: boolean; message?: string }>(`${this.apiUrl}/${noteId}/email`, { email });
+    }
 }
