@@ -8,6 +8,7 @@ import { ToastService } from '../../../shared/services/toast.service'; // Import
 import { GlobalPaymentComponent } from '../components/global-payment/global-payment.component';
 import { ClientSelectionModalComponent } from '../new-note/components/client-selection-modal/client-selection-modal.component';
 import { environment } from '../../../../environments/environment';
+import html2pdf from 'html2pdf.js';
 
 @Component({
     selector: 'app-note-details',
@@ -103,6 +104,23 @@ export class NoteDetailsComponent implements OnInit {
                 console.error('Error loading note', err);
                 this.error = 'Error al cargar los detalles de la nota';
                 this.isLoading = false;
+            }
+        });
+    }
+
+    loadSucursal(sucursalId: string | any) {
+        // Handle object population if needed
+        const sId = (typeof sucursalId === 'object' && sucursalId !== null) ? sucursalId._id : sucursalId;
+        if (!sId) return;
+
+        this.sucursalService.getSucursalById(sId).subscribe({
+            next: (response: any) => {
+                if (response.success && response.data) {
+                    this.sucursalDetails = response.data;
+                }
+            },
+            error: (err: any) => {
+                console.error('Error loading sucursal details', err);
             }
         });
     }
@@ -293,21 +311,7 @@ export class NoteDetailsComponent implements OnInit {
         return map[status] || status;
     }
 
-    loadSucursal(sucursalId: string) {
-        this.sucursalService.getSucursalById(sucursalId).subscribe({
-            next: (res) => {
-                this.sucursalDetails = res.data;
-            },
-            error: (err) => console.error('Error loading sucursal', err)
-        });
-    }
-
-    printNote() {
-        if (!this.note || !this.rawNote) return;
-
-        const printWindow = window.open('', '_blank', 'width=800,height=600');
-        if (!printWindow) return;
-
+    generateHtmlTicket(): string {
         const sucursal = this.sucursalDetails;
         const printConfig = sucursal?.printConfig;
 
@@ -337,7 +341,7 @@ export class NoteDetailsComponent implements OnInit {
 
         // Items HTML
         let itemsHtml = '';
-        this.rawNote.items.forEach(item => {
+        this.rawNote?.items.forEach(item => {
             // Safe fallback for financials
             const unitPrice = item.financials?.unitPrice || 0;
             const subtotal = item.financials?.subtotal || 0;
@@ -376,7 +380,8 @@ export class NoteDetailsComponent implements OnInit {
                 `).join('')}
             </table>`;
         }
-        const htmlContent = `
+        
+        return `
             <!DOCTYPE html>
             <html>
             <head>
@@ -386,12 +391,12 @@ export class NoteDetailsComponent implements OnInit {
                     * { margin: 0; padding: 0; box-sizing: border-box; }
                     
                     body { 
-                        font-family: 'Courier New', Courier, monospace; /* Monospace fits receipts better or a clean sans */
+                        font-family: 'Courier New', Courier, monospace;
                         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
                         font-size: 12px; 
                         line-height: 1.2; 
                         color: #000; 
-                        width: 80mm; /* Target 80mm Standard Ticket */
+                        width: 80mm; 
                         margin: 0; 
                         padding: 5mm; 
                         background-color: #fff;
@@ -431,7 +436,7 @@ export class NoteDetailsComponent implements OnInit {
                     @media print {
                         body { width: 100%; margin: 0; padding: 2mm; }
                         @page { 
-                            size: 80mm auto; /* Fixed width, fluid height */
+                            size: 80mm auto;
                             margin: 0; 
                         }
                     }
@@ -513,18 +518,31 @@ export class NoteDetailsComponent implements OnInit {
                     ${instagram ? `<div>IG: ${instagram}</div>` : ''}
                     <div style="margin-top: 5mm; font-size: 9px;">*** COPIA CLIENTE ***</div>
                 </div>
-
-                <script>
-                    window.onload = function() {
-                        window.print();
-                        setTimeout(function() { window.close(); }, 500);
-                    }
-                </script>
             </body>
             </html>
         `;
+    }
 
-        printWindow.document.write(htmlContent);
+    printNote() {
+        if (!this.note || !this.rawNote) return;
+
+        const printWindow = window.open('', '_blank', 'width=800,height=600');
+        if (!printWindow) return;
+
+        const htmlContent = this.generateHtmlTicket();
+
+        // Add print-specific script wrapper
+        const printHtml = `
+            ${htmlContent}
+            <script>
+                window.onload = function() {
+                    window.print();
+                    setTimeout(function() { window.close(); }, 500);
+                }
+            </script>
+        `;
+
+        printWindow.document.write(printHtml);
         printWindow.document.close();
     }
 
@@ -574,7 +592,7 @@ export class NoteDetailsComponent implements OnInit {
         });
     }
 
-    sendEmail() {
+    async sendEmail() {
         if (!this.rawNote?._id || !this.client?.email || this.client.email === 'Sin email') {
             this.toastService.warning('El cliente no tiene un correo electrónico válido registrado.');
             return;
@@ -582,19 +600,68 @@ export class NoteDetailsComponent implements OnInit {
 
         this.isSendingEmail = true;
         
-        // Use generic HttpClient for now (or a service method if existed)
-        // Since we didn't add the method to NoteService yet, I'll add a helper here
-        // But let's assume NoteService can handle this for now. I'll add the method to NoteService next.
-        this.noteService.sendEmailReceipt(this.rawNote._id, this.client.email).subscribe({
-            next: (res) => {
-                this.toastService.success('El ticket ha sido enviado por correo exitosamente.');
-                this.isSendingEmail = false;
-            },
-            error: (err) => {
-                console.error(err);
-                this.toastService.error('Hubo un error al enviar el correo. Por favor intente más tarde.');
-                this.isSendingEmail = false;
+        try {
+            const htmlString = this.generateHtmlTicket();
+
+            // Calculate dynamic height by temporarily mounting an iframe
+            const iframe = document.createElement('iframe');
+            iframe.style.visibility = 'hidden';
+            iframe.style.position = 'absolute';
+            iframe.style.left = '-9999px';
+            iframe.style.width = '302px'; // exactly 80mm equivalent
+            iframe.style.border = 'none';
+            document.body.appendChild(iframe);
+            
+            const iframeDoc = iframe.contentWindow?.document;
+            if (iframeDoc) {
+                iframeDoc.open();
+                iframeDoc.write(htmlString);
+                iframeDoc.close();
             }
-        });
+
+            // Wait brief moment for layout
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            const heightPx = iframeDoc?.documentElement.scrollHeight || 600;
+            document.body.removeChild(iframe);
+
+            const heightMm = heightPx * 0.264583;
+            const finalHeight = Math.max(heightMm + 20, 150);
+
+            // Setup html2pdf options
+            const opt = {
+                margin:       0,
+                filename:     `Recibo_${this.rawNote.folio}.pdf`,
+                image:        { type: 'jpeg' as const, quality: 0.98 },
+                html2canvas:  { 
+                    scale: 2, 
+                    useCORS: true,
+                    windowWidth: 302
+                },
+                jsPDF:        { unit: 'mm', format: [80, finalHeight] as [number, number], orientation: 'portrait' as const }
+            };
+
+            const pdfBase64DataUri = await html2pdf().set(opt).from(htmlString).outputPdf('datauristring');
+            
+            // Extract pure base64 part
+            const base64Data = (pdfBase64DataUri as string).split(',')[1];
+            
+            // Send to backend
+            this.noteService.sendEmailReceipt(this.rawNote._id, this.client.email, base64Data).subscribe({
+                next: (res) => {
+                    this.toastService.success('El ticket ha sido enviado por correo exitosamente.');
+                    this.isSendingEmail = false;
+                },
+                error: (err) => {
+                    console.error(err);
+                    this.toastService.error('Hubo un error al enviar el correo. Por favor intente más tarde.');
+                    this.isSendingEmail = false;
+                }
+            });
+        } catch (error) {
+            console.error('Error in PDF generation:', error);
+            this.toastService.error('Error al generar el documento PDF.');
+            this.isSendingEmail = false;
+        }
     }
 }
