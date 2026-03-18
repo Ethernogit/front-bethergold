@@ -72,10 +72,12 @@ export class ConsignmentSettlementComponent implements OnInit {
     this.noteService.getNoteById(this.noteId!).subscribe({
       next: (res: any) => {
         this.note = res.data;
-        if (this.note?.type !== 'consignment' || !['CONSIGNACION', 'PENDIENTE_PAGO'].includes(this.note?.status || '')) {
-          this.toastService.error('Esta nota no es una consignación pendiente');
-          this.router.navigate(['/sales/history']);
-          return;
+        if (this.note) {
+          this.note.items.forEach(item => {
+            if (item.returned) {
+              this.returnedItemIds.add((item as any)._id);
+            }
+          });
         }
         this.recalculateLists();
         this.isLoading = false;
@@ -109,8 +111,8 @@ export class ConsignmentSettlementComponent implements OnInit {
       return itemBarcode === barcode;
     });
 
-    if (foundItem && foundItem.itemId) {
-      const idStr = typeof foundItem.itemId === 'object' ? (foundItem.itemId as any)._id : foundItem.itemId;
+    if (foundItem && (foundItem as any)._id) {
+      const idStr = (foundItem as any)._id;
 
       if (this.returnedItemIds.has(idStr)) {
         this.toastService.warning('El artículo ya fue escaneado como devuelto');
