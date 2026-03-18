@@ -40,22 +40,64 @@
     <div class="p-8 pb-32">
         <form [formGroup]="configForm" class="w-full space-y-8">
 
-            <div class="space-y-6">
-                <!-- Logo Upload -->
-                <div>
-                    <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Logo de
-                        Sucursal</label>
-                    <div class="flex items-center space-x-4">
-                        <div
-                            class="w-20 h-20 border-2 border-dashed border-gray-300 dark:border-[#4A474D] rounded-lg flex items-center justify-center overflow-hidden bg-gray-50 dark:bg-[#232126]">
-                            <img *ngIf="previewLogoUrl" [src]="previewLogoUrl" alt="Logo"
-                                class="w-full h-full object-contain">
-                            <span *ngIf="!previewLogoUrl" class="text-xs text-gray-400">Sin Logo</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Logo Upload -->
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Logo de Sucursal</label>
+                        <div class="flex items-center space-x-4">
+                            <div class="w-20 h-20 border-2 border-dashed border-gray-300 dark:border-[#4A474D] rounded-lg flex items-center justify-center overflow-hidden bg-gray-50 dark:bg-[#232126]">
+                                <img *ngIf="previewLogoUrl" [src]="previewLogoUrl" alt="Logo" class="w-full h-full object-contain">
+                                <span *ngIf="!previewLogoUrl" class="text-xs text-gray-400">Sin Logo</span>
+                            </div>
+                            <input type="file" (change)="onFileSelected($event)" accept="image/*" class="text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-gray-700 dark:file:text-white">
                         </div>
-                        <input type="file" (change)="onFileSelected($event)" accept="image/*"
-                            class="text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-gray-700 dark:file:text-white">
                     </div>
                 </div>
+
+                <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+                    <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Datos de Contacto y Ubicación</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Teléfono Maestro -->
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Teléfono Maestro</label>
+                            <input type="text" formControlName="sucursalPhone" placeholder="Teléfono de la sucursal" class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-[#232126] dark:text-gray-300 dark:border-[#4A474D] focus:border-[#C69214] dark:focus:border-[#C69214] focus:outline-none focus:ring-1 focus:ring-[#C69214]/50">
+                        </div>
+                        
+                        <!-- Calle -->
+                        <div class="lg:col-span-2">
+                            <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Dirección Completa (Calle y Números)</label>
+                            <input type="text" formControlName="addressStreet" placeholder="Avenida Siempre Viva 742" class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-[#232126] dark:text-gray-300 dark:border-[#4A474D] focus:border-[#C69214] dark:focus:border-[#C69214] focus:outline-none focus:ring-1 focus:ring-[#C69214]/50">
+                        </div>
+
+                        <!-- Colonia -->
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Colonia</label>
+                            <input type="text" formControlName="addressNeighborhood" placeholder="Colonia Centro" class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-[#232126] dark:text-gray-300 dark:border-[#4A474D] focus:border-[#C69214] dark:focus:border-[#C69214] focus:outline-none focus:ring-1 focus:ring-[#C69214]/50">
+                        </div>
+
+                        <!-- Ciudad -->
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Ciudad / Municipio</label>
+                            <input type="text" formControlName="addressCity" placeholder="Irapuato" class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-[#232126] dark:text-gray-300 dark:border-[#4A474D] focus:border-[#C69214] dark:focus:border-[#C69214] focus:outline-none focus:ring-1 focus:ring-[#C69214]/50">
+                        </div>
+
+                        <!-- Estado -->
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Estado</label>
+                            <input type="text" formControlName="addressState" placeholder="Guanajuato" class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-[#232126] dark:text-gray-300 dark:border-[#4A474D] focus:border-[#C69214] dark:focus:border-[#C69214] focus:outline-none focus:ring-1 focus:ring-[#C69214]/50">
+                        </div>
+
+                        <!-- CP -->
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Código Postal</label>
+                            <input type="text" formControlName="addressZipCode" placeholder="36000" class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg dark:bg-[#232126] dark:text-gray-300 dark:border-[#4A474D] focus:border-[#C69214] dark:focus:border-[#C69214] focus:outline-none focus:ring-1 focus:ring-[#C69214]/50">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+                    <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Configuración Visual de Tickets</h2>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Footer Text -->

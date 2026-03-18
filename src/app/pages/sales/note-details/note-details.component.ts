@@ -8,7 +8,10 @@ import { ToastService } from '../../../shared/services/toast.service'; // Import
 import { GlobalPaymentComponent } from '../components/global-payment/global-payment.component';
 import { ClientSelectionModalComponent } from '../new-note/components/client-selection-modal/client-selection-modal.component';
 import { environment } from '../../../../environments/environment';
-import html2pdf from 'html2pdf.js';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+const pdfMakeConfig = pdfMake as any;
+pdfMakeConfig.vfs = (pdfFonts as any).pdfMake ? (pdfFonts as any).pdfMake.vfs : (pdfFonts as any).vfs;
 
 @Component({
     selector: 'app-note-details',
@@ -599,65 +602,225 @@ export class NoteDetailsComponent implements OnInit {
         }
 
         this.isSendingEmail = true;
-        
-        try {
-            const htmlString = this.generateHtmlTicket();
 
-            // Calculate dynamic height by temporarily mounting an iframe
-            const iframe = document.createElement('iframe');
-            iframe.style.visibility = 'hidden';
-            iframe.style.position = 'absolute';
-            iframe.style.left = '-9999px';
-            iframe.style.width = '302px'; // exactly 80mm equivalent
-            iframe.style.border = 'none';
-            document.body.appendChild(iframe);
-            
-            const iframeDoc = iframe.contentWindow?.document;
-            if (iframeDoc) {
-                iframeDoc.open();
-                iframeDoc.write(htmlString);
-                iframeDoc.close();
+        try {
+            const sucursal = this.sucursalDetails;
+            const printConfig = sucursal?.printConfig;
+
+            let base64Logo: string | null = null;
+            if (printConfig?.logoUrl) {
+                const logoUrl = environment.apiUrl.replace('/api/v1', '') + printConfig.logoUrl;
+                try {
+                    const response = await fetch(logoUrl);
+                    const blob = await response.blob();
+                    base64Logo = await new Promise<string>((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result as string);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(blob);
+                    });
+                } catch (e) {
+                    console.warn('No se pudo cargar el logo para el PDF', e);
+                }
             }
 
-            // Wait brief moment for layout
-            await new Promise(resolve => setTimeout(resolve, 100));
+            const orgName = sucursal?.name || 'Joyería';
+            const showAddress = printConfig?.showAddress ?? true;
+            const showPhone = printConfig?.showPhone ?? true;
 
-            const heightPx = iframeDoc?.documentElement.scrollHeight || 600;
-            document.body.removeChild(iframe);
+            const addressParts = [];
+            if (sucursal?.address) {
+                if (sucursal.address.street) addressParts.push(sucursal.address.street.trim());
+                if (sucursal.address.city) addressParts.push(sucursal.address.city);
+                if (sucursal.address.state) addressParts.push(sucursal.address.state);
+                if (sucursal.address.zipCode) addressParts.push(`C.P. ${sucursal.address.zipCode}`);
+                if (sucursal.address.country) addressParts.push(sucursal.address.country);
+            }
+            const addressStr = (showAddress && addressParts.length > 0) ? addressParts.join(', ') : '';
+            const phoneStr = (showPhone && sucursal?.phone) ? sucursal.phone : '';
 
-            const heightMm = heightPx * 0.264583;
-            const finalHeight = Math.max(heightMm + 20, 150);
+            // Construir tabla de artículos
+            const itemsBody: any[][] = [
+                [
+                    { text: 'CANT.', style: 'tableHeader' }, 
+                    { text: 'DESCRIPCIÓN', style: 'tableHeader' }, 
+                    { text: 'P.U.', style: 'tableHeader', alignment: 'right' }, 
+                    { text: 'IMPORTE', style: 'tableHeader', alignment: 'right' }
+                ]
+            ];
 
-            // Setup html2pdf options
-            const opt = {
-                margin:       0,
-                filename:     `Recibo_${this.rawNote.folio}.pdf`,
-                image:        { type: 'jpeg' as const, quality: 0.98 },
-                html2canvas:  { 
-                    scale: 2, 
-                    useCORS: true,
-                    windowWidth: 302
+            this.rawNote.items.forEach(item => {
+                const unitPrice = item.financials?.unitPrice || 0;
+                const subtotal = item.financials?.subtotal || 0;
+
+                let ref = '';
+                if (item.specifications?.notes) {
+                    ref = item.specifications.notes;
+                } else if (item.itemId && typeof item.itemId === 'object' && (item.itemId as any).barcode) {
+                    ref = (item.itemId as any).barcode;
+                }
+
+                const descText = (ref ? `#${ref} ` : '') + this.formatDescription(item);
+
+                itemsBody.push([
+                    { text: item.quantity.toString(), style: 'tableBody', alignment: 'center' },
+                    { text: descText, style: 'tableBody' },
+                    { text: `$${unitPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}`, style: 'tableBody', alignment: 'right' },
+                    { text: `$${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}`, style: 'tableBody', alignment: 'right' }
+                ]);
+            });
+
+            // Tabla de pagos
+            const paymentsBody: any[][] = [];
+            if (this.financials.transactions && this.financials.transactions.length > 0) {
+                paymentsBody.push([
+                    { text: 'FECHA', style: 'tableHeader' },
+                    { text: 'MÉTODO', style: 'tableHeader' },
+                    { text: 'MONTO', style: 'tableHeader', alignment: 'right' }
+                ]);
+                this.financials.transactions.forEach((t: any) => {
+                    paymentsBody.push([
+                        { text: t.date || '', style: 'tableBody' },
+                        { text: t.type || '', style: 'tableBody' },
+                        { text: `$${typeof t.amount === 'number' ? t.amount.toLocaleString('en-US', { minimumFractionDigits: 2 }) : t.amount}`, style: 'tableBody', alignment: 'right' }
+                    ]);
+                });
+            }
+            
+            // Footer Extra Links
+            const footerLinks = [];
+            if (printConfig?.facebook) footerLinks.push({ text: `FB: ${printConfig.facebook}`, alignment: 'center', style: 'footerLink' });
+            if (printConfig?.instagram) footerLinks.push({ text: `IG: ${printConfig.instagram}`, alignment: 'center', style: 'footerLink' });
+            
+            const docDefinition: any = {
+                pageSize: 'LETTER',
+                pageMargins: [ 40, 60, 40, 60 ],
+                content: [
+                    // Header
+                    {
+                        columns: [
+                            [
+                                ...(base64Logo ? [{ image: base64Logo, width: 140, margin: [0, 0, 0, 10] as [number, number, number, number] }] : []),
+                                { text: orgName.toUpperCase(), style: 'header' },
+                                addressStr ? { text: addressStr, style: 'subheader' } : '',
+                                phoneStr ? { text: `Tel: ${phoneStr}`, style: 'subheader' } : '',
+                                printConfig?.headerText ? { text: printConfig.headerText, style: 'subheader', margin: [0, 5, 0, 0] } : ''
+                            ],
+                            [
+                                { text: 'COMPROBANTE', style: 'invoiceTitle', alignment: 'right' },
+                                { text: `Folio: ${this.note.id}`, style: 'invoiceSub', alignment: 'right' },
+                                { text: `Fecha: ${this.note.dateCreated} ${this.note.time}`, style: 'invoiceSub', alignment: 'right' }
+                            ]
+                        ]
+                    },
+                    { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 530, y2: 5, lineWidth: 1, lineColor: '#dddddd' }], margin: [0, 10, 0, 10] },
+                    // Client Info
+                    {
+                        columns: [
+                            [
+                                { text: 'CLIENTE:', style: 'label' },
+                                { text: this.client.name, style: 'value' },
+                                { text: this.client.phone && this.client.phone !== 'Sin teléfono' ? `Tel: ${this.client.phone}` : '', style: 'value' }
+                            ],
+                            [
+                                { text: 'ATENDIÓ:', style: 'label', alignment: 'right' },
+                                { text: this.note.agent, style: 'value', alignment: 'right' }
+                            ]
+                        ]
+                    },
+                    { text: '', margin: [0, 10, 0, 10] },
+                    // Items Section
+                    {
+                        table: {
+                            headerRows: 1,
+                            widths: [ 'auto', '*', 'auto', 'auto' ],
+                            body: itemsBody
+                        },
+                        layout: 'lightHorizontalLines'
+                    },
+                    // Totals
+                    { text: '', margin: [0, 10, 0, 10] },
+                    {
+                        columns: [
+                            { width: '*', text: '' },
+                            {
+                                width: 'auto',
+                                table: {
+                                    widths: [100, 80],
+                                    body: [
+                                        [ { text: 'SUBTOTAL:', style: 'totalsLabel' }, { text: `$${this.financials.subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}`, style: 'totalsValue' } ],
+                                        ...(this.financials.tax > 0 ? [[ { text: 'IMPUESTOS:', style: 'totalsLabel' }, { text: `$${this.financials.tax.toLocaleString('en-US', { minimumFractionDigits: 2 })}`, style: 'totalsValue' } ]] : []),
+                                        [ { text: 'TOTAL:', style: 'totalsLabel', bold: true }, { text: `$${this.financials.total.toLocaleString('en-US', { minimumFractionDigits: 2 })}`, style: 'totalsValue', bold: true } ],
+                                        [ { text: 'PAGADO:', style: 'totalsLabel' }, { text: `$${this.financials.paid.toLocaleString('en-US', { minimumFractionDigits: 2 })}`, style: 'totalsValue' } ],
+                                        [ { text: 'PENDIENTE:', style: 'totalsLabel' }, { text: `$${this.financials.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`, style: 'totalsValue' } ]
+                                    ]
+                                },
+                                layout: 'noBorders'
+                            }
+                        ]
+                    },
+                    // Payments
+                    ...(paymentsBody.length > 0 ? [
+                        { text: 'PAGOS REALIZADOS', style: 'sectionTitle', margin: [0, 20, 0, 10] },
+                        {
+                            table: {
+                                headerRows: 1,
+                                widths: [ 'auto', '*', 'auto' ],
+                                body: paymentsBody
+                            },
+                            layout: 'lightHorizontalLines'
+                        }
+                    ] : []),
+                    // Footer
+                    { text: '', margin: [0, 20, 0, 20] },
+                    { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 530, y2: 5, lineWidth: 1, lineColor: '#dddddd' }], margin: [0, 0, 0, 10] },
+                    { text: printConfig?.footerText || '¡Gracias por su compra!', alignment: 'center', style: 'footer' },
+                    printConfig?.website ? { text: printConfig.website, alignment: 'center', style: 'footerLink' } : '',
+                    ...(footerLinks.length > 0 ? [
+                        {
+                            columns: footerLinks
+                        }
+                    ] : [])
+                ],
+                styles: {
+                    header: { fontSize: 18, bold: true, color: '#333333' },
+                    subheader: { fontSize: 10, color: '#666666', margin: [0, 2, 0, 0] },
+                    invoiceTitle: { fontSize: 18, bold: true, color: '#111111' },
+                    invoiceSub: { fontSize: 10, color: '#444444', margin: [0, 2, 0, 0] },
+                    label: { fontSize: 10, color: '#888888', bold: true },
+                    value: { fontSize: 11, color: '#000000', margin: [0, 2, 0, 4] },
+                    tableHeader: { fontSize: 10, bold: true, color: '#555555', margin: [0, 4, 0, 4] },
+                    tableBody: { fontSize: 10, color: '#222222', margin: [0, 4, 0, 4] },
+                    totalsLabel: { fontSize: 10, color: '#666666', alignment: 'right', margin: [0, 4, 0, 4] },
+                    totalsValue: { fontSize: 11, color: '#111111', alignment: 'right', margin: [0, 4, 0, 4] },
+                    sectionTitle: { fontSize: 12, bold: true, color: '#333333' },
+                    footer: { fontSize: 10, color: '#555555', margin: [0, 4, 0, 4] },
+                    footerLink: { fontSize: 9, color: '#888888', margin: [0, 2, 0, 2] }
                 },
-                jsPDF:        { unit: 'mm', format: [80, finalHeight] as [number, number], orientation: 'portrait' as const }
+                defaultStyle: {
+                    columnGap: 20
+                }
             };
 
-            const pdfBase64DataUri = await html2pdf().set(opt).from(htmlString).outputPdf('datauristring');
-            
-            // Extract pure base64 part
-            const base64Data = (pdfBase64DataUri as string).split(',')[1];
-            
-            // Send to backend
-            this.noteService.sendEmailReceipt(this.rawNote._id, this.client.email, base64Data).subscribe({
-                next: (res) => {
-                    this.toastService.success('El ticket ha sido enviado por correo exitosamente.');
-                    this.isSendingEmail = false;
-                },
-                error: (err) => {
-                    console.error(err);
-                    this.toastService.error('Hubo un error al enviar el correo. Por favor intente más tarde.');
-                    this.isSendingEmail = false;
-                }
+            const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+            pdfDocGenerator.getBase64().then((base64Data: string) => {
+                this.noteService.sendEmailReceipt(this.rawNote!._id as string, this.client!.email as string, base64Data).subscribe({
+                    next: (res) => {
+                        this.toastService.success('El recibo ha sido enviado por correo exitosamente.');
+                        this.isSendingEmail = false;
+                    },
+                    error: (err) => {
+                        console.error(err);
+                        this.toastService.error('Hubo un error al enviar el correo. Por favor intente más tarde.');
+                        this.isSendingEmail = false;
+                    }
+                });
+            }).catch((err) => {
+                console.error('Error generating PDF base64:', err);
+                this.toastService.error('Error al generar el documento PDF.');
+                this.isSendingEmail = false;
             });
+
         } catch (error) {
             console.error('Error in PDF generation:', error);
             this.toastService.error('Error al generar el documento PDF.');

@@ -42,7 +42,15 @@ export class SucursalPrintConfigComponent implements OnInit {
             printFontFamily: ['Courier'],
             printWebsite: [''],
             printFacebook: [''],
-            printInstagram: ['']
+            printInstagram: [''],
+            // Sugerido por el plan para editar en la misma pantalla
+            sucursalPhone: [''],
+            addressStreet: [''],
+            addressNeighborhood: [''],
+            addressCity: [''],
+            addressState: [''],
+            addressZipCode: [''],
+            addressCountry: ['México']
         });
     }
 
@@ -82,7 +90,16 @@ export class SucursalPrintConfigComponent implements OnInit {
                         printFontFamily: printConfig.fontFamily || 'Courier',
                         printWebsite: printConfig.website || '',
                         printFacebook: printConfig.facebook || '',
-                        printInstagram: printConfig.instagram || ''
+                        printInstagram: printConfig.instagram || '',
+                        
+                        // Direccion de Sucursal
+                        sucursalPhone: response.data.phone || '',
+                        addressStreet: response.data.address?.street || '',
+                        addressNeighborhood: '',
+                        addressCity: response.data.address?.city || '',
+                        addressState: response.data.address?.state || '',
+                        addressZipCode: response.data.address?.zipCode || '',
+                        addressCountry: response.data.address?.country || 'México'
                     });
 
                     if (printConfig.logoUrl) {
@@ -278,6 +295,15 @@ export class SucursalPrintConfigComponent implements OnInit {
             };
 
             const updateData = {
+                phone: formValue.sucursalPhone,
+                address: {
+                    street: formValue.addressStreet,
+                    neighborhood: formValue.addressNeighborhood,
+                    city: formValue.addressCity,
+                    state: formValue.addressState,
+                    zipCode: formValue.addressZipCode,
+                    country: formValue.addressCountry
+                },
                 printConfig: printConfig
             };
 
