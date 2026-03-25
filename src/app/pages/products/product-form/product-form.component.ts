@@ -469,7 +469,8 @@ export class ProductFormComponent implements OnInit, OnChanges {
                 },
                 error: (err) => {
                     console.error('Error updating product', err);
-                    this.toastService.error('Error al actualizar el producto');
+                    const msg = err?.error?.error?.message || err?.error?.message || err?.message || 'Error al actualizar el producto';
+                    this.toastService.error(msg);
                     this.isSubmitting = false;
                 }
             });
@@ -482,7 +483,8 @@ export class ProductFormComponent implements OnInit, OnChanges {
                 },
                 error: (err) => {
                     console.error('Error creating product', err);
-                    this.toastService.error('Error al registrar el producto');
+                    const msg = err?.error?.error?.message || err?.error?.message || err?.message || 'Error al registrar el producto';
+                    this.toastService.error(msg);
                     this.isSubmitting = false;
                 }
             });
