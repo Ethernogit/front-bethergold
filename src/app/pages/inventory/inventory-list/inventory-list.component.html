@@ -127,6 +127,9 @@
                                     class="px-4 py-3 font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] text-center">
                                     Stock</th>
                                 <th
+                                    class="px-4 py-3 font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] text-center">
+                                    Kilataje</th>
+                                <th
                                     class="px-4 py-3 font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] text-right">
                                     Peso</th>
                                 <th
@@ -151,11 +154,19 @@
                                             class="font-instrument text-theme-sm text-[#46424A] dark:text-gray-300 font-medium">
                                             {{ product.name }}</p>
                                         @if(product.reservation) {
-                                        <span
-                                            class="inline-flex items-center gap-1.5 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 text-theme-xs font-medium text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]">
-                                            <span class="size-1.5 rounded-full bg-[#C69214]"></span>
-                                            Apartado ({{ product.reservation.folio }})
-                                        </span>
+                                            @if(product.reservation.isPawn) {
+                                            <span
+                                                class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5 text-theme-xs font-medium text-blue-700 dark:bg-blue-500/15 dark:text-blue-400">
+                                                <span class="size-1.5 rounded-full bg-blue-500"></span>
+                                                En Préstamo ({{ product.reservation.folio }})
+                                            </span>
+                                            } @else {
+                                            <span
+                                                class="inline-flex items-center gap-1.5 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 text-theme-xs font-medium text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]">
+                                                <span class="size-1.5 rounded-full bg-[#C69214]"></span>
+                                                Apartado ({{ product.reservation.folio }})
+                                            </span>
+                                            }
                                         }
                                     </div>
                                     @if(product.description) {
@@ -189,6 +200,16 @@
                                         }">
                                         {{ product.stock }}
                                     </span>
+                                </td>
+                                <td class="px-4 py-3 text-center">
+                                    @if(product.jewelryDetails?.karatage) {
+                                    <span
+                                        class="inline-flex items-center justify-center rounded-full bg-[#FBF0C9] px-2.5 py-0.5 text-theme-xs font-medium text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]">
+                                        {{ product.jewelryDetails?.karatage }}
+                                    </span>
+                                    } @else {
+                                    <span class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-500">—</span>
+                                    }
                                 </td>
                                 <td class="px-4 py-3 text-right">
                                     <span class="font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">{{

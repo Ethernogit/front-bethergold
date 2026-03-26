@@ -94,6 +94,18 @@ export class InventoryListComponent implements OnInit {
                     { value: 'missing', label: 'No Revisado' }
                 ],
                 placeholder: 'Seleccione Estado'
+            },
+            {
+                key: 'jewelryDetails.karatage',
+                label: 'Kilataje',
+                type: 'select',
+                options: [
+                    { value: '10K', label: '10K' },
+                    { value: '14K', label: '14K' },
+                    { value: '18K', label: '18K' },
+                    { value: '24K', label: '24K' }
+                ],
+                placeholder: 'Seleccione Kilataje'
             }
         ];
         this.filterConfig.set(baseConfig);
