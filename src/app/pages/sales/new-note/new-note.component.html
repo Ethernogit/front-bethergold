@@ -538,8 +538,7 @@
                 <div class="pt-4">
                     <button type="button" (click)="onSubmit()" [disabled]="isLoading || isPaymentInsufficient"
                         [ngClass]="{
-                            'bg-gradient-to-br from-[#C69214] to-[#FAC600] text-white hover:from-[#9A6F0A] hover:to-[#C69214]': !isPartialPayment && !isPaymentInsufficient,
-                            'bg-[#4A474D] text-white hover:bg-[#3a383d]': isPartialPayment && !isPaymentInsufficient,
+                            'bg-gradient-to-br from-[#C69214] to-[#FAC600] text-white hover:from-[#9A6F0A] hover:to-[#C69214]': !isPaymentInsufficient,
                             'bg-[#6B6560] text-white cursor-not-allowed opacity-50': isPaymentInsufficient
                         }"
                         class="w-full py-4 font-instrument font-extrabold text-lg tracking-wide rounded-xl shadow-theme-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:transform-none disabled:shadow-none uppercase">

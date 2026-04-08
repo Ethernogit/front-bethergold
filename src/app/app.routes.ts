@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { LandingComponent } from './pages/landing/landing.component';
 import { EcommerceComponent } from './pages/dashboard/ecommerce/ecommerce.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { FormElementsComponent } from './pages/forms/form-elements/form-elements.component';
@@ -30,8 +31,9 @@ import { NoteDetailsComponent } from './pages/sales/note-details/note-details.co
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/sales/new',
-    pathMatch: 'full'
+    component: LandingComponent,
+    pathMatch: 'full',
+    title: 'Bether Gold — Sistema POS para Joyerías'
   },
 
   // Rutas de autenticación (públicas)
@@ -380,6 +382,18 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/support/support-center/support-center.component').then(m => m.SupportCenterComponent),
         canActivate: [AuthGuard],
         title: 'Centro de Ayuda | Bethergold'
+      },
+
+      // Reportes
+      {
+        path: 'reportes',
+        loadComponent: () => import('./pages/reportes/reportes.component').then(m => m.ReportesComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'reports',
+          action: 'read'
+        },
+        title: 'Reportes y Estadísticas | Bethergold'
       },
 
       // Ventas / Notas

@@ -1,0 +1,487 @@
+<!-- ===================== NAVBAR ===================== -->
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-[#E8D9A0] shadow-xs">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+    <!-- Logo -->
+    <a routerLink="/" class="flex items-center">
+      <img src="assets/brand/logo-principal.svg" alt="Bether Gold" class="h-8 w-auto" />
+    </a>
+
+    <!-- Nav links -->
+    <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-brand-charcoal">
+      <a href="#capturas" class="hover:text-gold-primary transition-colors">Vista previa</a>
+      <a href="#funcionalidades" class="hover:text-gold-primary transition-colors">Funcionalidades</a>
+      <a href="#como-funciona" class="hover:text-gold-primary transition-colors">Cómo funciona</a>
+      <a href="#proximamente" class="hover:text-gold-primary transition-colors">Próximamente</a>
+    </nav>
+
+    <!-- CTA -->
+    <a
+      routerLink="/auth/sign-in"
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white shadow-theme-sm transition-opacity hover:opacity-90"
+      style="background: linear-gradient(135deg, #C69214, #FAC600);"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+      </svg>
+      Acceder
+    </a>
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section
+  class="relative min-h-[90vh] flex items-center justify-center text-center overflow-hidden"
+  style="background-image: url('assets/brand/patron-fondo.jpg'); background-size: cover; background-position: center;"
+>
+  <!-- Overlay -->
+  <div class="absolute inset-0 bg-black/65"></div>
+
+  <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-24">
+    <!-- Badge -->
+    <span
+      class="inline-block mb-6 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase"
+      style="background: rgba(198,146,20,0.18); color: #FAC600; border: 1px solid rgba(250,198,0,0.35);"
+    >
+      Sistema POS para Joyerías
+    </span>
+
+    <h1 class="font-outfit text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+      Controla tu joyería<br />
+      <span style="background: linear-gradient(135deg, #C69214, #FAC600); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+        desde un solo lugar
+      </span>
+    </h1>
+
+    <p class="font-display text-lg sm:text-xl text-white/75 max-w-2xl mx-auto mb-10">
+      Inventario, punto de venta, etiquetas de precio y tickets impresos. Todo lo que necesita tu joyería para trabajar más rápido y sin errores.
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a
+        href="https://wa.me/527224413785?text=Hola%2C%20me%20interesa%20conocer%20Bether%20Gold.%20%C2%BFPodemos%20agendar%20una%20demo%3F"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-base font-semibold text-white shadow-theme-lg transition-opacity hover:opacity-90"
+        style="background: linear-gradient(135deg, #C69214, #FAC600);"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Solicitar demo por WhatsApp
+      </a>
+      <a
+        href="#capturas"
+        class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-base font-semibold text-white border border-white/30 hover:bg-white/10 transition-colors"
+      >
+        Ver el sistema
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== STATS STRIP ===================== -->
+<section class="bg-[#FFF8E7] border-y border-[#E8D9A0]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+    <div>
+      <p class="font-outfit text-3xl font-bold" style="color:#C69214">POS</p>
+      <p class="font-display text-sm text-brand-warm-gray mt-1">Punto de venta rápido</p>
+    </div>
+    <div>
+      <p class="font-outfit text-3xl font-bold" style="color:#C69214">Tickets</p>
+      <p class="font-display text-sm text-brand-warm-gray mt-1">Impresión al instante</p>
+    </div>
+    <div>
+      <p class="font-outfit text-3xl font-bold" style="color:#C69214">Etiquetas</p>
+      <p class="font-display text-sm text-brand-warm-gray mt-1">Con código de barras</p>
+    </div>
+    <div>
+      <p class="font-outfit text-3xl font-bold" style="color:#C69214">Inventario</p>
+      <p class="font-display text-sm text-brand-warm-gray mt-1">En tiempo real</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CAPTURAS DEL SISTEMA ===================== -->
+<section id="capturas" class="py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <span class="font-display text-sm font-semibold uppercase tracking-widest" style="color:#C69214">Vista previa</span>
+      <h2 class="font-outfit text-3xl sm:text-4xl font-bold text-brand-black mt-3">
+        Así se ve Bether Gold
+      </h2>
+      <p class="font-display text-brand-warm-gray mt-4 max-w-xl mx-auto">
+        Una interfaz limpia y pensada para el trabajo diario de tu joyería.
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-20">
+
+      <!-- Captura 1: POS -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <span class="font-display text-xs font-semibold uppercase tracking-widest" style="color:#C69214">Punto de venta</span>
+          <h3 class="font-outfit text-2xl sm:text-3xl font-bold text-brand-black mt-2 mb-4">
+            Cobra rápido, sin errores
+          </h3>
+          <p class="font-display text-brand-warm-gray leading-relaxed mb-6">
+            Agrega productos al carrito con un clic, aplica descuentos, selecciona el método de pago y genera el ticket impreso al instante. Diseñado para los momentos de mayor actividad.
+          </p>
+          <ul class="space-y-2">
+            @for (item of posHighlights; track item) {
+              <li class="flex items-center gap-2 font-display text-sm text-brand-charcoal">
+                <span class="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #C69214, #FAC600);">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                  </svg>
+                </span>
+                {{ item }}
+              </li>
+            }
+          </ul>
+        </div>
+        <div
+          class="rounded-2xl overflow-hidden border border-[#E8D9A0] shadow-theme-xl cursor-zoom-in relative group"
+          (click)="openLightbox('assets/images/landing/POS.png', 'Punto de venta Bether Gold')"
+        >
+          <img
+            src="assets/images/landing/POS.png"
+            alt="Punto de venta Bether Gold"
+            class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+          />
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+            <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60 rounded-full p-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6" />
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Captura 2: Inventario (imagen izquierda) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div
+          class="order-2 lg:order-1 rounded-2xl overflow-hidden border border-[#E8D9A0] shadow-theme-xl cursor-zoom-in relative group"
+          (click)="openLightbox('assets/images/landing/INVENTARIO.png', 'Inventario Bether Gold')"
+        >
+          <img
+            src="assets/images/landing/INVENTARIO.png"
+            alt="Inventario Bether Gold"
+            class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+          />
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+            <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60 rounded-full p-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6" />
+              </svg>
+            </span>
+          </div>
+        </div>
+        <div class="order-1 lg:order-2">
+          <span class="font-display text-xs font-semibold uppercase tracking-widest" style="color:#C69214">Inventario</span>
+          <h3 class="font-outfit text-2xl sm:text-3xl font-bold text-brand-black mt-2 mb-4">
+            Tus piezas, siempre bajo control
+          </h3>
+          <p class="font-display text-brand-warm-gray leading-relaxed mb-6">
+            Registra cada pieza con su descripción, precio, material y existencias. Consulta tu catálogo completo en segundos e imprime etiquetas con código de barras para cada producto.
+          </p>
+          <ul class="space-y-2">
+            @for (item of inventoryHighlights; track item) {
+              <li class="flex items-center gap-2 font-display text-sm text-brand-charcoal">
+                <span class="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #C69214, #FAC600);">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                  </svg>
+                </span>
+                {{ item }}
+              </li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <!-- Captura 3: Ventas -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div>
+          <span class="font-display text-xs font-semibold uppercase tracking-widest" style="color:#C69214">Historial de ventas</span>
+          <h3 class="font-outfit text-2xl sm:text-3xl font-bold text-brand-black mt-2 mb-4">
+            Cada venta, documentada
+          </h3>
+          <p class="font-display text-brand-warm-gray leading-relaxed mb-6">
+            Consulta todas tus ventas pasadas, filtra por fecha o cliente, y revisa el detalle completo de cada operación. Nunca pierdas el rastro de un movimiento.
+          </p>
+          <ul class="space-y-2">
+            @for (item of salesHighlights; track item) {
+              <li class="flex items-center gap-2 font-display text-sm text-brand-charcoal">
+                <span class="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #C69214, #FAC600);">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                  </svg>
+                </span>
+                {{ item }}
+              </li>
+            }
+          </ul>
+        </div>
+        <div
+          class="rounded-2xl overflow-hidden border border-[#E8D9A0] shadow-theme-xl cursor-zoom-in relative group"
+          (click)="openLightbox('assets/images/landing/ventas.png', 'Historial de ventas Bether Gold')"
+        >
+          <img
+            src="assets/images/landing/ventas.png"
+            alt="Historial de ventas Bether Gold"
+            class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+          />
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+            <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60 rounded-full p-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6" />
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Captura 4: Detalle de nota -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div
+          class="order-2 lg:order-1 rounded-2xl overflow-hidden border border-[#E8D9A0] shadow-theme-xl cursor-zoom-in relative group"
+          (click)="openLightbox('assets/images/landing/detallenota.png', 'Detalle de nota Bether Gold')"
+        >
+          <img
+            src="assets/images/landing/detallenota.png"
+            alt="Detalle de nota Bether Gold"
+            class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+          />
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+            <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60 rounded-full p-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6" />
+              </svg>
+            </span>
+          </div>
+        </div>
+        <div class="order-1 lg:order-2">
+          <span class="font-display text-xs font-semibold uppercase tracking-widest" style="color:#C69214">Detalle de nota</span>
+          <h3 class="font-outfit text-2xl sm:text-3xl font-bold text-brand-black mt-2 mb-4">
+            Más que una venta, una relación de confianza
+          </h3>
+          <p class="font-display text-brand-warm-gray leading-relaxed mb-6">
+            Cada nota guarda el historial completo: abonos, saldo pendiente, mayoreo y comunicación directa con el cliente. Ideal para joyerías que manejan crédito y clientes frecuentes.
+          </p>
+          <ul class="space-y-2">
+            @for (item of noteHighlights; track item) {
+              <li class="flex items-center gap-2 font-display text-sm text-brand-charcoal">
+                <span class="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #C69214, #FAC600);">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                  </svg>
+                </span>
+                {{ item }}
+              </li>
+            }
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FUNCIONALIDADES ===================== -->
+<section id="funcionalidades" class="py-24 bg-[#FFFDF7]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <span class="font-display text-sm font-semibold uppercase tracking-widest" style="color:#C69214">Funcionalidades</span>
+      <h2 class="font-outfit text-3xl sm:text-4xl font-bold text-brand-black mt-3">
+        Todo lo que tu joyería necesita
+      </h2>
+      <p class="font-display text-brand-warm-gray mt-4 max-w-xl mx-auto">
+        Sin complicaciones, sin una curva de aprendizaje enorme. Listo para usar desde el primer día.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (feature of features; track feature.title) {
+        <div class="bg-white rounded-2xl p-6 border border-[#E8D9A0] shadow-theme-sm hover:shadow-theme-md transition-shadow">
+          <div
+            class="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+            style="background: linear-gradient(135deg, #FBF0C9, #FFF8E7);"
+          >
+            <span class="w-6 h-6" style="color:#C69214" [innerHTML]="feature.icon"></span>
+          </div>
+          <h3 class="font-outfit text-lg font-semibold text-brand-black mb-2">{{ feature.title }}</h3>
+          <p class="font-display text-sm text-brand-warm-gray leading-relaxed">{{ feature.description }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CÓMO FUNCIONA ===================== -->
+<section id="como-funciona" class="py-24 bg-white">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <span class="font-display text-sm font-semibold uppercase tracking-widest" style="color:#C69214">Proceso</span>
+      <h2 class="font-outfit text-3xl sm:text-4xl font-bold text-brand-black mt-3">
+        Empieza en minutos
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div class="text-center">
+        <div
+          class="w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold font-outfit text-white mx-auto mb-4"
+          style="background: linear-gradient(135deg, #C69214, #FAC600);"
+        >1</div>
+        <h3 class="font-outfit text-lg font-semibold text-brand-black mb-2">Crea tu cuenta</h3>
+        <p class="font-display text-sm text-brand-warm-gray">Registra tu joyería en menos de 5 minutos.</p>
+      </div>
+      <div class="text-center">
+        <div
+          class="w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold font-outfit text-white mx-auto mb-4"
+          style="background: linear-gradient(135deg, #C69214, #FAC600);"
+        >2</div>
+        <h3 class="font-outfit text-lg font-semibold text-brand-black mb-2">Carga tu inventario</h3>
+        <p class="font-display text-sm text-brand-warm-gray">Agrega tus productos, precios y existencias. Genera etiquetas para cada pieza.</p>
+      </div>
+      <div class="text-center">
+        <div
+          class="w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold font-outfit text-white mx-auto mb-4"
+          style="background: linear-gradient(135deg, #C69214, #FAC600);"
+        >3</div>
+        <h3 class="font-outfit text-lg font-semibold text-brand-black mb-2">Empieza a vender</h3>
+        <p class="font-display text-sm text-brand-warm-gray">Usa el punto de venta para cobrar, generar tickets e imprimir al instante.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EN CONSTRUCCIÓN ===================== -->
+<section id="proximamente" class="py-24" style="background-color: #232126;">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <span
+        class="inline-block mb-3 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase"
+        style="background: rgba(198,146,20,0.18); color: #FAC600; border: 1px solid rgba(250,198,0,0.3);"
+      >
+        En construcción
+      </span>
+      <h2 class="font-outfit text-3xl sm:text-4xl font-bold text-white mt-2">
+        Lo que viene pronto
+      </h2>
+      <p class="font-display text-white/60 mt-4 max-w-xl mx-auto">
+        Estamos trabajando para hacer Bether Gold aún más poderoso. Estas funciones están en camino.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      @for (item of comingSoonItems; track item.title) {
+        <div
+          class="relative rounded-2xl p-6 border overflow-hidden"
+          style="background-color: #3a383d; border-color: #4A474D;"
+        >
+          @if (item.eta) {
+            <span
+              class="absolute top-4 right-4 text-[10px] font-semibold px-2 py-0.5 rounded-full"
+              style="background: rgba(198,146,20,0.2); color: #E8C97A;"
+            >
+              {{ item.eta }}
+            </span>
+          }
+          <div
+            class="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+            style="background: rgba(198,146,20,0.15);"
+          >
+            <span class="w-5 h-5" style="color:#FAC600" [innerHTML]="item.icon"></span>
+          </div>
+          <h3 class="font-outfit text-base font-semibold text-white mb-2">{{ item.title }}</h3>
+          <p class="font-display text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">{{ item.description }}</p>
+          <div class="mt-5 h-1 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.08);">
+            <div
+              class="h-full rounded-full"
+              style="width: 40%; background: linear-gradient(90deg, #C69214, #FAC600);"
+            ></div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CTA FINAL ===================== -->
+<section class="py-24" style="background-color: #191817;">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+    <img src="assets/brand/logo-negativo.svg" alt="Bether Gold" class="h-10 w-auto mx-auto mb-8 opacity-90" />
+    <h2 class="font-outfit text-3xl sm:text-4xl font-bold text-white mb-4">
+      Tu joyería merece una herramienta a su altura
+    </h2>
+    <p class="font-display text-white/60 text-lg mb-10">
+      Gestiona tu negocio con orden, velocidad y confianza.
+    </p>
+    <a
+      href="https://wa.me/527224413785?text=Hola%2C%20me%20interesa%20conocer%20Bether%20Gold.%20%C2%BFPodemos%20agendar%20una%20demo%3F"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl text-base font-semibold text-white shadow-theme-xl transition-opacity hover:opacity-90"
+      style="background: linear-gradient(135deg, #C69214, #FAC600);"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+      Solicitar demo por WhatsApp
+    </a>
+  </div>
+</section>
+
+<!-- ===================== LIGHTBOX ===================== -->
+@if (lightboxSrc) {
+  <div
+    class="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-8"
+    style="background: rgba(0,0,0,0.9);"
+    (click)="closeLightbox()"
+  >
+    <!-- Botón cerrar -->
+    <button
+      class="absolute top-4 right-4 text-white/70 hover:text-white transition-colors bg-white/10 hover:bg-white/20 rounded-full p-2"
+      (click)="closeLightbox()"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <!-- Imagen -->
+    <img
+      [src]="lightboxSrc"
+      [alt]="lightboxAlt"
+      class="max-w-full max-h-full rounded-xl shadow-2xl object-contain"
+      style="max-height: calc(100vh - 4rem);"
+      (click)="$event.stopPropagation()"
+    />
+
+    <!-- Label inferior -->
+    <p class="absolute bottom-4 left-1/2 -translate-x-1/2 font-display text-sm text-white/50">
+      {{ lightboxAlt }} &nbsp;·&nbsp; Clic fuera de la imagen o <kbd class="text-white/70">Esc</kbd> para cerrar
+    </p>
+  </div>
+}
+
+<!-- ===================== FOOTER ===================== -->
+<footer style="background-color: #191817; border-top: 1px solid #2a2828;">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col md:flex-row items-center justify-between gap-4">
+    <img src="assets/brand/logo-negativo.svg" alt="Bether Gold" class="h-7 w-auto opacity-80" />
+
+    <nav class="flex flex-wrap gap-5 text-sm justify-center">
+      <a href="#capturas" class="transition-colors" style="color: rgba(255,255,255,0.45);" onmouseover="this.style.color='#FAC600'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">Vista previa</a>
+      <a href="#funcionalidades" class="transition-colors" style="color: rgba(255,255,255,0.45);" onmouseover="this.style.color='#FAC600'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">Funcionalidades</a>
+      <a href="#como-funciona" class="transition-colors" style="color: rgba(255,255,255,0.45);" onmouseover="this.style.color='#FAC600'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">Cómo funciona</a>
+      <a href="#proximamente" class="transition-colors" style="color: rgba(255,255,255,0.45);" onmouseover="this.style.color='#FAC600'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">Próximamente</a>
+      <a href="https://wa.me/527224413785?text=Hola%2C%20me%20interesa%20conocer%20Bether%20Gold.%20%C2%BFPodemos%20agendar%20una%20demo%3F" target="_blank" rel="noopener noreferrer" class="transition-colors" style="color: rgba(255,255,255,0.45);" onmouseover="this.style.color='#FAC600'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">WhatsApp</a>
+    </nav>
+
+    <p class="font-display text-xs" style="color: rgba(255,255,255,0.3);">
+      © 2026 Bether Gold. Todos los derechos reservados.
+    </p>
+  </div>
+</footer>

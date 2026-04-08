@@ -1,0 +1,471 @@
+<div class="h-[calc(100vh-50px)] flex flex-col overflow-hidden max-w-7xl mx-auto animate-fade-in-up font-instrument">
+    <div class="flex flex-col gap-4 h-full p-6 overflow-auto">
+
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
+            <div>
+                <h1 class="font-instrument text-title-md font-semibold text-[#191817] dark:text-white">
+                    Reportes y Estadísticas
+                </h1>
+                <p class="mt-1 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-500">
+                    Análisis de ventas, inventario y caja.
+                </p>
+            </div>
+
+            <!-- Date filters (Ventas & Caja only) -->
+            <div class="flex flex-wrap items-end gap-3" *ngIf="activeTab !== 'inventario'">
+                <div>
+                    <label class="font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300 block mb-1">Desde</label>
+                    <input type="date" [(ngModel)]="startDate" (change)="onFilterChange()"
+                        class="rounded-xl border border-[#E8D9A0] bg-white px-4 py-2 font-instrument text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#232126] dark:text-white dark:focus:border-[#FAC600]">
+                </div>
+                <div>
+                    <label class="font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300 block mb-1">Hasta</label>
+                    <input type="date" [(ngModel)]="endDate" (change)="onFilterChange()"
+                        class="rounded-xl border border-[#E8D9A0] bg-white px-4 py-2 font-instrument text-base text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#232126] dark:text-white dark:focus:border-[#FAC600]">
+                </div>
+                <span class="text-theme-xs text-[#9A6F0A] dark:text-[#E8C97A] pb-2">Últimos 30 días por defecto</span>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex gap-1 bg-[#FBF0C9] dark:bg-[#2A2620] rounded-xl p-1 shrink-0 w-fit">
+            <button (click)="setTab('ventas')"
+                [class]="activeTab === 'ventas'
+                    ? 'px-5 py-2 rounded-lg font-instrument text-theme-sm font-semibold bg-white dark:bg-[#1C1A14] text-[#C69214] shadow-sm'
+                    : 'px-5 py-2 rounded-lg font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400 hover:text-[#C69214]'">
+                Ventas
+            </button>
+            <button (click)="setTab('inventario')"
+                [class]="activeTab === 'inventario'
+                    ? 'px-5 py-2 rounded-lg font-instrument text-theme-sm font-semibold bg-white dark:bg-[#1C1A14] text-[#C69214] shadow-sm'
+                    : 'px-5 py-2 rounded-lg font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400 hover:text-[#C69214]'">
+                Inventario
+            </button>
+            <button (click)="setTab('caja')"
+                [class]="activeTab === 'caja'
+                    ? 'px-5 py-2 rounded-lg font-instrument text-theme-sm font-semibold bg-white dark:bg-[#1C1A14] text-[#C69214] shadow-sm'
+                    : 'px-5 py-2 rounded-lg font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400 hover:text-[#C69214]'">
+                Caja
+            </button>
+        </div>
+
+        <!-- Loading -->
+        <div *ngIf="loading" class="flex flex-col items-center justify-center py-24 gap-3">
+            <div class="w-10 h-10 rounded-full border-4 border-[#E8D9A0] border-t-[#C69214] animate-spin"></div>
+            <p class="font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400">Cargando datos...</p>
+        </div>
+
+        <!-- ═══════════════════════════════════════ VENTAS ═══════════════════════════════════════ -->
+        <div *ngIf="!loading && activeTab === 'ventas' && salesData" class="flex flex-col gap-6">
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 uppercase tracking-wide">Total Ingresos</p>
+                    <p class="mt-1 font-instrument text-2xl font-bold text-[#191817] dark:text-white">
+                        {{ salesData.summary.totalRevenue | currency:'MXN':'symbol':'1.2-2' }}
+                    </p>
+                    <p class="mt-1 font-instrument text-theme-xs text-[#9A6F0A] dark:text-[#E8C97A]">
+                        {{ salesData.summary.totalNotes }} notas
+                    </p>
+                </div>
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 uppercase tracking-wide">Total Cobrado</p>
+                    <p class="mt-1 font-instrument text-2xl font-bold text-green-600 dark:text-green-400">
+                        {{ salesData.summary.totalPaid | currency:'MXN':'symbol':'1.2-2' }}
+                    </p>
+                </div>
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 uppercase tracking-wide">Saldo Pendiente</p>
+                    <p class="mt-1 font-instrument text-2xl font-bold text-orange-500 dark:text-orange-400">
+                        {{ salesData.summary.totalPending | currency:'MXN':'symbol':'1.2-2' }}
+                    </p>
+                </div>
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 uppercase tracking-wide">Ticket Promedio</p>
+                    <p class="mt-1 font-instrument text-2xl font-bold text-[#191817] dark:text-white">
+                        {{ salesData.summary.totalNotes > 0
+                            ? (salesData.summary.totalRevenue / salesData.summary.totalNotes | currency:'MXN':'symbol':'1.2-2')
+                            : '$0.00' }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <!-- Daily chart (2/3) -->
+                <div class="lg:col-span-2 rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                    <h3 class="font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white mb-4">Ingresos por día</h3>
+                    <apx-chart *ngIf="dailySalesChart"
+                        [series]="dailySalesChart.series"
+                        [chart]="dailySalesChart.chart"
+                        [xaxis]="dailySalesChart.xaxis"
+                        [yaxis]="dailySalesChart.yaxis"
+                        [colors]="dailySalesChart.colors"
+                        [fill]="dailySalesChart.fill"
+                        [stroke]="dailySalesChart.stroke"
+                        [dataLabels]="dailySalesChart.dataLabels"
+                        [grid]="dailySalesChart.grid"
+                        [tooltip]="dailySalesChart.tooltip">
+                    </apx-chart>
+                    <p *ngIf="!dailySalesChart || salesData.dailyTimeline?.length === 0"
+                        class="text-center text-theme-sm text-[#6B6560] py-8">Sin datos en el período</p>
+                </div>
+
+                <!-- Item type donut (1/3) -->
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                    <h3 class="font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white mb-4">Por tipo de ítem</h3>
+                    <apx-chart *ngIf="itemTypeChart && salesData.byItemType?.length > 0"
+                        [series]="itemTypeChart.series"
+                        [chart]="itemTypeChart.chart"
+                        [labels]="itemTypeChart.labels"
+                        [colors]="itemTypeChart.colors"
+                        [legend]="itemTypeChart.legend"
+                        [dataLabels]="itemTypeChart.dataLabels"
+                        [plotOptions]="itemTypeChart.plotOptions"
+                        [tooltip]="itemTypeChart.tooltip">
+                    </apx-chart>
+                    <p *ngIf="!salesData.byItemType?.length"
+                        class="text-center text-theme-sm text-[#6B6560] py-8">Sin datos</p>
+                </div>
+            </div>
+
+            <!-- Second row: payment method + top sellers -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- Payment method donut -->
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                    <h3 class="font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white mb-4">Forma de pago cobrada</h3>
+                    <div class="flex flex-col md:flex-row items-center gap-4">
+                        <apx-chart *ngIf="paymentMethodChart && salesData.byPaymentMethod?.length > 0"
+                            [series]="paymentMethodChart.series"
+                            [chart]="paymentMethodChart.chart"
+                            [labels]="paymentMethodChart.labels"
+                            [colors]="paymentMethodChart.colors"
+                            [legend]="paymentMethodChart.legend"
+                            [dataLabels]="paymentMethodChart.dataLabels"
+                            [plotOptions]="paymentMethodChart.plotOptions"
+                            [tooltip]="paymentMethodChart.tooltip"
+                            class="w-full md:w-auto">
+                        </apx-chart>
+                        <div class="flex flex-col gap-2 w-full" *ngIf="salesData.byPaymentMethod?.length > 0">
+                            <div *ngFor="let p of salesData.byPaymentMethod"
+                                class="flex justify-between items-center text-theme-sm">
+                                <span class="text-[#46424A] dark:text-gray-300">{{ labelForPaymentMethod(p._id) }}</span>
+                                <span class="font-semibold text-[#191817] dark:text-white">{{ p.total | currency:'MXN':'symbol':'1.2-2' }}</span>
+                            </div>
+                        </div>
+                        <p *ngIf="!salesData.byPaymentMethod?.length"
+                            class="text-center text-theme-sm text-[#6B6560] py-4 w-full">Sin datos</p>
+                    </div>
+                </div>
+
+                <!-- Top sellers table -->
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                    <h3 class="font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white mb-4">Top Vendedores</h3>
+                    <table class="w-full text-sm" *ngIf="salesData.topSellers?.length > 0">
+                        <thead>
+                            <tr class="text-left">
+                                <th class="pb-2 font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">#</th>
+                                <th class="pb-2 font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Vendedor</th>
+                                <th class="pb-2 text-right font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Notas</th>
+                                <th class="pb-2 text-right font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#3D3420]">
+                            <tr *ngFor="let s of salesData.topSellers; let i = index">
+                                <td class="py-2 text-[#6B6560] dark:text-gray-400">{{ i + 1 }}</td>
+                                <td class="py-2 font-medium text-[#191817] dark:text-white">{{ s.name?.trim() || 'Sin nombre' }}</td>
+                                <td class="py-2 text-right text-[#6B6560] dark:text-gray-400">{{ s.count }}</td>
+                                <td class="py-2 text-right font-semibold text-[#C69214]">{{ s.total | currency:'MXN':'symbol':'1.2-2' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p *ngIf="!salesData.topSellers?.length"
+                        class="text-center text-theme-sm text-[#6B6560] py-4">Sin datos</p>
+                </div>
+            </div>
+
+            <!-- Breakdown by item type -->
+            <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                <h3 class="font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white mb-4">Desglose por tipo</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm" *ngIf="salesData.byItemType?.length > 0">
+                        <thead>
+                            <tr class="bg-[#FBF0C9] dark:bg-[#2A2620]">
+                                <th class="px-4 py-3 text-left font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Tipo</th>
+                                <th class="px-4 py-3 text-right font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Ítems</th>
+                                <th class="px-4 py-3 text-right font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Facturado</th>
+                                <th class="px-4 py-3 text-right font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Cobrado</th>
+                                <th class="px-4 py-3 text-right font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Pendiente</th>
+                                <th class="px-4 py-3 text-right font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">% del total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#3D3420]">
+                            <tr *ngFor="let item of salesData.byItemType">
+                                <td class="px-4 py-3 font-medium text-[#191817] dark:text-white">{{ labelForItemType(item._id) }}</td>
+                                <td class="px-4 py-3 text-right text-[#6B6560] dark:text-gray-400">{{ item.count }}</td>
+                                <td class="px-4 py-3 text-right font-semibold text-[#C69214]">{{ item.total | currency:'MXN':'symbol':'1.2-2' }}</td>
+                                <td class="px-4 py-3 text-right font-semibold text-green-600 dark:text-green-400">{{ item.cobrado | currency:'MXN':'symbol':'1.2-2' }}</td>
+                                <td class="px-4 py-3 text-right font-semibold"
+                                    [class.text-orange-500]="item.pendiente > 0"
+                                    [class.text-[#6B6560]]="item.pendiente === 0">
+                                    {{ item.pendiente | currency:'MXN':'symbol':'1.2-2' }}
+                                </td>
+                                <td class="px-4 py-3 text-right text-[#6B6560] dark:text-gray-400">
+                                    {{ salesData.summary.totalRevenue > 0
+                                        ? ((item.total / salesData.summary.totalRevenue) * 100 | number:'1.1-1') + '%'
+                                        : '—' }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p *ngIf="!salesData.byItemType?.length"
+                        class="text-center text-theme-sm text-[#6B6560] py-4">Sin ventas en el período seleccionado</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════ INVENTARIO ═══════════════════════════════════════ -->
+        <div *ngIf="!loading && activeTab === 'inventario' && inventoryData" class="flex flex-col gap-6">
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 uppercase tracking-wide">Total Piezas Activas</p>
+                    <p class="mt-1 font-instrument text-2xl font-bold text-[#191817] dark:text-white">
+                        {{ inventoryData.summary.totalPieces | number }}
+                    </p>
+                </div>
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 uppercase tracking-wide">Valor del Inventario</p>
+                    <p class="mt-1 font-instrument text-2xl font-bold text-[#C69214]">
+                        {{ inventoryData.summary.totalValue | currency:'MXN':'symbol':'1.2-2' }}
+                    </p>
+                </div>
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 uppercase tracking-wide">Total Productos</p>
+                    <p class="mt-1 font-instrument text-2xl font-bold text-[#191817] dark:text-white">
+                        {{ inventoryData.summary.totalProducts | number }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- Category bar chart -->
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                    <h3 class="font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white mb-4">Stock por Categoría</h3>
+                    <apx-chart *ngIf="categoryChart && inventoryData.byCategory?.length > 0"
+                        [series]="categoryChart.series"
+                        [chart]="categoryChart.chart"
+                        [xaxis]="categoryChart.xaxis"
+                        [plotOptions]="categoryChart.plotOptions"
+                        [colors]="categoryChart.colors"
+                        [dataLabels]="categoryChart.dataLabels"
+                        [grid]="categoryChart.grid">
+                    </apx-chart>
+                    <p *ngIf="!inventoryData.byCategory?.length"
+                        class="text-center text-theme-sm text-[#6B6560] py-8">Sin datos</p>
+                </div>
+
+                <!-- Karatage donut -->
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                    <h3 class="font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white mb-4">Stock por Quilataje</h3>
+                    <apx-chart *ngIf="karatageChart && inventoryData.byKaratage?.length > 0"
+                        [series]="karatageChart.series"
+                        [chart]="karatageChart.chart"
+                        [labels]="karatageChart.labels"
+                        [colors]="karatageChart.colors"
+                        [legend]="karatageChart.legend"
+                        [dataLabels]="karatageChart.dataLabels"
+                        [plotOptions]="karatageChart.plotOptions">
+                    </apx-chart>
+                    <p *ngIf="!inventoryData.byKaratage?.length"
+                        class="text-center text-theme-sm text-[#6B6560] py-8">Sin datos de quilataje</p>
+                </div>
+            </div>
+
+            <!-- Tables row -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- By category table -->
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                    <h3 class="font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white mb-4">Detalle por Categoría</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm" *ngIf="inventoryData.byCategory?.length > 0">
+                            <thead>
+                                <tr class="bg-[#FBF0C9] dark:bg-[#2A2620]">
+                                    <th class="px-3 py-2 text-left font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Categoría</th>
+                                    <th class="px-3 py-2 text-right font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Piezas</th>
+                                    <th class="px-3 py-2 text-right font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#3D3420]">
+                                <tr *ngFor="let c of inventoryData.byCategory">
+                                    <td class="px-3 py-2 font-medium text-[#191817] dark:text-white">{{ c.categoryName }}</td>
+                                    <td class="px-3 py-2 text-right text-[#6B6560] dark:text-gray-400">{{ c.totalPieces | number }}</td>
+                                    <td class="px-3 py-2 text-right font-semibold text-[#C69214]">{{ c.totalValue | currency:'MXN':'symbol':'1.2-2' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p *ngIf="!inventoryData.byCategory?.length"
+                            class="text-center text-theme-sm text-[#6B6560] py-4">Sin datos</p>
+                    </div>
+                </div>
+
+                <!-- By gold type table -->
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                    <h3 class="font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white mb-4">Por Tipo de Oro</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm" *ngIf="inventoryData.byGoldType?.length > 0">
+                            <thead>
+                                <tr class="bg-[#FBF0C9] dark:bg-[#2A2620]">
+                                    <th class="px-3 py-2 text-left font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Tipo</th>
+                                    <th class="px-3 py-2 text-right font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Piezas</th>
+                                    <th class="px-3 py-2 text-right font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#3D3420]">
+                                <tr *ngFor="let g of inventoryData.byGoldType">
+                                    <td class="px-3 py-2 font-medium text-[#191817] dark:text-white">{{ g._id }}</td>
+                                    <td class="px-3 py-2 text-right text-[#6B6560] dark:text-gray-400">{{ g.totalPieces | number }}</td>
+                                    <td class="px-3 py-2 text-right font-semibold text-[#C69214]">{{ g.totalValue | currency:'MXN':'symbol':'1.2-2' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p *ngIf="!inventoryData.byGoldType?.length"
+                            class="text-center text-theme-sm text-[#6B6560] py-4">Sin datos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════ CAJA ═══════════════════════════════════════ -->
+        <div *ngIf="!loading && activeTab === 'caja' && cashData" class="flex flex-col gap-6">
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-4">
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 uppercase tracking-wide">Efectivo</p>
+                    <p class="mt-1 font-instrument text-xl font-bold text-[#191817] dark:text-white">
+                        {{ cashData.summary.totalSalesCash | currency:'MXN':'symbol':'1.2-2' }}
+                    </p>
+                </div>
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-4">
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 uppercase tracking-wide">Tarjeta</p>
+                    <p class="mt-1 font-instrument text-xl font-bold text-[#191817] dark:text-white">
+                        {{ cashData.summary.totalSalesCard | currency:'MXN':'symbol':'1.2-2' }}
+                    </p>
+                </div>
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-4">
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 uppercase tracking-wide">Transferencia</p>
+                    <p class="mt-1 font-instrument text-xl font-bold text-[#191817] dark:text-white">
+                        {{ cashData.summary.totalSalesTransfer | currency:'MXN':'symbol':'1.2-2' }}
+                    </p>
+                </div>
+                <div class="rounded-2xl border border-red-100 bg-white dark:border-red-900/30 dark:bg-[#232126] p-4">
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 uppercase tracking-wide">Egresos</p>
+                    <p class="mt-1 font-instrument text-xl font-bold text-red-500 dark:text-red-400">
+                        {{ cashData.summary.totalErasures | currency:'MXN':'symbol':'1.2-2' }}
+                    </p>
+                </div>
+                <div class="rounded-2xl border border-green-100 bg-white dark:border-green-900/30 dark:bg-[#232126] p-4">
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 uppercase tracking-wide">Entradas Extra</p>
+                    <p class="mt-1 font-instrument text-xl font-bold text-green-600 dark:text-green-400">
+                        {{ cashData.summary.totalIncomes | currency:'MXN':'symbol':'1.2-2' }}
+                    </p>
+                </div>
+                <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-4">
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 uppercase tracking-wide">Cortes</p>
+                    <p class="mt-1 font-instrument text-xl font-bold text-[#C69214]">
+                        {{ cashData.summary.cutCount }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Daily cash chart -->
+            <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5">
+                <h3 class="font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white mb-4">Ventas por día (cortes cerrados)</h3>
+                <apx-chart *ngIf="cashDailyChart && cashData.dailyChart?.length > 0"
+                    [series]="cashDailyChart.series"
+                    [chart]="cashDailyChart.chart"
+                    [xaxis]="cashDailyChart.xaxis"
+                    [colors]="cashDailyChart.colors"
+                    [plotOptions]="cashDailyChart.plotOptions"
+                    [dataLabels]="cashDailyChart.dataLabels"
+                    [grid]="cashDailyChart.grid"
+                    [legend]="cashDailyChart.legend"
+                    [tooltip]="cashDailyChart.tooltip">
+                </apx-chart>
+                <p *ngIf="!cashData.dailyChart?.length"
+                    class="text-center text-theme-sm text-[#6B6560] py-8">Sin cortes cerrados en el período</p>
+            </div>
+
+            <!-- Cash cuts table -->
+            <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] overflow-hidden">
+                <div class="p-5 border-b border-[#E8D9A0] dark:border-[#4A474D]">
+                    <h3 class="font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white">Cortes en el período</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm" *ngIf="cashData.cashCuts?.length > 0">
+                        <thead class="bg-[#FBF0C9] dark:bg-[#2A2620]">
+                            <tr>
+                                <th class="px-4 py-3 text-left font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Fecha</th>
+                                <th class="px-4 py-3 text-left font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Abrió</th>
+                                <th class="px-4 py-3 text-left font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Cerró</th>
+                                <th class="px-4 py-3 text-right font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Efectivo</th>
+                                <th class="px-4 py-3 text-right font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Tarjeta</th>
+                                <th class="px-4 py-3 text-right font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Sistema</th>
+                                <th class="px-4 py-3 text-right font-instrument text-theme-xs font-semibold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">Diferencia</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#3D3420]">
+                            <tr *ngFor="let cut of cashData.cashCuts" class="hover:bg-[#FBF0C9]/40 dark:hover:bg-[#252017]">
+                                <td class="px-4 py-3 text-[#191817] dark:text-white">
+                                    {{ cut.startDate | date:'dd/MM/yyyy' }}
+                                </td>
+                                <td class="px-4 py-3 text-[#6B6560] dark:text-gray-400">
+                                    {{ cut.openedBy?.profile?.firstName || '—' }} {{ cut.openedBy?.profile?.lastName || '' }}
+                                </td>
+                                <td class="px-4 py-3 text-[#6B6560] dark:text-gray-400">
+                                    {{ cut.closedBy?.profile?.firstName || '—' }} {{ cut.closedBy?.profile?.lastName || '' }}
+                                </td>
+                                <td class="px-4 py-3 text-right text-[#191817] dark:text-white">
+                                    {{ cut.totals?.totalSalesCash | currency:'MXN':'symbol':'1.2-2' }}
+                                </td>
+                                <td class="px-4 py-3 text-right text-[#191817] dark:text-white">
+                                    {{ cut.totals?.totalSalesCard | currency:'MXN':'symbol':'1.2-2' }}
+                                </td>
+                                <td class="px-4 py-3 text-right font-semibold text-[#C69214]">
+                                    {{ cut.totals?.totalSystemCalculated | currency:'MXN':'symbol':'1.2-2' }}
+                                </td>
+                                <td class="px-4 py-3 text-right font-semibold"
+                                    [class.text-red-500]="(cut.totals?.difference || 0) < 0"
+                                    [class.text-green-600]="(cut.totals?.difference || 0) >= 0">
+                                    {{ cut.totals?.difference | currency:'MXN':'symbol':'1.2-2' }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p *ngIf="!cashData.cashCuts?.length"
+                        class="text-center text-theme-sm text-[#6B6560] py-8">Sin cortes cerrados en el período</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty states -->
+        <div *ngIf="!loading && activeTab === 'ventas' && !salesData"
+            class="flex flex-col items-center justify-center py-24 gap-2">
+            <p class="font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400">Selecciona un rango de fechas para ver los datos</p>
+        </div>
+        <div *ngIf="!loading && activeTab === 'inventario' && !inventoryData"
+            class="flex flex-col items-center justify-center py-24 gap-2">
+            <p class="font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400">Cargando datos de inventario...</p>
+        </div>
+        <div *ngIf="!loading && activeTab === 'caja' && !cashData"
+            class="flex flex-col items-center justify-center py-24 gap-2">
+            <p class="font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400">Selecciona un rango de fechas para ver los datos</p>
+        </div>
+
+    </div>
+</div>
