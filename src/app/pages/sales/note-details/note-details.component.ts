@@ -357,11 +357,15 @@ export class NoteDetailsComponent implements OnInit {
                 ref = (item.itemId as any).barcode;
             }
 
+            const itemName = item.name || '';
+            const descDetail = this.formatDescription(item);
+            const showDetail = descDetail && descDetail !== itemName;
+
             itemsHtml += `
                 <tr>
                     <td class="qty-col">${item.quantity}</td>
                     <td class="desc-col">
-                        ${ref ? `<b>#${ref}</b> ` : ''}${this.formatDescription(item)}
+                        ${ref ? `<span class="desc-name">#${ref}</span> ` : ''}<span class="desc-name">${itemName}</span>${showDetail ? `<br><span class="desc-detail">${descDetail}</span>` : ''}
                     </td>
                     <td class="price-col">$${unitPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                     <td class="total-col">$${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
@@ -419,9 +423,11 @@ export class NoteDetailsComponent implements OnInit {
                     .items-table th { text-align: left; border-bottom: 1px dashed #000; padding: 1mm 0; font-weight: bold; }
                     .items-table td { padding: 1mm 0; vertical-align: top; }
                     .qty-col { width: 10%; text-align: center; }
-                    .desc-col { width: 55%; }
+                    .desc-col { width: 55%; word-break: break-word; overflow-wrap: break-word; white-space: normal; }
                     .price-col { width: 15%; text-align: right; }
                     .total-col { width: 20%; text-align: right; }
+                    .desc-name { font-weight: bold; }
+                    .desc-detail { font-size: 9px; color: #444; }
                     
                     .totals { margin-top: 2mm; }
                     .total-row { display: flex; justify-content: space-between; margin-bottom: 1mm; }
