@@ -426,8 +426,8 @@ export class NoteDetailsComponent implements OnInit {
                     .desc-col { width: 55%; word-break: break-word; overflow-wrap: break-word; white-space: normal; }
                     .price-col { width: 15%; text-align: right; }
                     .total-col { width: 20%; text-align: right; }
-                    .desc-name { font-weight: bold; }
-                    .desc-detail { font-size: 9px; color: #444; }
+                    .desc-name { font-weight: bold; font-size: 10px; }
+                    .desc-detail { font-size: 10px; color: #000; }
                     
                     .totals { margin-top: 2mm; }
                     .total-row { display: flex; justify-content: space-between; margin-bottom: 1mm; }
