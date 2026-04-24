@@ -1,161 +1,202 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
-import { LabelComponent } from '../../form/label/label.component';
-import { InputFieldComponent } from '../../form/input/input-field.component';
-import { ComponentCardComponent } from '../../common/component-card/component-card.component';
+import { Component, EventEmitter, Input, Output, OnInit, signal, computed } from '@angular/core';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Permission, Role } from '../../../interfaces/auth.interfaces';
 
 @Component({
   selector: 'app-role-form',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    ComponentCardComponent,
-    LabelComponent,
-    InputFieldComponent,
-  ],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   template: `
-    <app-component-card title="Formulario de Roles" desc="Crear o editar roles del sistema">
-      <form [formGroup]="roleForm" (ngSubmit)="onSubmit()" class="space-y-6">
-        <div>
-          <app-label for="name">Nombre del Rol</app-label>
-          <app-input-field 
-            type="text" 
-            id="name" 
-            formControlName="name"
-            placeholder="Ej: Administrador, Editor, Viewer"
-            [className]="getFieldClass('name')"
-          />
-          @if (roleForm.get('name')?.invalid && roleForm.get('name')?.touched) {
-            <p class="mt-1 text-sm text-red-600 dark:text-red-400">
-              El nombre del rol es requerido
-            </p>
-          }
-        </div>
+    <!-- Backdrop -->
+    <div class="fixed inset-0 z-[9998] bg-[#191817]/60 backdrop-blur-sm" (click)="onCancel()"></div>
 
-        <div>
-          <app-label for="description">Descripción</app-label>
-          <app-input-field 
-            type="text" 
-            id="description" 
-            formControlName="description"
-            placeholder="Descripción detallada del rol"
-            [className]="getFieldClass('description')"
-          />
-          @if (roleForm.get('description')?.invalid && roleForm.get('description')?.touched) {
-            <p class="mt-1 text-sm text-red-600 dark:text-red-400">
-              La descripción es requerida
+    <!-- Panel -->
+    <div class="fixed inset-y-0 right-0 z-[9999] flex w-full max-w-lg flex-col bg-white shadow-2xl dark:bg-[#232126] transition-transform duration-300">
+      <!-- Panel header -->
+      <div class="border-b border-[#E8D9A0] dark:border-[#4A474D] px-5 py-4 shrink-0">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white">
+              {{editMode ? 'Editar Rol' : 'Nuevo Rol'}}
+            </h2>
+            <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 mt-0.5">
+              {{editMode ? 'Modifica los datos del rol seleccionado.' : 'Completa los campos para crear un nuevo rol.'}}
             </p>
-          }
+          </div>
+          <button (click)="onCancel()"
+            class="p-1.5 rounded-lg text-[#6B6560] hover:text-[#191817] hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/5 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
         </div>
+      </div>
 
-        <div>
-          <app-label>Permisos</app-label>
-          <div class="mt-2 max-h-64 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-lg p-4">
+      <!-- Scrollable form body -->
+      <div class="flex-1 overflow-y-auto p-5">
+        <form [formGroup]="roleForm" (ngSubmit)="onSubmit()" class="space-y-5">
+
+          <!-- Name -->
+          <div>
+            <label class="mb-1.5 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+              Nombre del Rol <span class="text-error-500">*</span>
+            </label>
+            <input type="text" formControlName="name" placeholder="Ej: Administrador, Editor..."
+              class="w-full rounded-xl border bg-white px-4 py-2.5 font-instrument text-theme-sm text-[#191817] placeholder-[#6B6560] outline-none transition-all dark:bg-[#3a383d] dark:text-white dark:placeholder-white/40"
+              [ngClass]="roleForm.get('name')?.invalid && roleForm.get('name')?.touched
+                ? 'border-error-400 focus:border-error-500 focus:ring-2 focus:ring-error-500/20 dark:border-error-500'
+                : 'border-[#E8D9A0] focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D]'">
+            @if (roleForm.get('name')?.invalid && roleForm.get('name')?.touched) {
+            <p class="mt-1 font-instrument text-theme-xs text-error-600 dark:text-error-400">El nombre es requerido (mín. 3 caracteres)</p>
+            }
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="mb-1.5 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+              Descripción <span class="text-error-500">*</span>
+            </label>
+            <textarea formControlName="description" rows="2" placeholder="Descripción detallada del rol..."
+              class="w-full rounded-xl border bg-white px-4 py-2.5 font-instrument text-theme-sm text-[#191817] placeholder-[#6B6560] outline-none transition-all resize-none dark:bg-[#3a383d] dark:text-white dark:placeholder-white/40"
+              [ngClass]="roleForm.get('description')?.invalid && roleForm.get('description')?.touched
+                ? 'border-error-400 focus:border-error-500 focus:ring-2 focus:ring-error-500/20 dark:border-error-500'
+                : 'border-[#E8D9A0] focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D]'"></textarea>
+            @if (roleForm.get('description')?.invalid && roleForm.get('description')?.touched) {
+            <p class="mt-1 font-instrument text-theme-xs text-error-600 dark:text-error-400">La descripción es requerida (mín. 10 caracteres)</p>
+            }
+          </div>
+
+          <!-- Toggles -->
+          <div class="flex flex-col gap-3 rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] p-4 bg-[#FBF0C9]/20 dark:bg-[#3a383d]">
+            <label class="flex items-center gap-3 cursor-pointer">
+              <div class="relative">
+                <input type="checkbox" formControlName="isActive" class="sr-only peer">
+                <div class="w-10 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:bg-[#C69214] transition-colors"></div>
+                <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4"></div>
+              </div>
+              <div>
+                <p class="font-instrument text-theme-sm font-medium text-[#191817] dark:text-white">Rol Activo</p>
+                <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">El rol estará disponible para asignar a usuarios</p>
+              </div>
+            </label>
+            <div class="border-t border-[#E8D9A0] dark:border-[#4A474D]"></div>
+            <label class="flex items-center gap-3 cursor-pointer">
+              <div class="relative">
+                <input type="checkbox" formControlName="isGlobal" class="sr-only peer">
+                <div class="w-10 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:bg-purple-500 transition-colors"></div>
+                <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4"></div>
+              </div>
+              <div>
+                <p class="font-instrument text-theme-sm font-medium text-[#191817] dark:text-white">Rol Global</p>
+                <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">Disponible en todas las sucursales</p>
+              </div>
+            </label>
+          </div>
+
+          <!-- Permissions -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label class="font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+                Permisos <span class="text-error-500">*</span>
+              </label>
+              <span class="font-instrument text-theme-xs text-[#9A6F0A] dark:text-[#E8C97A]">
+                {{selectedPermissions.length}} seleccionados
+              </span>
+            </div>
+
             @if (availablePermissions.length === 0) {
-              <p class="text-gray-500 dark:text-gray-400 text-sm">No hay permisos disponibles</p>
+            <div class="rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] p-6 text-center">
+              <p class="font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400">No hay permisos disponibles</p>
+            </div>
             } @else {
-              <div class="space-y-3">
-                @for (permission of availablePermissions; track getPermissionId(permission)) {
-                  <label class="flex items-start space-x-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      [value]="getPermissionId(permission)"
-                      (change)="onPermissionChange(getPermissionId(permission), $event)"
-                      [checked]="isPermissionSelected(getPermissionId(permission))"
-                      class="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
-                    />
-                    <div class="flex-1 min-w-0">
-                      <div class="text-sm font-medium text-gray-900 dark:text-white">
-                        {{ permission.name }}
-                      </div>
-                      <div class="text-sm text-gray-500 dark:text-gray-400">
-                        {{ permission.description }}
-                      </div>
-                      <div class="text-xs text-gray-400 dark:text-gray-500 font-mono">
-                        ID: {{ getPermissionId(permission) }}
-                      </div>
-                      <div class="flex gap-2 mt-1">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
-                              [ngClass]="getModuleBadgeClass(permission.module)">
-                          {{ getModuleLabel(permission.module) }}
-                        </span>
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
-                              [ngClass]="getActionBadgeClass(permission.action)">
-                          {{ getActionLabel(permission.action) }}
-                        </span>
+            <div class="rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] overflow-hidden">
+              @for (group of permissionGroups(); track group.module) {
+              <div class="border-b border-[#E8D9A0] dark:border-[#4A474D] last:border-0">
+                <!-- Module header -->
+                <button type="button" (click)="toggleGroup(group.module)"
+                  class="w-full flex items-center justify-between px-4 py-3 bg-[#FBF0C9]/40 dark:bg-[#3a383d] hover:bg-[#FBF0C9]/70 dark:hover:bg-[#4A474D] transition-colors">
+                  <div class="flex items-center gap-2">
+                    <span class="font-instrument text-theme-xs font-bold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                      {{getModuleLabel(group.module)}}
+                    </span>
+                    <span class="font-instrument text-[10px] font-medium text-[#6B6560] dark:text-gray-400">
+                      ({{getGroupSelectedCount(group.module)}}/{{group.permissions.length}})
+                    </span>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="text-[#9A6F0A] dark:text-[#E8C97A] transition-transform"
+                    [ngClass]="isGroupOpen(group.module) ? 'rotate-180' : ''">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+                <!-- Permissions list -->
+                @if (isGroupOpen(group.module)) {
+                <div class="divide-y divide-[#E8D9A0]/50 dark:divide-[#4A474D]/50">
+                  @for (permission of group.permissions; track getPermissionId(permission)) {
+                  <label class="flex items-start gap-3 px-4 py-2.5 cursor-pointer hover:bg-[#FBF0C9]/20 dark:hover:bg-white/5 transition-colors">
+                    <div class="relative mt-0.5 shrink-0">
+                      <input type="checkbox"
+                        [value]="getPermissionId(permission)"
+                        (change)="onPermissionChange(getPermissionId(permission), $event)"
+                        [checked]="isPermissionSelected(getPermissionId(permission))"
+                        class="sr-only peer">
+                      <div class="w-4 h-4 rounded border-2 border-[#E8D9A0] dark:border-[#4A474D] bg-white dark:bg-[#3a383d] peer-checked:bg-[#C69214] peer-checked:border-[#C69214] transition-all flex items-center justify-center">
+                        <svg *ngIf="isPermissionSelected(getPermissionId(permission))" xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
                       </div>
                     </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="font-instrument text-theme-sm font-medium text-[#191817] dark:text-white">{{permission.name}}</p>
+                      <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">{{permission.description}}</p>
+                      <span class="inline-flex items-center mt-1 rounded px-1.5 py-0.5 font-instrument text-[10px] font-medium"
+                        [ngClass]="getActionBadgeClass(permission.action)">
+                        {{getActionLabel(permission.action)}}
+                      </span>
+                    </div>
                   </label>
+                  }
+                </div>
                 }
               </div>
+              }
+            </div>
+            }
+            @if (roleForm.get('permissions')?.invalid && roleForm.get('permissions')?.touched) {
+            <p class="mt-1 font-instrument text-theme-xs text-error-600 dark:text-error-400">Selecciona al menos un permiso</p>
             }
           </div>
-          @if (roleForm.get('permissions')?.invalid && roleForm.get('permissions')?.touched) {
-            <p class="mt-1 text-sm text-red-600 dark:text-red-400">
-              Debe seleccionar al menos un permiso
-            </p>
-          }
-        </div>
 
-        <div class="flex items-center space-x-3 pb-4 border-b border-gray-200 dark:border-gray-700">
-          <input
-            type="checkbox"
-            id="isGlobal"
-            formControlName="isGlobal"
-            class="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
-          />
-          <div class="flex flex-col">
-            <app-label for="isGlobal" className="mb-0">Rol Global</app-label>
-            <span class="text-xs text-gray-500 dark:text-gray-400">Si se activa, este rol estará disponible en TODAS las sucursales.</span>
-          </div>
-        </div>
+        </form>
+      </div>
 
-
-
-        <div class="flex items-center space-x-3">
-          <input
-            type="checkbox"
-            id="isActive"
-            formControlName="isActive"
-            class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
-          />
-          <app-label for="isActive" className="mb-0">Rol Activo</app-label>
-        </div>
-
-        <div class="flex gap-4 pt-4">
-          <button
-            type="submit"
-            [disabled]="roleForm.invalid || isLoading"
-            class="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 disabled:cursor-not-allowed"
-          >
-            @if (isLoading) {
-              <span class="flex items-center justify-center">
-                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Procesando...
-              </span>
-            } @else {
-              {{ editMode ? 'Actualizar' : 'Crear' }} Rol
-            }
-          </button>
-          <button
-            type="button"
-            (click)="onCancel()"
-            class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
-          >
+      <!-- Footer actions -->
+      <div class="border-t border-[#E8D9A0] dark:border-[#4A474D] px-5 py-4 shrink-0 bg-white dark:bg-[#232126]">
+        <div class="flex gap-3">
+          <button type="button" (click)="onCancel()"
+            class="flex-1 flex items-center justify-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-5 py-2.5 font-instrument text-sm font-medium text-[#46424A] hover:bg-gray-50 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-300 dark:hover:bg-white/5 transition-all shadow-theme-sm">
             Cancelar
           </button>
+          <button type="submit" (click)="onSubmit()" [disabled]="isLoading"
+            class="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] dark:text-white shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed">
+            @if (isLoading) {
+            <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Guardando...
+            } @else {
+            {{editMode ? 'Actualizar Rol' : 'Crear Rol'}}
+            }
+          </button>
         </div>
-      </form>
-    </app-component-card>
+      </div>
+    </div>
   `,
-  styles: ``
+  styles: []
 })
-export class RoleFormComponent {
+export class RoleFormComponent implements OnInit {
   @Input() role: Role | null = null;
   @Input() editMode = false;
   @Input() isLoading = false;
@@ -165,6 +206,17 @@ export class RoleFormComponent {
 
   roleForm: FormGroup;
   selectedPermissions: string[] = [];
+  openGroups = signal<Set<string>>(new Set());
+
+  permissionGroups = computed(() => {
+    const groups = new Map<string, Permission[]>();
+    for (const p of this.availablePermissions) {
+      const mod = p.module || 'general';
+      if (!groups.has(mod)) groups.set(mod, []);
+      groups.get(mod)!.push(p);
+    }
+    return Array.from(groups.entries()).map(([module, permissions]) => ({ module, permissions }));
+  });
 
   constructor(private fb: FormBuilder) {
     this.roleForm = this.fb.group({
@@ -177,31 +229,38 @@ export class RoleFormComponent {
   }
 
   ngOnInit() {
-    console.log('RoleForm - Available permissions:', this.availablePermissions);
+    // Open all groups by default
+    const allModules = new Set(this.availablePermissions.map(p => p.module || 'general'));
+    this.openGroups.set(allModules);
 
     if (this.role && this.editMode) {
-      console.log('RoleForm - Editing role:', this.role);
-
-      // Extraer IDs de permisos de manera más robusta
       this.selectedPermissions = this.role.permissions
-        .map(p => {
-          if (typeof p === 'string') {
-            return p;
-          } else if (p && typeof p === 'object') {
-            return this.getPermissionId(p as Permission);
-          }
-          return null;
-        })
-        .filter((id): id is string => id !== null && id !== undefined && id !== '');
-
-      console.log('RoleForm - Selected permissions:', this.selectedPermissions);
+        .map(p => typeof p === 'string' ? p : this.getPermissionId(p as Permission))
+        .filter((id): id is string => !!id);
 
       this.roleForm.patchValue({
         ...this.role,
         permissions: this.selectedPermissions,
-        isGlobal: !(this.role as any).sucursalId // If sucursalId is falsy (null), it is Global
+        isGlobal: !(this.role as any).sucursalId
       });
     }
+  }
+
+  toggleGroup(module: string) {
+    const current = new Set(this.openGroups());
+    if (current.has(module)) current.delete(module);
+    else current.add(module);
+    this.openGroups.set(current);
+  }
+
+  isGroupOpen(module: string): boolean {
+    return this.openGroups().has(module);
+  }
+
+  getGroupSelectedCount(module: string): number {
+    const group = this.permissionGroups().find(g => g.module === module);
+    if (!group) return 0;
+    return group.permissions.filter(p => this.isPermissionSelected(this.getPermissionId(p))).length;
   }
 
   getPermissionId(permission: Permission): string {
@@ -209,17 +268,11 @@ export class RoleFormComponent {
   }
 
   onPermissionChange(permissionId: string, event: any) {
-    console.log('Permission change:', permissionId, 'checked:', event.target.checked);
-
     if (event.target.checked) {
-      if (!this.selectedPermissions.includes(permissionId)) {
-        this.selectedPermissions.push(permissionId);
-      }
+      if (!this.selectedPermissions.includes(permissionId)) this.selectedPermissions.push(permissionId);
     } else {
       this.selectedPermissions = this.selectedPermissions.filter(id => id !== permissionId);
     }
-
-    console.log('Updated selected permissions:', this.selectedPermissions);
     this.roleForm.patchValue({ permissions: this.selectedPermissions });
   }
 
@@ -227,120 +280,53 @@ export class RoleFormComponent {
     return this.selectedPermissions.includes(permissionId);
   }
 
-  getFieldClass(fieldName: string): string {
-    const field = this.roleForm.get(fieldName);
-    if (!field) return '';
-
-    if (field.invalid && field.touched) {
-      return 'border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-600';
-    }
-    return '';
-  }
-
   getModuleLabel(module: string): string {
-    const labels: { [key: string]: string } = {
-      'users': 'Usuarios',
-      'products': 'Productos',
-      'orders': 'Órdenes',
-      'providers': 'Proveedores',
-      'organizations': 'Organizaciones',
-      'reports': 'Reportes',
-      'admin': 'Administración'
+    const labels: Record<string, string> = {
+      users: 'Usuarios', products: 'Productos', orders: 'Órdenes',
+      providers: 'Proveedores', organizations: 'Organizaciones',
+      reports: 'Reportes', admin: 'Administración', general: 'General'
     };
     return labels[module] || module;
   }
 
   getActionLabel(action: string): string {
-    const labels: { [key: string]: string } = {
-      'create': 'Crear',
-      'read': 'Leer',
-      'update': 'Actualizar',
-      'delete': 'Eliminar',
-      'list': 'Listar',
-      'export': 'Exportar',
-      'import': 'Importar'
+    const labels: Record<string, string> = {
+      create: 'Crear', read: 'Leer', update: 'Actualizar',
+      delete: 'Eliminar', list: 'Listar', export: 'Exportar', import: 'Importar'
     };
     return labels[action] || action;
   }
 
-  getModuleBadgeClass(module: string): string {
-    const classes: { [key: string]: string } = {
-      'users': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-      'products': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-      'orders': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-      'providers': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-      'organizations': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
-      'reports': 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300',
-      'admin': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
-    };
-    return classes[module] || 'bg-gray-100 text-gray-800 dark:bg-[#3a383d] dark:text-gray-300';
-  }
-
   getActionBadgeClass(action: string): string {
-    const classes: { [key: string]: string } = {
-      'create': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-      'read': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-      'update': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-      'delete': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
-      'list': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-      'export': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
-      'import': 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300'
+    const classes: Record<string, string> = {
+      create: 'bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-400',
+      read: 'bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400',
+      update: 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400',
+      delete: 'bg-error-50 text-error-700 dark:bg-error-500/15 dark:text-error-400',
+      list: 'bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400',
+      export: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-400',
+      import: 'bg-pink-50 text-pink-700 dark:bg-pink-900/20 dark:text-pink-400',
     };
-    return classes[action] || 'bg-gray-100 text-gray-800 dark:bg-[#3a383d] dark:text-gray-300';
+    return classes[action] || 'bg-[#F5F0EC] text-[#46424A] dark:bg-white/5 dark:text-gray-400';
   }
 
   onSubmit() {
-    console.log('Form submission - Form valid:', this.roleForm.valid);
-    console.log('Form values:', this.roleForm.value);
-    console.log('Selected permissions:', this.selectedPermissions);
-
     if (this.roleForm.valid) {
-      // Validar que los permisos seleccionados existan en la lista de permisos disponibles
-      const validPermissions = this.selectedPermissions.filter(permId => {
-        const exists = this.availablePermissions.some(perm =>
-          this.getPermissionId(perm) === permId
-        );
-        if (!exists) {
-          console.warn('Invalid permission ID found:', permId);
-          console.warn('Available permission IDs:', this.availablePermissions.map(p => this.getPermissionId(p)));
-        }
-        return exists;
-      });
-
-      if (validPermissions.length !== this.selectedPermissions.length) {
-        const invalidCount = this.selectedPermissions.length - validPermissions.length;
-        console.error(`Found ${invalidCount} invalid permission IDs. They will be filtered out.`);
-        alert(`Atención: Se encontraron ${invalidCount} permisos inválidos que serán omitidos.`);
-      }
-
-      console.log('Valid permissions after filtering:', validPermissions);
-
+      const validPermissions = this.selectedPermissions.filter(id =>
+        this.availablePermissions.some(p => this.getPermissionId(p) === id)
+      );
       const formValue = this.roleForm.value;
-      const isGlobal = formValue.isGlobal;
-
       const roleData: any = {
         name: formValue.name,
         description: formValue.description,
         permissions: validPermissions,
         isActive: formValue.isActive,
-        id: this.editMode && this.role?.id ? this.role.id : undefined
+        id: this.editMode && this.role?.id ? this.role.id : undefined,
+        ...(formValue.isGlobal ? { sucursalId: null } : {})
       };
-
-      // If Global is checked, explicitly send null to override backend default scoping
-      if (isGlobal) {
-        roleData.sucursalId = null;
-      }
-
-
-
-      console.log('Final role data to submit:', roleData);
       this.formSubmit.emit(roleData);
     } else {
-      console.log('Form is invalid, marking all fields as touched');
-      // Marcar todos los campos como touched para mostrar errores
-      Object.keys(this.roleForm.controls).forEach(key => {
-        this.roleForm.get(key)?.markAsTouched();
-      });
+      Object.keys(this.roleForm.controls).forEach(key => this.roleForm.get(key)?.markAsTouched());
     }
   }
 

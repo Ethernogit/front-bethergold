@@ -75,6 +75,36 @@
             }
           </h2>
           <ul class="flex flex-col gap-1">
+            <!-- Fullscreen Toggle -->
+            <li>
+              <button (click)="$event.stopPropagation(); uiService.toggleFullscreen()"
+                class="menu-item group w-full cursor-pointer menu-item-inactive"
+                [ngClass]="{
+                  'lg:justify-center': !(isExpanded$ | async),
+                  'lg:justify-start': (isExpanded$ | async)
+                }"
+                [title]="(isFullscreen$ | async) ? 'Salir de pantalla completa' : 'Pantalla completa'">
+                @if (isFullscreen$ | async) {
+                  <span class="menu-item-icon-size menu-item-icon-inactive">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M8 3v3a2 2 0 01-2 2H3m18 0h-3a2 2 0 01-2-2V3m0 18v-3a2 2 0 012-2h3M3 16h3a2 2 0 012 2v3" />
+                    </svg>
+                  </span>
+                } @else {
+                  <span class="menu-item-icon-size menu-item-icon-inactive">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                    </svg>
+                  </span>
+                }
+                @if ((isExpanded$ | async) || (isMobileOpen$ | async)) {
+                  <span class="menu-item-text">
+                    {{ (isFullscreen$ | async) ? 'Salir de pantalla completa' : 'Pantalla completa' }}
+                  </span>
+                }
+              </button>
+            </li>
+
             @for (nav of navItems; track $index;let i = $index) {
             @if (hasPermission(nav)) {
             <li (mouseenter)="onMouseEnter(nav, i, 'main', $event)" (mouseleave)="onMouseLeave()">
@@ -366,6 +396,7 @@
         }">
       <app-user-dropdown class="w-full block" [isCollapsed]="!((isExpanded$ | async) || (isMobileOpen$ | async))" />
     </div>
+
   </div>
 </aside>
 

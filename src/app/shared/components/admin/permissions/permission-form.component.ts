@@ -1,131 +1,156 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LabelComponent } from '../../form/label/label.component';
-import { InputFieldComponent } from '../../form/input/input-field.component';
-import { SelectComponent } from '../../form/select/select.component';
-import { ComponentCardComponent } from '../../common/component-card/component-card.component';
 import { Permission } from '../../../interfaces/auth.interfaces';
 
 @Component({
   selector: 'app-permission-form',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    ComponentCardComponent,
-    LabelComponent,
-    InputFieldComponent,
-    SelectComponent,
-  ],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   template: `
-    <app-component-card title="Formulario de Permisos" desc="Crear o editar permisos del sistema">
-      <form [formGroup]="permissionForm" (ngSubmit)="onSubmit()" class="space-y-6">
-        <div>
-          <app-label for="name">Nombre del Permiso</app-label>
-          <app-input-field 
-            type="text" 
-            id="name" 
-            formControlName="name"
-            placeholder="Ej: CREATE_USER, READ_PRODUCTS"
-            [className]="getFieldClass('name')"
-          />
-          @if (permissionForm.get('name')?.invalid && permissionForm.get('name')?.touched) {
-            <p class="mt-1 text-sm text-red-600 dark:text-red-400">
-              El nombre del permiso es requerido
+    <!-- Backdrop -->
+    <div class="fixed inset-0 z-[9998] bg-[#191817]/60 backdrop-blur-sm" (click)="onCancel()"></div>
+
+    <!-- Panel -->
+    <div class="fixed inset-y-0 right-0 z-[9999] flex w-full max-w-md flex-col bg-white shadow-2xl dark:bg-[#232126]">
+      <!-- Header -->
+      <div class="border-b border-[#E8D9A0] dark:border-[#4A474D] px-5 py-4 shrink-0">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white">
+              {{editMode ? 'Editar Permiso' : 'Nuevo Permiso'}}
+            </h2>
+            <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 mt-0.5">
+              {{editMode ? 'Modifica los datos del permiso.' : 'Define un nuevo permiso del sistema.'}}
             </p>
-          }
-        </div>
-
-        <div>
-          <app-label for="description">Descripción</app-label>
-          <app-input-field 
-            type="text" 
-            id="description" 
-            formControlName="description"
-            placeholder="Descripción detallada del permiso"
-            [className]="getFieldClass('description')"
-          />
-          @if (permissionForm.get('description')?.invalid && permissionForm.get('description')?.touched) {
-            <p class="mt-1 text-sm text-red-600 dark:text-red-400">
-              La descripción es requerida
-            </p>
-          }
-        </div>
-
-        <div>
-          <app-label>Módulo</app-label>
-          <app-select
-            [options]="moduleOptions"
-            placeholder="Seleccionar módulo"
-            [value]="permissionForm.get('module')?.value"
-            (valueChange)="onModuleChange($event)"
-            [className]="getSelectClass('module')"
-          />
-          @if (permissionForm.get('module')?.invalid && permissionForm.get('module')?.touched) {
-            <p class="mt-1 text-sm text-red-600 dark:text-red-400">
-              El módulo es requerido
-            </p>
-          }
-        </div>
-
-        <div>
-          <app-label>Acción</app-label>
-          <app-select
-            [options]="actionOptions"
-            placeholder="Seleccionar acción"
-            [value]="permissionForm.get('action')?.value"
-            (valueChange)="onActionChange($event)"
-            [className]="getSelectClass('action')"
-          />
-          @if (permissionForm.get('action')?.invalid && permissionForm.get('action')?.touched) {
-            <p class="mt-1 text-sm text-red-600 dark:text-red-400">
-              La acción es requerida
-            </p>
-          }
-        </div>
-
-        <div class="flex items-center space-x-3">
-          <input
-            type="checkbox"
-            id="isActive"
-            formControlName="isActive"
-            class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
-          />
-          <app-label for="isActive" className="mb-0">Permiso Activo</app-label>
-        </div>
-
-        <div class="flex gap-4 pt-4">
-          <button
-            type="submit"
-            [disabled]="permissionForm.invalid || isLoading"
-            class="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 disabled:cursor-not-allowed"
-          >
-            @if (isLoading) {
-              <span class="flex items-center justify-center">
-                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Procesando...
-              </span>
-            } @else {
-              {{ editMode ? 'Actualizar' : 'Crear' }} Permiso
-            }
+          </div>
+          <button (click)="onCancel()"
+            class="p-1.5 rounded-lg text-[#6B6560] hover:text-[#191817] hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/5 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
           </button>
-          <button
-            type="button"
-            (click)="onCancel()"
-            class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
-          >
+        </div>
+      </div>
+
+      <!-- Form body -->
+      <div class="flex-1 overflow-y-auto p-5">
+        <form [formGroup]="permissionForm" (ngSubmit)="onSubmit()" class="space-y-5">
+
+          <!-- Name -->
+          <div>
+            <label class="mb-1.5 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+              Nombre <span class="text-error-500">*</span>
+            </label>
+            <input type="text" formControlName="name" placeholder="Ej: CREATE_USER, READ_PRODUCTS"
+              class="w-full rounded-xl border bg-white px-4 py-2.5 font-instrument text-theme-sm text-[#191817] placeholder-[#6B6560] outline-none transition-all dark:bg-[#3a383d] dark:text-white dark:placeholder-white/40"
+              [ngClass]="permissionForm.get('name')?.invalid && permissionForm.get('name')?.touched
+                ? 'border-error-400 focus:border-error-500 focus:ring-2 focus:ring-error-500/20'
+                : 'border-[#E8D9A0] focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D]'">
+            @if (permissionForm.get('name')?.invalid && permissionForm.get('name')?.touched) {
+            <p class="mt-1 font-instrument text-theme-xs text-error-600 dark:text-error-400">El nombre es requerido (mín. 3 caracteres)</p>
+            }
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="mb-1.5 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+              Descripción <span class="text-error-500">*</span>
+            </label>
+            <textarea formControlName="description" rows="2" placeholder="Descripción detallada del permiso..."
+              class="w-full rounded-xl border bg-white px-4 py-2.5 font-instrument text-theme-sm text-[#191817] placeholder-[#6B6560] outline-none transition-all resize-none dark:bg-[#3a383d] dark:text-white dark:placeholder-white/40"
+              [ngClass]="permissionForm.get('description')?.invalid && permissionForm.get('description')?.touched
+                ? 'border-error-400 focus:border-error-500 focus:ring-2 focus:ring-error-500/20'
+                : 'border-[#E8D9A0] focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D]'"></textarea>
+            @if (permissionForm.get('description')?.invalid && permissionForm.get('description')?.touched) {
+            <p class="mt-1 font-instrument text-theme-xs text-error-600 dark:text-error-400">La descripción es requerida (mín. 10 caracteres)</p>
+            }
+          </div>
+
+          <!-- Module -->
+          <div>
+            <label class="mb-1.5 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+              Módulo <span class="text-error-500">*</span>
+            </label>
+            <select formControlName="module"
+              class="w-full rounded-xl border bg-white px-4 py-2.5 font-instrument text-theme-sm text-[#191817] outline-none transition-all dark:bg-[#3a383d] dark:text-white"
+              [ngClass]="permissionForm.get('module')?.invalid && permissionForm.get('module')?.touched
+                ? 'border-error-400 focus:border-error-500 focus:ring-2 focus:ring-error-500/20'
+                : 'border-[#E8D9A0] focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D]'">
+              <option value="" disabled>Seleccionar módulo</option>
+              @for (opt of moduleOptions; track opt.value) {
+              <option [value]="opt.value" class="dark:bg-[#232126]">{{opt.label}}</option>
+              }
+            </select>
+            @if (permissionForm.get('module')?.invalid && permissionForm.get('module')?.touched) {
+            <p class="mt-1 font-instrument text-theme-xs text-error-600 dark:text-error-400">El módulo es requerido</p>
+            }
+          </div>
+
+          <!-- Action -->
+          <div>
+            <label class="mb-1.5 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">
+              Acción <span class="text-error-500">*</span>
+            </label>
+            <div class="grid grid-cols-2 gap-2">
+              @for (opt of actionOptions; track opt.value) {
+              <label class="cursor-pointer">
+                <input type="radio" formControlName="action" [value]="opt.value" class="sr-only peer">
+                <div class="rounded-xl border px-3 py-2.5 font-instrument text-theme-sm font-medium text-center transition-all peer-checked:border-[#C69214] peer-checked:bg-[#FBF0C9] peer-checked:text-[#9A6F0A] dark:peer-checked:border-[#C69214] dark:peer-checked:bg-[#4A474D] dark:peer-checked:text-[#FAC600] border-[#E8D9A0] text-[#46424A] hover:bg-gray-50 dark:border-[#4A474D] dark:text-gray-300 dark:hover:bg-white/5">
+                  {{opt.label}}
+                </div>
+              </label>
+              }
+            </div>
+            @if (permissionForm.get('action')?.invalid && permissionForm.get('action')?.touched) {
+            <p class="mt-1 font-instrument text-theme-xs text-error-600 dark:text-error-400">La acción es requerida</p>
+            }
+          </div>
+
+          <!-- isActive toggle -->
+          <div class="rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] p-4 bg-[#FBF0C9]/20 dark:bg-[#3a383d]">
+            <label class="flex items-center gap-3 cursor-pointer">
+              <div class="relative">
+                <input type="checkbox" formControlName="isActive" class="sr-only peer">
+                <div class="w-10 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:bg-[#C69214] transition-colors"></div>
+                <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4"></div>
+              </div>
+              <div>
+                <p class="font-instrument text-theme-sm font-medium text-[#191817] dark:text-white">Permiso Activo</p>
+                <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">El permiso estará disponible para asignar a roles</p>
+              </div>
+            </label>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Footer -->
+      <div class="border-t border-[#E8D9A0] dark:border-[#4A474D] px-5 py-4 shrink-0 bg-white dark:bg-[#232126]">
+        <div class="flex gap-3">
+          <button type="button" (click)="onCancel()"
+            class="flex-1 flex items-center justify-center rounded-xl border border-[#E8D9A0] bg-white px-5 py-2.5 font-instrument text-sm font-medium text-[#46424A] hover:bg-gray-50 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-300 dark:hover:bg-white/5 transition-all shadow-theme-sm">
             Cancelar
           </button>
+          <button type="button" (click)="onSubmit()" [disabled]="isLoading"
+            class="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] dark:text-white shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed">
+            @if (isLoading) {
+            <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Guardando...
+            } @else {
+            {{editMode ? 'Actualizar Permiso' : 'Crear Permiso'}}
+            }
+          </button>
         </div>
-      </form>
-    </app-component-card>
+      </div>
+    </div>
   `,
-  styles: ``
+  styles: []
 })
-export class PermissionFormComponent {
+export class PermissionFormComponent implements OnInit {
   @Input() permission: Permission | null = null;
   @Input() editMode = false;
   @Input() isLoading = false;
@@ -135,12 +160,11 @@ export class PermissionFormComponent {
   @Input() set availableModules(modules: string[]) {
     this.moduleOptions = modules.map(m => ({
       value: m,
-      label: m.charAt(0).toUpperCase() + m.slice(1) // Capitalize first letter
+      label: this.getModuleLabel(m)
     }));
   }
 
   permissionForm: FormGroup;
-
   moduleOptions: { value: string; label: string }[] = [];
 
   actionOptions = [
@@ -169,46 +193,27 @@ export class PermissionFormComponent {
     }
   }
 
-  onModuleChange(value: string) {
-    this.permissionForm.patchValue({ module: value });
-  }
-
-  onActionChange(value: string) {
-    this.permissionForm.patchValue({ action: value });
-  }
-
-  getFieldClass(fieldName: string): string {
-    const field = this.permissionForm.get(fieldName);
-    if (!field) return '';
-
-    if (field.invalid && field.touched) {
-      return 'border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-600';
-    }
-    return '';
-  }
-
-  getSelectClass(fieldName: string): string {
-    const field = this.permissionForm.get(fieldName);
-    if (!field) return 'dark:bg-dark-900';
-
-    if (field.invalid && field.touched) {
-      return 'border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-600 dark:bg-dark-900';
-    }
-    return 'dark:bg-dark-900';
+  private getModuleLabel(module: string): string {
+    const labels: Record<string, string> = {
+      users: 'Usuarios', roles: 'Roles', permissions: 'Permisos', products: 'Productos',
+      orders: 'Órdenes', inventory: 'Inventario', sales: 'Ventas', reports: 'Reportes',
+      settings: 'Configuraciones', analytics: 'Analíticas', payments: 'Pagos',
+      customers: 'Clientes', suppliers: 'Proveedores', auth: 'Autenticación',
+      admin: 'Administración', organization: 'Organización', categories: 'Categorías',
+      sucursales: 'Sucursales', notifications: 'Notificaciones',
+    };
+    return labels[module] || module.charAt(0).toUpperCase() + module.slice(1);
   }
 
   onSubmit() {
     if (this.permissionForm.valid) {
-      const permissionData: Permission = {
+      const data: Permission = {
         ...this.permissionForm.value,
-        id: this.editMode && this.permission?.id ? this.permission.id : Date.now().toString()
+        id: this.editMode && this.permission?.id ? this.permission.id : undefined
       };
-      this.formSubmit.emit(permissionData);
+      this.formSubmit.emit(data);
     } else {
-      // Marcar todos los campos como touched para mostrar errores
-      Object.keys(this.permissionForm.controls).forEach(key => {
-        this.permissionForm.get(key)?.markAsTouched();
-      });
+      Object.keys(this.permissionForm.controls).forEach(key => this.permissionForm.get(key)?.markAsTouched());
     }
   }
 

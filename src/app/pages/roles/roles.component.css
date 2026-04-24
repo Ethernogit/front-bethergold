@@ -1,3 +1,9 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 /* Estilos específicos para la página de roles */
 .roles-page {
   min-height: 100vh;

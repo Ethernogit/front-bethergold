@@ -1,3 +1,9 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 /* Estilos específicos del componente de permisos */
 
 /* Animaciones para el modal */

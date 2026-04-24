@@ -12,7 +12,7 @@ import { finalize } from 'rxjs';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, FilterSidebarComponent],
   templateUrl: './sales-history.component.html',
-  styles: []
+  styles: [`:host { display: flex; flex-direction: column; height: 100%; }`]
 })
 export class SalesHistoryComponent implements OnInit {
   notes = signal<Note[]>([]);

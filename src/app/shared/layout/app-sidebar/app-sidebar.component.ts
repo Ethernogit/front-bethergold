@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, QueryList, ViewChildren, ChangeDetectorRef, HostListener } from '@angular/core';
 import { SidebarService } from '../../services/sidebar.service';
+import { UiService } from '../../services/ui.service';
 import { PermissionService } from '../../services/auth/permission.service';
 import { LoginService } from '../../services/auth/login.service';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
@@ -181,6 +182,7 @@ export class AppSidebarComponent {
     readonly isExpanded$;
     readonly isMobileOpen$;
     readonly isHovered$;
+    readonly isFullscreen$;
     readonly currentOrganization$;
     readonly currentSucursal$;
 
@@ -188,6 +190,7 @@ export class AppSidebarComponent {
 
     constructor(
         public sidebarService: SidebarService,
+        public uiService: UiService,
         private router: Router,
         private cdr: ChangeDetectorRef,
         private permissionService: PermissionService,
@@ -196,6 +199,7 @@ export class AppSidebarComponent {
         this.isExpanded$ = this.sidebarService.isExpanded$;
         this.isMobileOpen$ = this.sidebarService.isMobileOpen$;
         this.isHovered$ = this.sidebarService.isHovered$;
+        this.isFullscreen$ = this.uiService.isFullscreen$;
 
         // Signals
         this.currentOrganization$ = this.loginService.currentOrganization;
