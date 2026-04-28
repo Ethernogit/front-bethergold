@@ -134,6 +134,10 @@
 
             <!-- Summary Bar -->
             <div class="px-4 sm:px-6 py-2.5 bg-[#FBF0C9]/40 dark:bg-[#232126]/60 border-t border-[#E8D9A0] dark:border-[#4A474D] flex overflow-x-auto gap-4 md:gap-6 hide-scrollbar">
+                <div *ngIf="note?.dateCreated" class="flex items-center gap-2 sm:gap-3 pr-4 border-r border-[#E8D9A0] dark:border-[#4A474D] shrink-0">
+                    <div class="font-instrument text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">Fecha</div>
+                    <span class="font-instrument text-sm font-bold text-[#191817] dark:text-white">{{note?.dateCreated}}<span *ngIf="note?.time" class="font-normal text-[#6B6560] dark:text-gray-400"> {{note?.time}}</span></span>
+                </div>
                 <div class="flex items-center gap-2 sm:gap-3 pr-4 border-r border-[#E8D9A0] dark:border-[#4A474D] shrink-0">
                     <div class="font-instrument text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">Total</div>
                     <span class="font-instrument text-base font-bold text-[#191817] dark:text-white">${{financials?.total | number:'1.2-2'}}</span>
@@ -320,6 +324,31 @@
 
                     <!-- Right Column: Notes -->
                     <div class="space-y-6">
+                        <!-- Date & Time Card -->
+                        <div *ngIf="note?.dateCreated" class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5 shadow-theme-sm">
+                            <h3 class="font-instrument text-theme-sm font-bold text-[#9A6F0A] dark:text-[#E8C97A] mb-4 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                Fecha de Creación
+                            </h3>
+                            <div class="flex items-center gap-3">
+                                <div class="font-instrument text-base font-bold text-[#191817] dark:text-white">{{note?.dateCreated}}</div>
+                                <div *ngIf="note?.time" class="flex items-center gap-1.5 text-[#6B6560] dark:text-gray-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                    <span class="font-instrument text-sm font-medium">{{note?.time}}</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="rounded-2xl border border-[#E8D9A0] bg-[#FBF0C9]/30 dark:border-[#4A474D] dark:bg-[#232126] p-5 sm:p-6 shadow-theme-sm">
                             <h3 class="font-instrument text-theme-sm font-bold text-[#9A6F0A] dark:text-[#E8C97A] mb-4 flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"

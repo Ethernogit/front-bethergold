@@ -3,6 +3,19 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
+export interface StockHistoryEntry {
+    _id?: string;
+    date: string | Date;
+    quantity: number;
+    previousStock: number;
+    newStock: number;
+    type: 'sale' | 'reservation' | 'cancel_restore' | 'consignment_settle' | 'manual_adjustment';
+    noteId?: string;
+    folio?: string;
+    userId?: { _id: string; profile?: { firstName?: string; lastName?: string } } | string;
+    clientId?: { _id: string; name?: string } | string;
+}
+
 export interface Product {
     _id?: string;
     barcode: string;
@@ -29,6 +42,7 @@ export interface Product {
     isUnique?: boolean;
     lastInventoryRevision?: Date;
     reservation?: { folio: string; noteId: string; isPawn?: boolean };
+    stockHistory?: StockHistoryEntry[];
 }
 
 @Injectable({
@@ -95,6 +109,10 @@ export class ProductService {
             params = params.set('subcategory', subcategory);
         }
         return this.http.get(`${this.apiUrl}/next-barcode`, { params });
+    }
+
+    getStockHistory(productId: string): Observable<any> {
+        return this.http.get(`${this.apiUrl}/${productId}/stock-history`);
     }
 
     getInventoryStats(params?: any): Observable<any> {

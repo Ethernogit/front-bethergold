@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { InventoryService } from '../../../shared/services/inventory.service';
-import { Product } from '../../../shared/services/product.service';
+import { ProductService, Product, StockHistoryEntry } from '../../../shared/services/product.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { finalize } from 'rxjs';
 import { CategoryService } from '../../../shared/services/category.service';
@@ -27,6 +27,7 @@ import { TourService } from '../../../shared/services/tour.service';
 })
 export class InventoryListComponent implements OnInit {
     private inventoryService = inject(InventoryService);
+    private productService = inject(ProductService);
     private toastService = inject(ToastService);
     private categoryService = inject(CategoryService);
     private subcategoryService = inject(SubcategoryService);
@@ -284,6 +285,87 @@ export class InventoryListComponent implements OnInit {
             return (product.subcategory as any).name;
         }
         return product.subcategory as string;
+    }
+
+    // Stock History Modal
+    showHistoryModal = signal(false);
+    historyProduct = signal<Product | null>(null);
+    historyEntries = signal<StockHistoryEntry[]>([]);
+    historyLoading = signal(false);
+
+    openStockHistory(product: Product) {
+        if (!product._id) return;
+        this.historyProduct.set(product);
+        this.historyEntries.set([]);
+        this.showHistoryModal.set(true);
+        this.historyLoading.set(true);
+        this.productService.getStockHistory(product._id)
+            .pipe(finalize(() => this.historyLoading.set(false)))
+            .subscribe({
+                next: (res: any) => this.historyEntries.set(res.data?.history || []),
+                error: () => this.toastService.error('Error al cargar historial de stock')
+            });
+    }
+
+    closeHistoryModal() {
+        this.showHistoryModal.set(false);
+        this.historyProduct.set(null);
+        this.historyEntries.set([]);
+    }
+
+    getHistoryTypeLabel(type: string): string {
+        const labels: Record<string, string> = {
+            sale: 'Vendido', reservation: 'Apartado',
+            cancel_restore: 'Cancelado · Stock repuesto',
+            consignment_settle: 'Liquidación consignación',
+            manual_adjustment: 'Ajuste manual'
+        };
+        return labels[type] || type;
+    }
+
+    getHistoryIconClasses(type: string): Record<string, boolean> {
+        return {
+            'bg-success-50 border-success-300 text-success-600 dark:bg-success-500/15 dark:border-success-500/40 dark:text-success-400': type === 'sale',
+            'bg-[#FBF0C9] border-[#E8C97A] text-[#9A6F0A] dark:bg-[#4A474D] dark:border-[#C69214] dark:text-[#E8C97A]': type === 'reservation',
+            'bg-blue-50 border-blue-300 text-blue-600 dark:bg-blue-500/15 dark:border-blue-500/40 dark:text-blue-400': type === 'cancel_restore',
+            'bg-purple-50 border-purple-300 text-purple-600 dark:bg-purple-500/15 dark:border-purple-500/40 dark:text-purple-400': type === 'consignment_settle',
+            'bg-gray-100 border-gray-300 text-gray-600 dark:bg-gray-500/15 dark:border-gray-500/40 dark:text-gray-400': type === 'manual_adjustment',
+        };
+    }
+
+    getHistoryCardClasses(type: string): Record<string, boolean> {
+        return {
+            'border-success-200 dark:border-success-500/20': type === 'sale',
+            'border-[#E8D9A0] dark:border-[#4A474D]': type === 'reservation',
+            'border-blue-200 dark:border-blue-500/20': type === 'cancel_restore',
+            'border-purple-200 dark:border-purple-500/20': type === 'consignment_settle',
+            'border-gray-200 dark:border-gray-500/20': type === 'manual_adjustment',
+        };
+    }
+
+    getHistoryBadgeClasses(type: string): Record<string, boolean> {
+        return {
+            'bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-400': type === 'sale',
+            'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]': type === 'reservation',
+            'bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400': type === 'cancel_restore',
+            'bg-purple-50 text-purple-700 dark:bg-purple-500/15 dark:text-purple-400': type === 'consignment_settle',
+            'bg-gray-100 text-gray-600 dark:bg-gray-500/15 dark:text-gray-400': type === 'manual_adjustment',
+        };
+    }
+
+    getHistorySellerName(entry: StockHistoryEntry): string {
+        if (!entry.userId) return '-';
+        if (typeof entry.userId === 'object' && entry.userId.profile) {
+            const p = entry.userId.profile;
+            return `${p.firstName || ''} ${p.lastName || ''}`.trim() || '-';
+        }
+        return '-';
+    }
+
+    getHistoryClientName(entry: StockHistoryEntry): string {
+        if (!entry.clientId) return '-';
+        if (typeof entry.clientId === 'object' && entry.clientId.name) return entry.clientId.name;
+        return '-';
     }
 
     toggleReview(product: Product, event: Event) {

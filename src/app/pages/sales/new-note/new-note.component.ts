@@ -196,7 +196,7 @@ export class NewNoteComponent implements OnInit {
             filter(term => (term || '').length > 2),
             switchMap(term => {
                 this.isSearching = true;
-                return this.productService.searchProductsByQR({ q: term || '', minStock: 0.0001 }).pipe(
+                return this.productService.searchProductsByQR({ q: term || '' }).pipe(
                     catchError(err => {
                         console.error(err);
                         return of({ data: [] });
@@ -316,7 +316,15 @@ export class NewNoteComponent implements OnInit {
     // --- Item Management ---
 
     selectProduct(product: Product) {
-        // Determine item type based on product category/attributes logic (simplified for now)
+        if ((product as any).status === 'inactive') {
+            this.toastService.error('Este producto no está disponible para venta.');
+            return;
+        }
+        if ((product as any).reservation) {
+            this.toastService.error('Este producto ya está apartado en otra nota.');
+            return;
+        }
+
         const type = 'jewelry';
 
         const isUnique = product.isUnique !== false; // Default to true if undefined
