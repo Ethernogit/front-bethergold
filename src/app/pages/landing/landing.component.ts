@@ -1,6 +1,7 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { LoginService } from '../../shared/services/auth/login.service';
 
 interface ComingSoonItem {
   icon: string;
@@ -15,7 +16,14 @@ interface ComingSoonItem {
   imports: [CommonModule, RouterModule],
   templateUrl: './landing.component.html',
 })
-export class LandingComponent {
+export class LandingComponent implements OnInit {
+  constructor(private loginService: LoginService, private router: Router) {}
+
+  ngOnInit() {
+    if (this.loginService.isAuthenticated()) {
+      this.router.navigate(['/dashboard']);
+    }
+  }
   lightboxSrc: string | null = null;
   lightboxAlt = '';
 
