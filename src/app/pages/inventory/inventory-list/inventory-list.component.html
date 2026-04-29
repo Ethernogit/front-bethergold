@@ -27,6 +27,16 @@
                                 </svg>
                                 Tutorial
                             </button>
+                            <button (click)="openResetModal()" type="button"
+                                class="flex items-center gap-2 rounded-xl border border-error-200 bg-white px-4 py-2.5 font-instrument text-sm font-semibold text-error-600 shadow-theme-sm transition-all hover:bg-error-50 dark:border-error-500/30 dark:bg-[#3a383d] dark:text-error-400 dark:hover:bg-error-500/10">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <polyline points="1 4 1 10 7 10"></polyline>
+                                    <path d="M3.51 15a9 9 0 1 0 .49-3.5"></path>
+                                </svg>
+                                Reiniciar
+                            </button>
                             <button id="tour-inventory-summary" (click)="openSummary()" type="button"
                                 class="flex items-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:hover:bg-white/5">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
@@ -128,6 +138,9 @@
                                     Stock</th>
                                 <th
                                     class="px-4 py-3 font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] text-center">
+                                    Conteo</th>
+                                <th
+                                    class="px-4 py-3 font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] text-center">
                                     Kilataje</th>
                                 <th
                                     class="px-4 py-3 font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A] text-right">
@@ -203,6 +216,43 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 text-center">
+                                    @if (!product.isUnique) {
+                                    <div class="inline-flex items-center gap-1">
+                                        <button (click)="decrementCount(product)" type="button"
+                                            class="flex h-6 w-6 items-center justify-center rounded-lg border transition-colors"
+                                            [ngClass]="{
+                                                'border-[#E8D9A0] text-[#6B6560] hover:bg-[#FBF0C9] hover:text-[#9A6F0A] dark:border-[#4A474D] dark:text-gray-400 dark:hover:bg-white/5': getCounterState(product) !== 'empty',
+                                                'border-[#E8D9A0] text-[#D0CCC8] cursor-not-allowed dark:border-[#4A474D] dark:text-gray-600': getCounterState(product) === 'empty'
+                                            }"
+                                            [disabled]="getCount(product._id!) === 0"
+                                            title="Restar uno">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                        </button>
+                                        <span class="min-w-[3rem] text-center font-instrument text-theme-xs font-semibold"
+                                            [ngClass]="{
+                                                'text-[#9A6F0A] dark:text-gray-400': getCounterState(product) === 'empty',
+                                                'text-warning-600 dark:text-warning-400': getCounterState(product) === 'partial',
+                                                'text-success-600 dark:text-success-400': getCounterState(product) === 'complete',
+                                                'text-error-600 dark:text-error-400': getCounterState(product) === 'over'
+                                            }">
+                                            {{ getCount(product._id!) }}/{{ product.stock }}
+                                        </span>
+                                        <button (click)="incrementCount(product)" type="button"
+                                            class="flex h-6 w-6 items-center justify-center rounded-lg border border-[#E8D9A0] text-[#6B6560] transition-colors hover:bg-[#FBF0C9] hover:text-[#9A6F0A] dark:border-[#4A474D] dark:text-gray-400 dark:hover:bg-white/5"
+                                            title="Sumar uno">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    } @else {
+                                    <span class="font-instrument text-theme-xs text-[#D0CCC8] dark:text-gray-600">—</span>
+                                    }
+                                </td>
+                                <td class="px-4 py-3 text-center">
                                     @if(product.jewelryDetails?.karatage) {
                                     <span
                                         class="inline-flex items-center justify-center rounded-full bg-[#FBF0C9] px-2.5 py-0.5 text-theme-xs font-medium text-[#9A6F0A] dark:bg-[#3D3420] dark:text-[#E8C97A]">
@@ -224,6 +274,7 @@
                                         currency }}</span>
                                 </td>
                                 <td class="px-4 py-3 text-center">
+                                    @if (product.isUnique) {
                                     <label class="inline-flex items-center cursor-pointer">
                                         <input type="checkbox" [checked]="!!product.lastInventoryRevision"
                                             (change)="toggleReview(product, $event)" class="sr-only peer">
@@ -231,6 +282,17 @@
                                             class="relative w-11 h-6 bg-[#E8D9A0] peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-success-500/20 dark:peer-focus:ring-success-500/20 rounded-full peer dark:bg-[#4A474D] peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-500 peer-checked:bg-success-500 dark:peer-checked:bg-success-500">
                                         </div>
                                     </label>
+                                    } @else {
+                                    <div class="inline-flex items-center justify-center"
+                                        [title]="getCounterState(product) === 'complete' ? 'Revisado — conteo completo' : 'Pendiente — completa el conteo'">
+                                        <div class="relative w-11 h-6 rounded-full transition-colors duration-200"
+                                            [ngClass]="getCounterState(product) === 'complete' ? 'bg-success-500' : 'bg-[#E8D9A0] dark:bg-[#4A474D]'">
+                                            <span class="absolute top-[2px] h-5 w-5 rounded-full bg-white border border-gray-300 transition-all duration-200"
+                                                [ngClass]="getCounterState(product) === 'complete' ? 'left-[22px]' : 'left-[2px]'">
+                                            </span>
+                                        </div>
+                                    </div>
+                                    }
                                 </td>
                                 <td class="px-4 py-3 text-center">
                                     @if (!product.isUnique) {
@@ -300,6 +362,55 @@
         </div>
     </div>
 </div>
+
+<!-- Reset Inventory Modal -->
+@if (showResetModal()) {
+<div class="fixed inset-0 z-999999 flex items-center justify-center bg-[#191817]/60 backdrop-blur-sm p-4">
+    <div class="w-full max-w-md rounded-2xl border border-error-200 bg-white dark:border-error-500/30 dark:bg-[#232126] shadow-xl">
+        <div class="p-6">
+            <div class="flex items-start gap-4">
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-error-50 dark:bg-error-500/15">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="text-error-600 dark:text-error-400">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-instrument text-lg font-semibold text-[#191817] dark:text-white">
+                        ¿Reiniciar inventario?
+                    </h3>
+                    <p class="mt-1.5 font-instrument text-sm text-[#6B6560] dark:text-gray-400">
+                        Todos los productos quedarán marcados como <strong class="text-[#191817] dark:text-white">no revisados</strong> y el conteo actual se perderá. Esta acción no se puede deshacer.
+                    </p>
+                </div>
+            </div>
+            <div class="mt-6 flex gap-3 justify-end">
+                <button (click)="closeResetModal()" type="button" [disabled]="resetting()"
+                    class="rounded-xl border border-[#E8D9A0] bg-white px-5 py-2.5 font-instrument text-sm font-semibold text-[#46424A] transition-all hover:bg-[#FBF0C9] disabled:opacity-50 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-300 dark:hover:bg-white/5">
+                    Cancelar
+                </button>
+                <button (click)="confirmReset()" type="button" [disabled]="resetting()"
+                    class="flex items-center gap-2 rounded-xl bg-error-600 px-5 py-2.5 font-instrument text-sm font-semibold text-white transition-all hover:bg-error-700 disabled:opacity-60 active:scale-[0.98]">
+                    @if (resetting()) {
+                    <div class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    Reiniciando...
+                    } @else {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="1 4 1 10 7 10"></polyline>
+                        <path d="M3.51 15a9 9 0 1 0 .49-3.5"></path>
+                    </svg>
+                    Sí, reiniciar
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+}
 
 <!-- Filters Sidebar -->
 <app-filter-sidebar [isOpen]="showFilters()" [filters]="filterConfig()" (close)="closeFilters()"

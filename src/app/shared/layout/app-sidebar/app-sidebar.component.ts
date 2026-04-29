@@ -348,7 +348,14 @@ export class AppSidebarComponent {
         }
     }
 
+    private skipNextActiveMenuRestore = false;
+
     private setActiveMenuFromRoute(currentUrl: string) {
+        if (this.skipNextActiveMenuRestore) {
+            this.skipNextActiveMenuRestore = false;
+            return;
+        }
+
         const menuGroups = [
             { items: this.navItems, prefix: 'main' },
             { items: this.othersItems, prefix: 'others' },
@@ -377,6 +384,10 @@ export class AppSidebarComponent {
     }
 
     onNavigationClick() {
+        this.openSubmenu = null;
+        this.subMenuHeights = {};
+        this.skipNextActiveMenuRestore = true;
+
         // Handle Mobile
         this.isMobileOpen$.subscribe(isMobile => {
             if (isMobile) {

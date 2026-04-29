@@ -221,12 +221,14 @@ export class InventoryListComponent implements OnInit {
                     next: (res: any) => {
                         this.toastService.success(`Producto revisado: ${res.data.name}`);
                         this.searchForm.reset();
-                        // Keep focus on input (it usually stays, but good to know standard behavior)
 
-                        // Optimistically update list if the product is visible
                         const product = this.products().find(p => p._id === res.data._id);
                         if (product) {
-                            product.lastInventoryRevision = new Date();
+                            if (!product.isUnique) {
+                                this.incrementCount(product);
+                            } else {
+                                product.lastInventoryRevision = new Date();
+                            }
                         }
                     },
                     error: (err) => {
@@ -250,8 +252,67 @@ export class InventoryListComponent implements OnInit {
 
     toggleScanMode() {
         this.scanMode.update(v => !v);
-        // Focus input after toggle?
-        // Ideally yes, but need ViewChild for input. 
+    }
+
+    // --- Conteo físico (session-only, no altera stock real) ---
+    stockCounters = signal<Map<string, number>>(new Map());
+
+    getCount(productId: string): number {
+        return this.stockCounters().get(productId) ?? 0;
+    }
+
+    incrementCount(product: Product) {
+        const map = new Map(this.stockCounters());
+        const newCount = (map.get(product._id!) ?? 0) + 1;
+        map.set(product._id!, newCount);
+        this.stockCounters.set(map);
+        if (newCount === product.stock && !product.lastInventoryRevision) {
+            this.setReviewStatus(product, true);
+        }
+    }
+
+    decrementCount(product: Product) {
+        const map = new Map(this.stockCounters());
+        const current = map.get(product._id!) ?? 0;
+        if (current <= 0) return;
+        const newCount = current - 1;
+        map.set(product._id!, newCount);
+        this.stockCounters.set(map);
+        if (newCount < product.stock && !!product.lastInventoryRevision) {
+            this.setReviewStatus(product, false);
+        }
+    }
+
+    getCounterState(product: Product): 'empty' | 'partial' | 'complete' | 'over' {
+        if (!product._id) return 'empty';
+        const count = this.getCount(product._id);
+        if (count === 0) return 'empty';
+        if (count < product.stock) return 'partial';
+        if (count === product.stock) return 'complete';
+        return 'over';
+    }
+
+    showResetModal = signal(false);
+    resetting = signal(false);
+
+    openResetModal() { this.showResetModal.set(true); }
+    closeResetModal() { this.showResetModal.set(false); }
+
+    confirmReset() {
+        this.resetting.set(true);
+        this.inventoryService.resetInventory()
+            .pipe(finalize(() => this.resetting.set(false)))
+            .subscribe({
+                next: (res: any) => {
+                    this.closeResetModal();
+                    this.stockCounters.set(new Map());
+                    this.toastService.success(`Inventario reiniciado — ${res.data?.modifiedCount ?? 0} productos marcados como no revisados`);
+                    this.loadInventory();
+                },
+                error: () => {
+                    this.toastService.error('Error al reiniciar el inventario');
+                }
+            });
     }
 
     showSummaryModal = signal(false);
@@ -369,32 +430,24 @@ export class InventoryListComponent implements OnInit {
     }
 
     toggleReview(product: Product, event: Event) {
-        // Cast event target to input to get checked state, although assuming event is sufficient might be risky with custom components,
-        // but for standard checkbox/switch input it works.
         const input = event.target as HTMLInputElement;
         const newStatus = input.checked;
+        this.setReviewStatus(product, newStatus, input);
+    }
 
-        // Optimistic update? Or wait? Let's wait to ensure consistency or revert on error.
-        // For better UX, let's keep it optimistic but handle error.
-
+    setReviewStatus(product: Product, newStatus: boolean, inputRef?: HTMLInputElement) {
         this.inventoryService.toggleReviewStatus(product._id!, newStatus)
             .subscribe({
                 next: (res: any) => {
-                    // Update local state with the response data
-                    if (res && res.data && res.data.lastInventoryRevision !== undefined) {
-                        product.lastInventoryRevision = res.data.lastInventoryRevision;
-                    } else {
-                        // Fallback if response doesn't contain the updated field (though it should)
-                        product.lastInventoryRevision = newStatus ? new Date() : undefined;
-                    }
+                    product.lastInventoryRevision = res?.data?.lastInventoryRevision !== undefined
+                        ? res.data.lastInventoryRevision
+                        : (newStatus ? new Date() : undefined);
                     this.toastService.success(`Producto ${newStatus ? 'marcado como revisado' : 'marcado como no revisado'}`);
                 },
                 error: (err: any) => {
                     console.error('Error toggling review', err);
                     this.toastService.error('Error al actualizar estado de revisión');
-                    // Revert check on error
-                    input.checked = !newStatus;
-                    // Also revert the model if we had optimistically updated it (we didn't yet, but good to be safe)
+                    if (inputRef) inputRef.checked = !newStatus;
                 }
             });
     }

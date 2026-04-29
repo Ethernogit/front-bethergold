@@ -57,6 +57,13 @@ export class InventoryService {
         return this.http.post<{ success: boolean, data: Product }>(`${this.apiUrl}/review-by-code`, { code });
     }
     /**
+     * Reset all inventory revisions (fresh count)
+     */
+    resetInventory(): Observable<any> {
+        return this.http.post<{ success: boolean, data: any }>(`${this.apiUrl}/reset`, {});
+    }
+
+    /**
      * Get inventory stats
      */
     getInventoryStats(params?: any): Observable<any> {
