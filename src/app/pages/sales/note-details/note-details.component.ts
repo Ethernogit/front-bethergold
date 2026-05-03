@@ -205,6 +205,8 @@ export class NoteDetailsComponent implements OnInit {
                     returned: (item as any).returned || false
                 };
 
+                if ((item as any).returned) return;
+
                 const model = (item.itemModel || '').toLowerCase();
                 const type = (item.type || '').toLowerCase();
 
