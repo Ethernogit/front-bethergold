@@ -38,22 +38,96 @@
                             </div>
                         </div>
                         <div
-                            class="flex items-center gap-4 font-instrument text-theme-xs font-medium text-[#46424A] dark:text-gray-400 bg-[#FBF0C9]/40 dark:bg-[#3a383d] px-3 py-1.5 rounded-xl border border-[#E8D9A0] dark:border-[#4A474D]">
-                            <div class="flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none"
+                            class="flex items-center gap-3 font-instrument text-theme-xs font-medium text-[#46424A] dark:text-gray-400 bg-[#FBF0C9]/40 dark:bg-[#3a383d] px-3 py-1.5 rounded-xl border dark:border-[#4A474D] transition-colors"
+                            [class.border-[#E8D9A0]]="!permissionService.hasModulePermission('sales', 'approve')"
+                            [class.border-[#C69214]]="permissionService.hasModulePermission('sales', 'approve')">
+
+                            <!-- Fecha: solo texto si no tiene permiso, input si tiene -->
+                            <div class="flex items-center gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
-                                <span>{{ currentDate | date:'dd/MM/yyyy' }}</span>
+                                <!-- Sin permiso: solo muestra la fecha -->
+                                <span *ngIf="!permissionService.hasModulePermission('sales', 'approve')">
+                                    {{ currentDate | date:'dd/MM/yyyy' }}
+                                </span>
+                                <!-- Con permiso: botón que abre flatpickr -->
+                                <div *ngIf="permissionService.hasModulePermission('sales', 'approve')"
+                                    class="flex items-center gap-1.5">
+                                    <button #noteDateBtn type="button"
+                                        class="font-instrument text-theme-xs font-semibold text-[#191817] dark:text-white hover:text-[#C69214] dark:hover:text-[#FAC600] transition-colors cursor-pointer">
+                                        {{ noteDateDisplay }}
+                                    </button>
+                                    <span class="inline-flex items-center rounded-full bg-[#C69214]/15 px-1.5 py-0.5 font-instrument text-[10px] font-bold text-[#9A6F0A] dark:text-[#FAC600] uppercase tracking-wide whitespace-nowrap">
+                                        fecha corte
+                                    </span>
+                                </div>
                             </div>
+
                             <div class="h-4 w-px bg-[#E8D9A0] dark:bg-[#4A474D]"></div>
-                            <div class="flex items-center gap-1">
-                                <span class="opacity-75">Folio:</span>
-                                <span class="font-instrument font-bold text-[#C69214] dark:text-[#FAC600] text-sm">{{
-                                    nextFolio
-                                    }}</span>
-                            </div>
+
+                            <!-- Folio: static for non-approve users -->
+                            @if (!permissionService.hasPermission('sales:approve')) {
+                                <div class="flex items-center gap-1">
+                                    <span class="opacity-75">Folio:</span>
+                                    <span class="font-instrument font-bold text-[#C69214] dark:text-[#FAC600] text-sm">{{
+                                        nextFolio }}</span>
+                                </div>
+                            }
+
+                            <!-- Folio: editable for approve users -->
+                            @if (permissionService.hasPermission('sales:approve')) {
+                                <div class="flex items-center gap-1.5">
+                                    <span class="opacity-75 whitespace-nowrap">Folio:</span>
+                                    <div class="relative flex items-center">
+                                        <input
+                                            type="text"
+                                            [value]="customFolio || nextFolio"
+                                            (input)="onFolioInput($any($event.target).value)"
+                                            placeholder="{{ nextFolio }}"
+                                            maxlength="20"
+                                            [class]="'font-instrument font-bold text-sm w-28 bg-transparent border-b focus:outline-none transition-colors uppercase tracking-wide pr-5 ' +
+                                                (folioStatus === 'idle' ? 'text-[#C69214] dark:text-[#FAC600] border-[#C69214] dark:border-[#FAC600]' :
+                                                 folioStatus === 'checking' ? 'text-blue-500 border-blue-400' :
+                                                 folioStatus === 'available' ? 'text-green-600 border-green-500' :
+                                                 'text-red-500 border-red-500')"
+                                        />
+                                        <!-- Checking spinner -->
+                                        @if (folioStatus === 'checking') {
+                                            <span class="absolute right-0 flex items-center">
+                                                <svg class="animate-spin h-3 w-3 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                                </svg>
+                                            </span>
+                                        }
+                                        <!-- Available checkmark -->
+                                        @if (folioStatus === 'available') {
+                                            <span class="absolute right-0 flex items-center text-green-500">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </span>
+                                        }
+                                        <!-- Taken X -->
+                                        @if (folioStatus === 'taken') {
+                                            <span class="absolute right-0 flex items-center text-red-500">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </span>
+                                        }
+                                    </div>
+                                    @if (folioStatus === 'taken') {
+                                        <span class="text-[10px] text-red-500 font-instrument whitespace-nowrap">en uso</span>
+                                    }
+                                    @if (folioStatus === 'available' && customFolio) {
+                                        <span class="text-[10px] text-green-600 font-instrument whitespace-nowrap">disponible</span>
+                                    }
+                                </div>
+                            }
                         </div>
                     </div>
 

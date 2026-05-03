@@ -175,6 +175,7 @@ export class PermissionFormComponent implements OnInit {
     { value: 'list', label: 'Listar' },
     { value: 'export', label: 'Exportar' },
     { value: 'import', label: 'Importar' },
+    { value: 'approve', label: 'Aprobar' },
   ];
 
   constructor(private fb: FormBuilder) {

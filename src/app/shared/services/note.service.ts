@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface NoteItem {
-    itemId?: string; // Optional if custom item
+    _id?: string;
+    itemId?: string;
     itemModel: 'Product' | 'Service' | 'Custom' | 'Inventory';
     type: 'jewelry' | 'service' | 'repair' | 'custom' | 'gold_buying' | 'pawn';
     name: string;
@@ -26,8 +27,9 @@ export interface NoteItem {
         [key: string]: any;
     };
     tags?: string[];
-    deliveryStatus?: 'immediate' | 'pending'; // immediate = Se lo lleva, pending = Apartado
+    deliveryStatus?: 'immediate' | 'pending';
     returned?: boolean;
+    returnedAt?: Date;
 }
 
 export interface NotePayment {
@@ -103,6 +105,16 @@ export class NoteService {
 
     updateItemDeliveryStatus(noteId: string, itemId: string): Observable<{ success: boolean; data: Note; message?: string }> {
         return this.http.put<{ success: boolean; data: Note; message?: string }>(`${this.apiUrl}/${noteId}/items/${itemId}/deliver`, {});
+    }
+
+    checkFolioAvailability(value: string): Observable<{ success: boolean; available: boolean; folio: string }> {
+        return this.http.get<{ success: boolean; available: boolean; folio: string }>(`${this.apiUrl}/folio/check`, {
+            params: { value }
+        });
+    }
+
+    returnNoteItem(noteId: string, itemNoteId: string): Observable<{ success: boolean; data: Note; message?: string; pointsGenerated?: number }> {
+        return this.http.put<{ success: boolean; data: Note; message?: string; pointsGenerated?: number }>(`${this.apiUrl}/${noteId}/items/${itemNoteId}/return`, {});
     }
 
     settleConsignment(noteId: string, payload: any): Observable<{ success: boolean; data: any; message?: string }> {

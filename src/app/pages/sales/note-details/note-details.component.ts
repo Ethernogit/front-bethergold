@@ -1,10 +1,11 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { NoteService, Note, NoteItem } from '../../../shared/services/note.service';
 import { SucursalService, Sucursal } from '../../../shared/services/sucursal.service';
 import { CashCutService } from '../../../shared/services/cash-cut.service'; // Import
 import { ToastService } from '../../../shared/services/toast.service'; // Import
+import { PermissionService } from '../../../shared/services/auth/permission.service';
 import { GlobalPaymentComponent } from '../components/global-payment/global-payment.component';
 import { ClientSelectionModalComponent } from '../new-note/components/client-selection-modal/client-selection-modal.component';
 import { environment } from '../../../../environments/environment';
@@ -22,10 +23,12 @@ pdfMakeConfig.vfs = (pdfFonts as any).pdfMake ? (pdfFonts as any).pdfMake.vfs : 
 })
 export class NoteDetailsComponent implements OnInit {
     private route = inject(ActivatedRoute);
+    private router = inject(Router);
     private noteService = inject(NoteService);
     private sucursalService = inject(SucursalService);
     private cashCutService = inject(CashCutService); // Inject
     private toastService = inject(ToastService); // Inject
+    readonly permissionService = inject(PermissionService);
 
     isLoading = true;
     error: string | null = null;
@@ -43,6 +46,10 @@ export class NoteDetailsComponent implements OnInit {
     showPaymentModal = signal(false);
     showClientModal = signal(false);
     clientRequiredWarning = signal(false);
+
+    // Return Item Modal State
+    showReturnModal = signal(false);
+    returnModalItem: { id: string; name: string; price: number; pointsPreview: number } | null = null;
 
     // Tab State
     currentTab: 'general' | 'items' | 'payments' = 'items';
@@ -180,11 +187,13 @@ export class NoteDetailsComponent implements OnInit {
                 }
 
                 const uiItem = {
-                    id: typeof item.itemId === 'string' ? item.itemId : (item.itemId as any)?._id || 'N/A',
+                    id: (item as any)._id || 'N/A',   // note item subdocument _id (used for return/deliver)
+                    productId: typeof item.itemId === 'string' ? item.itemId : (item.itemId as any)?._id || 'N/A',
                     name: item.name || 'Sin Nombre',
                     ref: ref,
                     description: this.formatDescription(item),
                     price: item.financials?.unitPrice || 0,
+                    subtotal: item.financials?.subtotal || 0,
                     status: item.deliveryStatus === 'pending' ? 'Pendiente de Entrega' : 'Entregado',
                     // Workshop specific
                     title: item.name || 'Servicio',
@@ -192,7 +201,7 @@ export class NoteDetailsComponent implements OnInit {
                     estReady: item.specifications?.['deliveryDate'] || item.specifications?.duration || 'Por definir',
                     // Safe status fallback
                     itemStatus: item.deliveryStatus || 'Pending',
-                    isHechura: !!(item.specifications && item.specifications['karatage']), // Heuristic for Hechura
+                    isHechura: !!(item.specifications && item.specifications['karatage']),
                     returned: (item as any).returned || false
                 };
 
@@ -574,6 +583,78 @@ export class NoteDetailsComponent implements OnInit {
             error: (err) => {
                 console.error(err);
                 this.toastService.error('Error al actualizar cliente');
+                this.isLoading = false;
+            }
+        });
+    }
+
+    openReturnModal(item: any) {
+        if (!item.id || !this.rawNote) return;
+
+        // Use subtotal (price * qty - discount) to match backend recalculation
+        const itemSubtotal = item.subtotal ?? item.price ?? 0;
+        const currentBalanceDue = this.financials?.balance ?? 0;
+        // newBalanceDue = currentBalanceDue - itemSubtotal (removing item reduces what's owed)
+        const newBalanceDue = currentBalanceDue - itemSubtotal;
+        const pointsPreview = newBalanceDue < 0 ? Math.round(Math.abs(newBalanceDue)) : 0;
+
+        this.returnModalItem = { id: item.id, name: item.name, price: itemSubtotal, pointsPreview };
+        this.showReturnModal.set(true);
+    }
+
+    closeReturnModal() {
+        this.showReturnModal.set(false);
+        this.returnModalItem = null;
+    }
+
+    executeReturn() {
+        if (!this.rawNote?._id || !this.returnModalItem) return;
+
+        const itemNoteId = this.returnModalItem.id;
+        this.isLoading = true;
+        this.closeReturnModal();
+
+        this.noteService.returnNoteItem(this.rawNote._id, itemNoteId).subscribe({
+            next: (res) => {
+                if (res.success) {
+                    const pts = res.pointsGenerated ?? 0;
+                    if (pts > 0) {
+                        this.toastService.success(`Producto retirado. Se generaron ${pts} puntos al cliente.`);
+                    } else {
+                        this.toastService.success('Producto retirado de la nota exitosamente.');
+                    }
+                    this.mapNoteData(res.data);
+                } else {
+                    this.toastService.error('Error al retirar el producto');
+                }
+                this.isLoading = false;
+            },
+            error: (err) => {
+                console.error('Error returning item', err);
+                this.toastService.error(err?.error?.message || 'Error al retirar el producto');
+                this.isLoading = false;
+            }
+        });
+    }
+
+    confirmCancel() {
+        if (!this.rawNote?._id) return;
+        if (!confirm('¿Está seguro de anular esta nota? Esta acción restaurará el inventario y no se puede deshacer.')) return;
+
+        this.isLoading = true;
+        this.noteService.cancelNote(this.rawNote._id).subscribe({
+            next: (res) => {
+                if (res.success) {
+                    this.toastService.success('Nota anulada exitosamente');
+                    this.mapNoteData(res.data);
+                } else {
+                    this.toastService.error('Error al anular la nota');
+                }
+                this.isLoading = false;
+            },
+            error: (err) => {
+                console.error('Error canceling note', err);
+                this.toastService.error('Error al anular la nota');
                 this.isLoading = false;
             }
         });

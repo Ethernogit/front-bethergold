@@ -129,6 +129,19 @@
                         </svg>
                         Abonar
                     </button>
+
+                    <button
+                        *ngIf="note?.status !== 'Anulada' && permissionService.hasModulePermission('sales', 'delete')"
+                        (click)="confirmCancel()"
+                        class="flex items-center gap-1.5 rounded-xl border border-error-200 bg-error-50 px-3 py-2 sm:px-4 font-instrument text-sm font-semibold text-error-700 transition-all hover:bg-error-100 dark:border-error-500/30 dark:bg-error-500/10 dark:text-error-400 dark:hover:bg-error-500/20 shadow-theme-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                        <span class="hidden sm:inline">Anular</span>
+                    </button>
                 </div>
             </div>
 
@@ -411,6 +424,15 @@
                                                 </svg>
                                                 Entregar
                                             </button>
+                                            <button
+                                                *ngIf="!item.returned && note?.status !== 'Anulada' && permissionService.hasModulePermission('sales', 'delete')"
+                                                (click)="openReturnModal(item)"
+                                                class="inline-flex items-center gap-1 rounded-full bg-error-50 px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-error-700 dark:bg-error-500/15 dark:text-error-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
+                                                </svg>
+                                                Retirar
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -449,6 +471,15 @@
                                                             <polyline points="20 6 9 17 4 12"></polyline>
                                                         </svg>
                                                         Entregar
+                                                    </button>
+                                                    <button
+                                                        *ngIf="!item.returned && note?.status !== 'Anulada' && permissionService.hasModulePermission('sales', 'delete')"
+                                                        (click)="openReturnModal(item)"
+                                                        class="inline-flex items-center gap-1.5 rounded-full bg-error-50 px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-error-700 hover:scale-105 transition-transform dark:bg-error-500/15 dark:text-error-400">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                            <polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
+                                                        </svg>
+                                                        Retirar
                                                     </button>
                                                 </div>
                                             </td>
@@ -495,14 +526,25 @@
                                         <span class="inline-flex items-center gap-1.5 rounded-full bg-[#F5F0EC] px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-[#46424A] dark:bg-white/5 dark:text-gray-400">
                                             {{item.returned ? 'Devuelto' : item.status}}
                                         </span>
-                                        <button *ngIf="note?.status === 'Pagado' && item.itemStatus === 'pending'"
-                                            (click)="markAsDelivered(item.id)"
-                                            class="inline-flex items-center gap-1 rounded-full bg-success-50 px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-success-700 dark:bg-success-500/15 dark:text-success-400">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="20 6 9 17 4 12"></polyline>
-                                            </svg>
-                                            Entregar
-                                        </button>
+                                        <div class="flex items-center gap-2">
+                                            <button *ngIf="note?.status === 'Pagado' && item.itemStatus === 'pending'"
+                                                (click)="markAsDelivered(item.id)"
+                                                class="inline-flex items-center gap-1 rounded-full bg-success-50 px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-success-700 dark:bg-success-500/15 dark:text-success-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                                </svg>
+                                                Entregar
+                                            </button>
+                                            <button
+                                                *ngIf="!item.returned && note?.status !== 'Anulada' && permissionService.hasModulePermission('sales', 'delete')"
+                                                (click)="openReturnModal(item)"
+                                                class="inline-flex items-center gap-1 rounded-full bg-error-50 px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-error-700 dark:bg-error-500/15 dark:text-error-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
+                                                </svg>
+                                                Retirar
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -548,6 +590,15 @@
                                                             <polyline points="20 6 9 17 4 12"></polyline>
                                                         </svg>
                                                         Entregar
+                                                    </button>
+                                                    <button
+                                                        *ngIf="!item.returned && note?.status !== 'Anulada' && permissionService.hasModulePermission('sales', 'delete')"
+                                                        (click)="openReturnModal(item)"
+                                                        class="inline-flex items-center gap-1.5 rounded-full bg-error-50 px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-error-700 hover:scale-105 transition-transform dark:bg-error-500/15 dark:text-error-400">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                            <polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
+                                                        </svg>
+                                                        Retirar
                                                     </button>
                                                 </div>
                                             </td>
@@ -604,14 +655,25 @@
                                         <span class="inline-flex items-center gap-1.5 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]">
                                             {{item.returned ? 'Devuelto' : item.status}}
                                         </span>
-                                        <button *ngIf="note?.status === 'Pagado' && item.itemStatus === 'pending'"
-                                            (click)="markAsDelivered(item.id)"
-                                            class="inline-flex items-center gap-1 rounded-full bg-success-50 px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-success-700 dark:bg-success-500/15 dark:text-success-400">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="20 6 9 17 4 12"></polyline>
-                                            </svg>
-                                            Entregar
-                                        </button>
+                                        <div class="flex items-center gap-2">
+                                            <button *ngIf="note?.status === 'Pagado' && item.itemStatus === 'pending'"
+                                                (click)="markAsDelivered(item.id)"
+                                                class="inline-flex items-center gap-1 rounded-full bg-success-50 px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-success-700 dark:bg-success-500/15 dark:text-success-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                                </svg>
+                                                Entregar
+                                            </button>
+                                            <button
+                                                *ngIf="!item.returned && note?.status !== 'Anulada' && permissionService.hasModulePermission('sales', 'delete')"
+                                                (click)="openReturnModal(item)"
+                                                class="inline-flex items-center gap-1 rounded-full bg-error-50 px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-error-700 dark:bg-error-500/15 dark:text-error-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
+                                                </svg>
+                                                Retirar
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -662,6 +724,15 @@
                                                             <polyline points="20 6 9 17 4 12"></polyline>
                                                         </svg>
                                                         Entregar
+                                                    </button>
+                                                    <button
+                                                        *ngIf="!item.returned && note?.status !== 'Anulada' && permissionService.hasModulePermission('sales', 'delete')"
+                                                        (click)="openReturnModal(item)"
+                                                        class="inline-flex items-center gap-1.5 rounded-full bg-error-50 px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-error-700 hover:scale-105 transition-transform dark:bg-error-500/15 dark:text-error-400">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                            <polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
+                                                        </svg>
+                                                        Retirar
                                                     </button>
                                                 </div>
                                             </td>
@@ -776,6 +847,95 @@
     <app-global-payment [isOpen]="showPaymentModal()" [note]="rawNote" [clientPoints]="client?.points || 0"
         (close)="showPaymentModal.set(false)" (paymentSuccess)="onPaymentSuccess($event)">
     </app-global-payment>
+
+    <!-- Return Item Confirmation Modal -->
+    <div *ngIf="showReturnModal()"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#191817]/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-[#232126] rounded-2xl border border-[#E8D9A0] dark:border-[#4A474D] shadow-2xl w-full max-w-md">
+            <div class="border-b border-[#E8D9A0] dark:border-[#4A474D] px-6 py-4 flex items-center gap-3">
+                <div class="flex size-10 items-center justify-center rounded-xl bg-error-50 dark:bg-error-500/15">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="text-error-600 dark:text-error-400">
+                        <polyline points="9 14 4 9 9 4"></polyline>
+                        <path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
+                    </svg>
+                </div>
+                <h3 class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white">Retirar Producto</h3>
+            </div>
+
+            <div class="px-6 py-5 space-y-4" *ngIf="returnModalItem">
+                <!-- Item info -->
+                <div class="rounded-xl bg-[#F5F0EC] dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] p-4">
+                    <div class="flex justify-between items-start gap-2">
+                        <span class="font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white">{{returnModalItem.name}}</span>
+                        <span class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white shrink-0">
+                            ${{returnModalItem.price | number:'1.2-2'}}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Financial impact -->
+                <div class="space-y-2">
+                    <div class="flex items-start gap-2 rounded-xl bg-[#FBF0C9]/50 dark:bg-[#4A474D]/40 border border-[#E8D9A0] dark:border-[#4A474D] p-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="text-[#C69214] mt-0.5 shrink-0">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <p class="font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">
+                            El producto volverá al inventario. Esta acción no se puede deshacer.
+                        </p>
+                    </div>
+
+                    <!-- Points preview if overpaid -->
+                    <div *ngIf="returnModalItem.pointsPreview > 0"
+                        class="flex items-center gap-2 rounded-xl bg-success-50 dark:bg-success-500/10 border border-success-200 dark:border-success-500/20 p-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="text-success-600 dark:text-success-400 shrink-0">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        <p class="font-instrument text-theme-sm font-medium text-success-700 dark:text-success-400">
+                            Se generarán <strong>{{returnModalItem.pointsPreview}} puntos</strong> al cliente por el excedente pagado.
+                        </p>
+                    </div>
+
+                    <!-- No points, just reduces balance -->
+                    <div *ngIf="returnModalItem.pointsPreview === 0 && financials?.balance > 0"
+                        class="flex items-center gap-2 rounded-xl bg-[#F5F0EC] dark:bg-white/5 border border-[#E8D9A0] dark:border-[#4A474D] p-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="text-[#6B6560] dark:text-gray-400 shrink-0">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <polyline points="5 12 12 19 19 12"></polyline>
+                        </svg>
+                        <p class="font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">
+                            El saldo pendiente se reducirá en <strong>${{returnModalItem.price | number:'1.2-2'}}</strong>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-[#E8D9A0] dark:border-[#4A474D] px-6 py-4 flex justify-end gap-3">
+                <button (click)="closeReturnModal()"
+                    class="flex items-center gap-2 rounded-xl px-5 py-2.5 font-instrument text-sm font-medium text-[#46424A] dark:text-gray-400 border border-[#E8D9A0] dark:border-[#4A474D] bg-white dark:bg-[#3a383d] shadow-theme-sm transition-all hover:bg-gray-100 dark:hover:bg-white/5">
+                    Cancelar
+                </button>
+                <button (click)="executeReturn()"
+                    class="flex items-center gap-2 rounded-xl px-5 py-2.5 font-instrument text-sm font-semibold text-white bg-error-600 hover:bg-error-700 dark:bg-error-600 dark:hover:bg-error-700 shadow-theme-sm transition-all active:scale-[0.98]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 14 4 9 9 4"></polyline>
+                        <path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
+                    </svg>
+                    Confirmar Retiro
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Client Selection Modal -->
     <div *ngIf="showClientModal()"

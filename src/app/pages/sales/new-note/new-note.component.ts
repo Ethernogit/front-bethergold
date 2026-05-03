@@ -1,17 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import flatpickr from 'flatpickr';
+import { Spanish } from 'flatpickr/dist/l10n/es';
+import 'flatpickr/dist/flatpickr.css';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
 import { NoteService, Note, NoteItem } from '../../../shared/services/note.service';
 import { ClientService } from '../../../shared/services/client.service';
 import { ProductService, Product } from '../../../shared/services/product.service';
 import { LoginService } from '../../../shared/services/auth/login.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { SucursalService } from '../../../shared/services/sucursal.service';
-import { CashCutService } from '../../../shared/services/cash-cut.service'; // Import CashCutService
-import { PricingRuleService, PricingRule } from '../../../shared/services/pricing-rule.service'; // Pricing Engine
+import { CashCutService } from '../../../shared/services/cash-cut.service';
+import { PricingRuleService, PricingRule } from '../../../shared/services/pricing-rule.service';
+import { PermissionService } from '../../../shared/services/auth/permission.service';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, switchMap, catchError, filter } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 
 import { RouterModule } from '@angular/router';
 import { ManualMovementModalComponent } from './components/manual-movement-modal/manual-movement-modal.component';
@@ -26,10 +30,10 @@ import { ClientSelectionModalComponent } from './components/client-selection-mod
 @Component({
     selector: 'app-new-note',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, RouterModule, ManualMovementModalComponent, RepairModalComponent, ClientSelectionModalComponent, HechuraModalComponent],
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, ManualMovementModalComponent, RepairModalComponent, ClientSelectionModalComponent, HechuraModalComponent],
     templateUrl: './new-note.component.html'
 })
-export class NewNoteComponent implements OnInit {
+export class NewNoteComponent implements OnInit, OnDestroy {
     noteForm: FormGroup;
     searchControl = new FormControl('');
     isLoading = false;
@@ -50,9 +54,34 @@ export class NewNoteComponent implements OnInit {
     showClientModal = false;
     selectedClient: any = null;
     currentDate = new Date();
+    noteDate: string = this.toDateInputValue(new Date());
+    noteDateDisplay: string = this.formatDateDisplay(new Date());
     nextFolio = '---';
+
+    private fpInstance: flatpickr.Instance | null = null;
+
+    // Custom folio
+    customFolio = '';
+    folioStatus: 'idle' | 'checking' | 'available' | 'taken' = 'idle';
+    private folioInput$ = new Subject<string>();
+
+    @ViewChild('noteDateBtn') set noteDateBtnRef(el: ElementRef<HTMLElement>) {
+        if (el && !this.fpInstance) {
+            this.fpInstance = flatpickr(el.nativeElement, {
+                locale: Spanish,
+                dateFormat: 'Y-m-d',
+                defaultDate: this.noteDate,
+                maxDate: 'today',
+                disableMobile: true,
+                onChange: (_, dateStr) => {
+                    this.noteDate = dateStr;
+                    this.noteDateDisplay = this.formatDateDisplay(new Date(dateStr + 'T12:00:00'));
+                }
+            }) as flatpickr.Instance;
+        }
+    }
     paymentMethod: 'cash' | 'card' | 'points' = 'cash';
-    saleType: 'sale' | 'consignment' = 'sale'; // NEW: Toggle between normal and consignment
+    saleType: 'sale' | 'consignment' = 'sale';
 
     constructor(
         private fb: FormBuilder,
@@ -62,8 +91,9 @@ export class NewNoteComponent implements OnInit {
         private loginService: LoginService,
         private toastService: ToastService,
         private sucursalService: SucursalService,
-        private cashCutService: CashCutService, // Inject Service
-        private pricingRuleService: PricingRuleService, // Pricing Engine
+        private cashCutService: CashCutService,
+        private pricingRuleService: PricingRuleService,
+        readonly permissionService: PermissionService,
         private router: Router
     ) {
         this.noteForm = this.fb.group({
@@ -83,12 +113,12 @@ export class NewNoteComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // this.loadClients(); // Replaced by Modal
         this.checkOpenShift();
         this.setupSearch();
         this.loadNextFolio();
         this.loadDefaultClient();
         this.loadPricingRules();
+        this.setupFolioCheck();
     }
 
     loadPricingRules() {
@@ -159,9 +189,24 @@ export class NewNoteComponent implements OnInit {
         });
     }
 
+    private toDateInputValue(date: Date): string {
+        return date.toISOString().split('T')[0];
+    }
+
+    private formatDateDisplay(date: Date): string {
+        return date.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    ngOnDestroy() {
+        if (this.fpInstance) {
+            this.fpInstance.destroy();
+            this.fpInstance = null;
+        }
+    }
+
     setPaymentMethod(method: 'cash' | 'card' | 'points') {
         this.paymentMethod = method;
-        this.calculateTotals(); // Re-calculate to reset fields
+        this.calculateTotals();
     }
 
     toggleSaleType() {
@@ -187,6 +232,32 @@ export class NewNoteComponent implements OnInit {
 
     get isWholesaleClient(): boolean {
         return this.selectedClient?.type === 'MAYOREO' || this.selectedClient?.type === 'MAYORISTA';
+    }
+
+    setupFolioCheck() {
+        this.folioInput$.pipe(
+            debounceTime(400),
+            distinctUntilChanged(),
+            switchMap(value => {
+                const trimmed = value.trim();
+                if (!trimmed) {
+                    this.folioStatus = 'idle';
+                    return of(null);
+                }
+                this.folioStatus = 'checking';
+                return this.noteService.checkFolioAvailability(trimmed).pipe(
+                    catchError(() => of(null))
+                );
+            })
+        ).subscribe(res => {
+            if (!res) { this.folioStatus = 'idle'; return; }
+            this.folioStatus = res.available ? 'available' : 'taken';
+        });
+    }
+
+    onFolioInput(value: string) {
+        this.customFolio = value.toUpperCase();
+        this.folioInput$.next(this.customFolio);
     }
 
     setupSearch() {
@@ -685,6 +756,15 @@ export class NewNoteComponent implements OnInit {
             return;
         }
 
+        if (this.folioStatus === 'taken') {
+            this.toastService.error(`El folio "${this.customFolio}" ya está en uso. Elija otro.`);
+            return;
+        }
+        if (this.folioStatus === 'checking') {
+            this.toastService.warning('Verificando disponibilidad del folio, espere un momento.');
+            return;
+        }
+
         const formVal = this.noteForm.getRawValue();
 
         // Validate Min Payment Logic (Skip for Consignment)
@@ -727,10 +807,12 @@ export class NewNoteComponent implements OnInit {
         const balanceDue = total - totalPaid;
 
         // Construct Note Object
-        const noteData: Note = {
+        const noteData: any = {
             sucursalId: currentSucursal._id || '',
             clientId: formVal.clientId,
-            type: this.saleType, // Assign Type
+            type: this.saleType,
+            noteDate: new Date(this.noteDate).toISOString(),
+            ...(this.customFolio.trim() && { customFolio: this.customFolio.trim() }),
             items: formVal.items.map((item: any) => ({
                 itemId: item.itemId,
                 itemModel: item.itemModel,
