@@ -1,0 +1,18 @@
+{
+  "enabledPlugins": {
+    "skill-creator@claude-plugins-official": true
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:/Users/AMTI00580/.claude/hooks/pattern-detector.ps1"
+          }
+        ]
+      }
+    ]
+  }
+}
