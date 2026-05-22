@@ -806,11 +806,17 @@ export class NewNoteComponent implements OnInit, OnDestroy {
         const balanceDue = total - totalPaid;
 
         // Construct Note Object
+        // Only send noteDate when backdating (user picked a past date).
+        // For today, omit it so the backend records the actual creation time with new Date().
+        const todayLocal = new Date();
+        const todayStr = `${todayLocal.getFullYear()}-${String(todayLocal.getMonth() + 1).padStart(2, '0')}-${String(todayLocal.getDate()).padStart(2, '0')}`;
+        const isBackdated = this.noteDate !== todayStr;
+
         const noteData: any = {
             sucursalId: currentSucursal._id || '',
             clientId: formVal.clientId,
             type: this.saleType,
-            noteDate: new Date(this.noteDate).toISOString(),
+            ...(isBackdated && { noteDate: new Date(this.noteDate + 'T12:00:00').toISOString() }),
             ...(this.customFolio.trim() && { customFolio: this.customFolio.trim() }),
             items: formVal.items.map((item: any) => ({
                 itemId: item.itemId,
