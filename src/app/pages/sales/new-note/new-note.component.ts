@@ -189,7 +189,10 @@ export class NewNoteComponent implements OnInit, OnDestroy {
     }
 
     private toDateInputValue(date: Date): string {
-        return date.toISOString().split('T')[0];
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
     }
 
     private formatDateDisplay(date: Date): string {
@@ -808,9 +811,7 @@ export class NewNoteComponent implements OnInit, OnDestroy {
         // Construct Note Object
         // Only send noteDate when backdating (user picked a past date).
         // For today, omit it so the backend records the actual creation time with new Date().
-        const todayLocal = new Date();
-        const todayStr = `${todayLocal.getFullYear()}-${String(todayLocal.getMonth() + 1).padStart(2, '0')}-${String(todayLocal.getDate()).padStart(2, '0')}`;
-        const isBackdated = this.noteDate !== todayStr;
+        const isBackdated = this.noteDate !== this.toDateInputValue(new Date());
 
         const noteData: any = {
             sucursalId: currentSucursal._id || '',
