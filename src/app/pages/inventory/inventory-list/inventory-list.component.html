@@ -237,10 +237,15 @@
                                                 'text-success-600 dark:text-success-400': getCounterState(product) === 'complete',
                                                 'text-error-600 dark:text-error-400': getCounterState(product) === 'over'
                                             }">
-                                            {{ getCount(product._id!) }}/{{ product.stock }}
+                                            {{ getCount(product._id!) }}/{{ getPhysicalStock(product) }}
                                         </span>
                                         <button (click)="incrementCount(product)" type="button"
-                                            class="flex h-6 w-6 items-center justify-center rounded-lg border border-[#E8D9A0] text-[#6B6560] transition-colors hover:bg-[#FBF0C9] hover:text-[#9A6F0A] dark:border-[#4A474D] dark:text-gray-400 dark:hover:bg-white/5"
+                                            class="flex h-6 w-6 items-center justify-center rounded-lg border transition-colors"
+                                            [ngClass]="{
+                                                'border-[#E8D9A0] text-[#6B6560] hover:bg-[#FBF0C9] hover:text-[#9A6F0A] dark:border-[#4A474D] dark:text-gray-400 dark:hover:bg-white/5': getCount(product._id!) < product.stock,
+                                                'border-[#E8D9A0] text-[#D0CCC8] cursor-not-allowed dark:border-[#4A474D] dark:text-gray-600': getCount(product._id!) >= product.stock
+                                            }"
+                                            [disabled]="getCount(product._id!) >= getPhysicalStock(product)"
                                             title="Sumar uno">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                                                 <line x1="12" y1="5" x2="12" y2="19"></line>

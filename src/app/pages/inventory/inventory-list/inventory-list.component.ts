@@ -187,6 +187,15 @@ export class InventoryListComponent implements OnInit {
                     const products = res.data || res;
                     this.products.set(products);
 
+                    // Restore counters for non-unique products already reviewed in DB
+                    const counters = new Map(this.stockCounters());
+                    (products as Product[]).forEach(p => {
+                        if (!p.isUnique && p.lastInventoryRevision && p._id && !counters.has(p._id)) {
+                            counters.set(p._id, this.getPhysicalStock(p));
+                        }
+                    });
+                    this.stockCounters.set(counters);
+
                     if (res.pagination) {
                         this.totalItems.set(res.pagination.total);
                         this.totalPages.set(res.pagination.pages);
@@ -261,12 +270,21 @@ export class InventoryListComponent implements OnInit {
         return this.stockCounters().get(productId) ?? 0;
     }
 
+    // Stock disponible + unidades apartadas = total físico en la joyería
+    getPhysicalStock(product: Product): number {
+        const reserved = (!product.isUnique && product.reservation?.reservedQty) ? product.reservation.reservedQty : 0;
+        return product.stock + reserved;
+    }
+
     incrementCount(product: Product) {
         const map = new Map(this.stockCounters());
-        const newCount = (map.get(product._id!) ?? 0) + 1;
+        const current = map.get(product._id!) ?? 0;
+        const total = this.getPhysicalStock(product);
+        if (current >= total) return;
+        const newCount = current + 1;
         map.set(product._id!, newCount);
         this.stockCounters.set(map);
-        if (newCount === product.stock && !product.lastInventoryRevision) {
+        if (newCount === total && !product.lastInventoryRevision) {
             this.setReviewStatus(product, true);
         }
     }
@@ -278,7 +296,7 @@ export class InventoryListComponent implements OnInit {
         const newCount = current - 1;
         map.set(product._id!, newCount);
         this.stockCounters.set(map);
-        if (newCount < product.stock && !!product.lastInventoryRevision) {
+        if (newCount < this.getPhysicalStock(product) && !!product.lastInventoryRevision) {
             this.setReviewStatus(product, false);
         }
     }
@@ -286,9 +304,10 @@ export class InventoryListComponent implements OnInit {
     getCounterState(product: Product): 'empty' | 'partial' | 'complete' | 'over' {
         if (!product._id) return 'empty';
         const count = this.getCount(product._id);
-        if (count === 0) return 'empty';
-        if (count < product.stock) return 'partial';
-        if (count === product.stock) return 'complete';
+        const total = this.getPhysicalStock(product);
+        if (count === 0) return product.lastInventoryRevision ? 'complete' : 'empty';
+        if (count < total) return 'partial';
+        if (count === total) return 'complete';
         return 'over';
     }
 

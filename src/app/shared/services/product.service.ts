@@ -41,7 +41,7 @@ export interface Product {
     status?: 'active' | 'inactive' | 'discontinued';
     isUnique?: boolean;
     lastInventoryRevision?: Date;
-    reservation?: { folio: string; noteId: string; isPawn?: boolean };
+    reservation?: { folio: string; noteId: string; isPawn?: boolean; reservedQty?: number };
     stockHistory?: StockHistoryEntry[];
 }
 
