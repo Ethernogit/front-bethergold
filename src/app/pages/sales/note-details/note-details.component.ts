@@ -280,6 +280,19 @@ export class NoteDetailsComponent implements OnInit {
         });
     }
 
+    private extractGoldInfo(item: NoteItem): { goldType: string; karatage: string } {
+        const product = typeof item.itemId === 'object' ? (item.itemId as any) : null;
+        const goldType = item.specifications?.material?.trim() ||
+                         item.specifications?.['goldType']?.trim() ||
+                         product?.jewelryDetails?.goldType?.trim() || '';
+        const rawKaratage = item.specifications?.['karatage']?.trim() ||
+                            product?.jewelryDetails?.karatage?.trim() || '';
+        const karatage = rawKaratage && !rawKaratage.toUpperCase().endsWith('K')
+            ? `${rawKaratage}K`
+            : rawKaratage;
+        return { goldType, karatage };
+    }
+
     private formatDescription(item: NoteItem): string {
         const parts = [];
         const product = typeof item.itemId === 'object' ? (item.itemId as any) : null;
@@ -293,13 +306,11 @@ export class NoteDetailsComponent implements OnInit {
             else if (catName) parts.push(catName);
         }
 
-        // 2. Material (Gold Type)
-        // Prefer specs, then product details
-        const material = item.specifications?.material || product?.jewelryDetails?.goldType;
-        if (material) parts.push(material);
+        // 2. Material (Gold Type) — .trim() avoids empty-string falsy trap
+        const { goldType, karatage } = this.extractGoldInfo(item);
+        if (goldType) parts.push(goldType);
 
         // 3. Karatage
-        const karatage = (item.specifications && item.specifications['karatage']) || product?.jewelryDetails?.karatage;
         if (karatage) parts.push(karatage);
 
         // 4. Weight
@@ -369,14 +380,21 @@ export class NoteDetailsComponent implements OnInit {
             }
 
             const itemName = item.name || '';
-            const descDetail = this.formatDescription(item);
-            const showDetail = descDetail && descDetail !== itemName;
+            const product = typeof item.itemId === 'object' ? (item.itemId as any) : null;
+            const catName = product ? (typeof product.category === 'object' ? product.category?.name : product.category) : '';
+            const subName = product ? (typeof product.subcategory === 'object' ? product.subcategory?.name : product.subcategory) : '';
+            const catDetail = [catName, subName].filter(Boolean).join(' - ');
+            const showDetail = !!catDetail;
+
+            const { goldType, karatage } = this.extractGoldInfo(item);
+            const weight = item.specifications?.['weight'] || product?.specifications?.weight;
+            const goldLine = [goldType, karatage, weight ? `${weight}g` : ''].filter(Boolean).join(' - ');
 
             itemsHtml += `
                 <tr>
                     <td class="qty-col">${item.quantity}</td>
                     <td class="desc-col">
-                        ${ref ? `<span class="desc-name">#${ref}</span> ` : ''}<span class="desc-name">${itemName}</span>${showDetail ? `<br><span class="desc-detail">${descDetail}</span>` : ''}
+                        ${ref ? `<span class="desc-name">#${ref}</span> ` : ''}<span class="desc-name">${itemName}</span>${showDetail ? `<br><span class="desc-detail">${catDetail}</span>` : ''}${goldLine ? `<br><span class="desc-gold">${goldLine}</span>` : ''}
                     </td>
                     <td class="price-col">$${unitPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                     <td class="total-col">$${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
@@ -439,6 +457,7 @@ export class NoteDetailsComponent implements OnInit {
                     .total-col { width: 20%; text-align: right; }
                     .desc-name { font-weight: bold; font-size: 10px; }
                     .desc-detail { font-size: 10px; color: #000; }
+                    .desc-gold { font-size: 10px; color: #555; font-style: italic; }
                     
                     .totals { margin-top: 2mm; }
                     .total-row { display: flex; justify-content: space-between; margin-bottom: 1mm; }
@@ -749,11 +768,19 @@ export class NoteDetailsComponent implements OnInit {
                     ref = (item.itemId as any).barcode;
                 }
 
-                const descText = (ref ? `#${ref} ` : '') + this.formatDescription(item);
+                const pdfProduct = typeof item.itemId === 'object' ? (item.itemId as any) : null;
+                const pdfCatName = pdfProduct ? (typeof pdfProduct.category === 'object' ? pdfProduct.category?.name : pdfProduct.category) : '';
+                const pdfSubName = pdfProduct ? (typeof pdfProduct.subcategory === 'object' ? pdfProduct.subcategory?.name : pdfProduct.subcategory) : '';
+                const pdfCat = [pdfCatName, pdfSubName].filter(Boolean).join(' - ');
+                const descText = [(ref ? `#${ref} ` : '') + item.name, pdfCat].filter(Boolean).join('\n');
+                const { goldType: gt, karatage: kt } = this.extractGoldInfo(item);
+                const pdfWeight = item.specifications?.['weight'] || pdfProduct?.specifications?.weight;
+                const goldLine = [gt, kt, pdfWeight ? `${pdfWeight}g` : ''].filter(Boolean).join(' - ');
+                const fullDesc = goldLine ? `${descText}\n${goldLine}` : descText;
 
                 itemsBody.push([
                     { text: item.quantity.toString(), style: 'tableBody', alignment: 'center' },
-                    { text: descText, style: 'tableBody' },
+                    { text: fullDesc, style: 'tableBody' },
                     { text: `$${unitPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}`, style: 'tableBody', alignment: 'right' },
                     { text: `$${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}`, style: 'tableBody', alignment: 'right' }
                 ]);
