@@ -1,0 +1,107 @@
+<div class="flex flex-col gap-4">
+    <div class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126]">
+
+        <div class="border-b border-[#E8D9A0] px-4 py-3 dark:border-[#4A474D] sm:px-6">
+            <h1 class="font-instrument text-title-sm font-semibold text-[#191817] dark:text-[#E8C97A]">
+                Buscar nota de producto
+            </h1>
+            <p class="mt-0.5 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-500">
+                Escanea el código de barras de una pieza que aparece disponible pero crees que ya se vendió.
+                Te dice en qué nota migrada está para que busques la nota física.
+            </p>
+        </div>
+
+        <div class="px-4 py-4 sm:px-6">
+            <form (ngSubmit)="search()" class="flex flex-col gap-2 sm:flex-row">
+                <input #searchInput type="text" name="term" [(ngModel)]="term" autocomplete="off" autofocus
+                    placeholder="Escanea el código de barras o escribe un folio (ej. M7219)"
+                    class="flex-1 rounded-xl border border-[#E8D9A0] bg-white px-4 py-3 font-instrument text-base text-[#191817] placeholder:text-[#A9A29B] focus:border-[#C69214] focus:outline-none dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-200" />
+                <button type="submit" [disabled]="loading() || !term.trim()"
+                    class="rounded-xl bg-[#C69214] px-6 py-3 font-instrument text-sm font-semibold text-white transition-all hover:bg-[#A87B10] disabled:cursor-not-allowed disabled:opacity-50">
+                    {{ loading() ? 'Buscando…' : 'Buscar' }}
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <ng-container *ngIf="result() as res">
+
+        <!-- Nothing found: the two cases mean very different things -->
+        <div *ngIf="res.notes.length === 0"
+            class="rounded-2xl border border-[#E8D9A0] bg-white p-6 text-center shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126]">
+            <p class="font-instrument text-base font-semibold text-[#191817] dark:text-gray-200">
+                {{ res.productFound
+                    ? 'Este producto no está en ninguna nota migrada pendiente'
+                    : 'No existe ningún producto ni nota con ese código' }}
+            </p>
+            <p class="mt-1 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-500">
+                {{ res.productFound
+                    ? 'El producto está limpio: su situación no viene de la migración.'
+                    : 'Revisa que el código sea correcto. Buscaste: ' + res.term }}
+            </p>
+        </div>
+
+        <div *ngFor="let note of res.notes"
+            class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126]">
+
+            <div class="flex flex-wrap items-start justify-between gap-3 border-b border-[#E8D9A0] px-4 py-3 dark:border-[#4A474D] sm:px-6">
+                <div>
+                    <!-- Big and legible: they are about to go look for this on paper -->
+                    <p class="font-instrument text-title-md font-bold text-[#191817] dark:text-[#E8C97A]">
+                        {{ note.folio }}
+                    </p>
+                    <p class="mt-0.5 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-500">
+                        {{ note.client?.name || 'Cliente desconocido' }}
+                        <span *ngIf="note.client?.phone && note.client?.phone !== '0'">· {{ note.client?.phone }}</span>
+                        · {{ note.createdAt | date:'dd/MM/yyyy' }}
+                    </p>
+                </div>
+                <a [routerLink]="['/sales/note', note.folio]"
+                    class="rounded-xl border border-[#E8D9A0] px-4 py-2 font-instrument text-sm font-semibold text-[#191817] transition-all hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:text-gray-300 dark:hover:bg-white/5">
+                    Ver nota
+                </a>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 px-4 py-4 sm:grid-cols-4 sm:px-6">
+                <div>
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-500">Total</p>
+                    <p class="font-instrument text-base font-semibold text-[#191817] dark:text-gray-200">
+                        {{ note.financials.total | currency:'MXN':'symbol-narrow' }}
+                    </p>
+                </div>
+                <div>
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-500">Pagos del sistema anterior</p>
+                    <p class="font-instrument text-base font-semibold text-[#191817] dark:text-gray-200">
+                        {{ legacyPaid(note) | currency:'MXN':'symbol-narrow' }}
+                    </p>
+                </div>
+                <div>
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-500">Pagos posteriores</p>
+                    <p class="font-instrument text-base font-semibold text-[#191817] dark:text-gray-200">
+                        {{ postMigrationPaid(note) | currency:'MXN':'symbol-narrow' }}
+                    </p>
+                </div>
+                <div>
+                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-500">Saldo pendiente</p>
+                    <p class="font-instrument text-base font-semibold text-[#9A6F0A] dark:text-[#E8C97A]">
+                        {{ note.financials.balanceDue | currency:'MXN':'symbol-narrow' }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="border-t border-[#E8D9A0] px-4 py-3 dark:border-[#4A474D] sm:px-6">
+                <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-500">Productos y servicios en la nota</p>
+                <ul class="mt-2 flex flex-col gap-1">
+                    <li *ngFor="let item of note.items" class="font-instrument text-theme-sm"
+                        [ngClass]="item.isMatch
+                            ? 'font-semibold text-[#191817] dark:text-[#E8C97A]'
+                            : 'text-[#6B6560] dark:text-gray-500'">
+                        <span *ngIf="item.isMatch">→ </span>{{ item.name }}
+                        <span *ngIf="item.barcode" class="opacity-70">({{ item.barcode }})</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </ng-container>
+</div>

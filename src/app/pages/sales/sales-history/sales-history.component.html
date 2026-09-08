@@ -84,13 +84,15 @@
                                 'bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-400': note.status === 'PAGADA' || note.status === 'ENTREGADA',
                                 'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]': note.status === 'PENDIENTE_PAGO' || note.status === 'CONSIGNACION',
                                 'bg-[#F5F0EC] text-[#46424A] dark:bg-white/5 dark:text-gray-400': note.status === 'BORRADOR',
-                                'bg-error-50 text-error-700 dark:bg-error-500/15 dark:text-error-400': note.status === 'ANULADA'
+                                'bg-error-50 text-error-700 dark:bg-error-500/15 dark:text-error-400': note.status === 'ANULADA',
+                                'bg-[#E3EDF0] text-[#2F5A6B] dark:bg-[#2F5A6B]/20 dark:text-[#9FC5D4]': note.status === 'CONCILIADA'
                             }">
                             <span class="size-1.5 rounded-full shrink-0" [ngClass]="{
                                 'bg-success-500': note.status === 'PAGADA' || note.status === 'ENTREGADA',
                                 'bg-[#C69214]': note.status === 'PENDIENTE_PAGO' || note.status === 'CONSIGNACION',
                                 'bg-[#6B6560]': note.status === 'BORRADOR',
-                                'bg-error-500': note.status === 'ANULADA'
+                                'bg-error-500': note.status === 'ANULADA',
+                                'bg-[#2F5A6B]': note.status === 'CONCILIADA'
                             }"></span>
                             {{ note.status === 'CONSIGNACION' ? 'MAYOREO' : note.status }}
                         </span>
@@ -195,13 +197,15 @@
                                 'bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-400': note.status === 'PAGADA' || note.status === 'ENTREGADA',
                                 'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]': note.status === 'PENDIENTE_PAGO' || note.status === 'CONSIGNACION',
                                 'bg-[#F5F0EC] text-[#46424A] dark:bg-white/5 dark:text-gray-400': note.status === 'BORRADOR',
-                                'bg-error-50 text-error-700 dark:bg-error-500/15 dark:text-error-400': note.status === 'ANULADA'
+                                'bg-error-50 text-error-700 dark:bg-error-500/15 dark:text-error-400': note.status === 'ANULADA',
+                                'bg-[#E3EDF0] text-[#2F5A6B] dark:bg-[#2F5A6B]/20 dark:text-[#9FC5D4]': note.status === 'CONCILIADA'
                             }">
                                     <span class="size-1.5 rounded-full" [ngClass]="{
                                     'bg-success-500': note.status === 'PAGADA' || note.status === 'ENTREGADA',
                                     'bg-[#C69214]': note.status === 'PENDIENTE_PAGO' || note.status === 'CONSIGNACION',
                                     'bg-[#6B6560]': note.status === 'BORRADOR',
-                                    'bg-error-500': note.status === 'ANULADA'
+                                    'bg-error-500': note.status === 'ANULADA',
+                                    'bg-[#2F5A6B]': note.status === 'CONCILIADA'
                                 }"></span>
                                     {{ note.status === 'CONSIGNACION' ? 'MAYOREO' : note.status }}
                                 </span>

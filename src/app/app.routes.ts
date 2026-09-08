@@ -448,6 +448,16 @@ export const routes: Routes = [
         title: 'Corte de Mayoreo | Bethergold'
       },
       {
+        path: 'sales/legacy-lookup',
+        loadComponent: () => import('./pages/sales/legacy-lookup/legacy-lookup.component').then(m => m.LegacyLookupComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'sales',
+          action: 'read'
+        },
+        title: 'Buscar Nota de Producto | Bethergold'
+      },
+      {
         path: 'sales/note/:folio',
         component: NoteDetailsComponent,
         canActivate: [AuthGuard, PermissionGuard],

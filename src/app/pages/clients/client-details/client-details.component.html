@@ -152,7 +152,8 @@
                                         <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded" [ngClass]="{
                                                 'bg-success-50 text-success-700 border border-success-200 dark:bg-success-500/10 dark:text-success-400 dark:border-success-500/30': note.status === 'PAGADA' || note.status === 'ENTREGADA',
                                                 'bg-warning-50 text-warning-700 border border-warning-200 dark:bg-warning-500/10 dark:text-warning-400 dark:border-warning-500/30': note.status === 'PENDIENTE_PAGO' || note.status === 'CONSIGNACION',
-                                                'bg-error-50 text-error-700 border border-error-200 dark:bg-error-500/10 dark:text-error-400 dark:border-error-500/30': note.status === 'ANULADA'
+                                                'bg-error-50 text-error-700 border border-error-200 dark:bg-error-500/10 dark:text-error-400 dark:border-error-500/30': note.status === 'ANULADA',
+                                                'bg-[#E3EDF0] text-[#2F5A6B] border border-[#2F5A6B]/30 dark:bg-[#2F5A6B]/20 dark:text-[#9FC5D4] dark:border-[#2F5A6B]/40': note.status === 'CONCILIADA'
                                             }">
                                             {{ note.status === 'CONSIGNACION' ? 'A Vistas' : (note.status ||
                                             '').replace('_', ' ') }}

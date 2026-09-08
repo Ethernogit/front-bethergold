@@ -13,8 +13,10 @@ type NavItem = {
     icon: string;
     path?: string;
     new?: boolean;
-    subItems?: { name: string; path: string; pro?: boolean; new?: boolean; permission?: string }[];
+    subItems?: { name: string; path: string; pro?: boolean; new?: boolean; permission?: string; feature?: string }[];
     permission?: string;
+    /** Hidden unless the organization has this feature enabled in settings.features */
+    feature?: string;
 };
 
 import { ThemeToggleButtonComponent } from '../../components/common/theme-toggle/theme-toggle-button.component';
@@ -86,6 +88,7 @@ export class AppSidebarComponent {
             name: "Productos",
             subItems: [
                 { name: "Inventario", path: "/inventory", permission: 'inventory:read' },
+                { name: "Buscar Nota de Producto", path: "/sales/legacy-lookup", permission: 'sales:read', feature: 'legacyReconciliation' },
                 { name: "Lista de Productos", path: "/products" },
                 { name: "Categorías", path: "/categories" },
                 { name: "Subcategorías", path: "/subcategories" },
@@ -403,7 +406,18 @@ export class AppSidebarComponent {
         }).unsubscribe();
     }
 
+    /** Feature flags come from the organization on login (settings.features). */
+    private hasFeature(feature: string): boolean {
+        const org = this.currentOrganization$() as { settings?: { features?: { [k: string]: boolean } } } | null;
+        return org?.settings?.features?.[feature] === true;
+    }
+
     hasPermission(item: NavItem | any): boolean {
+        // 0. Modules gated behind an organization feature flag
+        if (item.feature && !this.hasFeature(item.feature)) {
+            return false;
+        }
+
         // 1. Check direct permission if it exists
         if (item.permission && !this.permissionService.hasPermission(item.permission)) {
             // If explicit permission fails, hide it immediately

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { InventoryService } from '../../../shared/services/inventory.service';
@@ -63,6 +63,7 @@ export class InventoryListComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.loadActiveCount();
         this.loadInventory();
         this.initFilterConfig();
     }
@@ -187,14 +188,9 @@ export class InventoryListComponent implements OnInit {
                     const products = res.data || res;
                     this.products.set(products);
 
-                    // Restore counters for non-unique products already reviewed in DB
-                    const counters = new Map(this.stockCounters());
-                    (products as Product[]).forEach(p => {
-                        if (!p.isUnique && p.lastInventoryRevision && p._id && !counters.has(p._id)) {
-                            counters.set(p._id, this.getPhysicalStock(p));
-                        }
-                    });
-                    this.stockCounters.set(counters);
+                    // Los contadores se restauran desde la sesión de conteo (servidor),
+                    // no desde el stock vivo — así una venta no altera lo ya registrado.
+                    // Ver loadActiveCount().
 
                     if (res.pagination) {
                         this.totalItems.set(res.pagination.total);
@@ -276,41 +272,113 @@ export class InventoryListComponent implements OnInit {
         return product.stock + reserved;
     }
 
-    incrementCount(product: Product) {
+    // Base del conteo: el stock capturado al momento de contar (snapshot durable).
+    // Si aún no se ha contado, usa el stock físico vivo como referencia.
+    getCountTarget(product: Product): number {
+        if (!product._id) return this.getPhysicalStock(product);
+        const t = this.countTargets().get(product._id);
+        return t !== undefined ? t : this.getPhysicalStock(product);
+    }
+
+    // Unidades que se contaron y luego se vendieron durante el conteo.
+    getSoldDuringCount(product: Product): number {
+        if (!product._id) return 0;
+        const t = this.countTargets().get(product._id);
+        if (t === undefined) return 0;
+        return Math.max(0, t - this.getPhysicalStock(product));
+    }
+
+    private persistCount(product: Product, newCount: number) {
+        if (!this.hasActiveCount()) {
+            this.toastService.error('Inicia un conteo antes de registrar cantidades');
+            return;
+        }
         const map = new Map(this.stockCounters());
-        const current = map.get(product._id!) ?? 0;
-        const total = this.getPhysicalStock(product);
-        if (current >= total) return;
-        const newCount = current + 1;
         map.set(product._id!, newCount);
         this.stockCounters.set(map);
-        if (newCount === total && !product.lastInventoryRevision) {
-            this.setReviewStatus(product, true);
-        }
+
+        this.inventoryService.recordCount(product._id!, newCount).subscribe({
+            next: (res: any) => {
+                const entry = res?.data?.entry;
+                if (entry) {
+                    const targets = new Map(this.countTargets());
+                    targets.set(product._id!, entry.stockAtCount);
+                    this.countTargets.set(targets);
+                }
+                if (res?.data?.product?.lastInventoryRevision !== undefined) {
+                    product.lastInventoryRevision = res.data.product.lastInventoryRevision;
+                }
+                this.refreshCountStats();
+            },
+            error: () => {
+                this.toastService.error('Error al registrar el conteo');
+                this.loadActiveCount(); // resincroniza con el servidor
+            }
+        });
+    }
+
+    incrementCount(product: Product) {
+        const current = this.getCount(product._id!);
+        if (current >= this.getCountTarget(product)) return;
+        this.persistCount(product, current + 1);
     }
 
     decrementCount(product: Product) {
-        const map = new Map(this.stockCounters());
-        const current = map.get(product._id!) ?? 0;
+        const current = this.getCount(product._id!);
         if (current <= 0) return;
-        const newCount = current - 1;
-        map.set(product._id!, newCount);
-        this.stockCounters.set(map);
-        if (newCount < this.getPhysicalStock(product) && !!product.lastInventoryRevision) {
-            this.setReviewStatus(product, false);
-        }
+        this.persistCount(product, current - 1);
     }
 
     getCounterState(product: Product): 'empty' | 'partial' | 'complete' | 'over' {
         if (!product._id) return 'empty';
         const count = this.getCount(product._id);
-        const total = this.getPhysicalStock(product);
+        const total = this.getCountTarget(product);
         if (count === 0) return product.lastInventoryRevision ? 'complete' : 'empty';
         if (count < total) return 'partial';
         if (count === total) return 'complete';
         return 'over';
     }
 
+    // --- Sesión de conteo (versionado durable) ---
+    activeCount = signal<any>(null);
+    countStats = signal<any>(null);
+    countTargets = signal<Map<string, number>>(new Map());
+    hasActiveCount = computed(() => !!this.activeCount());
+
+    loadActiveCount() {
+        this.inventoryService.getActiveCount().subscribe({
+            next: (res: any) => {
+                const session = res?.data?.session ?? null;
+                this.activeCount.set(session);
+                this.countStats.set(res?.data?.stats ?? null);
+
+                const counters = new Map<string, number>();
+                const targets = new Map<string, number>();
+                (session?.entries || []).forEach((e: any) => {
+                    const pid = (typeof e.productId === 'object' ? e.productId?._id : e.productId)?.toString();
+                    if (pid) {
+                        counters.set(pid, e.countedQty);
+                        targets.set(pid, e.stockAtCount);
+                    }
+                });
+                this.stockCounters.set(counters);
+                this.countTargets.set(targets);
+            },
+            error: () => { /* sin sesión activa: silencioso */ }
+        });
+    }
+
+    private refreshCountStats() {
+        this.inventoryService.getActiveCount().subscribe({
+            next: (res: any) => {
+                this.countStats.set(res?.data?.stats ?? null);
+                if (res?.data?.session) this.activeCount.set(res.data.session);
+            },
+            error: () => { }
+        });
+    }
+
+    // Iniciar conteo (reemplaza el antiguo "reiniciar").
     showResetModal = signal(false);
     resetting = signal(false);
 
@@ -319,19 +387,92 @@ export class InventoryListComponent implements OnInit {
 
     confirmReset() {
         this.resetting.set(true);
-        this.inventoryService.resetInventory()
+        this.inventoryService.startCount()
             .pipe(finalize(() => this.resetting.set(false)))
             .subscribe({
                 next: (res: any) => {
                     this.closeResetModal();
                     this.stockCounters.set(new Map());
-                    this.toastService.success(`Inventario reiniciado — ${res.data?.modifiedCount ?? 0} productos marcados como no revisados`);
+                    this.countTargets.set(new Map());
+                    this.activeCount.set(res?.data ?? null);
+                    this.toastService.success('Conteo de inventario iniciado');
+                    this.loadInventory();
+                    this.refreshCountStats();
+                },
+                error: () => {
+                    this.toastService.error('Error al iniciar el conteo');
+                }
+            });
+    }
+
+    // Cerrar y guardar conteo (genera archivo/s por categoría).
+    showCloseModal = signal(false);
+    closingCount = signal(false);
+    closeFormatXlsx = signal(true);
+    closeFormatPdf = signal(true);
+
+    openCloseModal() { this.showCloseModal.set(true); }
+    closeCloseModal() { this.showCloseModal.set(false); }
+
+    confirmCloseCount() {
+        const formats: Array<'xlsx' | 'pdf'> = [];
+        if (this.closeFormatXlsx()) formats.push('xlsx');
+        if (this.closeFormatPdf()) formats.push('pdf');
+        if (!formats.length) {
+            this.toastService.error('Selecciona al menos un formato');
+            return;
+        }
+        this.closingCount.set(true);
+        this.inventoryService.closeCount(formats)
+            .pipe(finalize(() => this.closingCount.set(false)))
+            .subscribe({
+                next: (res: any) => {
+                    this.closeCloseModal();
+                    const session = res?.data;
+                    (session?.files || []).forEach((f: any) => this.downloadVersion(session._id, f.format));
+                    this.activeCount.set(null);
+                    this.countStats.set(null);
+                    this.stockCounters.set(new Map());
+                    this.countTargets.set(new Map());
+                    this.toastService.success('Conteo cerrado y guardado');
                     this.loadInventory();
                 },
                 error: () => {
-                    this.toastService.error('Error al reiniciar el inventario');
+                    this.toastService.error('Error al cerrar el conteo');
                 }
             });
+    }
+
+    // Historial de inventarios (versiones).
+    showHistoryListModal = signal(false);
+    countHistory = signal<any[]>([]);
+    historyListLoading = signal(false);
+
+    openHistoryList() {
+        this.showHistoryListModal.set(true);
+        this.historyListLoading.set(true);
+        this.inventoryService.getCountHistory()
+            .pipe(finalize(() => this.historyListLoading.set(false)))
+            .subscribe({
+                next: (res: any) => this.countHistory.set(res?.data || []),
+                error: () => this.toastService.error('Error al cargar historial de inventarios')
+            });
+    }
+
+    closeHistoryList() { this.showHistoryListModal.set(false); }
+
+    downloadVersion(id: string, format: 'xlsx' | 'pdf') {
+        this.inventoryService.downloadCountFile(id, format).subscribe({
+            next: (blob: Blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `inventario-${id}.${format}`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            },
+            error: () => this.toastService.error('Error al descargar el archivo')
+        });
     }
 
     showSummaryModal = signal(false);
@@ -455,6 +596,38 @@ export class InventoryListComponent implements OnInit {
     }
 
     setReviewStatus(product: Product, newStatus: boolean, inputRef?: HTMLInputElement) {
+        // Con una sesión de conteo activa, el toggle de un producto único se
+        // registra de forma durable (cantidad 1/0) para que también cuente en
+        // "vendidas durante el conteo" si luego se vende.
+        if (this.hasActiveCount()) {
+            const qty = newStatus ? 1 : 0;
+            this.inventoryService.recordCount(product._id!, qty).subscribe({
+                next: (res: any) => {
+                    const entry = res?.data?.entry;
+                    if (entry) {
+                        const targets = new Map(this.countTargets());
+                        targets.set(product._id!, entry.stockAtCount);
+                        this.countTargets.set(targets);
+                    }
+                    const map = new Map(this.stockCounters());
+                    map.set(product._id!, qty);
+                    this.stockCounters.set(map);
+                    product.lastInventoryRevision = res?.data?.product?.lastInventoryRevision !== undefined
+                        ? res.data.product.lastInventoryRevision
+                        : (newStatus ? new Date() : undefined);
+                    this.refreshCountStats();
+                    this.toastService.success(`Producto ${newStatus ? 'marcado como revisado' : 'marcado como no revisado'}`);
+                },
+                error: (err: any) => {
+                    console.error('Error toggling review', err);
+                    this.toastService.error('Error al actualizar estado de revisión');
+                    if (inputRef) inputRef.checked = !newStatus;
+                }
+            });
+            return;
+        }
+
+        // Sin sesión activa: comportamiento legacy (solo marca la fecha).
         this.inventoryService.toggleReviewStatus(product._id!, newStatus)
             .subscribe({
                 next: (res: any) => {

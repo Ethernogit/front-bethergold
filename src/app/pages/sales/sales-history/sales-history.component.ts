@@ -80,7 +80,8 @@ export class SalesHistoryComponent implements OnInit {
           { value: 'ENTREGADA', label: 'Entregada' },
           { value: 'ANULADA', label: 'Anulada' },
           { value: 'BORRADOR', label: 'Borrador' },
-          { value: 'CONSIGNACION', label: 'Mayoreo (A vistas)' }
+          { value: 'CONSIGNACION', label: 'Mayoreo (A vistas)' },
+          { value: 'CONCILIADA', label: 'Conciliada (migración)' }
         ],
         placeholder: 'Todos'
       },

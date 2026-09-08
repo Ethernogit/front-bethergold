@@ -77,4 +77,49 @@ export class InventoryService {
         }
         return this.http.get<{ success: boolean, data: any }>(`${this.apiUrl}/stats`, { params: httpParams });
     }
+
+    // --- Sesión de conteo (versionado durable) ---
+
+    /**
+     * Inicia una sesión de conteo (reemplaza el reset). Limpia revisiones previas.
+     */
+    startCount(): Observable<any> {
+        return this.http.post<{ success: boolean, data: any }>(`${this.apiUrl}/count/start`, {});
+    }
+
+    /**
+     * Registra la cantidad contada (absoluta) de un producto de forma durable.
+     */
+    recordCount(productId: string, countedQty: number): Observable<any> {
+        return this.http.post<{ success: boolean, data: any }>(`${this.apiUrl}/count/item`, { productId, countedQty });
+    }
+
+    /**
+     * Sesión de conteo abierta + estadísticas (incluye soldDuringCount).
+     */
+    getActiveCount(): Observable<any> {
+        return this.http.get<{ success: boolean, data: any }>(`${this.apiUrl}/count/active`);
+    }
+
+    /**
+     * Cierra la sesión y genera los archivos en los formatos indicados.
+     */
+    closeCount(formats: Array<'xlsx' | 'pdf'>): Observable<any> {
+        return this.http.post<{ success: boolean, data: any }>(`${this.apiUrl}/count/close`, { formats });
+    }
+
+    /**
+     * Historial de inventarios cerrados (versiones).
+     */
+    getCountHistory(): Observable<any> {
+        return this.http.get<{ success: boolean, data: any[] }>(`${this.apiUrl}/count/history`);
+    }
+
+    /**
+     * Descarga el archivo de una versión en el formato pedido.
+     */
+    downloadCountFile(id: string, format: 'xlsx' | 'pdf'): Observable<Blob> {
+        const params = new HttpParams().set('format', format);
+        return this.http.get(`${this.apiUrl}/count/${id}/file`, { params, responseType: 'blob' });
+    }
 }

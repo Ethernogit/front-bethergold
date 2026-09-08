@@ -27,15 +27,40 @@
                                 </svg>
                                 Tutorial
                             </button>
+                            @if (!hasActiveCount()) {
                             <button (click)="openResetModal()" type="button"
-                                class="flex items-center gap-2 rounded-xl border border-error-200 bg-white px-4 py-2.5 font-instrument text-sm font-semibold text-error-600 shadow-theme-sm transition-all hover:bg-error-50 dark:border-error-500/30 dark:bg-[#3a383d] dark:text-error-400 dark:hover:bg-error-500/10">
+                                class="flex items-center gap-2 rounded-xl border border-[#C69214] bg-white px-4 py-2.5 font-instrument text-sm font-semibold text-[#9A6F0A] shadow-theme-sm transition-all hover:bg-[#FBF0C9] dark:border-[#C69214] dark:bg-[#3a383d] dark:text-[#E8C97A] dark:hover:bg-white/5">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
                                     <polyline points="1 4 1 10 7 10"></polyline>
                                     <path d="M3.51 15a9 9 0 1 0 .49-3.5"></path>
                                 </svg>
-                                Reiniciar
+                                Iniciar conteo
+                            </button>
+                            } @else {
+                            <button (click)="openCloseModal()" type="button"
+                                class="flex items-center gap-2 rounded-xl border border-success-300 bg-success-50 px-4 py-2.5 font-instrument text-sm font-semibold text-success-700 shadow-theme-sm transition-all hover:bg-success-100 dark:border-success-500/40 dark:bg-success-500/10 dark:text-success-400 dark:hover:bg-success-500/20">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                    <polyline points="7 3 7 8 15 8"></polyline>
+                                </svg>
+                                Cerrar y guardar
+                            </button>
+                            }
+                            <button (click)="openHistoryList()" type="button"
+                                class="flex items-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:hover:bg-white/5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M3 3v5h5"></path>
+                                    <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path>
+                                    <path d="M12 7v5l4 2"></path>
+                                </svg>
+                                Historial
                             </button>
                             <button id="tour-inventory-summary" (click)="openSummary()" type="button"
                                 class="flex items-center gap-2 rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:hover:bg-white/5">
@@ -106,6 +131,23 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Banner de conteo activo -->
+            @if (hasActiveCount() && countStats(); as s) {
+            <div class="mx-4 mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 rounded-xl border border-[#C69214]/50 bg-[#FBF0C9] px-4 py-2.5 font-instrument text-theme-xs text-[#46424A] dark:border-[#C69214]/40 dark:bg-[#4A474D]/40 dark:text-gray-200">
+                <span class="inline-flex items-center gap-1.5 font-semibold text-[#9A6F0A] dark:text-[#E8C97A]">
+                    <span class="h-2 w-2 rounded-full bg-[#C69214] animate-pulse"></span>
+                    Conteo en curso
+                </span>
+                <span>Revisados: <strong class="text-success-600 dark:text-success-400">{{ s.reviewed }}</strong> / {{ s.total }}</span>
+                <span>Faltantes: <strong class="text-warning-600 dark:text-warning-400">{{ s.missing }}</strong></span>
+                @if (s.soldDuringCount > 0) {
+                <span title="Unidades contadas que se vendieron mientras contabas — no es un error">
+                    Vendidas durante el conteo: <strong class="text-error-600 dark:text-error-400">{{ s.soldDuringCount }}</strong>
+                </span>
+                }
+            </div>
+            }
 
             <!-- Table -->
             <div class="flex-1 overflow-y-auto p-0 z-0">
@@ -237,15 +279,15 @@
                                                 'text-success-600 dark:text-success-400': getCounterState(product) === 'complete',
                                                 'text-error-600 dark:text-error-400': getCounterState(product) === 'over'
                                             }">
-                                            {{ getCount(product._id!) }}/{{ getPhysicalStock(product) }}
+                                            {{ getCount(product._id!) }}/{{ getCountTarget(product) }}
                                         </span>
                                         <button (click)="incrementCount(product)" type="button"
                                             class="flex h-6 w-6 items-center justify-center rounded-lg border transition-colors"
                                             [ngClass]="{
-                                                'border-[#E8D9A0] text-[#6B6560] hover:bg-[#FBF0C9] hover:text-[#9A6F0A] dark:border-[#4A474D] dark:text-gray-400 dark:hover:bg-white/5': getCount(product._id!) < product.stock,
-                                                'border-[#E8D9A0] text-[#D0CCC8] cursor-not-allowed dark:border-[#4A474D] dark:text-gray-600': getCount(product._id!) >= product.stock
+                                                'border-[#E8D9A0] text-[#6B6560] hover:bg-[#FBF0C9] hover:text-[#9A6F0A] dark:border-[#4A474D] dark:text-gray-400 dark:hover:bg-white/5': getCount(product._id!) < getCountTarget(product),
+                                                'border-[#E8D9A0] text-[#D0CCC8] cursor-not-allowed dark:border-[#4A474D] dark:text-gray-600': getCount(product._id!) >= getCountTarget(product)
                                             }"
-                                            [disabled]="getCount(product._id!) >= getPhysicalStock(product)"
+                                            [disabled]="getCount(product._id!) >= getCountTarget(product)"
                                             title="Sumar uno">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                                                 <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -253,6 +295,12 @@
                                             </svg>
                                         </button>
                                     </div>
+                                    @if (getSoldDuringCount(product) > 0) {
+                                    <div class="mt-1 font-instrument text-[10px] font-medium text-error-600 dark:text-error-400"
+                                        title="Unidades que contaste y se vendieron durante el conteo">
+                                        {{ getSoldDuringCount(product) }} vendida(s) en conteo
+                                    </div>
+                                    }
                                     } @else {
                                     <span class="font-instrument text-theme-xs text-[#D0CCC8] dark:text-gray-600">—</span>
                                     }
@@ -385,10 +433,10 @@
                 </div>
                 <div>
                     <h3 class="font-instrument text-lg font-semibold text-[#191817] dark:text-white">
-                        ¿Reiniciar inventario?
+                        ¿Iniciar un nuevo conteo?
                     </h3>
                     <p class="mt-1.5 font-instrument text-sm text-[#6B6560] dark:text-gray-400">
-                        Todos los productos quedarán marcados como <strong class="text-[#191817] dark:text-white">no revisados</strong> y el conteo actual se perderá. Esta acción no se puede deshacer.
+                        Todos los productos quedarán como <strong class="text-[#191817] dark:text-white">no revisados</strong> y empezará una nueva sesión de conteo. Lo que registres se guardará y no se perderá aunque haya ventas.
                     </p>
                 </div>
             </div>
@@ -398,17 +446,17 @@
                     Cancelar
                 </button>
                 <button (click)="confirmReset()" type="button" [disabled]="resetting()"
-                    class="flex items-center gap-2 rounded-xl bg-error-600 px-5 py-2.5 font-instrument text-sm font-semibold text-white transition-all hover:bg-error-700 disabled:opacity-60 active:scale-[0.98]">
+                    class="flex items-center gap-2 rounded-xl bg-[#C69214] px-5 py-2.5 font-instrument text-sm font-semibold text-white transition-all hover:bg-[#a87c11] disabled:opacity-60 active:scale-[0.98]">
                     @if (resetting()) {
                     <div class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                    Reiniciando...
+                    Iniciando...
                     } @else {
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="1 4 1 10 7 10"></polyline>
                         <path d="M3.51 15a9 9 0 1 0 .49-3.5"></path>
                     </svg>
-                    Sí, reiniciar
+                    Sí, iniciar conteo
                     }
                 </button>
             </div>
@@ -547,6 +595,113 @@
                     </div>
                     }
                 </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>
+}
+
+<!-- Cerrar y guardar conteo (elegir formato) -->
+@if (showCloseModal()) {
+<div class="fixed inset-0 z-999999 flex items-center justify-center bg-[#191817]/60 backdrop-blur-sm p-4">
+    <div class="w-full max-w-md rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] shadow-xl">
+        <div class="p-6">
+            <h3 class="font-instrument text-lg font-semibold text-[#191817] dark:text-white">Cerrar y guardar conteo</h3>
+            <p class="mt-1.5 font-instrument text-sm text-[#6B6560] dark:text-gray-400">
+                Se guardará esta versión del inventario y se generará el archivo agrupado por categoría. Elige el formato:
+            </p>
+
+            @if (countStats(); as s) {
+            <div class="mt-4 rounded-xl border border-[#E8D9A0] dark:border-[#4A474D] p-3 font-instrument text-theme-xs text-[#46424A] dark:text-gray-300">
+                <div class="flex justify-between py-0.5"><span>Total de productos</span><span class="font-semibold">{{ s.total }}</span></div>
+                <div class="flex justify-between py-0.5"><span>Revisados</span><span class="font-semibold text-success-600 dark:text-success-400">{{ s.reviewed }}</span></div>
+                <div class="flex justify-between py-0.5"><span>Faltantes</span><span class="font-semibold text-warning-600 dark:text-warning-400">{{ s.missing }}</span></div>
+                <div class="flex justify-between py-0.5"><span>Vendidas durante el conteo</span><span class="font-semibold text-error-600 dark:text-error-400">{{ s.soldDuringCount }}</span></div>
+            </div>
+            }
+
+            <div class="mt-4 space-y-2">
+                <label class="flex items-center gap-2 font-instrument text-sm text-[#191817] dark:text-white cursor-pointer">
+                    <input type="checkbox" [checked]="closeFormatXlsx()" (change)="closeFormatXlsx.set($any($event.target).checked)"
+                        class="h-4 w-4 rounded border-[#C69214] text-[#C69214] focus:ring-[#C69214]">
+                    Excel (.xlsx) — una hoja por categoría
+                </label>
+                <label class="flex items-center gap-2 font-instrument text-sm text-[#191817] dark:text-white cursor-pointer">
+                    <input type="checkbox" [checked]="closeFormatPdf()" (change)="closeFormatPdf.set($any($event.target).checked)"
+                        class="h-4 w-4 rounded border-[#C69214] text-[#C69214] focus:ring-[#C69214]">
+                    PDF — una sección por categoría
+                </label>
+            </div>
+
+            <div class="mt-6 flex gap-3 justify-end">
+                <button (click)="closeCloseModal()" type="button" [disabled]="closingCount()"
+                    class="rounded-xl border border-[#E8D9A0] bg-white px-5 py-2.5 font-instrument text-sm font-semibold text-[#46424A] transition-all hover:bg-[#FBF0C9] disabled:opacity-50 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-300 dark:hover:bg-white/5">
+                    Cancelar
+                </button>
+                <button (click)="confirmCloseCount()" type="button" [disabled]="closingCount()"
+                    class="flex items-center gap-2 rounded-xl bg-success-600 px-5 py-2.5 font-instrument text-sm font-semibold text-white transition-all hover:bg-success-700 disabled:opacity-60 active:scale-[0.98]">
+                    @if (closingCount()) {
+                    <div class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    Guardando...
+                    } @else {
+                    Cerrar y guardar
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Historial de inventarios (versiones) -->
+@if (showHistoryListModal()) {
+<div class="fixed inset-0 z-999999 flex items-center justify-center bg-[#191817]/60 backdrop-blur-sm p-4">
+    <div class="relative w-full max-w-2xl max-h-[85vh] flex flex-col rounded-2xl border border-[#E8D9A0] bg-[#FFF8E7] dark:border-[#4A474D] dark:bg-[#232126] shadow-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-[#E8D9A0] dark:border-[#4A474D] shrink-0 flex items-center justify-between">
+            <h3 class="font-instrument text-title-sm font-semibold text-[#191817] dark:text-[#E8C97A]">Historial de inventarios</h3>
+            <button (click)="closeHistoryList()" class="text-[#6B6560] hover:text-[#191817] dark:text-gray-400 dark:hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4">
+            @if (historyListLoading()) {
+            <div class="flex justify-center py-10">
+                <div class="h-10 w-10 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent"></div>
+            </div>
+            } @else if (countHistory().length === 0) {
+            <div class="py-10 text-center font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400">Aún no hay inventarios guardados</div>
+            } @else {
+            <div class="space-y-3">
+                @for (v of countHistory(); track v._id) {
+                <div class="rounded-xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#3a383d] p-4">
+                    <div class="flex items-center justify-between gap-3 flex-wrap">
+                        <div>
+                            <p class="font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white">
+                                {{ v.closedAt | date:'dd/MM/yyyy HH:mm' }}
+                            </p>
+                            <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 mt-0.5">
+                                {{ v.summary?.reviewed || 0 }} revisados · {{ v.summary?.missing || 0 }} faltantes ·
+                                {{ v.summary?.soldDuringCount || 0 }} vendidas en conteo
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            @for (f of v.files; track f.format) {
+                            <button (click)="downloadVersion(v._id, f.format)" type="button"
+                                class="flex items-center gap-1.5 rounded-lg border border-[#E8D9A0] bg-white px-3 py-1.5 font-instrument text-theme-xs font-semibold text-[#191817] transition-all hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:bg-[#232126] dark:text-white dark:hover:bg-white/5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                {{ f.format | uppercase }}
+                            </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+                }
             </div>
             }
         </div>

@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { NoteService, Note, NoteItem } from '../../../shared/services/note.service';
 import { SucursalService, Sucursal } from '../../../shared/services/sucursal.service';
@@ -17,7 +18,7 @@ pdfMakeConfig.vfs = (pdfFonts as any).pdfMake ? (pdfFonts as any).pdfMake.vfs : 
 @Component({
     selector: 'app-note-details',
     standalone: true,
-    imports: [CommonModule, RouterLink, GlobalPaymentComponent, ClientSelectionModalComponent],
+    imports: [CommonModule, FormsModule, RouterLink, GlobalPaymentComponent, ClientSelectionModalComponent],
     templateUrl: './note-details.component.html',
     styleUrl: './note-details.component.css'
 })
@@ -331,7 +332,8 @@ export class NoteDetailsComponent implements OnInit {
             'PENDIENTE_PAGO': 'Pago Pendiente',
             'PAGADA': 'Pagado',
             'ENTREGADA': 'Entregado',
-            'ANULADA': 'Anulada'
+            'ANULADA': 'Anulada',
+            'CONCILIADA': 'Conciliada'
         };
         return map[status] || status;
     }
@@ -676,6 +678,77 @@ export class NoteDetailsComponent implements OnInit {
             error: (err) => {
                 console.error('Error canceling note', err);
                 this.toastService.error('Error al anular la nota');
+                this.isLoading = false;
+            }
+        });
+    }
+
+    // --- Reconciliation of migrated (legacy) notes ---
+    // Payments were collected in the old system but never registered. Registering them
+    // now would land in today's cash cut, so the note is closed without any payment.
+
+    isReconcileModalOpen = false;
+    reconcileReason = '';
+
+    /** Only migrated notes can be reconciled; the backend enforces this too. */
+    get isLegacyNote(): boolean {
+        return /^Imported Layaway/.test(this.rawNote?.notes || '');
+    }
+
+    get canReconcile(): boolean {
+        return this.isLegacyNote
+            && this.rawNote?.status === 'PENDIENTE_PAGO'
+            && this.permissionService.hasModulePermission('sales', 'delete');
+    }
+
+    get isReconciled(): boolean {
+        return this.rawNote?.status === 'CONCILIADA';
+    }
+
+    openReconcileModal() {
+        this.reconcileReason = '';
+        this.isReconcileModalOpen = true;
+    }
+
+    closeReconcileModal() {
+        this.isReconcileModalOpen = false;
+    }
+
+    confirmReconcile() {
+        if (!this.rawNote?._id) return;
+        if (this.reconcileReason.trim().length < 5) {
+            this.toastService.error('Escribe el motivo de la conciliación (mínimo 5 caracteres).');
+            return;
+        }
+
+        this.isLoading = true;
+        this.noteService.reconcileNote(this.rawNote._id, this.reconcileReason.trim()).subscribe({
+            next: (res) => {
+                this.toastService.success(res.message || 'Nota conciliada');
+                this.mapNoteData(res.data);
+                this.isReconcileModalOpen = false;
+                this.isLoading = false;
+            },
+            error: (err) => {
+                this.toastService.error(err?.error?.message || 'Error al conciliar la nota');
+                this.isLoading = false;
+            }
+        });
+    }
+
+    revertReconciliation() {
+        if (!this.rawNote?._id) return;
+        if (!confirm('¿Revertir la conciliación? La nota volverá a quedar pendiente de pago y los productos se reactivarán.')) return;
+
+        this.isLoading = true;
+        this.noteService.revertReconciliation(this.rawNote._id).subscribe({
+            next: (res) => {
+                this.toastService.success(res.message || 'Conciliación revertida');
+                this.mapNoteData(res.data);
+                this.isLoading = false;
+            },
+            error: (err) => {
+                this.toastService.error(err?.error?.message || 'Error al revertir la conciliación');
                 this.isLoading = false;
             }
         });

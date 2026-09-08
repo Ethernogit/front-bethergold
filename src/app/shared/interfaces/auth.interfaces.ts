@@ -14,6 +14,15 @@ export interface Organization {
   name: string;
   isActive: boolean;
   sucursales?: Sucursal[];
+  settings?: OrganizationSettings;
+}
+
+export interface OrganizationSettings {
+  currency?: string;
+  timezone?: string;
+  language?: string;
+  /** Modules enabled for this organization. Absent keys mean disabled. */
+  features?: { [feature: string]: boolean };
 }
 
 export interface Sucursal {

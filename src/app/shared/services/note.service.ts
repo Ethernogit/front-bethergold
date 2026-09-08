@@ -57,10 +57,60 @@ export interface Note {
         balanceDue: number;
     };
     payments: NotePayment[];
-    status?: 'BORRADOR' | 'PENDIENTE_PAGO' | 'PAGADA' | 'ENTREGADA' | 'ANULADA' | 'CONSIGNACION';
+    status?: 'BORRADOR' | 'PENDIENTE_PAGO' | 'PAGADA' | 'ENTREGADA' | 'ANULADA' | 'CONSIGNACION' | 'CONCILIADA';
     notes?: string;
+    reconciliation?: NoteReconciliation;
     createdAt?: Date;
     updatedAt?: Date;
+}
+
+/**
+ * Set when a migrated note is closed without registering payments. Keeps the original
+ * balance so the gap stays auditable, and a snapshot so it can be reverted.
+ */
+export interface NoteReconciliation {
+    originalStatus?: string;
+    originalBalanceDue?: number;
+    reason?: string;
+    reconciledBy?: string | { profile?: { firstName?: string; lastName?: string } };
+    reconciledAt?: Date;
+}
+
+export interface LegacyLookupItem {
+    name: string;
+    type: string;
+    returned?: boolean;
+    subtotal: number;
+    barcode: string | null;
+    sku: string | null;
+    productStatus: string | null;
+    isMatch: boolean;
+}
+
+export interface LegacyLookupPayment {
+    amount: number;
+    method: string;
+    date?: Date;
+    reference?: string;
+    isLegacy: boolean;
+}
+
+export interface LegacyLookupNote {
+    _id: string;
+    folio: string;
+    createdAt: Date;
+    status: string;
+    client: { name: string; phone?: string } | null;
+    financials: { total: number; balancePaid: number; balanceDue: number };
+    items: LegacyLookupItem[];
+    payments: LegacyLookupPayment[];
+}
+
+export interface LegacyLookupResult {
+    term: string;
+    /** Distinguishes "no such barcode" from "product isn't in any pending legacy note". */
+    productFound: boolean;
+    notes: LegacyLookupNote[];
 }
 
 @Injectable({
@@ -105,6 +155,22 @@ export class NoteService {
 
     updateItemDeliveryStatus(noteId: string, itemId: string): Observable<{ success: boolean; data: Note; message?: string }> {
         return this.http.put<{ success: boolean; data: Note; message?: string }>(`${this.apiUrl}/${noteId}/items/${itemId}/deliver`, {});
+    }
+
+    /** Find migrated notes still pending payment by product barcode/SKU or folio. */
+    legacyLookup(term: string): Observable<{ success: boolean; data: LegacyLookupResult }> {
+        return this.http.get<{ success: boolean; data: LegacyLookupResult }>(`${this.apiUrl}/legacy-lookup`, {
+            params: { q: term }
+        });
+    }
+
+    /** Close a migrated note without registering payments (does not affect cash cuts). */
+    reconcileNote(noteId: string, reason: string): Observable<{ success: boolean; data: Note; message?: string }> {
+        return this.http.post<{ success: boolean; data: Note; message?: string }>(`${this.apiUrl}/${noteId}/reconcile`, { reason });
+    }
+
+    revertReconciliation(noteId: string): Observable<{ success: boolean; data: Note; message?: string }> {
+        return this.http.post<{ success: boolean; data: Note; message?: string }>(`${this.apiUrl}/${noteId}/reconcile/revert`, {});
     }
 
     checkFolioAvailability(value: string): Observable<{ success: boolean; available: boolean; folio: string }> {
