@@ -396,6 +396,38 @@ export const routes: Routes = [
         title: 'Reportes y Estadísticas | Bethergold'
       },
 
+      // Cotizaciones (módulo aparte de ventas)
+      {
+        path: 'quotes',
+        loadComponent: () => import('./pages/quotes/quote-list/quote-list.component').then(m => m.QuoteListComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'quotes',
+          action: 'read'
+        },
+        title: 'Cotizaciones | Bethergold'
+      },
+      {
+        path: 'quotes/new',
+        loadComponent: () => import('./pages/quotes/new-quote/new-quote.component').then(m => m.NewQuoteComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'quotes',
+          action: 'create'
+        },
+        title: 'Nueva Cotización | Bethergold'
+      },
+      {
+        path: 'quotes/:id',
+        loadComponent: () => import('./pages/quotes/quote-detail/quote-detail.component').then(m => m.QuoteDetailComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'quotes',
+          action: 'read'
+        },
+        title: 'Cotización | Bethergold'
+      },
+
       // Ventas / Notas
       {
         path: 'sales/cash-cut',

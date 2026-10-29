@@ -1,0 +1,471 @@
+<!-- Mismo diseño que el detalle de nota (pages/sales/note-details) -->
+<div class="min-h-screen bg-[#FFFDF7] dark:bg-[#3a383d] relative flex">
+    <!-- Sin encabezado fijo: en laptops con escalado (≈600px de alto) se comía media pantalla -->
+    <main class="w-full flex flex-col">
+        <!-- Header -->
+        <header class="bg-white dark:bg-[#232126] border-b border-[#E8D9A0] dark:border-[#4A474D] flex-shrink-0 z-20">
+            <div class="px-4 py-3 sm:px-6 sm:py-4">
+                <!-- Top Row: Back link -->
+                <div class="flex items-center justify-between mb-2">
+                    <a routerLink="/quotes"
+                        class="flex items-center gap-1.5 font-instrument text-theme-sm text-[#6B6560] hover:text-[#C69214] dark:text-gray-400 dark:hover:text-[#FAC600] transition-colors cursor-pointer group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="group-hover:-translate-x-1 transition-transform">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                        <span class="font-medium">Volver</span>
+                    </a>
+                </div>
+
+                <!-- Título, estado y botones en un renglón; en celular los botones bajan -->
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="size-10 sm:size-12 rounded-xl bg-[#FBF0C9] dark:bg-[#4A474D] flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                                class="text-[#C69214]">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="12" y1="18" x2="12" y2="12"></line>
+                                <path d="M14.5 13.5c-.4-.6-1.3-1-2.5-1s-2.5.6-2.5 1.5 1 1.2 2.5 1.5 2.5.6 2.5 1.5-1.1 1.5-2.5 1.5-2.1-.4-2.5-1"></path>
+                            </svg>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="font-instrument text-[10px] font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                                Cotización</div>
+                            <h1 class="font-instrument text-xl sm:text-2xl font-bold text-[#191817] dark:text-white leading-none truncate">
+                                {{ quote()?.folio || 'Cargando...' }}</h1>
+                        </div>
+
+                        <!-- Status badge -->
+                    @if (quote(); as q) {
+                    <span [ngClass]="{
+                        'bg-[#FBF0C9] text-[#9A6F0A] border-[#E8D9A0] dark:bg-[#4A474D] dark:text-[#E8C97A] dark:border-[#4A474D]': q.effectiveStatus === 'VIGENTE',
+                        'bg-[#F5F0EC] text-[#46424A] border-[#E8D9A0] dark:bg-white/5 dark:text-gray-400': q.effectiveStatus === 'VENCIDA',
+                        'bg-success-50 text-success-700 border-success-200 dark:bg-success-500/15 dark:text-success-400 dark:border-success-500/30': q.effectiveStatus === 'CONVERTIDA',
+                        'bg-error-50 text-error-700 border-error-200 dark:bg-error-500/15 dark:text-error-400': q.effectiveStatus === 'CANCELADA'
+                    }" class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 sm:px-4 sm:py-1.5 font-instrument text-xs sm:text-sm font-bold shrink-0">
+                        @if (q.effectiveStatus === 'VIGENTE' || q.effectiveStatus === 'VENCIDA') {
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        }
+                        {{ q.effectiveStatus }}
+                    </span>
+                    }
+                    </div>
+
+                    <!-- Acciones; Creada, Sucursal y Atendió pasaron a la tarjeta "Datos" de Info -->
+                    @if (quote()) {
+                    <div class="flex items-center gap-2">
+                    <button (click)="openEmailModal()" title="Enviar por correo" [disabled]="isSendingEmail()"
+                        class="flex items-center gap-1.5 rounded-xl border border-[#E8D9A0] bg-white px-3 py-2 sm:px-4 font-instrument text-sm font-medium text-[#46424A] transition-all hover:bg-[#FBF0C9] hover:text-[#C69214] dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-300 dark:hover:bg-[#4A474D] dark:hover:text-[#FAC600] shadow-theme-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22 6 12 13 2 6"></polyline>
+                        </svg>
+                        <span class="hidden sm:inline">Enviar</span>
+                    </button>
+
+                    <button (click)="download()" title="Descargar PDF"
+                        class="flex items-center gap-1.5 rounded-xl border border-[#E8D9A0] bg-white px-3 py-2 sm:px-4 font-instrument text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-300 dark:hover:bg-white/5 shadow-theme-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        <span class="hidden sm:inline">Descargar</span>
+                    </button>
+
+                    @if (shareFile()) {
+                    <button (click)="share()" title="Compartir (WhatsApp u otra app)"
+                        class="flex items-center gap-1.5 rounded-xl border border-[#E8D9A0] bg-white px-3 py-2 sm:px-4 font-instrument text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-300 dark:hover:bg-white/5 shadow-theme-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="18" cy="5" r="3"></circle>
+                            <circle cx="6" cy="12" r="3"></circle>
+                            <circle cx="18" cy="19" r="3"></circle>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                        </svg>
+                        <span class="hidden sm:inline">Compartir</span>
+                    </button>
+                    }
+
+                    <button (click)="print()" title="Imprimir"
+                        class="flex items-center gap-1.5 rounded-xl border border-[#E8D9A0] bg-white px-3 py-2 sm:px-4 font-instrument text-sm font-medium text-[#46424A] transition-all hover:bg-gray-100 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-300 dark:hover:bg-white/5 shadow-theme-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                        <span class="hidden sm:inline">Imprimir</span>
+                    </button>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Aviso: piezas que ya no están disponibles -->
+            @if (unavailableItems().length > 0) {
+            <div class="mx-4 mb-4 rounded-xl border border-error-200 bg-error-50 p-4 dark:border-error-500/30 dark:bg-error-500/10 sm:mx-6 flex items-start gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="text-error-600 dark:text-error-400 shrink-0 mt-0.5">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <div class="font-instrument text-theme-sm text-error-700 dark:text-error-400">
+                    <span class="font-bold">
+                        {{ unavailableItems().length === 1 ? 'Una pieza ya no está disponible' : unavailableItems().length + ' piezas ya no están disponibles' }}.
+                    </span>
+                    Revisa la pestaña Productos antes de confirmar con el cliente.
+                </div>
+            </div>
+            }
+
+            <!-- Summary Bar -->
+            @if (quote(); as q) {
+            <div class="px-4 sm:px-6 py-2.5 bg-[#FBF0C9]/40 dark:bg-[#232126]/60 border-t border-[#E8D9A0] dark:border-[#4A474D] flex flex-wrap sm:flex-nowrap sm:overflow-x-auto gap-x-4 gap-y-2 md:gap-6">
+                <div class="flex items-center gap-2 sm:gap-3 pr-4 border-r border-[#E8D9A0] dark:border-[#4A474D] shrink-0">
+                    <div class="font-instrument text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">Vence</div>
+                    <span class="font-instrument text-sm font-bold"
+                        [ngClass]="q.effectiveStatus === 'VENCIDA' ? 'text-error-500 dark:text-error-400' : 'text-[#191817] dark:text-white'">
+                        {{ q.validUntil | date:'mediumDate' }}</span>
+                </div>
+                <div class="flex items-center gap-2 sm:gap-3 sm:pr-4 sm:border-r border-[#E8D9A0] dark:border-[#4A474D] shrink-0">
+                    <div class="font-instrument text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">Total</div>
+                    <span class="font-instrument text-base font-bold text-[#191817] dark:text-white">${{ q.financials.total | number:'1.2-2' }}</span>
+                </div>
+                <div class="flex items-center gap-2 min-w-0 sm:shrink-0">
+                    <span class="font-instrument text-[10px] font-semibold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">{{ q.clientId ? 'Cliente:' : 'Prospecto:' }}</span>
+                    <div class="flex items-center gap-2 min-w-0 font-instrument text-theme-sm text-[#191817] dark:text-white">
+                        <span class="font-bold truncate">{{ customerName() }}</span>
+                        @if (q.clientId?.phone) {
+                        <span class="hidden sm:flex items-center gap-1 border-l border-[#E8D9A0] dark:border-[#4A474D] pl-2">
+                            <span class="text-[#6B6560] dark:text-gray-400 text-xs">Tel:</span>
+                            <span>{{ q.clientId?.phone }}</span>
+                        </span>
+                        }
+                        @if (customerEmail()) {
+                        <span class="hidden sm:flex items-center gap-1 border-l border-[#E8D9A0] dark:border-[#4A474D] pl-2">{{ customerEmail() }}</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="px-4 sm:px-6 flex gap-1 overflow-x-auto hide-scrollbar items-center border-t border-[#E8D9A0] dark:border-[#4A474D]">
+                <button (click)="currentTab.set('general')"
+                    [ngClass]="currentTab() === 'general'
+                        ? 'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]'
+                        : 'text-[#6B6560] dark:text-gray-400 hover:text-[#191817] dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'"
+                    class="px-3 sm:px-4 py-3 rounded-t-lg font-instrument text-theme-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    Info
+                </button>
+                <button (click)="currentTab.set('items')"
+                    [ngClass]="currentTab() === 'items'
+                        ? 'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]'
+                        : 'text-[#6B6560] dark:text-gray-400 hover:text-[#191817] dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'"
+                    class="px-3 sm:px-4 py-3 rounded-t-lg font-instrument text-theme-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    Productos
+                    <span [ngClass]="currentTab() === 'items'
+                            ? 'bg-[#9A6F0A] text-white dark:bg-[#E8C97A] dark:text-[#3a383d]'
+                            : 'bg-[#E8D9A0] text-[#46424A] dark:bg-[#4A474D] dark:text-gray-300'"
+                        class="px-1.5 py-0.5 rounded font-instrument text-theme-xs font-bold transition-colors">
+                        {{ q.items.length }}
+                    </span>
+                    @if (unavailableItems().length > 0) {
+                    <span class="size-2 rounded-full bg-error-500" title="Hay piezas no disponibles"></span>
+                    }
+                </button>
+            </div>
+            }
+        </header>
+
+        <!-- Loading State -->
+        @if (loading()) {
+        <div class="flex-1 flex items-center justify-center bg-[#FFFDF7] dark:bg-[#3a383d]">
+            <div class="h-12 w-12 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent"></div>
+        </div>
+        }
+
+        <!-- Error State -->
+        @if (notFound() && !loading()) {
+        <div class="flex-1 flex items-center justify-center bg-[#FFFDF7] dark:bg-[#3a383d] p-4 text-center">
+            <div class="max-w-md rounded-2xl border border-[#E8D9A0] bg-white p-8 shadow-lg dark:border-[#4A474D] dark:bg-[#232126]">
+                <h3 class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white mb-2">No se encontró la cotización</h3>
+                <a routerLink="/quotes" class="font-instrument text-theme-sm font-semibold text-[#9A6F0A] dark:text-[#E8C97A] hover:underline">Volver a la lista</a>
+            </div>
+        </div>
+        }
+
+        <!-- Content Area -->
+        @if (quote(); as q) {
+        <div class="flex-1 bg-[#FFFDF7] dark:bg-[#3a383d] p-4 lg:p-6">
+            <div class="max-w-[1200px] mx-auto">
+
+                <!-- TAB 1: General Info -->
+                @if (currentTab() === 'general') {
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fadeIn">
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Resumen Financiero -->
+                        <div class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] overflow-hidden relative">
+                            <div class="h-1.5 w-full bg-gradient-to-r from-[#C69214] to-[#FAC600] absolute top-0"></div>
+                            <div class="p-5 sm:p-6">
+                                <h3 class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white mb-4">Resumen</h3>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between font-instrument text-theme-sm">
+                                        <span class="text-[#6B6560] dark:text-gray-400">Subtotal</span>
+                                        <span class="font-medium text-[#191817] dark:text-white">${{ q.financials.subtotal | number:'1.2-2' }}</span>
+                                    </div>
+                                    @if (q.financials.globalDiscount > 0) {
+                                    <div class="flex justify-between font-instrument text-theme-sm">
+                                        <span class="text-[#6B6560] dark:text-gray-400">
+                                            Descuento al total @if (q.financials.globalDiscountPercent) { ({{ q.financials.globalDiscountPercent }}%) }
+                                        </span>
+                                        <span class="font-medium text-error-500">-${{ q.financials.globalDiscount | number:'1.2-2' }}</span>
+                                    </div>
+                                    }
+                                    <div class="border-t border-[#E8D9A0] dark:border-[#4A474D] my-2"></div>
+                                    <div class="flex justify-between items-end">
+                                        <span class="font-instrument text-theme-xl font-bold text-[#191817] dark:text-white">Total</span>
+                                        <span class="font-instrument text-2xl font-bold text-[#191817] dark:text-white">${{ q.financials.total | number:'1.2-2' }}</span>
+                                    </div>
+                                    <div class="rounded-xl bg-[#FBF0C9]/40 border border-[#E8D9A0] dark:border-[#4A474D] dark:bg-[#232126]/60 p-4 mt-4">
+                                        <p class="font-instrument text-theme-xs italic text-[#46424A] dark:text-gray-300 leading-relaxed">{{ clause }}</p>
+                                    </div>
+                                </div>
+                                <button (click)="currentTab.set('items')"
+                                    class="w-full mt-5 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] py-3 font-instrument text-sm font-bold text-[#191817] dark:text-white shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] active:scale-[0.98]">
+                                    Ver Productos
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="space-y-6">
+                        <!-- Vigencia -->
+                        <div class="rounded-2xl border border-[#E8D9A0] bg-white dark:border-[#4A474D] dark:bg-[#232126] p-5 shadow-theme-sm">
+                            <h3 class="font-instrument text-theme-sm font-bold text-[#9A6F0A] dark:text-[#E8C97A] mb-4 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                Datos
+                            </h3>
+                            <div class="space-y-2 font-instrument text-theme-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-[#6B6560] dark:text-gray-400">Creada</span>
+                                    <span class="font-bold text-[#191817] dark:text-white">{{ q.createdAt | date:'mediumDate' }} <span class="font-normal text-[#6B6560] dark:text-gray-400">{{ q.createdAt | date:'shortTime' }}</span></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-[#6B6560] dark:text-gray-400">Vence</span>
+                                    <span class="font-bold text-[#191817] dark:text-white">{{ q.validUntil | date:'mediumDate' }}</span>
+                                </div>
+                                <div class="flex justify-between gap-3">
+                                    <span class="text-[#6B6560] dark:text-gray-400">Sucursal</span>
+                                    <span class="font-bold text-[#191817] dark:text-white text-right">{{ q.sucursalId?.name }}</span>
+                                </div>
+                                <div class="flex justify-between gap-3">
+                                    <span class="text-[#6B6560] dark:text-gray-400">Atendió</span>
+                                    <span class="font-bold text-[#191817] dark:text-white text-right">{{ sellerName() }}</span>
+                                </div>
+                                @if (q.status === 'VIGENTE') {
+                                <div class="pt-1 text-theme-xs font-semibold"
+                                    [ngClass]="daysToExpire() < 0 ? 'text-error-500' : daysToExpire() <= 3 ? 'text-[#C69214]' : 'text-success-600 dark:text-success-400'">
+                                    @if (daysToExpire() < 0) { Venció hace {{ -daysToExpire() }} {{ -daysToExpire() === 1 ? 'día' : 'días' }} }
+                                    @else if (daysToExpire() === 0) { Vence hoy }
+                                    @else { Faltan {{ daysToExpire() }} {{ daysToExpire() === 1 ? 'día' : 'días' }} }
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Observaciones -->
+                        <div class="rounded-2xl border border-[#E8D9A0] bg-[#FBF0C9]/30 dark:border-[#4A474D] dark:bg-[#232126] p-5 sm:p-6 shadow-theme-sm">
+                            <h3 class="font-instrument text-theme-sm font-bold text-[#9A6F0A] dark:text-[#E8C97A] mb-4 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                Observaciones
+                            </h3>
+                            <p class="font-instrument text-theme-sm text-[#46424A] dark:text-gray-300 italic whitespace-pre-wrap leading-relaxed">
+                                "{{ q.notes || 'Sin observaciones.' }}"
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                }
+
+                <!-- TAB 2: Items -->
+                @if (currentTab() === 'items') {
+                <div class="space-y-6 animate-fadeIn">
+                    @if (itemGroups().jewelry.length > 0) {
+                    <ng-container *ngTemplateOutlet="itemsSection; context: { title: 'Piezas de inventario', items: itemGroups().jewelry, showAvailability: true }"></ng-container>
+                    }
+                    @if (itemGroups().service.length > 0) {
+                    <ng-container *ngTemplateOutlet="itemsSection; context: { title: 'Taller', items: itemGroups().service, showAvailability: false }"></ng-container>
+                    }
+                    @if (itemGroups().custom.length > 0) {
+                    <ng-container *ngTemplateOutlet="itemsSection; context: { title: 'Hechuras / Pedidos', items: itemGroups().custom, showAvailability: false }"></ng-container>
+                    }
+                </div>
+                }
+            </div>
+        </div>
+        }
+    </main>
+</div>
+
+<!-- Sección de partidas (misma tabla que en la nota) -->
+<ng-template #itemsSection let-title="title" let-items="items" let-showAvailability="showAvailability">
+    <section>
+        <div class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] overflow-hidden">
+            <div class="flex items-center justify-between px-4 py-3 sm:px-5 sm:py-4 border-b border-[#E8D9A0] dark:border-[#4A474D]">
+                <h3 class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#C69214]">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    {{ title }}
+                </h3>
+                <span class="inline-flex items-center rounded-full bg-[#FBF0C9] px-2.5 py-0.5 font-instrument text-theme-xs font-medium text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]">
+                    {{ items.length }} Ítems
+                </span>
+            </div>
+
+            <!-- Mobile cards -->
+            <div class="sm:hidden divide-y divide-[#E8D9A0] dark:divide-[#4A474D]">
+                @for (item of items; track item._id) {
+                <div class="p-4">
+                    <div class="flex items-start justify-between gap-2 mb-1.5">
+                        <div class="min-w-0">
+                            <div class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white">{{ item.name }}</div>
+                            <div class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">{{ itemDetail(item) }}</div>
+                        </div>
+                        <span class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white shrink-0">${{ item.financials.subtotal | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-2 mt-2">
+                        <span class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">{{ item.specifications?.notes }}</span>
+                        @if (showAvailability) {
+                        <ng-container *ngTemplateOutlet="availabilityBadge; context: { item: item }"></ng-container>
+                        }
+                    </div>
+                </div>
+                }
+            </div>
+
+            <!-- Desktop table -->
+            <div class="hidden sm:block overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-[#FBF0C9] dark:bg-[#3a383d]">
+                        <tr class="font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                            @if (showAvailability) { <th class="px-3 py-3 first:pl-5 last:pr-5">Codebar</th> }
+                            <th class="px-3 py-3 first:pl-5 last:pr-5">Producto</th>
+                            @if (showAvailability) { <th class="px-3 py-3 first:pl-5 last:pr-5">Disponibilidad</th> }
+                            <th class="px-3 py-3 first:pl-5 last:pr-5 text-center">Cant.</th>
+                            <th class="px-3 py-3 first:pl-5 last:pr-5 text-right">Precio</th>
+                            <th class="px-3 py-3 first:pl-5 last:pr-5 text-right">Desc. $</th>
+                            <th class="px-3 py-3 first:pl-5 last:pr-5 text-right">Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#E8D9A0] dark:divide-[#4A474D]">
+                        @for (item of items; track item._id) {
+                        <tr class="hover:bg-[#FBF0C9]/30 dark:hover:bg-white/5 transition-colors"
+                            [ngClass]="{ 'bg-error-50/40 dark:bg-error-500/5': item.availability?.available === false }">
+                            @if (showAvailability) {
+                            <td class="px-3 py-3 first:pl-5 last:pr-5 font-instrument text-theme-sm font-medium text-[#191817] dark:text-white">{{ item.specifications?.notes || '—' }}</td>
+                            }
+                            <td class="px-3 py-3 first:pl-5 last:pr-5 min-w-[180px]">
+                                <div class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white">{{ item.name }}</div>
+                                <div class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">{{ itemDetail(item) }}</div>
+                            </td>
+                            @if (showAvailability) {
+                            <td class="px-3 py-3 first:pl-5 last:pr-5"><ng-container *ngTemplateOutlet="availabilityBadge; context: { item: item }"></ng-container></td>
+                            }
+                            <td class="px-3 py-3 first:pl-5 last:pr-5 text-center font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">{{ item.quantity }}</td>
+                            <td class="px-3 py-3 first:pl-5 last:pr-5 text-right whitespace-nowrap font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">${{ item.financials.unitPrice | number:'1.2-2' }}</td>
+                            <td class="px-3 py-3 first:pl-5 last:pr-5 text-right whitespace-nowrap font-instrument text-theme-sm text-error-500">
+                                {{ item.financials.discount ? '-$' + (item.financials.discount | number:'1.2-2') : '' }}</td>
+                            <td class="px-3 py-3 first:pl-5 last:pr-5 text-right whitespace-nowrap font-instrument text-theme-sm font-bold text-[#191817] dark:text-white">${{ item.financials.subtotal | number:'1.2-2' }}</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</ng-template>
+
+<ng-template #availabilityBadge let-item="item">
+    @if (item.availability?.available === false) {
+    <span class="inline-flex items-center gap-1.5 rounded-full bg-error-50 px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-error-700 dark:bg-error-500/15 dark:text-error-400">
+        {{ item.availability?.reason }}
+    </span>
+    } @else {
+    <span class="inline-flex items-center gap-1.5 rounded-full bg-success-50 px-2.5 py-0.5 font-instrument text-theme-xs font-bold text-success-700 dark:bg-success-500/15 dark:text-success-400">
+        Disponible
+    </span>
+    }
+</ng-template>
+
+<!-- Enviar por correo -->
+@if (showEmailModal() && quote(); as q) {
+<div class="fixed inset-0 z-[999999] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-[#191817]/60 backdrop-blur-sm" (click)="showEmailModal.set(false)"></div>
+    <div class="relative w-full max-w-md rounded-2xl border border-[#E8D9A0] bg-[#FFF8E7] shadow-xl dark:border-[#4A474D] dark:bg-[#232126] p-6 flex flex-col gap-4">
+        <h3 class="font-instrument text-theme-xl font-semibold text-[#191817] dark:text-white">Enviar {{ q.folio }} por correo</h3>
+        <label class="flex flex-col gap-1 font-instrument text-theme-xs font-bold uppercase text-[#9A6F0A] dark:text-[#E8C97A]">
+            <span>Correo de <span class="normal-case">{{ customerName() }}</span></span>
+            <input type="email" [formControl]="emailControl" placeholder="correo@ejemplo.com" (keydown.enter)="sendEmail()"
+                class="h-11 px-3 text-theme-sm font-normal normal-case border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl bg-white dark:bg-[#3a383d] text-[#191817] dark:text-white focus:border-[#C69214] focus:outline-none">
+            @if (emailControl.touched && emailControl.invalid) {
+            <span class="normal-case font-normal text-error-500">Escribe un correo válido</span>
+            }
+        </label>
+        <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">Se adjunta el PDF de la cotización, el mismo que se imprime.</p>
+        <div class="flex justify-end gap-2">
+            <button type="button" (click)="showEmailModal.set(false)"
+                class="rounded-xl px-4 py-2.5 font-instrument text-sm font-semibold text-[#46424A] hover:bg-[#FBF0C9] dark:text-gray-300 dark:hover:bg-white/5">Cancelar</button>
+            <button type="button" (click)="sendEmail()" [disabled]="isSendingEmail()"
+                class="rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-4 py-2.5 font-instrument text-sm font-semibold text-[#191817] dark:text-white disabled:opacity-50">
+                @if (isSendingEmail()) { <span class="animate-spin inline-block">↻</span> }
+                {{ isSendingEmail() ? 'Enviando...' : 'Enviar' }}
+            </button>
+        </div>
+    </div>
+</div>
+}

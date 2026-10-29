@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, QueryList, ViewChildren, ChangeDetectorRef, HostListener } from '@angular/core';
 import { SidebarService } from '../../services/sidebar.service';
-import { UiService } from '../../services/ui.service';
 import { PermissionService } from '../../services/auth/permission.service';
 import { LoginService } from '../../services/auth/login.service';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
@@ -56,10 +55,31 @@ export class AppSidebarComponent {
             permission: 'sales:read'
         },
         {
+            icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 2C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8.41421C20 7.88378 19.7893 7.37507 19.4142 7L15 2.58579C14.6249 2.21071 14.1162 2 13.5858 2H6ZM6 4H13V8C13 8.55228 13.4477 9 14 9H18V20H6V4ZM15 4.41421L17.5858 7H15V4.41421ZM12 10.5C12.4142 10.5 12.75 10.8358 12.75 11.25V11.8C13.6 11.98 14.25 12.6 14.25 13.4C14.25 13.81 13.91 14.15 13.5 14.15C13.09 14.15 12.75 13.81 12.75 13.4C12.75 13.25 12.5 13.1 12 13.1C11.5 13.1 11.25 13.25 11.25 13.4C11.25 13.55 11.3 13.65 12.1 13.85C13.1 14.1 14.25 14.45 14.25 15.6C14.25 16.4 13.6 17.02 12.75 17.2V17.75C12.75 18.16 12.41 18.5 12 18.5C11.59 18.5 11.25 18.16 11.25 17.75V17.2C10.4 17.02 9.75 16.4 9.75 15.6C9.75 15.19 10.09 14.85 10.5 14.85C10.91 14.85 11.25 15.19 11.25 15.6C11.25 15.75 11.5 15.9 12 15.9C12.5 15.9 12.75 15.75 12.75 15.6C12.75 15.45 12.7 15.35 11.9 15.15C10.9 14.9 9.75 14.55 9.75 13.4C9.75 12.6 10.4 11.98 11.25 11.8V11.25C11.25 10.8358 11.5858 10.5 12 10.5Z" fill="currentColor"/></svg>`,
+            name: "Cotizaciones",
+            path: "/quotes",
+            permission: 'quotes:read'
+        },
+        {
             icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 18C7 16.8954 7.89543 16 9 16H15C16.1046 16 17 16.8954 17 18C17 19.1046 16.1046 20 15 20H9C7.89543 20 7 19.1046 7 18Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M3 5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V5ZM5 5H19V11H5V5ZM19 13H5V19H19V13Z" fill="currentColor"/></svg>`,
             name: "Corte de Caja",
             path: "/sales/cash-cut",
             permission: 'sales:read'
+        },
+        {
+            icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.5 4.5C6.67157 4.5 6 5.17157 6 6V7.5H18V6C18 5.17157 17.3284 4.5 16.5 4.5H7.5ZM19.5 7.5V6C19.5 4.34315 18.1569 3 16.5 3H7.5C5.84315 3 4.5 4.34315 4.5 6V7.5V9V18C4.5 19.6569 5.84315 21 7.5 21H16.5C18.1569 21 19.5 19.6569 19.5 18V9V7.5ZM18 9H6V18C6 18.8284 6.67157 19.5 7.5 19.5H16.5C17.3284 19.5 18 18.8284 18 18V9Z" fill="currentColor"></path><path d="M9 12C9 11.5858 9.33579 11.25 9.75 11.25H14.25C14.6642 11.25 15 11.5858 15 12C15 12.4142 14.6642 12.75 14.25 12.75H9.75C9.33579 12.75 9 12.4142 9 12Z" fill="currentColor"></path><path d="M9.75 14.25C9.33579 14.25 9 14.5858 9 15C9 15.4142 9.33579 15.75 9.75 15.75H12.75C13.1642 15.75 13.5 15.4142 13.5 15C13.5 14.5858 13.1642 14.25 12.75 14.25H9.75Z" fill="currentColor"></path></svg>`,
+            name: "Productos",
+            subItems: [
+                { name: "Inventario", path: "/inventory", permission: 'inventory:read' },
+                { name: "Buscar Nota de Producto", path: "/sales/legacy-lookup", permission: 'sales:read', feature: 'legacyReconciliation' },
+                { name: "Lista de Productos", path: "/products" },
+                { name: "Categorías", path: "/categories" },
+                { name: "Subcategorías", path: "/subcategories" },
+                { name: "Materiales", path: "/products/material-types", permission: 'products:read' },
+                { name: "Variantes", path: "/products/gold-types", permission: 'products:read' },
+                { name: "Tipos de Movimiento", path: "/products/movement-types", permission: 'products:read' },
+                { name: "Proveedores", path: "/providers", permission: 'providers:read' }
+            ],
         },
         {
             icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" fill="currentColor"/><path d="M12 14C8.13401 14 5 17.134 5 21H19C19 17.134 15.866 14 12 14Z" fill="currentColor"/></svg>`,
@@ -83,21 +103,6 @@ export class AppSidebarComponent {
               name: "User Profile",
               path: "/profile",
             }, */
-        {
-            icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.5 4.5C6.67157 4.5 6 5.17157 6 6V7.5H18V6C18 5.17157 17.3284 4.5 16.5 4.5H7.5ZM19.5 7.5V6C19.5 4.34315 18.1569 3 16.5 3H7.5C5.84315 3 4.5 4.34315 4.5 6V7.5V9V18C4.5 19.6569 5.84315 21 7.5 21H16.5C18.1569 21 19.5 19.6569 19.5 18V9V7.5ZM18 9H6V18C6 18.8284 6.67157 19.5 7.5 19.5H16.5C17.3284 19.5 18 18.8284 18 18V9Z" fill="currentColor"></path><path d="M9 12C9 11.5858 9.33579 11.25 9.75 11.25H14.25C14.6642 11.25 15 11.5858 15 12C15 12.4142 14.6642 12.75 14.25 12.75H9.75C9.33579 12.75 9 12.4142 9 12Z" fill="currentColor"></path><path d="M9.75 14.25C9.33579 14.25 9 14.5858 9 15C9 15.4142 9.33579 15.75 9.75 15.75H12.75C13.1642 15.75 13.5 15.4142 13.5 15C13.5 14.5858 13.1642 14.25 12.75 14.25H9.75Z" fill="currentColor"></path></svg>`,
-            name: "Productos",
-            subItems: [
-                { name: "Inventario", path: "/inventory", permission: 'inventory:read' },
-                { name: "Buscar Nota de Producto", path: "/sales/legacy-lookup", permission: 'sales:read', feature: 'legacyReconciliation' },
-                { name: "Lista de Productos", path: "/products" },
-                { name: "Categorías", path: "/categories" },
-                { name: "Subcategorías", path: "/subcategories" },
-                { name: "Materiales", path: "/products/material-types", permission: 'products:read' },
-                { name: "Variantes", path: "/products/gold-types", permission: 'products:read' },
-                { name: "Tipos de Movimiento", path: "/products/movement-types", permission: 'products:read' },
-                { name: "Proveedores", path: "/providers", permission: 'providers:read' }
-            ],
-        },
         /*     {
               name: "Forms",
               icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.5 3.25C4.25736 3.25 3.25 4.25736 3.25 5.5V18.5C3.25 19.7426 4.25736 20.75 5.5 20.75H18.5001C19.7427 20.75 20.7501 19.7426 20.7501 18.5V5.5C20.7501 4.25736 19.7427 3.25 18.5001 3.25H5.5ZM4.75 5.5C4.75 5.08579 5.08579 4.75 5.5 4.75H18.5001C18.9143 4.75 19.2501 5.08579 19.2501 5.5V18.5C19.2501 18.9142 18.9143 19.25 18.5001 19.25H5.5C5.08579 19.25 4.75 18.9142 4.75 18.5V5.5ZM6.25005 9.7143C6.25005 9.30008 6.58583 8.9643 7.00005 8.9643L17 8.96429C17.4143 8.96429 17.75 9.30008 17.75 9.71429C17.75 10.1285 17.4143 10.4643 17 10.4643L7.00005 10.4643C6.58583 10.4643 6.25005 10.1285 6.25005 9.7143ZM6.25005 14.2857C6.25005 13.8715 6.58583 13.5357 7.00005 13.5357H17C17.4143 13.5357 17.75 13.8715 17.75 14.2857C17.75 14.6999 17.4143 15.0357 17 15.0357H7.00005C6.58583 15.0357 6.25005 14.6999 6.25005 14.2857Z" fill="currentColor"></path></svg>`,
@@ -185,7 +190,6 @@ export class AppSidebarComponent {
     readonly isExpanded$;
     readonly isMobileOpen$;
     readonly isHovered$;
-    readonly isFullscreen$;
     readonly currentOrganization$;
     readonly currentSucursal$;
 
@@ -193,7 +197,6 @@ export class AppSidebarComponent {
 
     constructor(
         public sidebarService: SidebarService,
-        public uiService: UiService,
         private router: Router,
         private cdr: ChangeDetectorRef,
         private permissionService: PermissionService,
@@ -202,7 +205,6 @@ export class AppSidebarComponent {
         this.isExpanded$ = this.sidebarService.isExpanded$;
         this.isMobileOpen$ = this.sidebarService.isMobileOpen$;
         this.isHovered$ = this.sidebarService.isHovered$;
-        this.isFullscreen$ = this.uiService.isFullscreen$;
 
         // Signals
         this.currentOrganization$ = this.loginService.currentOrganization;
@@ -212,7 +214,9 @@ export class AppSidebarComponent {
     hoveredItem: NavItem | null = null;
     hoveredItemIndex: number = -1;
     hoveredGroup: string = '';
-    hoveredTop: number = 0;
+    hoveredTop: number | null = 0;
+    hoveredBottom: number | null = null;
+    hoveredMaxHeight: number | null = null;
     hoverTimeout: any;
 
     onMouseEnter(item: NavItem, index: number, group: string, event: MouseEvent) {
@@ -230,10 +234,20 @@ export class AppSidebarComponent {
                 this.hoveredItemIndex = index;
                 this.hoveredGroup = group;
 
-                // Calculate top position
+                // Calculate position: in the lower half of the window the submenu
+                // grows upwards so it is not cut off; if it still doesn't fit, it scrolls
                 const target = event.target as HTMLElement;
                 const rect = target.getBoundingClientRect();
-                this.hoveredTop = rect.top;
+                const margin = 8;
+                if (rect.top > window.innerHeight / 2) {
+                    this.hoveredTop = null;
+                    this.hoveredBottom = window.innerHeight - rect.bottom;
+                    this.hoveredMaxHeight = rect.bottom - margin;
+                } else {
+                    this.hoveredTop = rect.top;
+                    this.hoveredBottom = null;
+                    this.hoveredMaxHeight = window.innerHeight - rect.top - margin;
+                }
             }
         }).unsubscribe();
     }
