@@ -499,6 +499,12 @@
   @apply !text-gray-400;
 }
 
+/* Días bloqueados por minDate/maxDate: sin esto se ven igual que los elegibles */
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.flatpickr-disabled:hover {
+  @apply !text-gray-300 dark:!text-white/20 !cursor-not-allowed !bg-transparent !border-transparent;
+}
+
 .flatpickr-months>.flatpickr-month {
   background: none !important;
 }

@@ -1,0 +1,240 @@
+<!-- Sin ngSubmit: un Enter en cualquier campo (p. ej. el lector de códigos) no debe guardar -->
+<form [formGroup]="quoteForm" class="flex flex-col lg:flex-row gap-4">
+
+    <!-- Izquierda: cliente, búsqueda y partidas -->
+    <div class="flex-1 flex flex-col gap-4 min-w-0">
+        <div
+            class="bg-white dark:bg-[#232126] border border-[#E8D9A0] dark:border-[#4A474D] rounded-2xl shadow-theme-sm p-4 sm:p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="font-instrument text-2xl font-bold text-[#191817] dark:text-white">Nueva Cotización</h1>
+                <a routerLink="/quotes"
+                    class="font-instrument text-theme-sm font-semibold text-[#9A6F0A] dark:text-[#E8C97A] hover:underline">
+                    Volver a la lista
+                </a>
+            </div>
+
+            <div class="flex flex-col xl:flex-row gap-4">
+                <!-- Buscar pieza -->
+                <div class="flex-1 relative z-20">
+                    <label
+                        class="block font-instrument text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase mb-1">
+                        Agregar pieza de inventario
+                    </label>
+                    <div
+                        class="flex items-center bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl px-3 h-14 transition-colors hover:border-[#C69214] dark:hover:border-[#FAC600]">
+                        <input [formControl]="searchControl" (keydown.enter)="onSearchEnter($event)" type="text"
+                            placeholder="Escanear o escribir código..."
+                            class="w-full h-full bg-transparent border-none font-instrument text-[#191817] dark:text-white text-lg font-medium focus:ring-0 focus:outline-none placeholder-[#6B6560] dark:placeholder-white/50">
+                        @if (isSearching()) {
+                        <span class="text-[#C69214] animate-spin">⟳</span>
+                        }
+                    </div>
+                    @if (searchResults().length > 0) {
+                    <div
+                        class="absolute w-full mt-1 bg-white dark:bg-[#232126] rounded-xl shadow-xl border border-[#E8D9A0] dark:border-[#4A474D] max-h-60 overflow-y-auto z-50">
+                        <ul>
+                            @for (product of searchResults(); track product._id) {
+                            <li (click)="selectProduct(product)"
+                                class="px-4 py-3 hover:bg-[#FBF0C9]/50 dark:hover:bg-[#3a383d] cursor-pointer border-b border-[#E8D9A0] dark:border-[#4A474D] last:border-0 flex justify-between items-center gap-3">
+                                <div class="min-w-0">
+                                    <p class="font-instrument font-medium text-[#191817] dark:text-white truncate">
+                                        {{ product.name || product.description }}</p>
+                                    <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">
+                                        SKU: {{ product.sku }} | Stock: {{ product.stock }}
+                                        @if (product.status === 'inactive') { · <span class="text-error-500">No disponible</span> }
+                                        @if (product.reservation) { · <span class="text-[#C69214]">Apartado</span> }
+                                    </p>
+                                </div>
+                                <span class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white">
+                                    {{ product.price | currency }}</span>
+                            </li>
+                            }
+                        </ul>
+                    </div>
+                    }
+                </div>
+
+                <!-- Cliente o prospecto -->
+                <div class="flex-1">
+                    <div class="flex items-center justify-between mb-1">
+                        <label
+                            class="font-instrument text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">Para</label>
+                        <div class="flex rounded-lg border border-[#E8D9A0] dark:border-[#4A474D] overflow-hidden text-theme-xs font-instrument font-semibold">
+                            <button type="button" (click)="setCustomerMode('client')"
+                                [ngClass]="customerMode() === 'client' ? 'bg-[#C69214] text-white' : 'text-[#46424A] dark:text-gray-300'"
+                                class="px-3 py-1">Cliente</button>
+                            <button type="button" (click)="setCustomerMode('prospect')"
+                                [ngClass]="customerMode() === 'prospect' ? 'bg-[#C69214] text-white' : 'text-[#46424A] dark:text-gray-300'"
+                                class="px-3 py-1">Prospecto</button>
+                        </div>
+                    </div>
+
+                    @if (customerMode() === 'client') {
+                    <div (click)="showClientModal.set(true)"
+                        class="flex items-center bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl px-3 h-14 cursor-pointer transition-colors hover:border-[#C69214] dark:hover:border-[#FAC600]">
+                        <div class="flex-1 min-w-0">
+                            @if (selectedClient(); as client) {
+                            <p class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white truncate">{{ client.name }}</p>
+                            <p class="font-instrument text-[10px] text-[#6B6560] dark:text-gray-400">{{ client.phone || client.email || 'Cliente registrado' }}</p>
+                            } @else {
+                            <span class="font-instrument text-theme-sm text-[#6B6560] dark:text-gray-500">Seleccionar cliente...</span>
+                            }
+                        </div>
+                        <span class="font-instrument text-theme-xs font-bold text-[#C69214] dark:text-[#FAC600] whitespace-nowrap">
+                            {{ selectedClient() ? 'Cambiar' : 'Buscar' }}</span>
+                    </div>
+                    } @else {
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input formControlName="prospectName" type="text" placeholder="Nombre del prospecto"
+                            class="flex-1 h-14 px-3 font-instrument text-theme-sm border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl bg-white dark:bg-[#3a383d] text-[#191817] dark:text-white focus:border-[#C69214] focus:outline-none">
+                        <input formControlName="prospectEmail" type="email" placeholder="Correo (opcional)"
+                            class="flex-1 h-14 px-3 font-instrument text-theme-sm border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl bg-white dark:bg-[#3a383d] text-[#191817] dark:text-white focus:border-[#C69214] focus:outline-none">
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Partidas -->
+        <div formArrayName="items"
+            class="flex flex-col gap-3 min-h-[200px] rounded-2xl border border-[#E8D9A0] bg-[#FBF0C9]/20 shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] p-4 sm:p-6">
+            @for (item of items.controls; track item; let i = $index) {
+            <div [formGroupName]="i"
+                class="bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl shadow-theme-sm p-4 relative">
+                <span
+                    class="absolute top-0 left-0 bg-[#FBF0C9] dark:bg-[#4A474D] text-[#9A6F0A] dark:text-[#E8C97A] text-[10px] font-bold px-2 py-0.5 rounded-br rounded-tl-xl">
+                    {{ item.get('type')?.value === 'jewelry' ? 'PRODUCTO' : item.get('type')?.value === 'service' ? 'TALLER' : 'HECHURA' }}
+                </span>
+                <div class="flex flex-col xl:flex-row xl:items-center gap-3 pt-3">
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-instrument text-[#191817] dark:text-white font-bold text-lg leading-tight">
+                            {{ item.get('name')?.value }}</h3>
+                        <p class="font-instrument text-[#6B6560] dark:text-gray-400 text-theme-xs mt-1 flex flex-wrap gap-x-3">
+                            @if (item.get('specifications')?.value?.notes) { <span>CB: {{ item.get('specifications')?.value?.notes }}</span> }
+                            @if (item.get('specifications')?.value?.karatage) { <span>K: {{ item.get('specifications')?.value?.karatage }}</span> }
+                            @if (item.get('specifications')?.value?.weight) { <span>Peso: {{ item.get('specifications')?.value?.weight }}g</span> }
+                            @if (item.get('specifications')?.value?.deliveryDate) {
+                            <span>Entrega: {{ item.get('specifications')?.value?.deliveryDate | date:'mediumDate':'UTC' }}</span>
+                            }
+                        </p>
+                    </div>
+                    <div class="flex items-end justify-end gap-2">
+                        @if (item.get('maxQuantity')?.value > 1) {
+                        <label class="flex flex-col font-instrument text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">
+                            Cant.
+                            <input type="number" formControlName="quantity" min="1" [max]="item.get('maxQuantity')?.value"
+                                class="w-16 mt-0.5 px-2 py-1 text-right text-theme-sm font-normal border border-[#E8D9A0] dark:border-[#4A474D] rounded-lg bg-white dark:bg-[#232126] text-[#191817] dark:text-white">
+                        </label>
+                        }
+                        <label class="flex flex-col font-instrument text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">
+                            Precio
+                            <input type="number" formControlName="unitPrice" min="0" step="0.01"
+                                class="w-24 mt-0.5 px-2 py-1 text-right text-theme-sm font-bold border border-[#E8D9A0] dark:border-[#4A474D] rounded-lg bg-white dark:bg-[#232126] text-[#191817] dark:text-white">
+                        </label>
+                        <label class="flex flex-col font-instrument text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">
+                            Desc. $
+                            <input type="number" formControlName="discount" min="0" step="0.01"
+                                class="w-20 mt-0.5 px-2 py-1 text-right text-theme-sm border border-[#E8D9A0] dark:border-[#4A474D] rounded-lg bg-white dark:bg-[#232126] text-[#191817] dark:text-white">
+                        </label>
+                        <div class="flex flex-col items-end min-w-[100px]">
+                            <span class="font-instrument text-[10px] font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">Importe</span>
+                            <span class="font-instrument font-extrabold text-xl"
+                                [ngClass]="lineSubtotal(i) < 0 ? 'text-error-500' : 'text-[#C69214] dark:text-[#FAC600]'">
+                                {{ lineSubtotal(i) | currency }}</span>
+                        </div>
+                        <button type="button" (click)="removeItem(i)" title="Quitar"
+                            class="text-[#6B6560] hover:text-error-500 dark:text-gray-400 transition-colors p-1 mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            } @empty {
+            <div
+                class="flex flex-col items-center justify-center h-40 text-[#6B6560] dark:text-gray-500 border-2 border-dashed border-[#E8D9A0] dark:border-[#4A474D] rounded-xl">
+                <p class="font-instrument font-medium text-center px-4">Busca piezas o agrega una hechura o un taller</p>
+            </div>
+            }
+        </div>
+    </div>
+
+    <!-- Derecha: agregar, vigencia y totales. Fijo al desplazar para tener Guardar a la vista con muchas partidas,
+         solo si cabe completo: en laptops con escalado (≈600px de alto) quedaría cortado abajo -->
+    <aside
+        class="w-full lg:w-80 xl:w-96 shrink-0 bg-white dark:bg-[#232126] border border-[#E8D9A0] dark:border-[#4A474D] rounded-2xl shadow-theme-sm p-4 flex flex-col gap-4 text-[#191817] dark:text-white h-fit lg:[@media(min-height:780px)]:sticky lg:top-4">
+        <div class="grid grid-cols-2 gap-2">
+            <button type="button" (click)="showHechuraModal.set(true)"
+                class="h-14 bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl hover:bg-[#FBF0C9]/50 dark:hover:bg-[#4A474D] font-instrument text-theme-xs font-bold uppercase text-[#46424A] dark:text-gray-300">
+                + Hechura / Pedido
+            </button>
+            <button type="button" (click)="showRepairModal.set(true)"
+                class="h-14 bg-white dark:bg-[#3a383d] border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl hover:bg-[#FBF0C9]/50 dark:hover:bg-[#4A474D] font-instrument text-theme-xs font-bold uppercase text-[#46424A] dark:text-gray-300">
+                + Taller
+            </button>
+        </div>
+
+        <label class="flex flex-col gap-1 font-instrument text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">
+            Vence el *
+            <input #validUntilInput type="text" placeholder="Elegir fecha"
+                class="h-11 px-3 text-theme-sm font-normal normal-case cursor-pointer border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl bg-white dark:bg-[#3a383d] text-[#191817] dark:text-white focus:border-[#C69214] focus:outline-none">
+        </label>
+
+        <label class="flex flex-col gap-1 font-instrument text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">
+            Descuento al total %
+            <div class="relative">
+                <input type="number" formControlName="globalDiscountPercent" min="0" max="100" step="0.5"
+                    class="w-full h-11 pl-3 pr-8 text-right text-theme-sm font-normal border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl bg-white dark:bg-[#3a383d] text-[#191817] dark:text-white focus:border-[#C69214] focus:outline-none"
+                    [ngClass]="{ '!border-error-500': quoteForm.get('globalDiscountPercent')?.invalid }">
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-theme-sm font-normal text-[#6B6560] dark:text-gray-400">%</span>
+            </div>
+            @if (quoteForm.get('globalDiscountPercent')?.invalid) {
+            <span class="normal-case font-normal text-error-500">Debe estar entre 0 y 100</span>
+            }
+        </label>
+
+        <label class="flex flex-col gap-1 font-instrument text-theme-xs font-bold text-[#9A6F0A] dark:text-[#E8C97A] uppercase">
+            Observaciones
+            <textarea formControlName="notes" rows="3"
+                class="px-3 py-2 text-theme-sm font-normal normal-case border border-[#E8D9A0] dark:border-[#4A474D] rounded-xl bg-white dark:bg-[#3a383d] text-[#191817] dark:text-white focus:border-[#C69214] focus:outline-none"></textarea>
+        </label>
+
+        <div class="space-y-1 font-instrument text-theme-sm border-t border-[#E8D9A0] dark:border-[#4A474D] pt-3">
+            <div class="flex justify-between text-[#6B6560] dark:text-gray-400">
+                <span>Subtotal</span><span class="text-[#191817] dark:text-white">{{ subtotal() | currency }}</span>
+            </div>
+            <div class="flex justify-between text-[#6B6560] dark:text-gray-400">
+                <span>Descuento @if (discountPercent()) { ({{ discountPercent() }}%) }</span>
+                <span class="text-error-500">-{{ globalDiscountAmount() | currency }}</span>
+            </div>
+            <div class="flex justify-between items-baseline pt-1">
+                <span class="font-bold uppercase text-theme-xs">Total</span>
+                <span class="font-extrabold text-2xl" [ngClass]="total() < 0 ? 'text-error-500' : 'text-[#C69214] dark:text-[#FAC600]'">
+                    {{ total() | currency }}</span>
+            </div>
+        </div>
+
+        <button type="button" (click)="onSubmit()" [disabled]="isSaving()"
+            class="w-full py-4 font-instrument font-extrabold text-lg tracking-wide rounded-xl shadow-theme-md transition-all active:scale-[0.98] uppercase bg-gradient-to-br from-[#C69214] to-[#FAC600] text-white hover:from-[#9A6F0A] hover:to-[#C69214] disabled:opacity-50 disabled:cursor-not-allowed">
+            @if (isSaving()) { <span class="animate-spin inline-block">↻</span> }
+            Guardar cotización
+        </button>
+        <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-500 text-center">
+            No aparta inventario ni pide caja abierta.
+        </p>
+    </aside>
+</form>
+
+@if (showHechuraModal()) {
+<app-hechura-modal (close)="handleHechuraEntry($event)"></app-hechura-modal>
+}
+@if (showRepairModal()) {
+<app-repair-modal (close)="handleRepairEntry($event)"></app-repair-modal>
+}
+@if (showClientModal()) {
+<app-client-selection-modal (select)="handleClientSelection($event)"
+    (close)="showClientModal.set(false)"></app-client-selection-modal>
+}
