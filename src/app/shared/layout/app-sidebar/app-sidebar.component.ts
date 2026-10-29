@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, QueryList, ViewChildren, ChangeDetectorRef, HostListener } from '@angular/core';
 import { SidebarService } from '../../services/sidebar.service';
-import { UiService } from '../../services/ui.service';
 import { PermissionService } from '../../services/auth/permission.service';
 import { LoginService } from '../../services/auth/login.service';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
@@ -68,6 +67,21 @@ export class AppSidebarComponent {
             permission: 'sales:read'
         },
         {
+            icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.5 4.5C6.67157 4.5 6 5.17157 6 6V7.5H18V6C18 5.17157 17.3284 4.5 16.5 4.5H7.5ZM19.5 7.5V6C19.5 4.34315 18.1569 3 16.5 3H7.5C5.84315 3 4.5 4.34315 4.5 6V7.5V9V18C4.5 19.6569 5.84315 21 7.5 21H16.5C18.1569 21 19.5 19.6569 19.5 18V9V7.5ZM18 9H6V18C6 18.8284 6.67157 19.5 7.5 19.5H16.5C17.3284 19.5 18 18.8284 18 18V9Z" fill="currentColor"></path><path d="M9 12C9 11.5858 9.33579 11.25 9.75 11.25H14.25C14.6642 11.25 15 11.5858 15 12C15 12.4142 14.6642 12.75 14.25 12.75H9.75C9.33579 12.75 9 12.4142 9 12Z" fill="currentColor"></path><path d="M9.75 14.25C9.33579 14.25 9 14.5858 9 15C9 15.4142 9.33579 15.75 9.75 15.75H12.75C13.1642 15.75 13.5 15.4142 13.5 15C13.5 14.5858 13.1642 14.25 12.75 14.25H9.75Z" fill="currentColor"></path></svg>`,
+            name: "Productos",
+            subItems: [
+                { name: "Inventario", path: "/inventory", permission: 'inventory:read' },
+                { name: "Buscar Nota de Producto", path: "/sales/legacy-lookup", permission: 'sales:read', feature: 'legacyReconciliation' },
+                { name: "Lista de Productos", path: "/products" },
+                { name: "Categorías", path: "/categories" },
+                { name: "Subcategorías", path: "/subcategories" },
+                { name: "Materiales", path: "/products/material-types", permission: 'products:read' },
+                { name: "Variantes", path: "/products/gold-types", permission: 'products:read' },
+                { name: "Tipos de Movimiento", path: "/products/movement-types", permission: 'products:read' },
+                { name: "Proveedores", path: "/providers", permission: 'providers:read' }
+            ],
+        },
+        {
             icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" fill="currentColor"/><path d="M12 14C8.13401 14 5 17.134 5 21H19C19 17.134 15.866 14 12 14Z" fill="currentColor"/></svg>`,
             name: "Clientes",
             path: "/clients",
@@ -89,21 +103,6 @@ export class AppSidebarComponent {
               name: "User Profile",
               path: "/profile",
             }, */
-        {
-            icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.5 4.5C6.67157 4.5 6 5.17157 6 6V7.5H18V6C18 5.17157 17.3284 4.5 16.5 4.5H7.5ZM19.5 7.5V6C19.5 4.34315 18.1569 3 16.5 3H7.5C5.84315 3 4.5 4.34315 4.5 6V7.5V9V18C4.5 19.6569 5.84315 21 7.5 21H16.5C18.1569 21 19.5 19.6569 19.5 18V9V7.5ZM18 9H6V18C6 18.8284 6.67157 19.5 7.5 19.5H16.5C17.3284 19.5 18 18.8284 18 18V9Z" fill="currentColor"></path><path d="M9 12C9 11.5858 9.33579 11.25 9.75 11.25H14.25C14.6642 11.25 15 11.5858 15 12C15 12.4142 14.6642 12.75 14.25 12.75H9.75C9.33579 12.75 9 12.4142 9 12Z" fill="currentColor"></path><path d="M9.75 14.25C9.33579 14.25 9 14.5858 9 15C9 15.4142 9.33579 15.75 9.75 15.75H12.75C13.1642 15.75 13.5 15.4142 13.5 15C13.5 14.5858 13.1642 14.25 12.75 14.25H9.75Z" fill="currentColor"></path></svg>`,
-            name: "Productos",
-            subItems: [
-                { name: "Inventario", path: "/inventory", permission: 'inventory:read' },
-                { name: "Buscar Nota de Producto", path: "/sales/legacy-lookup", permission: 'sales:read', feature: 'legacyReconciliation' },
-                { name: "Lista de Productos", path: "/products" },
-                { name: "Categorías", path: "/categories" },
-                { name: "Subcategorías", path: "/subcategories" },
-                { name: "Materiales", path: "/products/material-types", permission: 'products:read' },
-                { name: "Variantes", path: "/products/gold-types", permission: 'products:read' },
-                { name: "Tipos de Movimiento", path: "/products/movement-types", permission: 'products:read' },
-                { name: "Proveedores", path: "/providers", permission: 'providers:read' }
-            ],
-        },
         /*     {
               name: "Forms",
               icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.5 3.25C4.25736 3.25 3.25 4.25736 3.25 5.5V18.5C3.25 19.7426 4.25736 20.75 5.5 20.75H18.5001C19.7427 20.75 20.7501 19.7426 20.7501 18.5V5.5C20.7501 4.25736 19.7427 3.25 18.5001 3.25H5.5ZM4.75 5.5C4.75 5.08579 5.08579 4.75 5.5 4.75H18.5001C18.9143 4.75 19.2501 5.08579 19.2501 5.5V18.5C19.2501 18.9142 18.9143 19.25 18.5001 19.25H5.5C5.08579 19.25 4.75 18.9142 4.75 18.5V5.5ZM6.25005 9.7143C6.25005 9.30008 6.58583 8.9643 7.00005 8.9643L17 8.96429C17.4143 8.96429 17.75 9.30008 17.75 9.71429C17.75 10.1285 17.4143 10.4643 17 10.4643L7.00005 10.4643C6.58583 10.4643 6.25005 10.1285 6.25005 9.7143ZM6.25005 14.2857C6.25005 13.8715 6.58583 13.5357 7.00005 13.5357H17C17.4143 13.5357 17.75 13.8715 17.75 14.2857C17.75 14.6999 17.4143 15.0357 17 15.0357H7.00005C6.58583 15.0357 6.25005 14.6999 6.25005 14.2857Z" fill="currentColor"></path></svg>`,
@@ -191,7 +190,6 @@ export class AppSidebarComponent {
     readonly isExpanded$;
     readonly isMobileOpen$;
     readonly isHovered$;
-    readonly isFullscreen$;
     readonly currentOrganization$;
     readonly currentSucursal$;
 
@@ -199,7 +197,6 @@ export class AppSidebarComponent {
 
     constructor(
         public sidebarService: SidebarService,
-        public uiService: UiService,
         private router: Router,
         private cdr: ChangeDetectorRef,
         private permissionService: PermissionService,
@@ -208,7 +205,6 @@ export class AppSidebarComponent {
         this.isExpanded$ = this.sidebarService.isExpanded$;
         this.isMobileOpen$ = this.sidebarService.isMobileOpen$;
         this.isHovered$ = this.sidebarService.isHovered$;
-        this.isFullscreen$ = this.uiService.isFullscreen$;
 
         // Signals
         this.currentOrganization$ = this.loginService.currentOrganization;
@@ -218,7 +214,9 @@ export class AppSidebarComponent {
     hoveredItem: NavItem | null = null;
     hoveredItemIndex: number = -1;
     hoveredGroup: string = '';
-    hoveredTop: number = 0;
+    hoveredTop: number | null = 0;
+    hoveredBottom: number | null = null;
+    hoveredMaxHeight: number | null = null;
     hoverTimeout: any;
 
     onMouseEnter(item: NavItem, index: number, group: string, event: MouseEvent) {
@@ -236,10 +234,20 @@ export class AppSidebarComponent {
                 this.hoveredItemIndex = index;
                 this.hoveredGroup = group;
 
-                // Calculate top position
+                // Calculate position: in the lower half of the window the submenu
+                // grows upwards so it is not cut off; if it still doesn't fit, it scrolls
                 const target = event.target as HTMLElement;
                 const rect = target.getBoundingClientRect();
-                this.hoveredTop = rect.top;
+                const margin = 8;
+                if (rect.top > window.innerHeight / 2) {
+                    this.hoveredTop = null;
+                    this.hoveredBottom = window.innerHeight - rect.bottom;
+                    this.hoveredMaxHeight = rect.bottom - margin;
+                } else {
+                    this.hoveredTop = rect.top;
+                    this.hoveredBottom = null;
+                    this.hoveredMaxHeight = window.innerHeight - rect.top - margin;
+                }
             }
         }).unsubscribe();
     }

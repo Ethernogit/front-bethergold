@@ -218,7 +218,16 @@
 }
 
 @utility menu-item {
-  @apply relative flex items-center w-full gap-3 px-3 py-2 font-outfit font-medium rounded-lg text-theme-sm;
+  @apply relative flex items-center w-full gap-3 px-3 py-1.5 font-outfit font-medium rounded-lg text-theme-sm;
+}
+
+/* Sidebar contraído (solo escritorio): nombre chico debajo del ícono */
+@utility menu-item-collapsed {
+  @apply lg:flex-col lg:gap-1! lg:px-1!;
+}
+
+@utility menu-item-mini-label {
+  @apply w-full text-center font-outfit text-[10px] font-medium leading-tight hyphens-auto [overflow-wrap:anywhere];
 }
 
 @utility menu-item-active {
