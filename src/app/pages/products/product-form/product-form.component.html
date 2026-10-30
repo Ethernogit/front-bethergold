@@ -213,6 +213,12 @@
                 class="mt-1.5 block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-gray-600 dark:focus:border-[#FAC600] resize-none"></textarea>
         </div>
 
+        <!-- 14. Photos (botones type="button": el formulario se envía con Enter del lector) -->
+        <div class="md:col-span-2 lg:col-span-4" id="product-photos">
+            <app-product-photos [productId]="product?._id ?? null" [images]="product?.images"
+                (changed)="photosChanged.emit()"></app-product-photos>
+        </div>
+
     </div>
 
     <!-- Buttons -->

@@ -38,6 +38,15 @@
                                 {{ selectedProducts().size }}
                             </span>
                         </button>
+                        <button (click)="showPhotoAssign.set(true)" title="Asignar una foto a las seleccionadas"
+                            class="flex items-center gap-2 rounded-xl border border-[#C69214] bg-transparent p-2.5 font-outfit text-sm font-semibold text-[#C69214] transition-all hover:bg-[#FBF0C9] dark:hover:bg-[#4A474D]">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                <circle cx="12" cy="13" r="4"></circle>
+                            </svg>
+                        </button>
                         }
 
                         <button (click)="startTour()"
@@ -98,6 +107,7 @@
                                         (change)="toggleAllSelection($event)"
                                         class="h-5 w-5 rounded border-[#E8D9A0] text-[#C69214] focus:ring-[#C69214] bg-white dark:border-[#4A474D] dark:bg-[#3a383d] dark:ring-offset-[#3a383d] cursor-pointer">
                                 </th>
+                                <th class="px-2 py-3 w-14"><span class="sr-only">Foto</span></th>
                                 <th class="px-4 py-3">Código</th>
                                 <th class="px-4 py-3">Nombre</th>
                                 <th class="px-4 py-3">Cat / Subcat</th>
@@ -120,6 +130,21 @@
                                     <input type="checkbox" [checked]="isSelected(product._id!)"
                                         (change)="toggleSelection(product._id!)"
                                         class="h-5 w-5 rounded border-[#E8D9A0] text-[#C69214] focus:ring-[#C69214] bg-white dark:border-[#4A474D] dark:bg-[#3a383d] dark:ring-offset-[#3a383d] cursor-pointer">
+                                </td>
+                                <td class="px-2 py-2">
+                                    <button (click)="openEditModal(product)" [title]="primaryThumb(product) ? 'Ver fotos' : 'Agregar foto'"
+                                        class="flex size-10 items-center justify-center overflow-hidden rounded-lg border border-[#E8D9A0] bg-[#FBF0C9]/40 text-[#C69214]/60 dark:border-[#4A474D] dark:bg-[#232126]">
+                                        @if (primaryThumb(product); as thumb) {
+                                        <img [src]="thumb" alt="" loading="lazy" class="size-full object-cover">
+                                        } @else {
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                            <circle cx="12" cy="13" r="4"></circle>
+                                        </svg>
+                                        }
+                                    </button>
                                 </td>
                                 <td class="px-4 py-3">
                                     <span
@@ -328,11 +353,17 @@
         <!-- Body -->
         <div class="p-8 overflow-y-auto">
             <app-product-form [product]="editingProduct()" [isEditMode]="!!editingProduct()" (close)="closeModal()"
-                (saved)="onProductSaved()">
+                (saved)="onProductSaved()" (photosChanged)="onPhotosChanged()">
             </app-product-form>
         </div>
     </div>
 </div>
+}
+
+<!-- Una foto para las piezas seleccionadas -->
+@if (showPhotoAssign()) {
+<app-product-photo-assign [productIds]="selectedIds()" (close)="showPhotoAssign.set(false)"
+    (done)="onPhotoAssigned()"></app-product-photo-assign>
 }
 
 <!-- Delete Confirmation Modal -->

@@ -1,0 +1,84 @@
+<div>
+    <div class="flex flex-wrap items-baseline justify-between gap-x-3">
+        <label class="block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Fotos</label>
+        <span class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-500">La principal es la que sale en el catálogo</span>
+    </div>
+
+    <div class="mt-1.5 flex flex-wrap gap-3">
+        @for (image of images(); track image._id) {
+        <div class="relative size-24 overflow-hidden rounded-xl border bg-white dark:bg-[#3a383d]"
+            [ngClass]="image.isPrimary ? 'border-[#C69214] ring-2 ring-[#C69214]/40' : 'border-[#E8D9A0] dark:border-[#4A474D]'">
+            <img [src]="image.thumbUrl || image.url" [alt]="image.alt || 'Foto de la pieza'" loading="lazy"
+                class="size-full object-cover">
+            @if (image.isPrimary) {
+            <span
+                class="absolute left-1 top-1 rounded-md bg-[#C69214] px-1.5 py-0.5 font-outfit text-[10px] font-semibold text-white">Principal</span>
+            }
+            <div class="absolute inset-x-0 bottom-0 flex items-center justify-between bg-[#191817]/60 px-1 py-0.5">
+                @if (!image.isPrimary) {
+                <button type="button" (click)="setPrimary(image)" title="Hacer principal"
+                    class="rounded p-1 text-white hover:text-[#FAC600]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon
+                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                        </polygon>
+                    </svg>
+                </button>
+                } @else {
+                <span></span>
+                }
+                <button type="button" (click)="remove(image)"
+                    [title]="confirmingRemoveId() === image._id ? 'Clic otra vez para quitarla' : 'Quitar foto'"
+                    class="rounded p-1 font-outfit text-[10px] font-semibold"
+                    [ngClass]="confirmingRemoveId() === image._id ? 'bg-error-500 text-white px-1.5' : 'text-white hover:text-error-300'">
+                    @if (confirmingRemoveId() === image._id) {
+                    ¿Quitar?
+                    } @else {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    }
+                </button>
+            </div>
+        </div>
+        }
+
+        @for (photo of pending(); track photo.preview; let i = $index) {
+        <div class="relative size-24 overflow-hidden rounded-xl border border-dashed border-[#C69214] bg-white dark:bg-[#3a383d]">
+            <img [src]="photo.preview" alt="Foto por subir" class="size-full object-cover opacity-80">
+            <span
+                class="absolute left-1 top-1 rounded-md bg-[#191817]/70 px-1.5 py-0.5 font-outfit text-[10px] font-semibold text-white">Al guardar</span>
+            <button type="button" (click)="removePending(i)" title="Quitar"
+                class="absolute bottom-1 right-1 rounded bg-[#191817]/60 p-1 text-white hover:text-error-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        }
+
+        <!-- En el celular, accept="image/*" ofrece la cámara o la galería -->
+        <label
+            class="flex size-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-[#E8D9A0] text-center font-instrument text-theme-xs font-medium text-[#9A6F0A] transition-colors hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:text-[#E8C97A] dark:hover:bg-white/5"
+            [ngClass]="{ 'pointer-events-none opacity-60': busyText() }">
+            @if (busyText()) {
+            <span class="size-5 animate-spin rounded-full border-2 border-[#C69214] border-t-transparent"></span>
+            <span class="px-1 leading-tight">{{ busyText() }}</span>
+            } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+            </svg>
+            <span class="leading-tight">Agregar foto</span>
+            }
+            <input type="file" accept="image/*" multiple class="hidden" (change)="onFiles($event)"
+                [disabled]="!!busyText()">
+        </label>
+    </div>
+</div>

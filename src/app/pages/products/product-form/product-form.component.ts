@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, OnChanges, SimpleChanges, Output, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, OnChanges, SimpleChanges, Output, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common'; // Added isPlatformBrowser
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductService, Product } from '../../../shared/services/product.service';
@@ -12,11 +12,12 @@ import { SucursalService } from '../../../shared/services/sucursal.service';
 import { MaterialType, ProviderPrice, GoldType } from '../../../shared/interfaces/provider.interfaces';
 import { combineLatest, forkJoin } from 'rxjs';
 import { RouterModule } from '@angular/router';
+import { ProductPhotosComponent } from '../../../shared/components/product-photos/product-photos.component';
 
 @Component({
     selector: 'app-product-form',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, RouterModule],
+    imports: [CommonModule, ReactiveFormsModule, RouterModule, ProductPhotosComponent],
     templateUrl: './product-form.component.html'
 })
 export class ProductFormComponent implements OnInit, OnChanges {
@@ -24,6 +25,9 @@ export class ProductFormComponent implements OnInit, OnChanges {
     @Input() isEditMode = false;
     @Output() close = new EventEmitter<void>();
     @Output() saved = new EventEmitter<void>();
+    /** Las fotos se guardan al momento, aunque se cierre sin "Guardar": la lista debe recargar */
+    @Output() photosChanged = new EventEmitter<void>();
+    @ViewChild(ProductPhotosComponent) photos?: ProductPhotosComponent;
 
     productForm: FormGroup;
     categories: any[] = [];
@@ -476,7 +480,15 @@ export class ProductFormComponent implements OnInit, OnChanges {
             });
         } else {
             this.productService.createProduct(productData).subscribe({
-                next: () => {
+                next: async (res: any) => {
+                    // Las fotos elegidas antes de dar de alta se suben ya con el id de la pieza
+                    const newId = res?.data?._id;
+                    if (newId && this.photos?.pending().length) {
+                        const failed = await this.photos.uploadPending(newId);
+                        if (failed > 0) {
+                            this.toastService.warning(`La pieza se guardó, pero ${failed} foto(s) no se pudieron subir`);
+                        }
+                    }
                     this.toastService.success('Producto registrado exitosamente');
                     this.saved.emit();
                     this.close.emit();
