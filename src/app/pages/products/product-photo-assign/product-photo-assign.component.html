@@ -1,0 +1,106 @@
+<div class="fixed inset-0 z-999999 flex items-center justify-center bg-[#191817]/60 backdrop-blur-sm p-4 overflow-y-auto">
+    <div
+        class="relative flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-[#E8D9A0] bg-[#FFF8E7] shadow-xl dark:border-[#4A474D] dark:bg-[#232126]">
+        <button type="button" (click)="close.emit()"
+            class="absolute right-4 top-4 z-10 text-[#6B6560] transition-colors hover:text-[#191817] dark:text-gray-400 dark:hover:text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+
+        <div class="shrink-0 border-b border-[#E8D9A0] px-6 py-4 dark:border-[#4A474D]">
+            <h3 class="font-instrument text-title-sm font-semibold text-[#191817] dark:text-[#E8C97A]">Asignar foto</h3>
+            <p class="mt-0.5 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400">
+                La misma foto para {{ productIds().length }} {{ productIds().length === 1 ? 'pieza' : 'piezas' }}
+            </p>
+        </div>
+
+        <div class="space-y-4 overflow-y-auto px-6 py-5">
+            <!-- Modo -->
+            <div class="grid grid-cols-2 gap-1 rounded-xl bg-[#FBF0C9] p-1 dark:bg-[#3a383d]">
+                <button type="button" (click)="mode.set('upload')"
+                    class="rounded-lg px-3 py-2 font-instrument text-theme-sm font-semibold transition-colors"
+                    [ngClass]="mode() === 'upload' ? 'bg-white text-[#191817] shadow-theme-sm dark:bg-[#232126] dark:text-white' : 'text-[#9A6F0A] dark:text-gray-400'">
+                    Foto nueva
+                </button>
+                <button type="button" (click)="mode.set('existing')"
+                    class="rounded-lg px-3 py-2 font-instrument text-theme-sm font-semibold transition-colors"
+                    [ngClass]="mode() === 'existing' ? 'bg-white text-[#191817] shadow-theme-sm dark:bg-[#232126] dark:text-white' : 'text-[#9A6F0A] dark:text-gray-400'">
+                    De otra pieza
+                </button>
+            </div>
+
+            @if (mode() === 'upload') {
+            <label
+                class="flex aspect-[4/3] w-full cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border-2 border-dashed border-[#E8D9A0] bg-white text-center font-instrument text-theme-sm font-medium text-[#9A6F0A] transition-colors hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-[#E8C97A]"
+                [ngClass]="{ 'pointer-events-none opacity-60': preparing() }">
+                @if (preview()) {
+                <img [src]="preview()" alt="Foto elegida" class="size-full object-contain">
+                } @else if (preparing()) {
+                <span class="size-6 animate-spin rounded-full border-2 border-[#C69214] border-t-transparent"></span>
+                Preparando…
+                } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                Tomar o elegir foto
+                }
+                <input type="file" accept="image/*" class="hidden" (change)="onFile($event)">
+            </label>
+            @if (preview()) {
+            <p class="text-center font-instrument text-theme-xs text-[#6B6560] dark:text-gray-500">Toca la foto para cambiarla</p>
+            }
+            } @else {
+            <div>
+                <input type="text" [ngModel]="term()" (ngModelChange)="onSearch($event)"
+                    placeholder="Busca la pieza que ya tiene foto (código o nombre)"
+                    class="block w-full rounded-xl border border-[#E8D9A0] bg-white px-4 py-2.5 font-instrument text-base text-[#191817] placeholder-[#6B6560] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white dark:placeholder-gray-600">
+                <div class="mt-3 space-y-3">
+                    @if (searching()) {
+                    <p class="font-instrument text-theme-sm text-[#6B6560]">Buscando…</p>
+                    } @else if (term().trim().length >= 2 && results().length === 0) {
+                    <p class="font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400">Ninguna pieza con foto coincide</p>
+                    }
+                    @for (product of results(); track product._id) {
+                    <div>
+                        <p class="font-instrument text-theme-sm font-medium text-[#191817] dark:text-white">
+                            {{ product.name }} <span class="text-theme-xs text-[#6B6560]">{{ product.barcode }}</span>
+                        </p>
+                        <div class="mt-1.5 flex flex-wrap gap-2">
+                            @for (image of product.images; track image._id) {
+                            <button type="button" (click)="selected.set({ productId: product._id!, image })"
+                                class="size-20 overflow-hidden rounded-lg border-2 transition-all"
+                                [ngClass]="selected()?.image?._id === image._id ? 'border-[#C69214] ring-2 ring-[#C69214]/40' : 'border-transparent'">
+                                <img [src]="image.thumbUrl || image.url" alt="Foto" loading="lazy" class="size-full object-cover">
+                            </button>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+
+            <label class="flex cursor-pointer items-center gap-2 font-instrument text-theme-sm text-[#191817] dark:text-gray-300">
+                <input type="checkbox" [ngModel]="primary()" (ngModelChange)="primary.set($event)"
+                    class="h-5 w-5 rounded border-[#E8D9A0] text-[#C69214] focus:ring-[#C69214]">
+                Usarla como foto principal
+            </label>
+        </div>
+
+        <div class="flex shrink-0 items-center justify-end gap-3 border-t border-[#E8D9A0] px-6 py-4 dark:border-[#4A474D]">
+            <button type="button" (click)="close.emit()"
+                class="rounded-xl border border-[#E8D9A0] bg-white px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white">
+                Cancelar
+            </button>
+            <button type="button" (click)="save()" [disabled]="!canSave()"
+                class="rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-outfit text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] disabled:cursor-not-allowed disabled:opacity-50">
+                {{ saving() ? 'Asignando…' : (productIds().length === 1 ? 'Asignar a 1 pieza' : 'Asignar a ' + productIds().length + ' piezas') }}
+            </button>
+        </div>
+    </div>
+</div>

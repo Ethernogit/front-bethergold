@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductService, Product, StockHistoryEntry } from '../../../shared/services/product.service';
@@ -9,13 +9,14 @@ import { ToastService } from '../../../shared/services/toast.service';
 import { LabelPrintingService } from '../../../shared/services/label-printing.service';
 import { finalize } from 'rxjs';
 import { ProductFormComponent } from '../product-form/product-form.component';
+import { ProductPhotoAssignComponent } from '../product-photo-assign/product-photo-assign.component';
 import { ProductStatus } from '../../../shared/interfaces/product.interfaces';
 import { FilterSidebarComponent, FilterConfig } from '../../../shared/components/ui/filter-sidebar/filter-sidebar.component';
 import { TourService } from '../../../shared/services/tour.service';
 @Component({
     selector: 'app-product-list',
     standalone: true,
-    imports: [CommonModule, FormsModule, ProductFormComponent, FilterSidebarComponent],
+    imports: [CommonModule, FormsModule, ProductFormComponent, ProductPhotoAssignComponent, FilterSidebarComponent],
     templateUrl: './product-list.component.html'
 })
 export class ProductListComponent implements OnInit {
@@ -51,6 +52,12 @@ export class ProductListComponent implements OnInit {
 
     // Selection
     selectedProducts = signal<Set<string>>(new Set());
+
+    // Fotos: una foto para las piezas seleccionadas
+    showPhotoAssign = signal(false);
+    selectedIds = computed(() => [...this.selectedProducts()]);
+    // Las fotos se guardan al momento desde la ficha; al cerrarla hay que recargar
+    private reloadOnClose = false;
 
     // Pagination
     currentPage = signal(1);
@@ -254,11 +261,31 @@ export class ProductListComponent implements OnInit {
     closeModal() {
         this.showModal.set(false);
         this.editingProduct.set(null);
+        if (this.reloadOnClose) {
+            this.reloadOnClose = false;
+            this.loadProducts();
+        }
     }
 
     onProductSaved() {
+        this.reloadOnClose = false;
         this.closeModal();
         this.loadProducts();
+    }
+
+    onPhotosChanged() {
+        this.reloadOnClose = true;
+    }
+
+    onPhotoAssigned() {
+        this.showPhotoAssign.set(false);
+        this.loadProducts();
+    }
+
+    /** Miniatura de la foto principal para la lista */
+    primaryThumb(product: Product): string | null {
+        const image = product.images?.find(i => i.isPrimary) ?? product.images?.[0];
+        return image ? (image.thumbUrl || image.url) : null;
     }
 
     openDeleteModal(product: Product) {

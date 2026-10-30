@@ -16,6 +16,24 @@ export interface StockHistoryEntry {
     clientId?: { _id: string; name?: string } | string;
 }
 
+/** Foto en R2. Varias piezas pueden compartir la misma `key` (una foto para piezas iguales) */
+export interface ProductImage {
+    _id: string;
+    url: string;
+    thumbUrl?: string;
+    key?: string;
+    width?: number;
+    height?: number;
+    alt?: string;
+    isPrimary: boolean;
+}
+
+/** Piezas que quedaron con la foto, con su lista de fotos actualizada */
+export interface ProductImagesResult {
+    image: Omit<ProductImage, '_id' | 'isPrimary'>;
+    products: { _id: string; images: ProductImage[] }[];
+}
+
 export interface Product {
     _id?: string;
     barcode: string;
@@ -37,7 +55,7 @@ export interface Product {
         weight?: number;
         material?: string;
     };
-    images?: { url: string; isPrimary: boolean }[];
+    images?: ProductImage[];
     status?: 'active' | 'inactive' | 'discontinued';
     isUnique?: boolean;
     lastInventoryRevision?: Date;
@@ -109,6 +127,28 @@ export class ProductService {
             params = params.set('subcategory', subcategory);
         }
         return this.http.get(`${this.apiUrl}/next-barcode`, { params });
+    }
+
+    /** Sube una foto (ya comprimida en el navegador) y la asigna a una o varias piezas */
+    uploadImage(productIds: string[], file: Blob, primary = false): Observable<{ data: ProductImagesResult }> {
+        const form = new FormData();
+        form.append('image', file, 'foto.jpg');
+        productIds.forEach(id => form.append('productIds', id));
+        if (primary) form.append('primary', 'true');
+        return this.http.post<{ data: ProductImagesResult }>(`${this.apiUrl}/images`, form);
+    }
+
+    /** Asigna a otras piezas una foto que ya tiene esta pieza, sin volver a subirla */
+    assignImage(productId: string, imageId: string, productIds: string[], primary = false): Observable<{ data: ProductImagesResult }> {
+        return this.http.post<{ data: ProductImagesResult }>(`${this.apiUrl}/${productId}/images/${imageId}/assign`, { productIds, primary });
+    }
+
+    setPrimaryImage(productId: string, imageId: string): Observable<{ data: { product: { images: ProductImage[] } } }> {
+        return this.http.patch<{ data: { product: { images: ProductImage[] } } }>(`${this.apiUrl}/${productId}/images/${imageId}/primary`, {});
+    }
+
+    removeImage(productId: string, imageId: string): Observable<{ data: { product: { images: ProductImage[] }; fileDeleted: boolean } }> {
+        return this.http.delete<{ data: { product: { images: ProductImage[] }; fileDeleted: boolean } }>(`${this.apiUrl}/${productId}/images/${imageId}`);
     }
 
     getStockHistory(productId: string): Observable<any> {
