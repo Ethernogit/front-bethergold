@@ -61,6 +61,13 @@ export class AppSidebarComponent {
             permission: 'quotes:read'
         },
         {
+            icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="17" r="2.5" stroke="currentColor" stroke-width="2"/></svg>`,
+            name: "Descuentos",
+            path: "/discounts",
+            permission: 'discounts:read',
+            feature: 'discounts'
+        },
+        {
             icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 18C7 16.8954 7.89543 16 9 16H15C16.1046 16 17 16.8954 17 18C17 19.1046 16.1046 20 15 20H9C7.89543 20 7 19.1046 7 18Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M3 5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V5ZM5 5H19V11H5V5ZM19 13H5V19H19V13Z" fill="currentColor"/></svg>`,
             name: "Corte de Caja",
             path: "/sales/cash-cut",

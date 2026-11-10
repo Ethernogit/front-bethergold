@@ -1,0 +1,123 @@
+<app-modal [isOpen]="isOpen()" (close)="close.emit()" className="max-w-[560px] m-4 p-5 sm:p-7">
+    <h2 class="pr-10 font-instrument text-title-sm font-semibold text-[#191817] dark:text-[#E8C97A]">
+        {{ isEdit() ? 'Editar descuento' : 'Nuevo descuento' }}
+    </h2>
+    <p class="mt-1 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400">
+        Se aplica solo en el punto de venta a las piezas que le toquen.
+    </p>
+
+    <form class="mt-5 flex flex-col gap-4" (ngSubmit)="onSubmit()" novalidate>
+        <!-- Nombre -->
+        <div>
+            <label for="discount-name" class="mb-1.5 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Nombre</label>
+            <input id="discount-name" name="name" type="text" maxlength="100" [ngModel]="name()" (ngModelChange)="name.set($event)"
+                placeholder="Buen Fin anillos"
+                class="w-full rounded-xl border border-[#E8D9A0] bg-white px-3.5 py-2.5 font-instrument text-theme-sm text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#232126] dark:text-white" />
+            @if (submitted() && errors()['name']) {
+            <p class="mt-1 font-instrument text-theme-xs text-error-600 dark:text-error-400">{{ errors()['name'] }}</p>
+            }
+        </div>
+
+        <!-- Porcentaje -->
+        <div>
+            <label for="discount-percent" class="mb-1.5 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Porcentaje</label>
+            <div class="relative w-40">
+                <input id="discount-percent" name="percent" type="number" min="0.01" [max]="cap()" step="0.01"
+                    [ngModel]="percent()" (ngModelChange)="percent.set($event === '' ? null : $event)"
+                    class="w-full rounded-xl border border-[#E8D9A0] bg-white py-2.5 pl-3.5 pr-9 font-instrument text-theme-sm text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#232126] dark:text-white" />
+                <span class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 font-instrument text-theme-sm text-[#6B6560]">%</span>
+            </div>
+            <p class="mt-1 font-instrument text-theme-xs text-[#6B6560] dark:text-gray-500">Máximo {{ cap() }} % (tope de la organización).</p>
+            @if (submitted() && errors()['percent']) {
+            <p class="mt-1 font-instrument text-theme-xs text-error-600 dark:text-error-400">{{ errors()['percent'] }}</p>
+            }
+        </div>
+
+        <!-- Alcance -->
+        <fieldset>
+            <legend class="mb-1.5 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">¿A qué piezas?</legend>
+            <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                @for (option of [
+                    { value: 'all', label: 'Toda la tienda' },
+                    { value: 'category', label: 'Una categoría' },
+                    { value: 'subcategory', label: 'Una subcategoría' }
+                ]; track option.value) {
+                <label class="flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2.5 font-instrument text-theme-sm transition-colors"
+                    [ngClass]="scope() === option.value
+                        ? 'border-[#C69214] bg-[#FBF0C9] text-[#191817] dark:bg-[#4A474D] dark:text-white'
+                        : 'border-[#E8D9A0] text-[#46424A] hover:bg-[#FBF0C9]/40 dark:border-[#4A474D] dark:text-gray-300'">
+                    <input type="radio" name="scope" class="accent-[#C69214]" [value]="option.value"
+                        [checked]="scope() === option.value" (change)="scope.set($any(option.value))" />
+                    {{ option.label }}
+                </label>
+                }
+            </div>
+        </fieldset>
+
+        @if (scope() === 'category') {
+        <div>
+            <label for="discount-category" class="mb-1.5 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Categoría</label>
+            <select id="discount-category" name="categoryId" [ngModel]="categoryId()" (ngModelChange)="categoryId.set($event)"
+                class="w-full rounded-xl border border-[#E8D9A0] bg-white px-3.5 py-2.5 font-instrument text-theme-sm text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#232126] dark:text-white">
+                <option value="" disabled>Elige una categoría</option>
+                @for (c of categories(); track c._id) {
+                <option [value]="c._id">{{ c.name }}</option>
+                }
+            </select>
+            @if (submitted() && errors()['categoryId']) {
+            <p class="mt-1 font-instrument text-theme-xs text-error-600 dark:text-error-400">{{ errors()['categoryId'] }}</p>
+            }
+        </div>
+        }
+
+        @if (scope() === 'subcategory') {
+        <div>
+            <label for="discount-subcategory" class="mb-1.5 block font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Subcategoría</label>
+            <select id="discount-subcategory" name="subcategoryId" [ngModel]="subcategoryId()" (ngModelChange)="subcategoryId.set($event)"
+                class="w-full rounded-xl border border-[#E8D9A0] bg-white px-3.5 py-2.5 font-instrument text-theme-sm text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#232126] dark:text-white">
+                <option value="" disabled>Elige una subcategoría</option>
+                @for (s of subcategoryOptions(); track s.id) {
+                <option [value]="s.id">{{ s.label }}</option>
+                }
+            </select>
+            @if (submitted() && errors()['subcategoryId']) {
+            <p class="mt-1 font-instrument text-theme-xs text-error-600 dark:text-error-400">{{ errors()['subcategoryId'] }}</p>
+            }
+        </div>
+        }
+
+        <!-- Vigencia -->
+        <div>
+            <p class="mb-1.5 font-instrument text-theme-sm font-medium text-[#46424A] dark:text-gray-300">Vigencia <span class="font-normal text-[#6B6560]">(opcional)</span></p>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label for="discount-starts" class="mb-1 block font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">Primer día</label>
+                    <input id="discount-starts" name="startsAt" type="date" [ngModel]="startsAt()" (ngModelChange)="startsAt.set($event)"
+                        class="w-full rounded-xl border border-[#E8D9A0] bg-white px-3 py-2.5 font-instrument text-theme-sm text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#232126] dark:text-white" />
+                </div>
+                <div>
+                    <label for="discount-ends" class="mb-1 block font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">Último día</label>
+                    <input id="discount-ends" name="endsAt" type="date" [ngModel]="endsAt()" (ngModelChange)="endsAt.set($event)"
+                        class="w-full rounded-xl border border-[#E8D9A0] bg-white px-3 py-2.5 font-instrument text-theme-sm text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 dark:border-[#4A474D] dark:bg-[#232126] dark:text-white" />
+                </div>
+            </div>
+            <p class="mt-1 font-instrument text-theme-xs text-[#6B6560] dark:text-gray-500">
+                Empieza a las 00:00 del primer día y termina a las 23:59 del último (hora de México). Sin fechas, aplica siempre.
+            </p>
+            @if (submitted() && errors()['endsAt']) {
+            <p class="mt-1 font-instrument text-theme-xs text-error-600 dark:text-error-400">{{ errors()['endsAt'] }}</p>
+            }
+        </div>
+
+        <div class="mt-2 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <button type="button" (click)="close.emit()"
+                class="rounded-xl border border-[#E8D9A0] bg-white px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] transition-all hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-300 dark:hover:bg-white/5">
+                Cancelar
+            </button>
+            <button type="submit" [disabled]="saving()"
+                class="rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] disabled:cursor-not-allowed disabled:opacity-60 dark:text-white">
+                {{ saving() ? 'Guardando...' : (isEdit() ? 'Guardar cambios' : 'Crear descuento') }}
+            </button>
+        </div>
+    </form>
+</app-modal>
