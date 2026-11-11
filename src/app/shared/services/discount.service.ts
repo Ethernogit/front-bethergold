@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../interfaces/product.interfaces';
 import {
     Discount,
+    DiscountPrice,
     DiscountListData,
     DiscountListParams,
     DiscountPayload,
@@ -24,6 +25,12 @@ export class DiscountService {
 
     updateSettings(settings: Partial<DiscountSettings>): Observable<ApiResponse<{ settings: DiscountSettings }>> {
         return this.http.put<ApiResponse<{ settings: DiscountSettings }>>(`${this.apiUrl}/settings`, settings);
+    }
+
+    /** Precio de hoy de las piezas de la nota; el mismo cálculo con el que el servidor la revisa */
+    getPrices(productIds: string[]): Observable<ApiResponse<{ prices: DiscountPrice[] }>> {
+        const params = new HttpParams().set('productIds', productIds.join(','));
+        return this.http.get<ApiResponse<{ prices: DiscountPrice[] }>>(`${this.apiUrl}/prices`, { params });
     }
 
     getDiscounts(params: DiscountListParams = {}): Observable<ApiResponse<DiscountListData>> {

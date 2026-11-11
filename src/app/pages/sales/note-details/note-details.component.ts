@@ -195,6 +195,7 @@ export class NoteDetailsComponent implements OnInit {
                     description: this.formatDescription(item),
                     price: item.financials?.unitPrice || 0,
                     subtotal: item.financials?.subtotal || 0,
+                    discountLines: this.discountLines(item),
                     status: item.deliveryStatus === 'pending' ? 'Pendiente de Entrega' : 'Entregado',
                     // Workshop specific
                     title: item.name || 'Servicio',
@@ -366,6 +367,12 @@ export class NoteDetailsComponent implements OnInit {
         const facebook = printConfig?.facebook || '';
         const instagram = printConfig?.instagram || '';
 
+        // Lo rebajado por descuentos automáticos en las piezas que siguen en la nota. El subtotal
+        // del servidor ya viene rebajado: en el ticket se muestra a precio de lista y aparte el descuento.
+        const itemDiscounts = (this.rawNote?.items || [])
+            .filter(item => !(item as any).returned && item.discountDetail)
+            .reduce((sum, item) => sum + (item.financials?.discount || 0), 0);
+
         // Items HTML
         let itemsHtml = '';
         this.rawNote?.items.forEach(item => {
@@ -392,11 +399,16 @@ export class NoteDetailsComponent implements OnInit {
             const weight = item.specifications?.['weight'] || product?.specifications?.weight;
             const goldLine = [goldType, karatage, weight ? `${weight}g` : ''].filter(Boolean).join(' - ');
 
+            // Descuento automático: el desglose paso a paso guardado al vender (no se recalcula)
+            const discountHtml = this.discountLines(item)
+                .map(line => `<br><span class="desc-detail">${this.escapeHtml(line)}</span>`)
+                .join('');
+
             itemsHtml += `
                 <tr>
                     <td class="qty-col">${item.quantity}</td>
                     <td class="desc-col">
-                        ${ref ? `<span class="desc-name">#${ref}</span> ` : ''}<span class="desc-name">${itemName}</span>${showDetail ? `<br><span class="desc-detail">${catDetail}</span>` : ''}${goldLine ? `<br><span class="desc-gold">${goldLine}</span>` : ''}
+                        ${ref ? `<span class="desc-name">#${ref}</span> ` : ''}<span class="desc-name">${itemName}</span>${showDetail ? `<br><span class="desc-detail">${catDetail}</span>` : ''}${goldLine ? `<br><span class="desc-gold">${goldLine}</span>` : ''}${discountHtml}
                     </td>
                     <td class="price-col">$${unitPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                     <td class="total-col">$${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
@@ -526,10 +538,19 @@ export class NoteDetailsComponent implements OnInit {
                 <div class="divider"></div>
 
                 <div class="totals">
+                    ${itemDiscounts > 0 ? `
+                    <div class="total-row">
+                        <span>SUBTOTAL:</span>
+                        <span>$${(this.financials.subtotal + itemDiscounts).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>DESCUENTOS:</span>
+                        <span>-$${itemDiscounts.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                    </div>` : `
                     <div class="total-row">
                         <span>SUBTOTAL:</span>
                         <span>$${this.financials.subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-                    </div>
+                    </div>`}
                     ${this.financials.tax > 0 ? `
                     <div class="total-row">
                         <span>IMPUESTOS:</span>
@@ -562,6 +583,25 @@ export class NoteDetailsComponent implements OnInit {
             </body>
             </html>
         `;
+    }
+
+    /**
+     * Lo que dice la nota del descuento automático de una pieza, desde la copia fija guardada al
+     * vender: cada descuento con lo que quedó después (el último es lo cobrado), o una sola línea
+     * si el tope o el costo recortaron (la cadena daría otro número). Nunca muestra el costo.
+     */
+    discountLines(item: NoteItem): string[] {
+        const d = item.discountDetail;
+        if (!d?.applied?.length) return [];
+        if (d.capApplied || d.costApplied || !d.steps?.length) {
+            return [`Descuento máximo autorizado −${d.percent} %`];
+        }
+        return d.steps.map(s => `${s.name} −${s.percent} % → $${s.remaining.toLocaleString('en-US', { minimumFractionDigits: 2 })}`);
+    }
+
+    // Los nombres de descuento los captura el admin: se escapan antes de meterlos al HTML del ticket
+    private escapeHtml(text: string): string {
+        return text.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
     }
 
     printNote() {

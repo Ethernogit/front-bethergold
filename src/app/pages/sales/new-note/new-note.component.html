@@ -283,6 +283,14 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- Descuento automático (lo calcula el servidor) -->
+                                    <div *ngIf="hasAutoDiscount(item)" [title]="discountSteps(item)"
+                                        class="mb-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 font-instrument text-theme-xs">
+                                        <span class="text-[#6B6560] line-through dark:text-gray-500">{{ item.get('unitPrice')?.value | currency }}</span>
+                                        <span class="rounded-md bg-[#FBF0C9] px-1.5 py-0.5 font-semibold text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]">
+                                            {{ discountLabel(item) }}
+                                        </span>
+                                    </div>
                                     <div class="font-instrument text-[#6B6560] dark:text-gray-400 text-theme-sm flex flex-wrap gap-x-4 gap-y-1"
                                         formGroupName="specifications">
                                         <span class="flex items-center gap-1"><span class="opacity-70">CB:</span> {{
@@ -475,12 +483,11 @@
                 <div class="space-y-1 mb-4 font-instrument text-theme-xs shrink-0">
                     <div class="flex justify-between text-[#6B6560] dark:text-gray-400">
                         <span>Subtotal</span>
-                        <span class="text-[#191817] dark:text-white">{{ noteForm.get('subtotal')?.value | currency
-                            }}</span>
+                        <span class="text-[#191817] dark:text-white">{{ listSubtotal | currency }}</span>
                     </div>
                     <div class="flex justify-between text-[#6B6560] dark:text-gray-400">
                         <span>Descuento</span>
-                        <span class="text-error-500">-{{ noteForm.get('discount')?.value | currency }}</span>
+                        <span class="text-error-500">-{{ totalDiscounts | currency }}</span>
                     </div>
                     <div class="flex justify-between text-[#6B6560] dark:text-gray-400">
                         <span>Impuestos</span>

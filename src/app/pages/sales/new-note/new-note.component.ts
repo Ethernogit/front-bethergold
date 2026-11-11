@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, inject } from '@angular/core';
 import flatpickr from 'flatpickr';
 import { Spanish } from 'flatpickr/dist/l10n/es';
 import { CommonModule } from '@angular/common';
@@ -12,6 +12,8 @@ import { SucursalService } from '../../../shared/services/sucursal.service';
 import { CashCutService } from '../../../shared/services/cash-cut.service';
 import { PricingRuleService, PricingRule } from '../../../shared/services/pricing-rule.service';
 import { PermissionService } from '../../../shared/services/auth/permission.service';
+import { DiscountService } from '../../../shared/services/discount.service';
+import { DiscountPrice } from '../../../shared/interfaces/discount.interfaces';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, switchMap, catchError, filter } from 'rxjs/operators';
 import { of, Subject } from 'rxjs';
@@ -81,6 +83,8 @@ export class NewNoteComponent implements OnInit, OnDestroy {
     }
     paymentMethod: 'cash' | 'card' | 'points' = 'cash';
     saleType: 'sale' | 'consignment' = 'sale';
+
+    private discountService = inject(DiscountService);
 
     constructor(
         private fb: FormBuilder,
@@ -217,6 +221,8 @@ export class NewNoteComponent implements OnInit, OnDestroy {
             this.toastService.warning('Recuerde que las ventas de mayoreo son solo para clientes de Mayoreo.');
         }
         this.recalculateAllPrices();
+        // Los descuentos automáticos solo van en venta: volver a calcular cada renglón
+        this.items.controls.forEach(group => group.updateValueAndValidity());
     }
 
     openClientModal() {
@@ -419,6 +425,9 @@ export class NewNoteComponent implements OnInit, OnDestroy {
             ruleApplied: [ruleApplied],
             manuallyEdited: [false],
             discount: [0, [Validators.min(0)]],
+            // Descuento automático (lo calcula el servidor): monto por pieza y el detalle para mostrar
+            discountPerUnit: [0],
+            discountInfo: [null as DiscountPrice | null],
             subtotal: [price],
             isUnique: [isUnique], // For UI condition
             maxStock: [maxStock], // For UI validation msg
@@ -434,6 +443,7 @@ export class NewNoteComponent implements OnInit, OnDestroy {
 
         this.subscribeToItemChanges(itemGroup);
         this.items.push(itemGroup);
+        this.loadItemDiscounts([itemGroup]);
 
         // Clear search
         this.searchControl.setValue('', { emitEvent: false });
@@ -614,11 +624,89 @@ export class NewNoteComponent implements OnInit, OnDestroy {
         group.valueChanges.subscribe(val => {
             const qty = val.quantity || 0;
             const price = val.unitPrice || 0;
-            const discount = val.discount || 0 || 0;
-            const sub = (qty * price) - discount;
-            group.patchValue({ subtotal: sub > 0 ? sub : 0 }, { emitEvent: false });
+            // El descuento automático solo aplica en venta y a precio de lista; si el vendedor
+            // cambia el precio a mano no lleva descuento (igual que el servidor al guardar)
+            const discount = this.hasAutoDiscount(group)
+                ? Math.round((val.discountPerUnit || 0) * qty * 100) / 100
+                : 0;
+            const sub = Math.round(((qty * price) - discount) * 100) / 100;
+            group.patchValue({ discount, subtotal: sub > 0 ? sub : 0 }, { emitEvent: false });
             this.calculateTotals();
         });
+    }
+
+    // --- Descuentos automáticos ---
+
+    /** Solo si la organización tiene prendidos los descuentos (se lee al iniciar sesión) */
+    get discountsEnabled(): boolean {
+        const org = this.loginService.currentOrganization() as { settings?: { features?: { discounts?: boolean } } } | null;
+        return org?.settings?.features?.discounts === true;
+    }
+
+    /** ¿Este renglón lleva el descuento automático? Venta, con descuento y a precio de lista */
+    hasAutoDiscount(group: { get(path: string): { value: any } | null }): boolean {
+        const info = group.get('discountInfo')?.value as DiscountPrice | null;
+        if (!info || info.percent <= 0 || this.saleType !== 'sale') return false;
+        const price = Number(group.get('unitPrice')?.value) || 0;
+        return Math.round(price * 100) === Math.round(info.listPrice * 100);
+    }
+
+    /** "Buen Fin −15 % · Anillos −5 %", o una sola línea si el tope o el costo recortaron */
+    discountLabel(group: { get(path: string): { value: any } | null }): string {
+        const info = group.get('discountInfo')?.value as DiscountPrice | null;
+        if (!info) return '';
+        if (info.capApplied || info.costApplied) return `Descuento máximo −${info.percent} %`;
+        return info.applied.map(a => `${a.name} −${a.percent} %`).join(' · ');
+    }
+
+    /** El desglose paso a paso, para el tooltip del renglón */
+    discountSteps(group: { get(path: string): { value: any } | null }): string {
+        const info = group.get('discountInfo')?.value as DiscountPrice | null;
+        if (!info?.steps?.length) return '';
+        const money = (n: number) => n.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+        return [`Precio de lista ${money(info.listPrice)}`, ...info.steps.map(s => `${s.name} −${s.percent} % → ${money(s.remaining)}`)].join('\n');
+    }
+
+    /**
+     * Pide al servidor el precio de hoy de las piezas de inventario. Es el mismo cálculo con el
+     * que revisa la nota al guardarla: si aquí no se aplica, la nota se rechaza con 409.
+     */
+    loadItemDiscounts(groups: FormGroup[]) {
+        if (!this.discountsEnabled) return;
+        const byId = new Map<string, FormGroup[]>();
+        groups.forEach(g => {
+            const id = g.get('itemId')?.value;
+            if (g.get('type')?.value === 'jewelry' && id) byId.set(String(id), [...(byId.get(String(id)) ?? []), g]);
+        });
+        if (byId.size === 0) return;
+
+        this.discountService.getPrices([...byId.keys()]).subscribe({
+            next: (res) => {
+                const prices = new Map(res.data.prices.map(p => [String(p.productId), p]));
+                byId.forEach((gs, id) => {
+                    const price = prices.get(id);
+                    const discounted = price && price.percent > 0 ? price : null;
+                    gs.forEach(g => g.patchValue({
+                        discountInfo: discounted,
+                        discountPerUnit: discounted ? Math.round((discounted.listPrice - discounted.finalPrice) * 100) / 100 : 0
+                    }));
+                });
+            },
+            error: () => this.toastService.warning('No se pudieron cargar los descuentos de la pieza', 5000)
+        });
+    }
+
+    /** Lo que se rebajó por descuentos (automáticos y el global) */
+    get totalDiscounts(): number {
+        const items = this.items.getRawValue();
+        const byItems = items.reduce((acc: number, item: any) => acc + (item.discount || 0), 0);
+        return byItems + (this.noteForm.get('discount')?.value || 0);
+    }
+
+    /** Subtotal a precio de lista, antes de descuentos (solo para mostrar) */
+    get listSubtotal(): number {
+        const items = this.items.getRawValue();
+        return items.reduce((acc: number, item: any) => acc + (item.quantity || 0) * (item.unitPrice || 0), 0);
     }
 
     removeItem(index: number) {
@@ -858,8 +946,15 @@ export class NewNoteComponent implements OnInit, OnDestroy {
             },
             error: (err) => {
                 console.error('Error creating note', err);
-                this.toastService.error('Error al crear la nota');
                 this.isLoading = false;
+                // El servidor recalculó los descuentos y no cuadran (uno venció, o cambió la
+                // configuración): se recargan los precios para que el vendedor revise y cobre otra vez
+                if (err?.status === 409 && this.discountsEnabled) {
+                    this.toastService.warning(err.error?.error?.message || 'Los precios cambiaron. Revisa la nota y vuelve a cobrar.', 7000);
+                    this.loadItemDiscounts(this.items.controls as FormGroup[]);
+                    return;
+                }
+                this.toastService.error('Error al crear la nota');
             }
         });
     }

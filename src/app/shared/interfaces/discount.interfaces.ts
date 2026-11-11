@@ -43,6 +43,42 @@ export interface DiscountPayload {
     endsAt?: string | null;
 }
 
+export interface AppliedDiscount {
+    discountId: string;
+    name: string;
+    percent: number;
+    scope: DiscountScope;
+}
+
+// Lo que quedó después de cada descuento; el último es el importe real
+export interface DiscountStep {
+    name: string;
+    percent: number;
+    remaining: number;
+}
+
+// Precio de hoy de una pieza (GET /discounts/prices): lo que el servidor va a cobrar
+export interface DiscountPrice {
+    productId: string;
+    listPrice: number;
+    finalPrice: number;
+    percent: number;
+    capApplied: boolean;
+    costApplied: boolean;
+    applied: AppliedDiscount[];
+    steps: DiscountStep[];
+}
+
+// Copia fija guardada en la partida de la nota (items[].discountDetail)
+export interface NoteItemDiscountDetail {
+    percent: number;
+    capApplied: boolean;
+    costApplied: boolean;
+    combineMode: CombineMode;
+    applied: AppliedDiscount[];
+    steps: DiscountStep[];
+}
+
 export interface DiscountListParams {
     status?: 'active' | 'inactive';
     term?: string;
