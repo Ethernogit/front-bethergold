@@ -1,0 +1,246 @@
+<div class="h-full flex flex-col gap-4 min-h-0">
+
+    <!-- Cómo se cobran: tope y forma de combinar -->
+    <section class="rounded-2xl border border-[#E8D9A0] bg-white p-4 shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] sm:p-6 shrink-0">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-end">
+            <div class="min-w-0 lg:w-56">
+                <h2 class="font-instrument text-theme-sm font-semibold text-[#191817] dark:text-[#E8C97A]">Tope por pieza</h2>
+                <p class="mt-0.5 font-instrument text-theme-xs text-[#6B6560] dark:text-gray-500">Lo más que se puede rebajar, sumando todo.</p>
+                <div class="relative mt-2 w-32">
+                    <input type="number" min="0" max="100" step="0.5" aria-label="Tope por pieza en porcentaje"
+                        [ngModel]="capDraft()" (ngModelChange)="capDraft.set($event)" [disabled]="!canUpdate() || !settings()"
+                        class="w-full rounded-xl border border-[#E8D9A0] bg-white py-2 pl-3 pr-8 font-instrument text-theme-sm text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 disabled:opacity-70 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white" />
+                    <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 font-instrument text-theme-sm text-[#6B6560]">%</span>
+                </div>
+            </div>
+
+            <div class="min-w-0 flex-1">
+                <h2 class="font-instrument text-theme-sm font-semibold text-[#191817] dark:text-[#E8C97A]">Si a una pieza le toca más de uno</h2>
+                <select aria-label="Forma de combinar descuentos" [ngModel]="modeDraft()" (ngModelChange)="modeDraft.set($event)"
+                    [disabled]="!canUpdate() || !settings()"
+                    class="mt-2 w-full rounded-xl border border-[#E8D9A0] bg-white px-3 py-2 font-instrument text-theme-sm text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 disabled:opacity-70 sm:w-64 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white">
+                    @for (mode of combineModes; track mode.value) {
+                    <option [value]="mode.value">{{ mode.label }}</option>
+                    }
+                </select>
+                <p class="mt-1.5 font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">{{ modeHelp() }}</p>
+            </div>
+
+            @if (canUpdate() && settingsChanged()) {
+            <div class="flex gap-2 shrink-0">
+                <button type="button" (click)="resetSettings()"
+                    class="rounded-xl border border-[#E8D9A0] bg-white px-4 py-2 font-instrument text-sm font-semibold text-[#191817] transition-all hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-300">
+                    Deshacer
+                </button>
+                <button type="button" (click)="saveSettings()" [disabled]="savingSettings()"
+                    class="rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-4 py-2 font-instrument text-sm font-semibold text-[#191817] shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] disabled:opacity-60 dark:text-white">
+                    {{ savingSettings() ? 'Guardando...' : 'Guardar' }}
+                </button>
+            </div>
+            }
+        </div>
+    </section>
+
+    <!-- Lista: altura mínima para que la tarjeta del tope no la aplaste en pantallas bajas;
+         si no cabe, se desplaza la página -->
+    <div class="rounded-2xl border border-[#E8D9A0] bg-white shadow-theme-sm dark:border-[#4A474D] dark:bg-[#232126] flex flex-col flex-1 min-h-[26rem]">
+        <div class="border-b border-[#E8D9A0] px-4 py-3 dark:border-[#4A474D] sm:px-6 shrink-0">
+            <div class="flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                    <h1 class="font-instrument text-title-sm font-semibold text-[#191817] dark:text-[#E8C97A] truncate">Descuentos</h1>
+                    <p class="mt-0.5 font-instrument text-theme-sm text-[#6B6560] dark:text-gray-500 hidden sm:block">
+                        Se aplican solos en el punto de venta a las piezas que les toquen.
+                    </p>
+                </div>
+                @if (permissionService.hasPermission('discounts:create')) {
+                <button type="button" (click)="openNew()"
+                    class="flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#C69214] to-[#FAC600] px-3 py-2.5 sm:px-5 font-instrument text-sm font-semibold text-[#191817] dark:text-white shadow-theme-sm transition-all hover:from-[#9A6F0A] hover:to-[#C69214] hover:shadow-theme-md active:scale-[0.98] shrink-0">
+                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 4.5V15.5M4.5 10H15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    <span class="hidden sm:inline">Nuevo descuento</span>
+                </button>
+                }
+            </div>
+            <div class="mt-3 flex flex-col gap-2 sm:flex-row">
+                <input type="search" placeholder="Buscar por nombre..." aria-label="Buscar descuento"
+                    [ngModel]="term()" (ngModelChange)="term.set($event)" (keyup.enter)="onSearch()" (search)="onSearch()"
+                    class="w-full rounded-xl border border-[#E8D9A0] bg-white px-3 py-2 font-instrument text-theme-sm text-[#191817] outline-none transition-all focus:border-[#C69214] focus:ring-2 focus:ring-[#C69214]/20 sm:max-w-xs dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white" />
+                <select aria-label="Filtrar por estado" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); onSearch()"
+                    class="rounded-xl border border-[#E8D9A0] bg-white px-3 py-2 font-instrument text-theme-sm text-[#191817] outline-none transition-all focus:border-[#C69214] sm:w-44 dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-white">
+                    <option value="">Todos</option>
+                    <option value="active">Prendidos</option>
+                    <option value="inactive">Apagados</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-auto min-h-0">
+            @if (loading()) {
+            <div class="flex justify-center px-4 py-12">
+                <div class="h-10 w-10 animate-spin rounded-full border-4 border-solid border-[#C69214] border-t-transparent"></div>
+            </div>
+            } @else {
+            <!-- Celular: tarjetas -->
+            <div class="sm:hidden divide-y divide-[#E8D9A0] dark:divide-[#4A474D]">
+                @for (d of discounts(); track d._id) {
+                <div class="px-4 py-3">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0">
+                            <p class="font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white truncate">{{ d.name }}</p>
+                            <p class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400 truncate">{{ scopeLabel(d) }}</p>
+                        </div>
+                        <span class="font-instrument text-title-sm font-semibold text-[#9A6F0A] dark:text-[#E8C97A] shrink-0">{{ d.percent }} %</span>
+                    </div>
+                    <div class="mt-2 flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <ng-container *ngTemplateOutlet="statusBadge; context: { $implicit: d.effectiveStatus }"></ng-container>
+                            <span class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-500 truncate">
+                                <ng-container *ngTemplateOutlet="validity; context: { $implicit: d }"></ng-container>
+                            </span>
+                        </div>
+                        <ng-container *ngTemplateOutlet="actions; context: { $implicit: d }"></ng-container>
+                    </div>
+                </div>
+                } @empty {
+                <ng-container *ngTemplateOutlet="empty"></ng-container>
+                }
+            </div>
+
+            <table class="hidden sm:table min-w-full divide-y divide-[#E8D9A0] dark:divide-[#4A474D]">
+                <thead class="bg-[#FBF0C9] dark:bg-[#232126] sticky top-0 z-10">
+                    <tr class="text-left font-instrument text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
+                        <th scope="col" class="px-6 py-3">Descuento</th>
+                        <th scope="col" class="px-6 py-3">A qué piezas</th>
+                        <th scope="col" class="px-6 py-3 text-right">%</th>
+                        <th scope="col" class="px-6 py-3 hidden md:table-cell">Vigencia</th>
+                        <th scope="col" class="px-6 py-3 text-center">Estado</th>
+                        <th scope="col" class="px-6 py-3 text-right"><span class="sr-only">Acciones</span></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#E8D9A0] bg-white dark:divide-[#4A474D] dark:bg-[#232126]">
+                    @for (d of discounts(); track d._id) {
+                    <tr class="transition-colors hover:bg-[#FBF0C9]/40 dark:hover:bg-white/5">
+                        <td class="px-6 py-4 font-instrument text-theme-sm font-semibold text-[#191817] dark:text-white">{{ d.name }}</td>
+                        <td class="px-6 py-4 font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">
+                            <span class="block text-theme-xs text-[#6B6560] dark:text-gray-500">{{ scopeKind(d) }}</span>
+                            {{ scopeLabel(d) }}
+                        </td>
+                        <td class="px-6 py-4 text-right font-instrument text-theme-sm font-semibold text-[#9A6F0A] dark:text-[#E8C97A] whitespace-nowrap">{{ d.percent }} %</td>
+                        <td class="px-6 py-4 font-instrument text-theme-sm text-[#46424A] dark:text-gray-300 hidden md:table-cell whitespace-nowrap">
+                            <ng-container *ngTemplateOutlet="validity; context: { $implicit: d }"></ng-container>
+                        </td>
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
+                            <ng-container *ngTemplateOutlet="statusBadge; context: { $implicit: d.effectiveStatus }"></ng-container>
+                        </td>
+                        <td class="px-6 py-4 text-right whitespace-nowrap">
+                            <ng-container *ngTemplateOutlet="actions; context: { $implicit: d }"></ng-container>
+                        </td>
+                    </tr>
+                    } @empty {
+                    <tr><td colspan="6"><ng-container *ngTemplateOutlet="empty"></ng-container></td></tr>
+                    }
+                </tbody>
+            </table>
+            }
+        </div>
+
+        <div class="border-t border-[#E8D9A0] px-4 py-3 dark:border-[#4A474D] sm:px-6 shrink-0 rounded-b-2xl">
+            <div class="flex items-center justify-between gap-3">
+                <p class="font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">
+                    {{ totalItems() }} {{ totalItems() === 1 ? 'descuento' : 'descuentos' }}
+                </p>
+                @if (totalPages() > 1) {
+                <div class="flex items-center gap-2">
+                    <button type="button" (click)="onPageChange(currentPage() - 1)" [disabled]="currentPage() === 1"
+                        class="rounded-xl px-3 py-1.5 font-instrument text-theme-sm text-[#46424A] hover:bg-gray-100 disabled:opacity-50 dark:text-gray-400 dark:hover:bg-white/5">Anterior</button>
+                    <span class="font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">{{ currentPage() }}/{{ totalPages() }}</span>
+                    <button type="button" (click)="onPageChange(currentPage() + 1)" [disabled]="currentPage() >= totalPages()"
+                        class="rounded-xl px-3 py-1.5 font-instrument text-theme-sm text-[#46424A] hover:bg-gray-100 disabled:opacity-50 dark:text-gray-400 dark:hover:bg-white/5">Siguiente</button>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-discount-form [isOpen]="formOpen()" [discount]="editing()" [categories]="categories()"
+    [subcategories]="subcategories()" [cap]="settings()?.cap ?? 30" [saving]="saving()"
+    (save)="onSave($event)" (close)="formOpen.set(false)"></app-discount-form>
+
+<!-- Confirmar borrado (sin confirm() del navegador) -->
+<app-modal [isOpen]="!!toDelete()" (close)="toDelete.set(null)" className="max-w-[420px] m-4 p-6">
+    <h2 class="pr-10 font-instrument text-title-sm font-semibold text-[#191817] dark:text-white">¿Borrar el descuento?</h2>
+    <p class="mt-2 font-instrument text-theme-sm text-[#46424A] dark:text-gray-300">
+        <strong>{{ toDelete()?.name }}</strong> deja de aplicarse y ya no sale en la lista. Las notas que ya lo usaron no cambian.
+        Si solo quieres pausarlo, mejor apágalo.
+    </p>
+    <div class="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <button type="button" (click)="toDelete.set(null)"
+            class="rounded-xl border border-[#E8D9A0] bg-white px-5 py-2.5 font-instrument text-sm font-semibold text-[#191817] hover:bg-[#FBF0C9] dark:border-[#4A474D] dark:bg-[#3a383d] dark:text-gray-300">Cancelar</button>
+        <button type="button" (click)="confirmDelete()" [disabled]="deleting()"
+            class="rounded-xl bg-error-600 px-5 py-2.5 font-instrument text-sm font-semibold text-white hover:bg-error-700 disabled:opacity-60">
+            {{ deleting() ? 'Borrando...' : 'Borrar' }}
+        </button>
+    </div>
+</app-modal>
+
+<ng-template #statusBadge let-status>
+    <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-instrument text-theme-xs font-medium whitespace-nowrap"
+        [ngClass]="{
+            'bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-400': status === 'active',
+            'bg-[#FBF0C9] text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]': status === 'scheduled',
+            'bg-[#F5F0EC] text-[#46424A] dark:bg-white/5 dark:text-gray-400': status === 'expired' || status === 'inactive'
+        }">
+        <span class="size-1.5 rounded-full" [ngClass]="{
+            'bg-success-500': status === 'active',
+            'bg-[#C69214]': status === 'scheduled',
+            'bg-[#6B6560]': status === 'expired' || status === 'inactive'
+        }"></span>
+        {{ statusLabel(status) }}
+    </span>
+</ng-template>
+
+<!-- Fechas en hora de México: el back guarda 00:00 y 23:59:59 de la Ciudad de México -->
+<ng-template #validity let-d>
+    @if (d.startsAt || d.endsAt) {
+    {{ d.startsAt ? (d.startsAt | date:'d MMM y':'-0600') : 'Desde siempre' }} – {{ d.endsAt ? (d.endsAt | date:'d MMM y':'-0600') : 'sin fin' }}
+    } @else {
+    Siempre
+    }
+</ng-template>
+
+<ng-template #actions let-d>
+    <div class="inline-flex items-center gap-1">
+        @if (canUpdate()) {
+        <button type="button" role="switch" [attr.aria-checked]="d.isActive" [disabled]="togglingId() === d._id"
+            [attr.aria-label]="(d.isActive ? 'Apagar ' : 'Prender ') + d.name" (click)="toggle(d)"
+            class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors disabled:opacity-60"
+            [ngClass]="d.isActive ? 'bg-[#C69214]' : 'bg-gray-300 dark:bg-[#4A474D]'">
+            <span class="inline-block size-5 rounded-full bg-white shadow transition-transform"
+                [ngClass]="d.isActive ? 'translate-x-5.5' : 'translate-x-0.5'"></span>
+        </button>
+        <button type="button" (click)="openEdit(d)" [attr.aria-label]="'Editar ' + d.name"
+            class="rounded-lg p-2 text-[#46424A] transition-colors hover:bg-[#FBF0C9] dark:text-gray-300 dark:hover:bg-white/5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </button>
+        }
+        @if (permissionService.hasPermission('discounts:delete')) {
+        <button type="button" (click)="toDelete.set(d)" [attr.aria-label]="'Borrar ' + d.name"
+            class="rounded-lg p-2 text-error-600 transition-colors hover:bg-error-50 dark:text-error-400 dark:hover:bg-error-500/10">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+        }
+    </div>
+</ng-template>
+
+<ng-template #empty>
+    <div class="flex flex-col items-center justify-center gap-3 px-6 py-16">
+        <div class="flex size-16 items-center justify-center rounded-full bg-[#FBF0C9] dark:bg-[#4A474D]">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-[#C69214]"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+        </div>
+        <p class="font-instrument text-theme-sm text-[#6B6560] dark:text-gray-400">
+            {{ term() || statusFilter() ? 'Ningún descuento coincide con la búsqueda' : 'Todavía no hay descuentos' }}
+        </p>
+    </div>
+</ng-template>

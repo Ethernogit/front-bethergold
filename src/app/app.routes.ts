@@ -428,6 +428,18 @@ export const routes: Routes = [
         title: 'Cotización | Bethergold'
       },
 
+      // Descuentos automáticos (solo si la organización tiene settings.features.discounts)
+      {
+        path: 'discounts',
+        loadComponent: () => import('./pages/discounts/discount-list/discount-list.component').then(m => m.DiscountListComponent),
+        canActivate: [AuthGuard, PermissionGuard],
+        data: {
+          module: 'discounts',
+          action: 'read'
+        },
+        title: 'Descuentos | Bethergold'
+      },
+
       // Ventas / Notas
       {
         path: 'sales/cash-cut',

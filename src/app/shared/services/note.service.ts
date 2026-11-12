@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { NoteItemDiscountDetail } from '../interfaces/discount.interfaces';
 
 export interface NoteItem {
     _id?: string;
@@ -16,6 +17,8 @@ export interface NoteItem {
         tax: number;
         subtotal: number;
     };
+    // Copia fija del descuento automático que se le aplicó al vender (solo si llevó)
+    discountDetail?: NoteItemDiscountDetail;
     specifications?: {
         material?: string;
         gemstone?: string;

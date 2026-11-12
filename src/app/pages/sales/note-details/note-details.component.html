@@ -481,6 +481,7 @@
                                             <div class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white truncate"
                                                 [ngClass]="{'line-through': item.returned}">{{item.name}}</div>
                                             <div class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">{{item.description}}</div>
+                                            <div *ngFor="let line of item.discountLines" class="font-instrument text-theme-xs font-medium text-[#9A6F0A] dark:text-[#E8C97A]">{{ line }}</div>
                                         </div>
                                         <span class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white shrink-0">${{item.price | number:'1.2-2'}}</span>
                                     </div>
@@ -532,6 +533,7 @@
                                                 <div class="font-instrument text-theme-sm font-bold text-[#191817] dark:text-white"
                                                     [ngClass]="{'line-through': item.returned}">{{item.name}}</div>
                                                 <div class="font-instrument text-theme-xs text-[#6B6560] dark:text-gray-400">{{item.description}}</div>
+                                            <div *ngFor="let line of item.discountLines" class="font-instrument text-theme-xs font-medium text-[#9A6F0A] dark:text-[#E8C97A]">{{ line }}</div>
                                             </td>
                                             <td class="px-6 py-4">
                                                 <div class="flex items-center gap-2 flex-wrap">
