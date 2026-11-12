@@ -102,22 +102,21 @@
                         <thead class="sticky top-0 z-10 bg-[#FBF0C9] dark:bg-[#232126] shadow-sm">
                             <tr
                                 class="text-left font-outfit text-theme-xs font-semibold uppercase tracking-wider text-[#9A6F0A] dark:text-[#E8C97A]">
-                                <th class="px-4 py-3 w-12 text-center">
+                                <th class="px-3 py-3 w-12 text-center">
                                     <input type="checkbox" [checked]="isAllSelected()"
                                         (change)="toggleAllSelection($event)"
                                         class="h-5 w-5 rounded border-[#E8D9A0] text-[#C69214] focus:ring-[#C69214] bg-white dark:border-[#4A474D] dark:bg-[#3a383d] dark:ring-offset-[#3a383d] cursor-pointer">
                                 </th>
                                 <th class="px-2 py-3 w-14"><span class="sr-only">Foto</span></th>
-                                <th class="px-4 py-3">Código</th>
-                                <th class="px-4 py-3">Nombre</th>
-                                <th class="px-4 py-3">Cat / Subcat</th>
-                                <th class="px-4 py-3">Material</th>
-                                <th class="px-4 py-3 text-center">Stock</th>
-                                <th class="px-4 py-3 text-center">Estado</th>
-                                <th class="px-4 py-3 text-right">Peso</th>
-                                <th class="px-4 py-3 text-right">Costo</th>
-                                <th class="px-4 py-3 text-right">Precio</th>
-                                <th class="px-4 py-3 text-center">Acciones</th>
+                                <!-- Código, peso y costo van dentro de Producto, Material y Precio para que la
+                                     tabla quepa sin barra horizontal en laptops (~1230 px con el menú abierto) -->
+                                <th class="px-3 py-3">Producto</th>
+                                <th class="px-3 py-3">Cat / Subcat</th>
+                                <th class="px-3 py-3">Material</th>
+                                <th class="px-3 py-3 text-center">Stock</th>
+                                <th class="px-3 py-3 text-center">Estado</th>
+                                <th class="px-3 py-3 text-right">Precio</th>
+                                <th class="px-3 py-3 text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-[#E8D9A0] bg-white dark:divide-[#4A474D] dark:bg-[#3a383d]">
@@ -126,7 +125,7 @@
                                     'bg-[#FBF0C9]/20': isSelected(product._id!),
                                     'dark:bg-[#232126]/50': isSelected(product._id!)
                                 }">
-                                <td class="px-4 py-3 text-center">
+                                <td class="px-3 py-3 text-center">
                                     <input type="checkbox" [checked]="isSelected(product._id!)"
                                         (change)="toggleSelection(product._id!)"
                                         class="h-5 w-5 rounded border-[#E8D9A0] text-[#C69214] focus:ring-[#C69214] bg-white dark:border-[#4A474D] dark:bg-[#3a383d] dark:ring-offset-[#3a383d] cursor-pointer">
@@ -146,22 +145,19 @@
                                         }
                                     </button>
                                 </td>
-                                <td class="px-4 py-3">
-                                    <span
-                                        class="font-display text-theme-sm font-medium text-[#191817] dark:text-white">{{
-                                        product.barcode }}</span>
-                                </td>
-                                <td class="px-4 py-3">
+                                <td class="px-3 py-3">
                                     <p class="font-display text-theme-sm font-medium text-[#191817] dark:text-white">{{
                                         product.name }}</p>
+                                    <p class="font-display text-theme-xs text-[#6B6560] dark:text-gray-400 whitespace-nowrap">{{
+                                        product.barcode }}</p>
                                     @if(product.description) {
                                     <p
-                                        class="font-display text-theme-xs text-[#6B6560] dark:text-gray-400 truncate max-w-[200px]">
+                                        class="font-display text-theme-xs text-[#6B6560] dark:text-gray-400 truncate max-w-[160px]">
                                         {{
                                         product.description }}</p>
                                     }
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-3 py-3">
                                     <div class="flex flex-col gap-1.5 items-start">
                                         <span
                                             class="inline-flex items-center gap-1.5 rounded-full bg-[#FBF0C9] px-2.5 py-0.5 text-theme-xs font-medium text-[#9A6F0A] dark:bg-[#4A474D] dark:text-[#E8C97A]">
@@ -175,11 +171,11 @@
                                         }
                                     </div>
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-3 py-3">
                                     <div
                                         class="flex flex-col gap-0.5 text-[#46424A] dark:text-gray-300 font-display text-theme-sm">
                                         @if(product.jewelryDetails?.karatage) {
-                                        <span class="text-[#191817] dark:text-white font-medium">{{
+                                        <span class="text-[#191817] dark:text-white font-medium whitespace-nowrap">{{
                                             product.jewelryDetails?.karatage }}</span>
                                         }
                                         @if(product.jewelryDetails?.goldType) {
@@ -189,9 +185,11 @@
                                         @else {
                                         <span class="text-theme-xs text-[#6B6560] dark:text-gray-500">-</span>
                                         }
+                                        <span class="text-theme-xs text-[#6B6560] dark:text-gray-400 whitespace-nowrap">{{
+                                            product.specifications?.weight != null ? product.specifications?.weight : '—' }} g</span>
                                     </div>
                                 </td>
-                                <td class="px-4 py-3 text-center">
+                                <td class="px-3 py-3 text-center">
                                     <span
                                         class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-theme-xs font-medium"
                                         [ngClass]="{
@@ -207,7 +205,7 @@
                                         {{ product.stock }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 text-center">
+                                <td class="px-3 py-3 text-center">
                                     <span
                                         class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-theme-xs font-medium"
                                         [ngClass]="{
@@ -221,19 +219,13 @@
                                         {{ product.status === 'active' ? 'Activo' : 'Inactivo' }}
                                     </span>
                                 </td>
-                                <td
-                                    class="px-4 py-3 text-right font-display text-theme-sm text-[#46424A] dark:text-gray-300">
-                                    {{ product.specifications?.weight }}g
+                                <td class="px-3 py-3 text-right font-display whitespace-nowrap">
+                                    <p class="text-theme-sm font-semibold text-[#191817] dark:text-white">{{
+                                        product.price | currency }}</p>
+                                    <p class="text-theme-xs text-[#6B6560] dark:text-gray-400">Costo {{
+                                        product.cost | currency }}</p>
                                 </td>
-                                <td
-                                    class="px-4 py-3 text-right font-display text-theme-sm text-[#46424A] dark:text-gray-300">
-                                    {{ product.cost | currency }}
-                                </td>
-                                <td
-                                    class="px-4 py-3 text-right font-display text-theme-sm font-semibold text-[#191817] dark:text-white">
-                                    {{ product.price | currency }}
-                                </td>
-                                <td class="px-4 py-3">
+                                <td class="px-3 py-3">
                                     <div class="flex items-center justify-center gap-2">
                                         @if (!product.isUnique) {
                                         <button (click)="openStockHistory(product)"
