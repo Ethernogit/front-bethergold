@@ -949,12 +949,13 @@ export class NewNoteComponent implements OnInit, OnDestroy {
                 this.isLoading = false;
                 // El servidor recalculó los descuentos y no cuadran (uno venció, o cambió la
                 // configuración): se recargan los precios para que el vendedor revise y cobre otra vez
-                if (err?.status === 409 && this.discountsEnabled) {
-                    this.toastService.warning(err.error?.error?.message || 'Los precios cambiaron. Revisa la nota y vuelve a cobrar.', 7000);
+                if (err?.error?.error?.code === 'PRICES_CHANGED') {
+                    this.toastService.warning(err.error.error.message || 'Los precios cambiaron. Revisa la nota y vuelve a cobrar.', 7000);
                     this.loadItemDiscounts(this.items.controls as FormGroup[]);
                     return;
                 }
-                this.toastService.error('Error al crear la nota');
+                // Otros 409 (folio en uso) traen su propio mensaje
+                this.toastService.error(err?.status === 409 && err.error?.message ? err.error.message : 'Error al crear la nota');
             }
         });
     }
